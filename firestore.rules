@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /households/{hid} {
+      // Members can list/read their own household.
+      allow read: if request.auth != null
+        && request.auth.uid in resource.data.members;
+
+      // Any signed-in user can fetch a household by its exact ID (the invite
+      // code) to join it. This does NOT allow listing/browsing households -
+      // Firestore only grants this for a direct get(), not a query.
+      allow get: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.members == [request.auth.uid];
+
+      // A member can update freely. A non-member may only update to add
+      // themselves, and only while the household has room (max 2 members).
+      allow update: if request.auth != null && (
+        request.auth.uid in resource.data.members
+        || (
+          resource.data.members.size() < 2
+          && request.resource.data.members == resource.data.members + [request.auth.uid]
+        )
+      );
+
+      allow delete: if false;
+
+      match /{subcol}/{docId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid in
+             get(/databases/$(db)/documents/households/$(hid)).data.members;
+      }
+    }
+  }
+}
