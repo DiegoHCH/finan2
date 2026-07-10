@@ -37,9 +37,19 @@ flutter pub get
 flutter run
 ```
 
+## Firebase
+
+Proyecto: `finan2` (región de Firestore: `southamerica-east1`). Configurado con `flutterfire configure`.
+
+**Pendiente manual:** habilitar los proveedores **Email/Password** y **Google** en
+[Authentication > Sign-in method](https://console.firebase.google.com/project/finan2/authentication/providers) —
+sin esto el login/registro no funciona en tiempo real (el código ya está listo y compila).
+
 ## Estado actual
 
 - [x] Setup del proyecto, dependencias, theme y esqueleto de carpetas
-- [ ] Auth + Hogar (login, crear/unirse a hogar)
+- [x] Firebase configurado (Auth + Firestore en `southamerica-east1`) y reglas de seguridad desplegadas
+- [x] Auth (login/registro con email y Google) + Hogar (crear/unirse por código, pantalla temporal de inicio)
+- [ ] Habilitar proveedores de Auth en la consola (paso manual, ver arriba)
 - [ ] Transacciones
 - [ ] Dashboard, presupuesto, deudas, ahorros
