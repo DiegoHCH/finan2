@@ -4,8 +4,9 @@ import '../theme/app_theme.dart';
 
 /// A labeled text field matching the design mockup's `.field`: a bordered
 /// box with a small uppercase label above the value, instead of Material's
-/// floating label.
-class Finan2Field extends StatelessWidget {
+/// floating label. Password fields (`obscureText: true`) get a show/hide
+/// eye toggle.
+class Finan2Field extends StatefulWidget {
   const Finan2Field({
     required this.label,
     required this.controller,
@@ -26,6 +27,13 @@ class Finan2Field extends StatelessWidget {
   final Iterable<String>? autofillHints;
 
   @override
+  State<Finan2Field> createState() => _Finan2FieldState();
+}
+
+class _Finan2FieldState extends State<Finan2Field> {
+  late bool _obscured = widget.obscureText;
+
+  @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Container(
@@ -40,7 +48,7 @@ class Finan2Field extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label.toUpperCase(),
+            widget.label.toUpperCase(),
             style: TextStyle(
               fontSize: 9.5,
               fontWeight: FontWeight.w700,
@@ -49,18 +57,18 @@ class Finan2Field extends StatelessWidget {
             ),
           ),
           TextFormField(
-            controller: controller,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            textCapitalization: textCapitalization,
-            validator: validator,
-            autofillHints: autofillHints,
+            controller: widget.controller,
+            obscureText: _obscured,
+            keyboardType: widget.keyboardType,
+            textCapitalization: widget.textCapitalization,
+            validator: widget.validator,
+            autofillHints: widget.autofillHints,
             style: TextStyle(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
               color: colors.ink,
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               isDense: true,
               isCollapsed: true,
               border: InputBorder.none,
@@ -68,7 +76,23 @@ class Finan2Field extends StatelessWidget {
               focusedBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               focusedErrorBorder: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 3),
+              contentPadding: const EdgeInsets.only(top: 3),
+              suffixIconConstraints: const BoxConstraints(),
+              suffixIcon: widget.obscureText
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: GestureDetector(
+                        onTap: () => setState(() => _obscured = !_obscured),
+                        child: Icon(
+                          _obscured
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 18,
+                          color: colors.inkFaint,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
           ),
         ],

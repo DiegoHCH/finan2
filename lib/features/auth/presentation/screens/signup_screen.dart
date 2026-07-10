@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../viewmodels/auth_providers.dart';
 import 'login_screen.dart';
 
@@ -50,15 +51,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const Finan2LogoTile(),
+                const SizedBox(height: Finan2Space.lg),
                 Text(
                   'Crea tu cuenta',
                   style: Theme.of(context).textTheme.headlineSmall,

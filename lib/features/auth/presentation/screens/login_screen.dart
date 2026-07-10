@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/finan2_bars_icon.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_google_icon.dart';
+import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../viewmodels/auth_providers.dart';
 import 'signup_screen.dart';
 
@@ -57,7 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const _AppLogo(),
+                const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
                 Text.rich(
                   TextSpan(
@@ -165,33 +165,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _AppLogo extends StatelessWidget {
-  const _AppLogo();
-
-  @override
-  Widget build(BuildContext context) {
-    final brand = Theme.of(context).colorScheme.primary;
-    final brandDeep = Theme.of(context).extension<Finan2Colors>()!.brandDeep;
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [brand, brandDeep],
-          ),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        alignment: Alignment.center,
-        child: const Finan2BarsIcon(size: 28),
       ),
     );
   }
