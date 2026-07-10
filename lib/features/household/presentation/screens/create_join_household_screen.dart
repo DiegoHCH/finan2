@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_field.dart';
 import '../../data/household_repository.dart';
 import '../viewmodels/household_providers.dart';
 import 'invite_household_screen.dart';
@@ -106,23 +107,19 @@ class _CreateJoinHouseholdScreenState
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 if (_choice == _HouseholdChoice.create)
-                  TextFormField(
+                  Finan2Field(
+                    label: 'Nombre del hogar',
                     controller: _householdNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre del hogar',
-                    ),
                     validator: (value) =>
                         (value == null || value.trim().isEmpty)
                             ? 'Ponle un nombre a tu hogar'
                             : null,
                   )
                 else
-                  TextFormField(
+                  Finan2Field(
+                    label: 'Código del hogar',
                     controller: _codeController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(
-                      labelText: 'Código del hogar',
-                    ),
                     validator: (value) => (value == null || value.trim().isEmpty)
                         ? 'Ingresa el código que te compartieron'
                         : null,

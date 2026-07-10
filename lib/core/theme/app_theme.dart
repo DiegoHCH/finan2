@@ -463,6 +463,22 @@ abstract class Finan2Theme {
           ),
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: surface,
+          foregroundColor: ink,
+          side: BorderSide(color: line),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Finan2Radius.field),
+          ),
+          textStyle: const TextStyle(
+            fontFamily: Finan2Type.fontFamily,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,

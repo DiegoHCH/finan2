@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_field.dart';
 import '../viewmodels/auth_providers.dart';
 import 'signup_screen.dart';
 
@@ -69,19 +70,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: Finan2Space.xl),
-                TextFormField(
+                Finan2Field(
+                  label: 'Correo',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Correo'),
+                  autofillHints: const [AutofillHints.email],
                   validator: (value) => (value == null || !value.contains('@'))
                       ? 'Ingresa un correo válido'
                       : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
-                TextFormField(
+                Finan2Field(
+                  label: 'Contraseña',
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Contraseña'),
+                  autofillHints: const [AutofillHints.password],
                   validator: (value) => (value == null || value.length < 6)
                       ? 'Mínimo 6 caracteres'
                       : null,
@@ -124,11 +127,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: const Text('Continuar con Google'),
                 ),
                 const SizedBox(height: Finan2Space.lg),
-                TextButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SignupScreen()),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const SignupScreen()),
+                    ),
+                    child: Text.rich(
+                      TextSpan(
+                        style: Theme.of(context).textTheme.bodySmall,
+                        children: [
+                          const TextSpan(text: '¿No tienes cuenta? '),
+                          TextSpan(
+                            text: 'Créala aquí',
+                            style: const TextStyle(
+                              color: Finan2Palette.brand,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: const Text('¿No tienes cuenta? Créala aquí'),
                 ),
               ],
             ),

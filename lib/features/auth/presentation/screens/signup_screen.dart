@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_field.dart';
 import '../viewmodels/auth_providers.dart';
 import 'login_screen.dart';
 
@@ -68,38 +69,39 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: Finan2Space.xl),
-                TextFormField(
+                Finan2Field(
+                  label: 'Nombre',
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre'),
+                  autofillHints: const [AutofillHints.name],
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? 'Ingresa tu nombre'
                       : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
-                TextFormField(
+                Finan2Field(
+                  label: 'Correo',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Correo'),
+                  autofillHints: const [AutofillHints.email],
                   validator: (value) => (value == null || !value.contains('@'))
                       ? 'Ingresa un correo válido'
                       : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
-                TextFormField(
+                Finan2Field(
+                  label: 'Contraseña',
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Contraseña'),
+                  autofillHints: const [AutofillHints.newPassword],
                   validator: (value) => (value == null || value.length < 6)
                       ? 'Mínimo 6 caracteres'
                       : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
-                TextFormField(
+                Finan2Field(
+                  label: 'Confirmar contraseña',
                   controller: _confirmController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirmar contraseña',
-                  ),
                   validator: (value) => value != _passwordController.text
                       ? 'Las contraseñas no coinciden'
                       : null,
@@ -116,11 +118,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       : const Text('Crear cuenta'),
                 ),
                 const SizedBox(height: Finan2Space.md),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    ),
+                    child: Text.rich(
+                      TextSpan(
+                        style: Theme.of(context).textTheme.bodySmall,
+                        children: [
+                          const TextSpan(text: '¿Ya tienes cuenta? '),
+                          TextSpan(
+                            text: 'Inicia sesión',
+                            style: const TextStyle(
+                              color: Finan2Palette.brand,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: const Text('¿Ya tienes cuenta? Inicia sesión'),
                 ),
               ],
             ),
