@@ -12,7 +12,20 @@
           "package_name": "com.katanalabs.finan2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1048748616099-3n538o3dt6it5ucofh2mlbceoe1ralmn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.katanalabs.finan2",
+            "certificate_hash": "42bdf46bd0fcd22d5f3f0582e3017c8e0436fcdc"
+          }
+        },
+        {
+          "client_id": "1048748616099-m1mphbsbin27i0kab9adf0lv8c8ebf8m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBwRwOLaZghlUTP_Q900MmbAXScU0DD1iM"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1048748616099-m1mphbsbin27i0kab9adf0lv8c8ebf8m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1048748616099-0qjts1thqac91qor0q95a8apd5l1tis7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.katanalabs.finan2"
+              }
+            }
+          ]
         }
       }
     }
