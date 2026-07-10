@@ -1,0 +1,186 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../viewmodels/auth_providers.dart';
+import 'signup_screen.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    await ref.read(authControllerProvider.notifier).signInWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    ref.listen<AsyncValue<void>>(authControllerProvider, (previous, next) {
+      if (next.hasError && !next.isLoading) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authErrorMessage(next.error))),
+        );
+      }
+    });
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const _AppLogo(),
+                const SizedBox(height: Finan2Space.lg),
+                Text(
+                  'Bienvenido a Finan2',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: Finan2Space.xs),
+                Text(
+                  'Entra con tu cuenta. Cada quien tiene la suya; '
+                  'las finanzas del hogar son compartidas.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: Finan2Space.xl),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Correo'),
+                  validator: (value) => (value == null || !value.contains('@'))
+                      ? 'Ingresa un correo válido'
+                      : null,
+                ),
+                const SizedBox(height: Finan2Space.md),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Contraseña'),
+                  validator: (value) => (value == null || value.length < 6)
+                      ? 'Mínimo 6 caracteres'
+                      : null,
+                ),
+                const SizedBox(height: Finan2Space.lg),
+                FilledButton(
+                  onPressed: authState.isLoading ? null : _submit,
+                  child: authState.isLoading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Iniciar sesión'),
+                ),
+                const SizedBox(height: Finan2Space.md),
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Finan2Space.sm,
+                      ),
+                      child: Text(
+                        'o',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: Finan2Space.md),
+                OutlinedButton.icon(
+                  onPressed: authState.isLoading
+                      ? null
+                      : () => ref
+                          .read(authControllerProvider.notifier)
+                          .signInWithGoogle(),
+                  icon: const Icon(Icons.g_mobiledata),
+                  label: const Text('Continuar con Google'),
+                ),
+                const SizedBox(height: Finan2Space.lg),
+                TextButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SignupScreen()),
+                  ),
+                  child: const Text('¿No tienes cuenta? Créala aquí'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppLogo extends StatelessWidget {
+  const _AppLogo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Finan2Palette.brand, Finan2Palette.brandDeep],
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: const Icon(Icons.trending_up_rounded, color: Colors.white),
+      ),
+    );
+  }
+}
+
+/// Maps common Firebase Auth errors to short, Spanish, user-facing messages.
+String authErrorMessage(Object? error) {
+  if (error is FirebaseAuthException) {
+    switch (error.code) {
+      case 'invalid-email':
+        return 'El correo no es válido.';
+      case 'user-not-found':
+      case 'invalid-credential':
+      case 'wrong-password':
+        return 'Correo o contraseña incorrectos.';
+      case 'email-already-in-use':
+        return 'Ya existe una cuenta con ese correo.';
+      case 'weak-password':
+        return 'La contraseña es muy débil.';
+      case 'network-request-failed':
+        return 'Problema de conexión, intenta de nuevo.';
+      default:
+        return 'Algo salió mal (${error.code}).';
+    }
+  }
+  return 'Algo salió mal, intenta de nuevo.';
+}
