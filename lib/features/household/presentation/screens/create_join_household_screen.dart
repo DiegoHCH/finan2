@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
 import '../../data/household_repository.dart';
 import '../viewmodels/household_providers.dart';
@@ -78,6 +79,8 @@ class _CreateJoinHouseholdScreenState
             key: _formKey,
             child: Finan2CenteredForm(
               children: [
+                const Finan2LogoTile(),
+                const SizedBox(height: Finan2Space.lg),
                 Text(
                   'Un último paso',
                   style: Theme.of(context).textTheme.headlineSmall,
