@@ -73,13 +73,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: Finan2Space.xs),
                 Text(
                   'Entra con tu cuenta. Cada quien tiene la suya; '
                   'las finanzas del hogar son compartidas.',
-                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: Finan2Space.xl),
@@ -178,7 +176,8 @@ class _AppLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final brand = Theme.of(context).colorScheme.primary;
     final brandDeep = Theme.of(context).extension<Finan2Colors>()!.brandDeep;
-    return Center(
+    return Align(
+      alignment: Alignment.centerLeft,
       child: Container(
         width: 52,
         height: 52,
