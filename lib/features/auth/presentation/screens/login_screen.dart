@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_bars_icon.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_google_icon.dart';
 import '../viewmodels/auth_providers.dart';
@@ -189,7 +190,8 @@ class _AppLogo extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(15),
         ),
-        child: const Icon(Icons.trending_up_rounded, color: Colors.white),
+        alignment: Alignment.center,
+        child: const Finan2BarsIcon(size: 28),
       ),
     );
   }
