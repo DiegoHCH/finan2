@@ -96,8 +96,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.password],
-                  validator: (value) => (value == null || value.length < 6)
-                      ? 'Mínimo 6 caracteres'
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Ingresa tu contraseña'
                       : null,
                 ),
                 const SizedBox(height: Finan2Space.lg),

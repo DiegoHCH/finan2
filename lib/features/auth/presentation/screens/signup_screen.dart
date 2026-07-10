@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
@@ -95,9 +96,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.newPassword],
-                  validator: (value) => (value == null || value.length < 6)
-                      ? 'Mínimo 6 caracteres'
-                      : null,
+                  validator: validateNewPassword,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
