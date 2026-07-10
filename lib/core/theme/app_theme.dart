@@ -34,6 +34,7 @@ abstract class Finan2Palette {
   static const brandTintLight = Color(0xFFE3F4EE);
   static const brandTintDark = Color(0xFF123028);
   static const brandDarkMode = Color(0xFF2DD39C);
+  static const brandDeepDark = Color(0xFF1D8B68);
 
   // Acento
   static const gold = Color(0xFFC8892F); // ahorros / metas
@@ -286,6 +287,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
   final Color saving; // ahorro / meta (ámbar)
   final Color savingTint;
   final Color brandTint;
+  final Color brandDeep; // fin de degradado de marca, reactivo al tema
   final Color userA;
   final Color userB;
   final Color ink; // texto principal
@@ -300,6 +302,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
     required this.saving,
     required this.savingTint,
     required this.brandTint,
+    required this.brandDeep,
     required this.userA,
     required this.userB,
     required this.ink,
@@ -315,6 +318,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
     saving: Finan2Palette.gold,
     savingTint: Color(0xFFF8EEDE),
     brandTint: Finan2Palette.brandTintLight,
+    brandDeep: Finan2Palette.brandDeep,
     userA: Finan2Palette.userA,
     userB: Finan2Palette.userB,
     ink: Finan2Palette.inkLight,
@@ -330,6 +334,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
     saving: Finan2Palette.goldDark,
     savingTint: Color(0xFF2C2415),
     brandTint: Finan2Palette.brandTintDark,
+    brandDeep: Finan2Palette.brandDeepDark,
     userA: Finan2Palette.userADark,
     userB: Finan2Palette.userBDark,
     ink: Finan2Palette.inkDark,
@@ -342,7 +347,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
   @override
   Finan2Colors copyWith({
     Color? income, Color? expense, Color? saving, Color? savingTint,
-    Color? brandTint, Color? userA, Color? userB, Color? ink,
+    Color? brandTint, Color? brandDeep, Color? userA, Color? userB, Color? ink,
     Color? inkSoft, Color? inkFaint, Color? line, Color? surfaceAlt,
   }) {
     return Finan2Colors(
@@ -351,6 +356,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
       saving: saving ?? this.saving,
       savingTint: savingTint ?? this.savingTint,
       brandTint: brandTint ?? this.brandTint,
+      brandDeep: brandDeep ?? this.brandDeep,
       userA: userA ?? this.userA,
       userB: userB ?? this.userB,
       ink: ink ?? this.ink,
@@ -370,6 +376,7 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
       saving: Color.lerp(saving, other.saving, t)!,
       savingTint: Color.lerp(savingTint, other.savingTint, t)!,
       brandTint: Color.lerp(brandTint, other.brandTint, t)!,
+      brandDeep: Color.lerp(brandDeep, other.brandDeep, t)!,
       userA: Color.lerp(userA, other.userA, t)!,
       userB: Color.lerp(userB, other.userB, t)!,
       ink: Color.lerp(ink, other.ink, t)!,

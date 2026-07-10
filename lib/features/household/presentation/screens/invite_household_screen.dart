@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_code_box.dart';
 
 /// Shown right after creating a household: the code the creator shares with
 /// their partner so they can join the same household.
@@ -13,6 +14,7 @@ class InviteHouseholdScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final brand = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -20,10 +22,10 @@ class InviteHouseholdScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.home_work_outlined,
                 size: Finan2Sizes.iconXl,
-                color: Finan2Palette.brand,
+                color: brand,
               ),
               const SizedBox(height: Finan2Space.md),
               Text(
@@ -41,23 +43,7 @@ class InviteHouseholdScreen extends StatelessWidget {
                     ?.copyWith(color: colors.inkSoft),
               ),
               const SizedBox(height: Finan2Space.lg),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Finan2Space.xl,
-                  vertical: Finan2Space.md,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.brandTint,
-                  borderRadius: BorderRadius.circular(Finan2Radius.field),
-                ),
-                child: Text(
-                  inviteCode,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Finan2Palette.brand,
-                        letterSpacing: 6,
-                      ),
-                ),
-              ),
+              Finan2CodeBox(code: inviteCode),
               const SizedBox(height: Finan2Space.lg),
               FilledButton.icon(
                 onPressed: () async {

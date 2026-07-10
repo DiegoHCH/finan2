@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_option_card.dart';
 import '../../data/household_repository.dart';
 import '../viewmodels/household_providers.dart';
 import 'invite_household_screen.dart';
@@ -88,7 +89,7 @@ class _CreateJoinHouseholdScreenState
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: Finan2Space.lg),
-                _ChoiceCard(
+                Finan2OptionCard(
                   icon: Icons.home_work_outlined,
                   title: 'Crear un hogar nuevo',
                   subtitle: 'Empiezas de cero e invitas a tu pareja.',
@@ -97,7 +98,7 @@ class _CreateJoinHouseholdScreenState
                       setState(() => _choice = _HouseholdChoice.create),
                 ),
                 const SizedBox(height: Finan2Space.sm),
-                _ChoiceCard(
+                Finan2OptionCard(
                   icon: Icons.vpn_key_outlined,
                   title: 'Unirme con un código',
                   subtitle: 'Tu pareja ya creó el hogar.',
@@ -142,69 +143,6 @@ class _CreateJoinHouseholdScreenState
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChoiceCard extends StatelessWidget {
-  const _ChoiceCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(Finan2Radius.card),
-      child: Container(
-        padding: const EdgeInsets.all(Finan2Space.md),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Finan2Radius.card),
-          border: Border.all(
-            color: selected ? Finan2Palette.brand : colors.line,
-            width: selected ? 1.5 : 1,
-          ),
-          color: selected ? colors.brandTint : null,
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: selected ? Finan2Palette.brand : colors.inkSoft),
-            const SizedBox(width: Finan2Space.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: Theme.of(context).textTheme.titleSmall),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: colors.inkSoft),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              selected
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              color: selected ? Finan2Palette.brand : colors.line,
-            ),
-          ],
         ),
       ),
     );

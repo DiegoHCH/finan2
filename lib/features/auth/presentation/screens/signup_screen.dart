@@ -130,8 +130,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           const TextSpan(text: '¿Ya tienes cuenta? '),
                           TextSpan(
                             text: 'Inicia sesión',
-                            style: const TextStyle(
-                              color: Finan2Palette.brand,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_avatar.dart';
+import '../../../../core/widgets/finan2_code_box.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/household_model.dart';
 
@@ -36,13 +38,8 @@ class HouseholdHomeScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Código del hogar', style: Theme.of(context).textTheme.bodySmall),
-            SelectableText(
-              household.inviteCode,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(letterSpacing: 3, color: Finan2Palette.brand),
-            ),
+            const SizedBox(height: Finan2Space.xs),
+            Finan2CodeBox(code: household.inviteCode),
             const SizedBox(height: Finan2Space.xl),
             Text('Miembros', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: Finan2Space.sm),
@@ -51,14 +48,9 @@ class HouseholdHomeScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: Finan2Space.xs),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: Finan2Sizes.avatar / 2,
-                      backgroundColor:
-                          i == 0 ? colors.userA : colors.userB,
-                      child: Text(
-                        _initial(household.memberInfo[members[i]]?.name),
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    Finan2Avatar(
+                      label: _initial(household.memberInfo[members[i]]?.name),
+                      memberIndex: i,
                     ),
                     const SizedBox(width: Finan2Space.sm),
                     Text(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_google_icon.dart';
 import '../viewmodels/auth_providers.dart';
 import 'signup_screen.dart';
 
@@ -57,10 +58,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const _AppLogo(),
                 const SizedBox(height: Finan2Space.lg),
-                Text(
-                  'Bienvenido a Finan2',
+                Text.rich(
+                  TextSpan(
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    children: [
+                      const TextSpan(text: 'Bienvenido a Finan'),
+                      TextSpan(
+                        text: '2',
+                        style: TextStyle(
+                          color: Theme.of(context)
+                              .extension<Finan2Colors>()!
+                              .saving,
+                        ),
+                      ),
+                    ],
+                  ),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: Finan2Space.xs),
                 Text(
@@ -123,7 +136,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       : () => ref
                           .read(authControllerProvider.notifier)
                           .signInWithGoogle(),
-                  icon: const Icon(Icons.g_mobiledata),
+                  icon: const Finan2GoogleIcon(),
                   label: const Text('Continuar con Google'),
                 ),
                 const SizedBox(height: Finan2Space.lg),
@@ -139,8 +152,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const TextSpan(text: '¿No tienes cuenta? '),
                           TextSpan(
                             text: 'Créala aquí',
-                            style: const TextStyle(
-                              color: Finan2Palette.brand,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -163,15 +176,17 @@ class _AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brand = Theme.of(context).colorScheme.primary;
+    final brandDeep = Theme.of(context).extension<Finan2Colors>()!.brandDeep;
     return Center(
       child: Container(
         width: 52,
         height: 52,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Finan2Palette.brand, Finan2Palette.brandDeep],
+            colors: [brand, brandDeep],
           ),
           borderRadius: BorderRadius.circular(15),
         ),
