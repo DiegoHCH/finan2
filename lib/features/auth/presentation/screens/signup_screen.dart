@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../viewmodels/auth_providers.dart';
@@ -56,9 +57,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Finan2CenteredForm(
               children: [
                 const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
