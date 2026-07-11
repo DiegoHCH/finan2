@@ -111,13 +111,18 @@ class InvestmentsScreen extends ConsumerWidget {
                                   color: Colors.white,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  '${totalReturn >= 0 ? '+' : ''}${formatMoney(totalReturn)} '
-                                  'de rendimiento total',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11.5,
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${totalReturn >= 0 ? '+' : ''}${formatMoney(totalReturn)}',
+                                        style: const TextStyle(fontWeight: FontWeight.w700),
+                                      ),
+                                      const TextSpan(text: ' de rendimiento total'),
+                                    ],
                                   ),
+                                  style: const TextStyle(color: Colors.white, fontSize: 11.5),
                                 ),
                               ],
                             ),
