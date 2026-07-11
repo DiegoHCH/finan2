@@ -11,6 +11,7 @@ import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
+import '../../data/budget_summary.dart';
 import '../viewmodels/budget_providers.dart';
 
 class BudgetScreen extends ConsumerWidget {
@@ -27,45 +28,35 @@ class BudgetScreen extends ConsumerWidget {
     final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
-    var income = 0;
-    final spendByCategory = <String, int>{};
-    for (final tx in transactions) {
-      if (tx.isIncome) {
-        income += tx.amount;
-      } else {
-        spendByCategory[tx.categoryId] =
-            (spendByCategory[tx.categoryId] ?? 0) + tx.amount;
-      }
-    }
+    final summary = computeBudgetSummary(budget: budget, transactions: transactions);
+    final spendByCategory = summary.spendByCategory;
 
     final budgetable = categories.where((c) => c.type != CategoryType.ingreso).toList();
-    final totalPlanned = budget.values.fold(0, (sum, v) => sum + v);
+    final totalPlanned = summary.totalPlanned;
 
-    final visibleIds = <String>{
-      for (final entry in budget.entries)
-        if (entry.value > 0) entry.key,
-      for (final entry in spendByCategory.entries)
-        if (entry.value > 0) entry.key,
-    };
-    final rows = budgetable.where((c) => visibleIds.contains(c.id)).toList()
+    final rows = budgetable
+        .where((c) => summary.visibleCategoryIds.contains(c.id))
+        .toList()
       ..sort(
         (a, b) => (spendByCategory[b.id] ?? 0).compareTo(spendByCategory[a.id] ?? 0),
       );
-    final unbudgeted = budgetable.where((c) => !visibleIds.contains(c.id)).toList();
+    final unbudgeted =
+        budgetable.where((c) => !summary.visibleCategoryIds.contains(c.id)).toList();
 
-    final int? pctAsignado = income > 0 ? ((totalPlanned / income) * 100).round() : null;
+    final pctAsignado = summary.pctAsignado;
 
     final String bannerLabel;
     final String bannerValue;
-    if (income <= 0) {
-      bannerLabel = 'Falta por presupuestar';
-      bannerValue = 'Registra ingresos este mes';
-    } else if (totalPlanned >= income) {
-      bannerLabel = 'Presupuestado de más';
-      bannerValue = formatMoney(totalPlanned - income);
-    } else {
-      bannerLabel = 'Falta por presupuestar';
-      bannerValue = formatMoney(income - totalPlanned);
+    switch (summary.bannerKind) {
+      case BudgetBannerKind.noIncome:
+        bannerLabel = 'Falta por presupuestar';
+        bannerValue = 'Registra ingresos este mes';
+      case BudgetBannerKind.overBudgeted:
+        bannerLabel = 'Presupuestado de más';
+        bannerValue = formatMoney(summary.bannerAmount);
+      case BudgetBannerKind.remaining:
+        bannerLabel = 'Falta por presupuestar';
+        bannerValue = formatMoney(summary.bannerAmount);
     }
 
     return Scaffold(
