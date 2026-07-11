@@ -107,6 +107,21 @@ class HouseholdRepository {
     });
   }
 
+  Future<void> updateSettings(
+    String householdId, {
+    String? currency,
+    int? startYear,
+    String? weekStartsOn,
+  }) {
+    final update = <String, dynamic>{
+      'settings.currency': ?currency,
+      'settings.startYear': ?startYear,
+      'settings.weekStartsOn': ?weekStartsOn,
+    };
+    if (update.isEmpty) return Future.value();
+    return _households.doc(householdId).update(update);
+  }
+
   String _generateInviteCode() {
     final rand = Random.secure();
     return List.generate(
