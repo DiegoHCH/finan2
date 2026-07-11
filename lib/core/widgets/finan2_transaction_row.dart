@@ -11,8 +11,8 @@ class Finan2TransactionRow extends StatelessWidget {
     required this.iconColor,
     required this.description,
     required this.subLabel,
-    required this.avatarLabel,
-    required this.avatarIndex,
+    this.avatarLabel,
+    this.avatarIndex,
     required this.amountText,
     required this.amountColor,
     this.onTap,
@@ -23,8 +23,8 @@ class Finan2TransactionRow extends StatelessWidget {
   final Color iconColor;
   final String description;
   final String subLabel;
-  final String avatarLabel;
-  final int avatarIndex;
+  final String? avatarLabel;
+  final int? avatarIndex;
   final String amountText;
   final Color amountColor;
   final VoidCallback? onTap;
@@ -32,6 +32,8 @@ class Finan2TransactionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final avatarIndex = this.avatarIndex;
+    final avatarLabel = this.avatarLabel;
     final avatarColor = avatarIndex == 0 ? colors.userA : colors.userB;
 
     return InkWell(
@@ -66,24 +68,26 @@ class Finan2TransactionRow extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: avatarColor,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          avatarLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
+                      if (avatarLabel != null && avatarIndex != null) ...[
+                        Container(
+                          width: 14,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: avatarColor,
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            avatarLabel,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
+                        const SizedBox(width: 5),
+                      ],
                       Text(
                         subLabel,
                         style: TextStyle(fontSize: 11, color: colors.inkFaint),
