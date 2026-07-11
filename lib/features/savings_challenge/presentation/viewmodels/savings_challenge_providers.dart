@@ -47,6 +47,17 @@ class SavingsChallengeController extends AsyncNotifier<void> {
           .updateDone(householdId, challengeId, newDone),
     );
   }
+
+  Future<void> delete(String challengeId) async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (householdId == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref
+          .read(savingsChallengeRepositoryProvider)
+          .deleteChallenge(householdId, challengeId),
+    );
+  }
 }
 
 final savingsChallengeControllerProvider =

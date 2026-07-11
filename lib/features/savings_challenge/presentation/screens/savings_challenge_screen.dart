@@ -41,6 +41,36 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
         .create(name.isEmpty ? 'Reto de ahorro' : name, cells);
   }
 
+  Future<void> _delete(SavingsChallenge challenge) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar reto de ahorro'),
+        content: Text(
+          'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
+          'no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              'Eliminar',
+              style: TextStyle(
+                color: Theme.of(context).extension<Finan2Colors>()!.expense,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(savingsChallengeControllerProvider.notifier).delete(challenge.id);
+  }
+
   Future<void> _toggleCell(SavingsChallenge challenge, int index) async {
     final newDone = [...challenge.done];
     while (newDone.length <= index) {
@@ -62,7 +92,15 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2BackHead(title: 'Reto de ahorro'),
+            Finan2BackHead(
+              title: 'Reto de ahorro',
+              trailing: challengeAsync.value == null
+                  ? null
+                  : IconButton(
+                      icon: Icon(Icons.delete_outline, size: 20, color: colors.inkSoft),
+                      onPressed: () => _delete(challengeAsync.value!),
+                    ),
+            ),
             Expanded(
               child: challengeAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
