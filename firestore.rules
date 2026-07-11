@@ -29,10 +29,33 @@ service cloud.firestore {
 
       allow delete: if false;
 
+      // Read/update/delete: any household member, for every subcollection.
+      // Create is defined per-subcollection below so we can enforce
+      // per-document integrity (e.g. transactions.createdBy) - a broader
+      // "allow write" here would OR-bypass those checks.
       match /{subcol}/{docId} {
-        allow read, write: if request.auth != null
+        allow read, update, delete: if request.auth != null
           && request.auth.uid in
              get(/databases/$(db)/documents/households/$(hid)).data.members;
+      }
+
+      function isMember() {
+        return request.auth != null
+          && request.auth.uid in
+             get(/databases/$(db)/documents/households/$(hid)).data.members;
+      }
+
+      match /categories/{catId} {
+        allow create: if isMember();
+      }
+
+      match /accounts/{accId} {
+        allow create: if isMember();
+      }
+
+      match /transactions/{txId} {
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
     }
   }
