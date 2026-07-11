@@ -13,6 +13,7 @@ import '../../../categories/presentation/screens/categories_screen.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../export/presentation/screens/export_screen.dart';
 import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
 
 const _currencies = {'COP': 'Peso COP · \$', 'USD': 'Dólar USD · US\$'};
@@ -247,6 +248,13 @@ class SettingsScreen extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (_) => const NotificationPreferencesScreen(),
                           ),
+                        ),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.ios_share_outlined,
+                        label: 'Exportar reporte',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ExportScreen()),
                         ),
                       ),
                     ],
