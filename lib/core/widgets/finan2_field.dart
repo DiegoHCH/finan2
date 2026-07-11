@@ -15,6 +15,7 @@ class Finan2Field extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.validator,
     this.autofillHints,
+    this.maxLines = 1,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class Finan2Field extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final String? Function(String?)? validator;
   final Iterable<String>? autofillHints;
+  final int maxLines;
 
   @override
   State<Finan2Field> createState() => _Finan2FieldState();
@@ -63,6 +65,7 @@ class _Finan2FieldState extends State<Finan2Field> {
             textCapitalization: widget.textCapitalization,
             validator: widget.validator,
             autofillHints: widget.autofillHints,
+            maxLines: widget.obscureText ? 1 : widget.maxLines,
             style: TextStyle(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
