@@ -1,5 +1,4 @@
 import 'package:finan2/core/widgets/finan2_segmented_control.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/pump_app.dart';
