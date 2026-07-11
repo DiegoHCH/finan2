@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/accounts/presentation/viewmodels/account_providers.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/budget/presentation/viewmodels/budget_providers.dart';
 import '../../features/categories/presentation/viewmodels/category_providers.dart';
@@ -9,15 +10,18 @@ import '../../features/debts/presentation/screens/debts_screen.dart';
 import '../../features/debts/presentation/viewmodels/debt_providers.dart';
 import '../../features/household/data/household_model.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
+import '../../features/investments/presentation/viewmodels/investment_providers.dart';
 import '../../features/notification_prefs/data/notification_prefs.dart';
 import '../../features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
 import '../../features/notifications/presentation/viewmodels/notification_providers.dart';
 import '../../features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
+import '../../features/savings_challenge/presentation/viewmodels/savings_challenge_providers.dart';
 import '../../features/savings_goals/presentation/screens/savings_goals_screen.dart';
 import '../../features/savings_goals/presentation/viewmodels/savings_goal_providers.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
+import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
 import '../notifications/notification_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
@@ -54,6 +58,11 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           budget: ref.read(currentMonthBudgetProvider).value ?? const {},
           transactionsThisMonth: ref.read(transactionsForMonthProvider).value ?? const [],
           categories: ref.read(categoriesProvider).value ?? const [],
+          accounts: ref.read(accountsProvider).value ?? const [],
+          investments: ref.read(investmentsProvider).value ?? const [],
+          recurringBills: ref.read(recurringBillsProvider).value ?? const [],
+          transfers: ref.read(transfersProvider).value ?? const [],
+          savingsChallenge: ref.read(savingsChallengeProvider).value,
           prefs: prefs,
           formatMoney: ref.read(moneyFormatterProvider),
         );
@@ -102,7 +111,15 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     ref.listen(savingsGoalsProvider, (previous, next) => _runScan());
     ref.listen(currentMonthBudgetProvider, (previous, next) => _runScan());
     ref.listen(transactionsForMonthProvider, (previous, next) => _runScan());
-    ref.listen(recurringBillsProvider, (previous, next) => _runRecurringBillScan());
+    ref.listen(recurringBillsProvider, (previous, next) {
+      _runScan();
+      _runRecurringBillScan();
+    });
+    ref.listen(accountsProvider, (previous, next) => _runScan());
+    ref.listen(investmentsProvider, (previous, next) => _runScan());
+    ref.listen(transfersProvider, (previous, next) => _runScan());
+    ref.listen(categoriesProvider, (previous, next) => _runScan());
+    ref.listen(savingsChallengeProvider, (previous, next) => _runScan());
 
     final tabs = [
       DashboardScreen(household: widget.household),

@@ -1,8 +1,13 @@
+import '../../accounts/data/account_model.dart';
 import '../../categories/data/category_model.dart';
 import '../../debts/data/debt_model.dart';
+import '../../investments/data/investment_model.dart';
 import '../../notification_prefs/data/notification_prefs.dart';
+import '../../recurring_bills/data/recurring_bill_model.dart';
+import '../../savings_challenge/data/savings_challenge_model.dart';
 import '../../savings_goals/data/savings_goal_model.dart';
 import '../../transactions/data/transaction_model.dart';
+import '../../transfers/data/transfer_model.dart';
 import 'notification_model.dart';
 import 'notification_repository.dart';
 
@@ -25,6 +30,11 @@ class NotificationScanner {
     required List<Category> categories,
     required NotificationPrefs prefs,
     required String Function(num) formatMoney,
+    List<Account> accounts = const [],
+    List<Investment> investments = const [],
+    List<RecurringBill> recurringBills = const [],
+    List<Transfer> transfers = const [],
+    SavingsChallenge? savingsChallenge,
     DateTime? now,
   }) async {
     now ??= DateTime.now();
@@ -47,6 +57,21 @@ class NotificationScanner {
     }
     if (prefs.partnerActivity) {
       await _scanContributions(householdId, goals, currentUid, formatMoney);
+      await _scanPartnerCreated(
+        householdId: householdId,
+        currentUid: currentUid,
+        now: now,
+        transactionsThisMonth: transactionsThisMonth,
+        transfers: transfers,
+        debts: debts,
+        accounts: accounts,
+        investments: investments,
+        recurringBills: recurringBills,
+        categories: categories,
+        savingsChallenge: savingsChallenge,
+        goals: goals,
+        formatMoney: formatMoney,
+      );
     }
   }
 
@@ -166,6 +191,125 @@ class NotificationScanner {
           ),
         );
       }
+    }
+  }
+
+  /// One notification per record the OTHER member created, across every
+  /// entity that tracks a `createdBy`. Deterministic per-record IDs keep
+  /// this idempotent the same way every other scan is.
+  Future<void> _scanPartnerCreated({
+    required String householdId,
+    required String currentUid,
+    required DateTime now,
+    required List<Movement> transactionsThisMonth,
+    required List<Transfer> transfers,
+    required List<Debt> debts,
+    required List<Account> accounts,
+    required List<Investment> investments,
+    required List<RecurringBill> recurringBills,
+    required List<Category> categories,
+    required SavingsChallenge? savingsChallenge,
+    required List<SavingsGoal> goals,
+    required String Function(num) formatMoney,
+  }) async {
+    Future<void> notify(
+      String idSuffix,
+      String createdBy,
+      String title,
+      String body,
+      DateTime createdAt,
+    ) async {
+      if (createdBy.isEmpty || createdBy == currentUid) return;
+      final id = 'partner_$idSuffix';
+      await _repository.createIfAbsent(
+        householdId,
+        id,
+        HouseholdNotification(
+          id: id,
+          type: NotificationType.partnerActivity,
+          title: title,
+          body: body,
+          createdAt: createdAt,
+          read: false,
+        ),
+      );
+    }
+
+    for (final tx in transactionsThisMonth) {
+      await notify(
+        'tx_${tx.id}',
+        tx.createdBy,
+        'Nuevo movimiento',
+        '${tx.description} · ${formatMoney(tx.amount)}',
+        tx.date,
+      );
+    }
+    for (final transfer in transfers) {
+      await notify(
+        'transfer_${transfer.id}',
+        transfer.createdBy,
+        'Nueva transferencia',
+        'Transferencia de ${formatMoney(transfer.amount)}',
+        transfer.date,
+      );
+    }
+    for (final debt in debts) {
+      await notify('debt_${debt.id}', debt.createdBy, 'Nueva deuda', debt.name, now);
+    }
+    for (final account in accounts) {
+      await notify(
+        'account_${account.id}',
+        account.createdBy,
+        'Nueva cuenta',
+        account.name,
+        now,
+      );
+    }
+    for (final investment in investments) {
+      await notify(
+        'investment_${investment.id}',
+        investment.createdBy,
+        'Nueva inversión',
+        investment.name,
+        now,
+      );
+    }
+    for (final bill in recurringBills) {
+      await notify(
+        'bill_${bill.id}',
+        bill.createdBy,
+        'Nueva factura recurrente',
+        bill.name,
+        now,
+      );
+    }
+    for (final category in categories) {
+      await notify(
+        'category_${category.id}',
+        category.createdBy,
+        'Nueva categoría',
+        category.name,
+        now,
+      );
+    }
+    final challenge = savingsChallenge;
+    if (challenge != null) {
+      await notify(
+        'challenge_${challenge.id}',
+        challenge.createdBy,
+        'Nuevo reto de ahorro',
+        challenge.name,
+        now,
+      );
+    }
+    for (final goal in goals) {
+      await notify(
+        'goal_${goal.id}',
+        goal.createdBy,
+        'Nueva meta de ahorro',
+        goal.name,
+        now,
+      );
     }
   }
 }

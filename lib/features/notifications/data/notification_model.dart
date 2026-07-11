@@ -2,7 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Matches the Firestore schema's `type` field - each one maps to one of
 /// the [notification_scanner.dart] detection rules.
-enum NotificationType { debtDue, goalNear, budgetExceeded, contribution }
+enum NotificationType {
+  debtDue,
+  goalNear,
+  budgetExceeded,
+  contribution,
+  partnerActivity,
+}
 
 extension NotificationTypeLabel on NotificationType {
   static NotificationType fromName(String name) => NotificationType.values.firstWhere(

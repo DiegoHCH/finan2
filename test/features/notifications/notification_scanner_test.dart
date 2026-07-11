@@ -1,19 +1,29 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/investments/data/investment_model.dart';
 import 'package:finan2/features/notification_prefs/data/notification_prefs.dart';
 import 'package:finan2/features/notifications/data/notification_model.dart';
 import 'package:finan2/features/notifications/data/notification_repository.dart';
 import 'package:finan2/features/notifications/data/notification_scanner.dart';
+import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
+import 'package:finan2/features/savings_challenge/data/savings_challenge_model.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_model.dart';
 import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transfers/data/transfer_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 String _fmt(num n) => '\$$n';
 const _householdId = 'h1';
 final _now = DateTime(2026, 7, 9);
 
-Debt _debt({String id = 'd1', int paymentDay = 10, int balance = 1000000}) {
+Debt _debt({
+  String id = 'd1',
+  int paymentDay = 10,
+  int balance = 1000000,
+  String createdBy = '',
+}) {
   return Debt(
     id: id,
     name: 'Tarjeta',
@@ -24,6 +34,7 @@ Debt _debt({String id = 'd1', int paymentDay = 10, int balance = 1000000}) {
     creditLimit: 5000000,
     minPayment: 180000,
     extraPayment: 0,
+    createdBy: createdBy,
   );
 }
 
@@ -31,6 +42,7 @@ SavingsGoal _goal({
   String id = 'g1',
   int targetAmount = 1000000,
   List<Contribution> contributions = const [],
+  String createdBy = '',
 }) {
   return SavingsGoal(
     id: id,
@@ -41,6 +53,7 @@ SavingsGoal _goal({
     monthlyContribution: 100000,
     interestRate: 0,
     contributions: contributions,
+    createdBy: createdBy,
   );
 }
 
@@ -331,6 +344,218 @@ void main() {
         now: _now,
       );
       expect(await readAll(), isEmpty);
+    });
+  });
+
+  group('partner created an entity', () {
+    test('a new debt from the partner notifies', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: [_debt(paymentDay: _now.day + 20, createdBy: 'partner')],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      final notifications = await readAll();
+      expect(notifications, hasLength(1));
+      expect(notifications.single.type, NotificationType.partnerActivity);
+    });
+
+    test('a new savings goal from the partner notifies', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: const [],
+        goals: [_goal(createdBy: 'partner')],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      final notifications = await readAll();
+      expect(notifications, hasLength(1));
+      expect(notifications.single.type, NotificationType.partnerActivity);
+    });
+
+    test('a new transaction from the partner notifies', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: const [],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: [
+          Movement(
+            id: 'tx1',
+            amount: 50000,
+            type: CategoryType.gasto,
+            categoryId: 'ocio',
+            accountId: 'acc',
+            description: 'Cine',
+            date: _now,
+            createdBy: 'partner',
+          ),
+        ],
+        categories: const [],
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      final notifications = await readAll();
+      expect(notifications, hasLength(1));
+      expect(notifications.single.type, NotificationType.partnerActivity);
+    });
+
+    test('a new transfer from the partner notifies', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: const [],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        transfers: [
+          Transfer(
+            id: 't1',
+            amount: 100000,
+            fromAccountId: 'a1',
+            toAccountId: 'a2',
+            date: _now,
+            createdBy: 'partner',
+          ),
+        ],
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      final notifications = await readAll();
+      expect(notifications, hasLength(1));
+      expect(notifications.single.type, NotificationType.partnerActivity);
+    });
+
+    test('a new account, investment, bill, category and challenge from the '
+        'partner each notify once', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: const [],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: [
+          const Category(
+            id: 'c1',
+            name: 'Ocio',
+            type: CategoryType.gasto,
+            iconSlug: 'ocio',
+            color: 0xFF0F9D74,
+            createdBy: 'partner',
+          ),
+        ],
+        accounts: [
+          const Account(
+            id: 'a1',
+            name: 'Nequi',
+            type: AccountType.billetera,
+            balance: 0,
+            includeInAvailable: true,
+            createdBy: 'partner',
+          ),
+        ],
+        investments: [
+          const Investment(
+            id: 'i1',
+            name: 'CDT',
+            kind: InvestmentKind.rentaFija,
+            rate: 12,
+            investedAmount: 1000000,
+            currentValue: 1000000,
+            createdBy: 'partner',
+          ),
+        ],
+        recurringBills: [
+          const RecurringBill(
+            id: 'b1',
+            name: 'Arriendo',
+            type: CategoryType.factura,
+            categoryId: 'c1',
+            accountId: 'a1',
+            amount: 500000,
+            dayOfMonth: 5,
+            createdBy: 'partner',
+          ),
+        ],
+        savingsChallenge: const SavingsChallenge(
+          id: 'ch1',
+          name: 'Reto',
+          cellAmounts: [1000],
+          done: [false],
+          createdBy: 'partner',
+        ),
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      expect(await readAll(), hasLength(5));
+    });
+
+    test('does not notify for my own creation', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: [_debt(paymentDay: _now.day + 20, createdBy: 'me')],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+        formatMoney: _fmt,
+        now: _now,
+      );
+      expect(await readAll(), isEmpty);
+    });
+
+    test('respects prefs.partnerActivity == false', () async {
+      await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'me',
+        debts: [_debt(paymentDay: _now.day + 20, createdBy: 'partner')],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults,
+        formatMoney: _fmt,
+        now: _now,
+      );
+      expect(await readAll(), isEmpty);
+    });
+
+    test('re-scanning never duplicates the notification', () async {
+      final debts = [_debt(paymentDay: _now.day + 20, createdBy: 'partner')];
+      for (var i = 0; i < 3; i++) {
+        await scanner.scan(
+          householdId: _householdId,
+          currentUid: 'me',
+          debts: debts,
+          goals: const [],
+          budget: const {},
+          transactionsThisMonth: const [],
+          categories: const [],
+          prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
+          formatMoney: _fmt,
+          now: _now,
+        );
+      }
+      expect(await readAll(), hasLength(1));
     });
   });
 }

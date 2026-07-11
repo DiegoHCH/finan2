@@ -114,6 +114,11 @@ class _NotificationRow extends StatelessWidget {
           colors.expense.withValues(alpha: 0.14),
           colors.expense,
         ),
+      NotificationType.partnerActivity => (
+          Icons.groups_outlined,
+          colors.brandTint,
+          brand,
+        ),
     };
 
     return Container(
