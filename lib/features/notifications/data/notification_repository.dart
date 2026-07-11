@@ -20,16 +20,19 @@ class NotificationRepository {
 
   /// Writes the notification only if [id] doesn't already exist - the
   /// scanner uses deterministic IDs so re-running the scan never creates
-  /// duplicates for the same condition.
-  Future<void> createIfAbsent(
+  /// duplicates for the same condition. Returns the notification if it was
+  /// actually created, or null if it already existed (so callers can tell
+  /// genuinely new alerts apart from a no-op re-scan).
+  Future<HouseholdNotification?> createIfAbsent(
     String householdId,
     String id,
     HouseholdNotification notification,
   ) async {
     final ref = _notifications(householdId).doc(id);
     final snap = await ref.get();
-    if (snap.exists) return;
+    if (snap.exists) return null;
     await ref.set(notification.toFirestore());
+    return notification;
   }
 
   Future<void> markAllRead(String householdId, List<String> ids) async {

@@ -77,7 +77,7 @@ void main() {
 
   group('debt payment due', () {
     test('notifies when payment day is within 2 days', () async {
-      await scanner.scan(
+      final returned = await scanner.scan(
         householdId: _householdId,
         currentUid: 'u1',
         debts: [_debt(paymentDay: _now.day + 2)],
@@ -89,6 +89,8 @@ void main() {
         formatMoney: _fmt,
         now: _now,
       );
+      expect(returned, hasLength(1));
+      expect(returned.single.type, NotificationType.debtDue);
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.debtDue);
@@ -129,7 +131,7 @@ void main() {
     test('re-scanning the same month never duplicates the notification', () async {
       final debts = [_debt(paymentDay: _now.day)];
       for (var i = 0; i < 3; i++) {
-        await scanner.scan(
+        final returned = await scanner.scan(
           householdId: _householdId,
           currentUid: 'u1',
           debts: debts,
@@ -141,6 +143,7 @@ void main() {
           formatMoney: _fmt,
           now: _now,
         );
+        expect(returned, i == 0 ? hasLength(1) : isEmpty);
       }
       expect(await readAll(), hasLength(1));
     });

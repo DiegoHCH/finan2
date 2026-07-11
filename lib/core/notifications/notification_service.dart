@@ -125,6 +125,21 @@ class NotificationService {
   Future<void> cancelDebtPaymentReminder(String debtId) =>
       _plugin.cancel(id: _debtNotificationId(debtId));
 
+  /// Shows a push immediately - used for FCM messages that arrive while the
+  /// app is in the foreground, since Android/iOS don't surface those in the
+  /// system tray on their own the way they do for background/terminated.
+  Future<void> showNow({required String title, required String body}) {
+    return _plugin.show(
+      id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('finan2_activity', 'Actividad del hogar'),
+        iOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
+
   int _debtNotificationId(String debtId) => 1000 + (debtId.hashCode & 0xFFFF);
 }
 

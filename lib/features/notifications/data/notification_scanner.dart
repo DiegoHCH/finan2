@@ -20,7 +20,10 @@ class NotificationScanner {
 
   final NotificationRepository _repository;
 
-  Future<void> scan({
+  /// Returns every notification actually created this scan (as opposed to
+  /// ones that already existed) - callers use this to trigger a real push
+  /// only for genuinely new alerts.
+  Future<List<HouseholdNotification>> scan({
     required String householdId,
     required String currentUid,
     required List<Debt> debts,
@@ -38,15 +41,17 @@ class NotificationScanner {
     DateTime? now,
   }) async {
     now ??= DateTime.now();
+    final created = <HouseholdNotification>[];
 
     if (prefs.debtPayments) {
-      await _scanDebts(householdId, debts, now, formatMoney);
+      await _scanDebts(created, householdId, debts, now, formatMoney);
     }
     if (prefs.goalProgress) {
-      await _scanGoalProgress(householdId, goals, now);
+      await _scanGoalProgress(created, householdId, goals, now);
     }
     if (prefs.budgetExceeded) {
       await _scanBudget(
+        created,
         householdId,
         budget,
         transactionsThisMonth,
@@ -56,8 +61,9 @@ class NotificationScanner {
       );
     }
     if (prefs.partnerActivity) {
-      await _scanContributions(householdId, goals, currentUid, formatMoney);
+      await _scanContributions(created, householdId, goals, currentUid, formatMoney);
       await _scanPartnerCreated(
+        created: created,
         householdId: householdId,
         currentUid: currentUid,
         now: now,
@@ -73,9 +79,11 @@ class NotificationScanner {
         formatMoney: formatMoney,
       );
     }
+    return created;
   }
 
   Future<void> _scanDebts(
+    List<HouseholdNotification> created,
     String householdId,
     List<Debt> debts,
     DateTime now,
@@ -86,7 +94,7 @@ class NotificationScanner {
       final daysUntil = _daysUntilDayOfMonth(debt.paymentDay, now);
       if (daysUntil < 0 || daysUntil > 2) continue;
       final id = 'debt_due_${debt.id}_${now.year}_${now.month}';
-      await _repository.createIfAbsent(
+      final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
@@ -100,10 +108,12 @@ class NotificationScanner {
           read: false,
         ),
       );
+      if (notification != null) created.add(notification);
     }
   }
 
   Future<void> _scanGoalProgress(
+    List<HouseholdNotification> created,
     String householdId,
     List<SavingsGoal> goals,
     DateTime now,
@@ -112,7 +122,7 @@ class NotificationScanner {
       final fraction = goal.progressFractionAsOf(now);
       if (fraction < 0.9 || fraction >= 1.0) continue;
       final id = 'goal_near_${goal.id}';
-      await _repository.createIfAbsent(
+      final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
@@ -124,10 +134,12 @@ class NotificationScanner {
           read: false,
         ),
       );
+      if (notification != null) created.add(notification);
     }
   }
 
   Future<void> _scanBudget(
+    List<HouseholdNotification> created,
     String householdId,
     Map<String, int> budget,
     List<Movement> transactionsThisMonth,
@@ -149,7 +161,7 @@ class NotificationScanner {
       if (real <= planned) continue;
       final id = 'budget_exceeded_${entry.key}_${now.year}_${now.month}';
       final categoryName = categoryById[entry.key]?.name ?? 'una categoría';
-      await _repository.createIfAbsent(
+      final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
@@ -162,10 +174,12 @@ class NotificationScanner {
           read: false,
         ),
       );
+      if (notification != null) created.add(notification);
     }
   }
 
   Future<void> _scanContributions(
+    List<HouseholdNotification> created,
     String householdId,
     List<SavingsGoal> goals,
     String currentUid,
@@ -177,7 +191,7 @@ class NotificationScanner {
           continue;
         }
         final id = 'contribution_${goal.id}_${contribution.date.millisecondsSinceEpoch}';
-        await _repository.createIfAbsent(
+        final notification = await _repository.createIfAbsent(
           householdId,
           id,
           HouseholdNotification(
@@ -190,6 +204,7 @@ class NotificationScanner {
             read: false,
           ),
         );
+        if (notification != null) created.add(notification);
       }
     }
   }
@@ -198,6 +213,7 @@ class NotificationScanner {
   /// entity that tracks a `createdBy`. Deterministic per-record IDs keep
   /// this idempotent the same way every other scan is.
   Future<void> _scanPartnerCreated({
+    required List<HouseholdNotification> created,
     required String householdId,
     required String currentUid,
     required DateTime now,
@@ -221,7 +237,7 @@ class NotificationScanner {
     ) async {
       if (createdBy.isEmpty || createdBy == currentUid) return;
       final id = 'partner_$idSuffix';
-      await _repository.createIfAbsent(
+      final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
@@ -233,6 +249,7 @@ class NotificationScanner {
           read: false,
         ),
       );
+      if (notification != null) created.add(notification);
     }
 
     for (final tx in transactionsThisMonth) {

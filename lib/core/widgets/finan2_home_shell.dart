@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,7 +51,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     if (householdId == null || uid == null) return;
     final prefs =
         ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
-    await ref.read(notificationScannerProvider).scan(
+    final created = await ref.read(notificationScannerProvider).scan(
           householdId: householdId,
           currentUid: uid,
           debts: ref.read(debtsProvider).value ?? const [],
@@ -66,6 +67,14 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           prefs: prefs,
           formatMoney: ref.read(moneyFormatterProvider),
         );
+    for (final notification in created) {
+      await ref.read(pushServiceProvider).sendPush(
+            householdId: householdId,
+            excludeUid: uid,
+            title: notification.title,
+            body: notification.body,
+          );
+    }
   }
 
   Future<void> _runRecurringBillScan() async {
@@ -77,6 +86,17 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           currentUid: uid,
           bills: ref.read(recurringBillsProvider).value ?? const [],
         );
+  }
+
+  Future<void> _registerPushToken() async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    final uid = ref.read(authStateChangesProvider).value?.uid;
+    if (householdId == null || uid == null) return;
+    try {
+      await ref.read(pushServiceProvider).registerToken(householdId, uid);
+    } catch (_) {
+      // Permission denied or unsupported platform - in-app alerts still work.
+    }
   }
 
   Future<void> _rescheduleDebtReminders() async {
@@ -99,6 +119,18 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       _runScan();
       _rescheduleDebtReminders();
       _runRecurringBillScan();
+      _registerPushToken();
+    });
+    // FCM doesn't surface a system-tray alert for messages that arrive while
+    // the app is foregrounded - show it ourselves the same way local
+    // reminders already are.
+    FirebaseMessaging.onMessage.listen((message) {
+      final notification = message.notification;
+      if (notification == null) return;
+      ref.read(notificationServiceProvider).showNow(
+            title: notification.title ?? '',
+            body: notification.body ?? '',
+          );
     });
   }
 

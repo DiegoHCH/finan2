@@ -101,6 +101,11 @@ service cloud.firestore {
       match /monthlyNotes/{noteId} {
         allow create: if isMember();
       }
+
+      match /fcmTokens/{token} {
+        allow create: if isMember()
+          && request.resource.data.uid == request.auth.uid;
+      }
     }
   }
 }

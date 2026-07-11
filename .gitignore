@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets - never commit (service account keys, worker shared secrets, etc.)
+.secrets/
+cloudflare/**/.dev.vars
+cloudflare/**/.wrangler/
