@@ -5,9 +5,11 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
 import '../viewmodels/transaction_providers.dart';
 import 'edit_transaction_screen.dart';
 
@@ -101,63 +103,88 @@ class TransactionsScreen extends ConsumerWidget {
                       ),
                     );
                   }
-                  return Padding(
+                  return ListView(
                     padding: const EdgeInsets.fromLTRB(
                       Finan2Space.xl,
                       0,
                       Finan2Space.xl,
                       Finan2Space.xl,
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        border: Border.all(color: colors.line),
-                        borderRadius: BorderRadius.circular(Finan2Radius.card),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        itemCount: transactions.length,
-                        separatorBuilder: (_, _) =>
-                            Divider(height: 1, color: colors.line),
-                        itemBuilder: (context, index) {
-                          final tx = transactions[index];
-                          final category = categoryById[tx.categoryId];
-                          final memberIndex =
-                              household?.members.indexOf(tx.createdBy) ?? 0;
-                          final memberName =
-                              household?.memberInfo[tx.createdBy]?.name ?? '?';
-                          return Finan2TransactionRow(
-                            icon: category != null
-                                ? Finan2Icons.categoria(category.iconSlug)
-                                : Icons.label_outline,
-                            iconColor: category != null
-                                ? Color(category.color)
-                                : colors.inkSoft,
-                            description: tx.description.isEmpty
-                                ? (category?.name ?? '')
-                                : tx.description,
-                            subLabel:
-                                '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
-                            avatarLabel: memberName.isEmpty
-                                ? '?'
-                                : memberName.substring(0, 1).toUpperCase(),
-                            avatarIndex: memberIndex < 0 ? 0 : memberIndex,
-                            amountText: tx.isIncome
-                                ? '+${formatMoney(tx.amount)}'
-                                : '−${formatMoney(tx.amount)}',
-                            amountColor: tx.isIncome ? colors.income : colors.ink,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => EditTransactionScreen(
-                                  transaction: tx,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(color: colors.line),
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < transactions.length; i++) ...[
+                              if (i > 0) Divider(height: 1, color: colors.line),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: Builder(
+                                  builder: (context) {
+                                    final tx = transactions[i];
+                                    final category = categoryById[tx.categoryId];
+                                    final memberIndex = household?.members
+                                            .indexOf(tx.createdBy) ??
+                                        0;
+                                    final memberName = household
+                                            ?.memberInfo[tx.createdBy]?.name ??
+                                        '?';
+                                    return Finan2TransactionRow(
+                                      icon: category != null
+                                          ? Finan2Icons.categoria(category.iconSlug)
+                                          : Icons.label_outline,
+                                      iconColor: category != null
+                                          ? Color(category.color)
+                                          : colors.inkSoft,
+                                      description: tx.description.isEmpty
+                                          ? (category?.name ?? '')
+                                          : tx.description,
+                                      subLabel:
+                                          '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
+                                      avatarLabel: memberName.isEmpty
+                                          ? '?'
+                                          : memberName.substring(0, 1).toUpperCase(),
+                                      avatarIndex: memberIndex < 0 ? 0 : memberIndex,
+                                      amountText: tx.isIncome
+                                          ? '+${formatMoney(tx.amount)}'
+                                          : '−${formatMoney(tx.amount)}',
+                                      amountColor:
+                                          tx.isIncome ? colors.income : colors.ink,
+                                      onTap: () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => EditTransactionScreen(
+                                            transaction: tx,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: Finan2Space.lg),
+                      Finan2ListCard(
+                        children: [
+                          Finan2ListRow(
+                            icon: Icons.autorenew,
+                            label: 'Facturas recurrentes',
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const RecurringBillsScreen(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   );
                 },
               ),
