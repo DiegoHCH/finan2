@@ -6,6 +6,7 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../theme/app_theme.dart';
 import 'finan2_coming_soon.dart';
+import 'finan2_list_icon.dart';
 
 /// The app's root navigation once a household exists: bottom nav with the
 /// 5 destinations from the design mockup. Deudas/Metas are placeholders
@@ -37,24 +38,24 @@ class _Finan2HomeShellState extends State<Finan2HomeShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Finan2Icons.inicio),
             label: 'Inicio',
           ),
-          NavigationDestination(
-            icon: Icon(Finan2Icons.movimientos),
+          const NavigationDestination(
+            icon: Finan2ListIcon(),
             label: 'Movimientos',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Finan2Icons.deudas),
             label: 'Deudas',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Finan2Icons.metas),
             label: 'Metas',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Finan2Icons.ajustes),
             label: 'Ajustes',
           ),

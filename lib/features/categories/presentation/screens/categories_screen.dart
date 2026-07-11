@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../data/category_model.dart';
 import '../viewmodels/category_providers.dart';
@@ -28,14 +29,15 @@ class CategoriesScreen extends ConsumerWidget {
         error: (error, _) => Center(child: Text('$error')),
         data: (categories) {
           if (categories.isEmpty) {
-            return Center(
-              child: Text(
-                'Aún no hay categorías. Toca + para crear la primera.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: colors.inkSoft),
+            return Finan2EmptyState(
+              icon: Icons.sell_outlined,
+              title: 'Aún no hay categorías',
+              description:
+                  'Crea tu primera categoría para poder registrar '
+                  'movimientos.',
+              actionLabel: '+ Nueva categoría',
+              onAction: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
               ),
             );
           }

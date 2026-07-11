@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
@@ -36,6 +37,19 @@ class AccountsScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('$error')),
         data: (accounts) {
+          if (accounts.isEmpty) {
+            return Finan2EmptyState(
+              icon: Finan2Icons.cuentas,
+              title: 'Aún no hay cuentas',
+              description:
+                  'Agrega tu primera cuenta (efectivo, banco, billetera) '
+                  'para empezar a registrar movimientos.',
+              actionLabel: '+ Nueva cuenta',
+              onAction: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditAccountScreen()),
+              ),
+            );
+          }
           return ListView(
             padding: const EdgeInsets.all(Finan2Space.xl),
             children: [
@@ -72,35 +86,21 @@ class AccountsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: Finan2Space.lg),
-              if (accounts.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: Finan2Space.xl),
-                  child: Text(
-                    'Aún no hay cuentas. Toca + para crear la primera.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: colors.inkSoft),
-                  ),
-                )
-              else
-                Finan2ListCard(
-                  children: [
-                    for (final account in accounts)
-                      Finan2ListRow(
-                        icon: _accountIcons[account.type]!,
-                        label: account.name,
-                        value: formatCop(account.balance),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                EditAccountScreen(account: account),
-                          ),
+              Finan2ListCard(
+                children: [
+                  for (final account in accounts)
+                    Finan2ListRow(
+                      icon: _accountIcons[account.type]!,
+                      label: account.name,
+                      value: formatCop(account.balance),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EditAccountScreen(account: account),
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
+              ),
             ],
           );
         },

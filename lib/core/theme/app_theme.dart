@@ -201,9 +201,9 @@ abstract class Finan2Sizes {
 abstract class Finan2Icons {
   // Navegación inferior
   static const inicio = Icons.home_outlined;
-  static const movimientos = Icons.receipt_long_outlined;
+  static const movimientos = Icons.reorder; // ver Finan2ListIcon para el trazo exacto del mockup
   static const deudas = Icons.credit_card_outlined;
-  static const metas = Icons.savings_outlined;
+  static const metas = Icons.track_changes_outlined;
   static const ajustes = Icons.settings_outlined;
 
   // Acciones
@@ -501,6 +501,30 @@ abstract class Finan2Theme {
           borderRadius: BorderRadius.circular(Finan2Radius.field),
           borderSide: BorderSide(color: brand, width: 1.6),
         ),
+      ),
+      // Mockup's .nav only changes color on the active tab (.nav a.on) -
+      // no pill/indicator behind the icon and no underline anywhere.
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: Colors.transparent,
+        height: 64,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            fontFamily: Finan2Type.fontFamily,
+            fontSize: 9,
+            fontWeight: FontWeight.w600,
+            color: selected ? brand : ext.inkFaint,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            size: 21,
+            color: selected ? brand : ext.inkFaint,
+          );
+        }),
       ),
     );
   }
