@@ -30,6 +30,7 @@ class AccountsScreen extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: 'accountsFab',
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const EditAccountScreen()),
         ),

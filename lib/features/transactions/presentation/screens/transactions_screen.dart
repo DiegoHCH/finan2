@@ -37,6 +37,7 @@ class TransactionsScreen extends ConsumerWidget {
       floatingActionButton: currentTransactions.isEmpty
           ? null
           : FloatingActionButton(
+              heroTag: 'transactionsFab',
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const EditTransactionScreen()),
               ),

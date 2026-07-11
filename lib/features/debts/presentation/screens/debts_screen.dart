@@ -31,6 +31,7 @@ class DebtsScreen extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: 'debtsFab',
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const EditDebtScreen()),
         ),

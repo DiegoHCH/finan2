@@ -20,6 +20,7 @@ class CategoriesScreen extends ConsumerWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: 'categoriesFab',
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
         ),
