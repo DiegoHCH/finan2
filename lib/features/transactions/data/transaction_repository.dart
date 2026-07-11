@@ -43,6 +43,16 @@ class TransactionRepository {
     return _transactions(householdId).add(tx.toFirestore());
   }
 
+  /// Writes [tx] under the deterministic [id] only if no document with that
+  /// ID already exists - used by recurring_bill_scanner.dart so re-scanning
+  /// never creates a duplicate Movement for the same bill/month.
+  Future<void> createIfAbsent(String householdId, String id, Movement tx) async {
+    final ref = _transactions(householdId).doc(id);
+    final snap = await ref.get();
+    if (snap.exists) return;
+    await ref.set(tx.toFirestore());
+  }
+
   Future<void> updateTransaction(String householdId, Movement tx) {
     return _transactions(householdId).doc(tx.id).update(tx.toFirestore());
   }
