@@ -28,6 +28,17 @@ class TransactionRepository {
         .map((snap) => snap.docs.map(Movement.fromFirestore).toList());
   }
 
+  Stream<List<Movement>> watchTransactionsForYear(
+    String householdId, {
+    required int year,
+  }) {
+    return _transactions(householdId)
+        .where('year', isEqualTo: year)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map(Movement.fromFirestore).toList());
+  }
+
   Future<void> createTransaction(String householdId, Movement tx) {
     return _transactions(householdId).add(tx.toFirestore());
   }

@@ -23,6 +23,17 @@ final transactionsForMonthProvider = StreamProvider<List<Movement>>((ref) {
       );
 });
 
+/// All of the current year's transactions - used by Resumen anual to
+/// compute yearly totals and the month-by-month spend chart.
+final transactionsForYearProvider = StreamProvider<List<Movement>>((ref) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const []);
+  final now = DateTime.now();
+  return ref
+      .watch(transactionRepositoryProvider)
+      .watchTransactionsForYear(householdId, year: now.year);
+});
+
 class TransactionController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
