@@ -18,16 +18,14 @@ class TransactionsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedMonth = ref.watch(selectedMonthProvider);
     final transactionsAsync = ref.watch(transactionsForMonthProvider);
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final household = ref.watch(currentHouseholdProvider).value;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     final categoryById = {for (final c in categories) c.id: c};
-    final monthLabel = DateFormat.yMMMM(
-      'es',
-    ).format(DateTime(selectedMonth.year, selectedMonth.month));
+    final now = DateTime.now();
+    final monthLabel = DateFormat.yMMMM('es').format(now);
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
     final currentTransactions = transactionsAsync.value ?? const [];
@@ -52,35 +50,6 @@ class TransactionsScreen extends ConsumerWidget {
               label: 'Movimientos',
               title: currentTransactions.isEmpty ? monthLabelCap : formatCop(net),
               household: household,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                decoration: BoxDecoration(
-                  border: Border.all(color: colors.line),
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: () =>
-                          ref.read(selectedMonthProvider.notifier).previous(),
-                    ),
-                    Text(
-                      monthLabelCap,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: () =>
-                          ref.read(selectedMonthProvider.notifier).next(),
-                    ),
-                  ],
-                ),
-              ),
             ),
             Expanded(
               child: transactionsAsync.when(
