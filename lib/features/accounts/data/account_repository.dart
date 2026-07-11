@@ -17,8 +17,10 @@ class AccountRepository {
         );
   }
 
-  Future<void> createAccount(String householdId, Account account) {
-    return _accounts(householdId).add(account.toFirestore());
+  /// Returns the new account's generated ID.
+  Future<String> createAccount(String householdId, Account account) async {
+    final doc = await _accounts(householdId).add(account.toFirestore());
+    return doc.id;
   }
 
   Future<void> updateAccount(String householdId, Account account) {

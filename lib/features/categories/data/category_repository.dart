@@ -17,8 +17,10 @@ class CategoryRepository {
         );
   }
 
-  Future<void> createCategory(String householdId, Category category) {
-    return _categories(householdId).add(category.toFirestore());
+  /// Returns the new category's generated ID.
+  Future<String> createCategory(String householdId, Category category) async {
+    final doc = await _categories(householdId).add(category.toFirestore());
+    return doc.id;
   }
 
   Future<void> updateCategory(String householdId, Category category) {
