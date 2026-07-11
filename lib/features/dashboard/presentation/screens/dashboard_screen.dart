@@ -5,7 +5,11 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
+import '../../../budget/presentation/screens/budget_screen.dart';
+import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -27,6 +31,9 @@ class DashboardScreen extends ConsumerWidget {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final formatMoney = ref.watch(moneyFormatterProvider);
     final categoryById = {for (final c in categories) c.id: c};
+    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {})
+        .values
+        .fold(0, (sum, v) => sum + v);
 
     final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
@@ -177,6 +184,32 @@ class DashboardScreen extends ConsumerWidget {
                               ),
                           ],
                         ),
+                      ),
+                      const SizedBox(height: Finan2Space.lg),
+                      Finan2ListCard(
+                        children: [
+                          Finan2ListRow(
+                            icon: Icons.donut_large_outlined,
+                            label: 'Presupuesto',
+                            value: '${formatMoney(totalPlanned)} planeado',
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const BudgetScreen(),
+                              ),
+                            ),
+                          ),
+                          Finan2ListRow(
+                            icon: Icons.bar_chart_outlined,
+                            label: 'Resumen anual',
+                            value: '${DateTime.now().year}',
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    AnnualSummaryScreen(household: household),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   );
