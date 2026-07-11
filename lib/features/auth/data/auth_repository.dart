@@ -19,6 +19,14 @@ class AuthRepository {
 
   User? get currentUser => _auth.currentUser;
 
+  /// Whether the signed-in user's only sign-in method is Google (so
+  /// deleting the account must reauthenticate via Google, not a password).
+  bool get signedInWithGoogle {
+    return _auth.currentUser?.providerData
+            .any((info) => info.providerId == 'google.com') ??
+        false;
+  }
+
   Future<UserCredential> signUpWithEmail({
     required String name,
     required String email,
@@ -52,5 +60,38 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  /// Re-proves identity with the current password, as Firebase requires for
+  /// sensitive operations like account deletion.
+  Future<void> reauthenticateWithPassword(String password) async {
+    final user = _auth.currentUser;
+    if (user == null || user.email == null) return;
+    final credential = EmailAuthProvider.credential(
+      email: user.email!,
+      password: password,
+    );
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  /// Same as [reauthenticateWithPassword], for accounts that only ever
+  /// signed in with Google.
+  Future<void> reauthenticateWithGoogle() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    if (!_googleSignInInitialized) {
+      await _googleSignIn.initialize();
+      _googleSignInInitialized = true;
+    }
+    final account = await _googleSignIn.authenticate();
+    final idToken = account.authentication.idToken;
+    final credential = GoogleAuthProvider.credential(idToken: idToken);
+    await user.reauthenticateWithCredential(credential);
+  }
+
+  /// Permanently deletes the signed-in user. Must be called right after a
+  /// successful reauthentication.
+  Future<void> deleteAccount() async {
+    await _auth.currentUser?.delete();
   }
 }

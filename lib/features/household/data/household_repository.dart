@@ -107,6 +107,16 @@ class HouseholdRepository {
     });
   }
 
+  /// Removes [uid] from the household's membership. The household and its
+  /// data are left untouched for any remaining member - there is no way to
+  /// delete a household outright (`allow delete: if false` in the rules).
+  Future<void> leaveHousehold(String householdId, String uid) {
+    return _households.doc(householdId).update({
+      'members': FieldValue.arrayRemove([uid]),
+      'memberInfo.$uid': FieldValue.delete(),
+    });
+  }
+
   Future<void> updateSettings(
     String householdId, {
     String? currency,
