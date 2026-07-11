@@ -49,7 +49,7 @@ sin esto el login/registro no funciona en tiempo real (el código ya está listo
 
 - [x] Setup del proyecto, dependencias, theme y esqueleto de carpetas
 - [x] Firebase configurado (Auth + Firestore en `southamerica-east1`) y reglas de seguridad desplegadas
-- [x] Auth (login/registro con email y Google) + Hogar (crear/unirse por código, pantalla temporal de inicio)
-- [ ] Habilitar proveedores de Auth en la consola (paso manual, ver arriba)
-- [ ] Transacciones
-- [ ] Dashboard, presupuesto, deudas, ahorros
+- [x] Auth (login/registro con email y Google) + Hogar (crear/unirse por código)
+- [x] Ícono de la app generado a partir del mockup
+- [x] Categorías, Cuentas y Transacciones (Movimientos) — shell de navegación con bottom nav
+- [ ] Dashboard, presupuesto, deudas, ahorros, inversiones
