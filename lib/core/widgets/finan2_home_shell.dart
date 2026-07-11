@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../../features/debts/presentation/screens/debts_screen.dart';
 import '../../features/household/data/household_model.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
@@ -28,7 +29,7 @@ class _Finan2HomeShellState extends State<Finan2HomeShell> {
     final tabs = [
       DashboardScreen(household: widget.household),
       const TransactionsScreen(),
-      const Finan2ComingSoon(title: 'Deudas', icon: Finan2Icons.deudas),
+      const DebtsScreen(),
       const Finan2ComingSoon(title: 'Metas', icon: Finan2Icons.metas),
       SettingsScreen(household: widget.household),
     ];
