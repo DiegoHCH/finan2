@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+
+import '../../features/household/data/household_model.dart';
+import '../../features/household/presentation/screens/household_home_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/transactions/presentation/screens/transactions_screen.dart';
+import '../theme/app_theme.dart';
+import 'finan2_coming_soon.dart';
+
+/// The app's root navigation once a household exists: bottom nav with the
+/// 5 destinations from the design mockup. Deudas/Metas are placeholders
+/// until Fase 4/5.
+class Finan2HomeShell extends StatefulWidget {
+  const Finan2HomeShell({required this.household, super.key});
+
+  final Household household;
+
+  @override
+  State<Finan2HomeShell> createState() => _Finan2HomeShellState();
+}
+
+class _Finan2HomeShellState extends State<Finan2HomeShell> {
+  var _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = [
+      HouseholdHomeScreen(household: widget.household),
+      const TransactionsScreen(),
+      const Finan2ComingSoon(title: 'Deudas', icon: Finan2Icons.deudas),
+      const Finan2ComingSoon(title: 'Metas', icon: Finan2Icons.metas),
+      SettingsScreen(household: widget.household),
+    ];
+
+    return Scaffold(
+      body: IndexedStack(index: _index, children: tabs),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _index,
+        onDestinationSelected: (i) => setState(() => _index = i),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Finan2Icons.inicio),
+            label: 'Inicio',
+          ),
+          NavigationDestination(
+            icon: Icon(Finan2Icons.movimientos),
+            label: 'Movimientos',
+          ),
+          NavigationDestination(
+            icon: Icon(Finan2Icons.deudas),
+            label: 'Deudas',
+          ),
+          NavigationDestination(
+            icon: Icon(Finan2Icons.metas),
+            label: 'Metas',
+          ),
+          NavigationDestination(
+            icon: Icon(Finan2Icons.ajustes),
+            label: 'Ajustes',
+          ),
+        ],
+      ),
+    );
+  }
+}

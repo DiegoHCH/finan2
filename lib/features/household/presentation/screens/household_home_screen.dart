@@ -1,37 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_code_box.dart';
-import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/household_model.dart';
 
-/// Temporary landing screen for Fase 1: proves that two users signed in
-/// separately land on the same shared household. The real dashboard comes
-/// in a later phase.
-class HouseholdHomeScreen extends ConsumerWidget {
+/// Placeholder "Inicio" tab until the real dashboard lands (Fase 3).
+class HouseholdHomeScreen extends StatelessWidget {
   const HouseholdHomeScreen({required this.household, super.key});
 
   final Household household;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final members = household.members;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(household.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar sesión',
-            onPressed: () =>
-                ref.read(authControllerProvider.notifier).signOut(),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(household.name)),
       body: Padding(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(

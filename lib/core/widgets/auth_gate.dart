@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/household/presentation/screens/create_join_household_screen.dart';
-import '../../features/household/presentation/screens/household_home_screen.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
+import 'finan2_home_shell.dart';
 
 /// Root of the navigation: signed out -> auth screens; signed in without a
 /// household -> create/join; signed in with a household -> its home.
@@ -39,7 +39,7 @@ class _HouseholdGate extends ConsumerWidget {
       error: (error, _) => _ErrorScreen(message: error.toString()),
       data: (household) {
         if (household == null) return const CreateJoinHouseholdScreen();
-        return HouseholdHomeScreen(household: household);
+        return Finan2HomeShell(household: household);
       },
     );
   }
