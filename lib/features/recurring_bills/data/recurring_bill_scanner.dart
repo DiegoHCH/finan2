@@ -15,8 +15,9 @@ class RecurringBillScanner {
     required String householdId,
     required String currentUid,
     required List<RecurringBill> bills,
+    DateTime? now,
   }) async {
-    final now = DateTime.now();
+    now ??= DateTime.now();
     final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
 
     for (final bill in bills) {
