@@ -57,6 +57,10 @@ service cloud.firestore {
         allow create: if isMember()
           && request.resource.data.createdBy == request.auth.uid;
       }
+
+      match /debts/{debtId} {
+        allow create: if isMember();
+      }
     }
   }
 }
