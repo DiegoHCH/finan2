@@ -99,48 +99,63 @@ class TransactionsScreen extends ConsumerWidget {
                       ),
                     );
                   }
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: Finan2Space.xl,
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Finan2Space.xl,
+                      0,
+                      Finan2Space.xl,
+                      Finan2Space.xl,
                     ),
-                    itemCount: transactions.length,
-                    separatorBuilder: (_, _) => Divider(height: 1, color: colors.line),
-                    itemBuilder: (context, index) {
-                      final tx = transactions[index];
-                      final category = categoryById[tx.categoryId];
-                      final memberIndex =
-                          household?.members.indexOf(tx.createdBy) ?? 0;
-                      final memberName =
-                          household?.memberInfo[tx.createdBy]?.name ?? '?';
-                      return Finan2TransactionRow(
-                        icon: category != null
-                            ? Finan2Icons.categoria(category.iconSlug)
-                            : Icons.label_outline,
-                        iconColor: category != null
-                            ? Color(category.color)
-                            : colors.inkSoft,
-                        description: tx.description.isEmpty
-                            ? (category?.name ?? '')
-                            : tx.description,
-                        subLabel:
-                            '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
-                        avatarLabel: memberName.isEmpty
-                            ? '?'
-                            : memberName.substring(0, 1).toUpperCase(),
-                        avatarIndex: memberIndex < 0 ? 0 : memberIndex,
-                        amountText: tx.isIncome
-                            ? '+${formatCop(tx.amount)}'
-                            : '−${formatCop(tx.amount)}',
-                        amountColor: tx.isIncome ? colors.income : colors.ink,
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => EditTransactionScreen(
-                              transaction: tx,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        border: Border.all(color: colors.line),
+                        borderRadius: BorderRadius.circular(Finan2Radius.card),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        itemCount: transactions.length,
+                        separatorBuilder: (_, _) =>
+                            Divider(height: 1, color: colors.line),
+                        itemBuilder: (context, index) {
+                          final tx = transactions[index];
+                          final category = categoryById[tx.categoryId];
+                          final memberIndex =
+                              household?.members.indexOf(tx.createdBy) ?? 0;
+                          final memberName =
+                              household?.memberInfo[tx.createdBy]?.name ?? '?';
+                          return Finan2TransactionRow(
+                            icon: category != null
+                                ? Finan2Icons.categoria(category.iconSlug)
+                                : Icons.label_outline,
+                            iconColor: category != null
+                                ? Color(category.color)
+                                : colors.inkSoft,
+                            description: tx.description.isEmpty
+                                ? (category?.name ?? '')
+                                : tx.description,
+                            subLabel:
+                                '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
+                            avatarLabel: memberName.isEmpty
+                                ? '?'
+                                : memberName.substring(0, 1).toUpperCase(),
+                            avatarIndex: memberIndex < 0 ? 0 : memberIndex,
+                            amountText: tx.isIncome
+                                ? '+${formatCop(tx.amount)}'
+                                : '−${formatCop(tx.amount)}',
+                            amountColor: tx.isIncome ? colors.income : colors.ink,
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => EditTransactionScreen(
+                                  transaction: tx,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
               ),

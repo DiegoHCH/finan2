@@ -465,6 +465,15 @@ abstract class Finan2Theme {
           borderRadius: BorderRadius.circular(Finan2Radius.card),
         ),
       ),
+      // Material 3's default FAB uses colorScheme.primaryContainer (a pale
+      // tint), not the vivid brand green from the mockup's .fab - force it.
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: brand,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: brand,
