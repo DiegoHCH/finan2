@@ -6,6 +6,8 @@ import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/utils/currency.dart';
+import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
 
@@ -61,6 +63,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.account != null;
+    final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
 
     return Scaffold(
       appBar: Finan2FormTop(
@@ -95,7 +98,10 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(controller: _balanceController),
+            Finan2AmountInput(
+              controller: _balanceController,
+              currencySymbol: currencySymbol,
+            ),
             const SizedBox(height: Finan2Space.lg),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,

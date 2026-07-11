@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
@@ -20,6 +19,7 @@ class TransactionsScreen extends ConsumerWidget {
     final transactionsAsync = ref.watch(transactionsForMonthProvider);
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final household = ref.watch(currentHouseholdProvider).value;
+    final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     final categoryById = {for (final c in categories) c.id: c};
@@ -49,7 +49,7 @@ class TransactionsScreen extends ConsumerWidget {
               label: 'Movimientos',
               title: currentTransactions.isEmpty
                   ? monthLabelCap
-                  : '${formatCop(net)} neto',
+                  : '${formatMoney(net)} neto',
               household: household,
             ),
             if (currentTransactions.isNotEmpty)
@@ -143,8 +143,8 @@ class TransactionsScreen extends ConsumerWidget {
                                 : memberName.substring(0, 1).toUpperCase(),
                             avatarIndex: memberIndex < 0 ? 0 : memberIndex,
                             amountText: tx.isIncome
-                                ? '+${formatCop(tx.amount)}'
-                                : '−${formatCop(tx.amount)}',
+                                ? '+${formatMoney(tx.amount)}'
+                                : '−${formatMoney(tx.amount)}',
                             amountColor: tx.isIncome ? colors.income : colors.ink,
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(

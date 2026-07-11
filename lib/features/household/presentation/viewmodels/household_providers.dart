@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/currency.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/household_model.dart';
 import '../../data/household_repository.dart';
@@ -16,6 +17,19 @@ final currentHouseholdProvider = StreamProvider<Household?>((ref) {
   final user = ref.watch(authStateChangesProvider).value;
   if (user == null) return Stream.value(null);
   return ref.watch(householdRepositoryProvider).watchHouseholdForUser(user.uid);
+});
+
+/// The household's currency code (e.g. "COP", "USD"), defaulting to
+/// [defaultCurrency] until the household loads.
+final currentCurrencyProvider = Provider<String>((ref) {
+  return ref.watch(currentHouseholdProvider).value?.currency ?? defaultCurrency;
+});
+
+/// A ready-to-use formatter for the household's current currency - screens
+/// call `ref.watch(moneyFormatterProvider)(amount)` instead of hardcoding COP.
+final moneyFormatterProvider = Provider<String Function(num)>((ref) {
+  final currency = ref.watch(currentCurrencyProvider);
+  return (amount) => formatMoney(amount, currency);
 });
 
 class HouseholdController extends AsyncNotifier<Household?> {

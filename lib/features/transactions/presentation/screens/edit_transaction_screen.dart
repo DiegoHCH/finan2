@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
+import '../../../../core/utils/currency.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -150,6 +151,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final user = ref.watch(authStateChangesProvider).value;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.transaction != null;
+    final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
 
     final categoriesOfSegment =
         categories.where((c) => _segment.matches(c.type)).toList();
@@ -197,7 +199,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               }),
             ),
             const SizedBox(height: Finan2Space.sm),
-            Finan2AmountInput(controller: _amountController),
+            Finan2AmountInput(
+              controller: _amountController,
+              currencySymbol: currencySymbol,
+            ),
             const SizedBox(height: Finan2Space.lg),
             Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),

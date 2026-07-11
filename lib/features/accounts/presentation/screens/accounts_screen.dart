@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
@@ -26,6 +25,7 @@ class AccountsScreen extends ConsumerWidget {
     final accountsAsync = ref.watch(accountsProvider);
     final available = ref.watch(availableBalanceProvider);
     final household = ref.watch(currentHouseholdProvider).value;
+    final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
@@ -88,7 +88,7 @@ class AccountsScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              formatCop(available),
+                              formatMoney(available),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 26,
@@ -105,7 +105,7 @@ class AccountsScreen extends ConsumerWidget {
                             Finan2ListRow(
                               icon: _accountIcons[account.type]!,
                               label: account.name,
-                              value: formatCop(account.balance),
+                              value: formatMoney(account.balance),
                               onTap: () => Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) =>
