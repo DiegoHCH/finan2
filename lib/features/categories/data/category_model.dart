@@ -31,6 +31,7 @@ class Category {
     required this.type,
     required this.iconSlug,
     required this.color,
+    this.createdBy = '',
   });
 
   final String id;
@@ -38,6 +39,7 @@ class Category {
   final CategoryType type;
   final String iconSlug;
   final int color; // ARGB, matches Color(...).toARGB32()
+  final String createdBy;
 
   factory Category.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
@@ -47,6 +49,7 @@ class Category {
       type: CategoryTypeLabel.fromName(data['type'] as String? ?? 'gasto'),
       iconSlug: data['icon'] as String? ?? 'label',
       color: data['color'] as int? ?? 0xFF0F9D74,
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -56,6 +59,7 @@ class Category {
       'type': type.name,
       'icon': iconSlug,
       'color': color,
+      'createdBy': createdBy,
     };
   }
 }

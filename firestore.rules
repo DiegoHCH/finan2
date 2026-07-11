@@ -46,11 +46,13 @@ service cloud.firestore {
       }
 
       match /categories/{catId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /accounts/{accId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /transactions/{txId} {
@@ -59,7 +61,8 @@ service cloud.firestore {
       }
 
       match /debts/{debtId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /budgets/{budgetId} {
@@ -67,11 +70,13 @@ service cloud.firestore {
       }
 
       match /savingsGoals/{goalId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /savingsChallenges/{challengeId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /notifications/{notificationId} {
@@ -79,15 +84,18 @@ service cloud.firestore {
       }
 
       match /transfers/{transferId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /recurringBills/{billId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /investments/{investmentId} {
-        allow create: if isMember();
+        allow create: if isMember()
+          && request.resource.data.createdBy == request.auth.uid;
       }
 
       match /monthlyNotes/{noteId} {

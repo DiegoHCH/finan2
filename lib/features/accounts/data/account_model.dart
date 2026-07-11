@@ -23,6 +23,7 @@ class Account {
     required this.type,
     required this.balance,
     required this.includeInAvailable,
+    this.createdBy = '',
   });
 
   final String id;
@@ -30,6 +31,7 @@ class Account {
   final AccountType type;
   final int balance;
   final bool includeInAvailable;
+  final String createdBy;
 
   factory Account.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
@@ -39,6 +41,7 @@ class Account {
       type: AccountTypeLabel.fromName(data['type'] as String? ?? 'banco'),
       balance: (data['balance'] as num?)?.toInt() ?? 0,
       includeInAvailable: data['includeInAvailable'] as bool? ?? true,
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -48,6 +51,7 @@ class Account {
       'type': type.name,
       'balance': balance,
       'includeInAvailable': includeInAvailable,
+      'createdBy': createdBy,
     };
   }
 }

@@ -106,6 +106,9 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
       monthlyContribution: int.tryParse(_monthlyController.text) ?? 0,
       interestRate: double.tryParse(_rateController.text.replaceAll(',', '.')) ?? 0,
       contributions: contributions,
+      createdBy: widget.goal?.createdBy ??
+          ref.read(authStateChangesProvider).value?.uid ??
+          '',
     );
     await ref.read(savingsGoalControllerProvider.notifier).save(goal);
     if (mounted) Navigator.of(context).pop();

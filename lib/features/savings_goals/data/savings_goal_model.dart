@@ -46,6 +46,7 @@ class SavingsGoal {
     required this.monthlyContribution,
     required this.interestRate,
     required this.contributions,
+    this.createdBy = '',
   });
 
   final String id;
@@ -56,6 +57,7 @@ class SavingsGoal {
   final int monthlyContribution;
   final double interestRate; // % E.A., 0 = sin interés
   final List<Contribution> contributions;
+  final String createdBy;
 
   int get totalContributed =>
       contributions.fold(0, (total, c) => total + c.amount);
@@ -109,6 +111,7 @@ class SavingsGoal {
       contributions: rawContributions
           .map((c) => Contribution.fromMap((c as Map).cast<String, dynamic>()))
           .toList(),
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -121,6 +124,7 @@ class SavingsGoal {
       'monthlyContribution': monthlyContribution,
       'interestRate': interestRate,
       'contributions': contributions.map((c) => c.toMap()).toList(),
+      'createdBy': createdBy,
     };
   }
 }

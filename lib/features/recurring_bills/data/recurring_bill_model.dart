@@ -15,6 +15,7 @@ class RecurringBill {
     required this.accountId,
     required this.amount,
     required this.dayOfMonth,
+    this.createdBy = '',
   });
 
   final String id;
@@ -24,6 +25,7 @@ class RecurringBill {
   final String accountId;
   final int amount;
   final int dayOfMonth;
+  final String createdBy;
 
   factory RecurringBill.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
@@ -37,6 +39,7 @@ class RecurringBill {
       accountId: data['accountId'] as String? ?? '',
       amount: (data['amount'] as num?)?.toInt() ?? 0,
       dayOfMonth: (data['dayOfMonth'] as num?)?.toInt() ?? 1,
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -48,6 +51,7 @@ class RecurringBill {
       'accountId': accountId,
       'amount': amount,
       'dayOfMonth': dayOfMonth,
+      'createdBy': createdBy,
     };
   }
 }

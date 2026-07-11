@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/debt_model.dart';
 import '../viewmodels/debt_providers.dart';
@@ -102,6 +103,9 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
       monthlyPayment: int.tryParse(_monthlyPaymentController.text) ?? 0,
       termMonths: int.tryParse(_termMonthsController.text) ?? 0,
       paidInstallments: int.tryParse(_paidInstallmentsController.text) ?? 0,
+      createdBy: widget.debt?.createdBy ??
+          ref.read(authStateChangesProvider).value?.uid ??
+          '',
     );
     await ref.read(debtControllerProvider.notifier).save(debt);
     if (mounted) Navigator.of(context).pop();

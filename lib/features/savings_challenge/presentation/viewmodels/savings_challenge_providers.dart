@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_challenge_model.dart';
 import '../../data/savings_challenge_repository.dart';
@@ -32,6 +33,7 @@ class SavingsChallengeController extends AsyncNotifier<void> {
               name: name,
               cellAmounts: cellAmounts,
               done: List.filled(cellAmounts.length, false),
+              createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
             ),
           ),
     );

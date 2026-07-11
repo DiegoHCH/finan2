@@ -11,6 +11,7 @@ import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -106,6 +107,9 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
             accountId: accountId,
             amount: amount,
             dayOfMonth: day,
+            createdBy: widget.bill?.createdBy ??
+                ref.read(authStateChangesProvider).value?.uid ??
+                '',
           ),
         );
     if (mounted) Navigator.of(context).pop();

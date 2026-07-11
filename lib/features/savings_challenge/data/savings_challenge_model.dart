@@ -9,12 +9,14 @@ class SavingsChallenge {
     required this.name,
     required this.cellAmounts,
     required this.done,
+    this.createdBy = '',
   });
 
   final String id;
   final String name;
   final List<int> cellAmounts;
   final List<bool> done;
+  final String createdBy;
 
   int get target => cellAmounts.fold(0, (total, a) => total + a);
 
@@ -39,10 +41,16 @@ class SavingsChallenge {
       name: data['name'] as String? ?? 'Reto de ahorro',
       cellAmounts: rawAmounts.map((a) => (a as num).toInt()).toList(),
       done: rawDone.map((d) => d as bool).toList(),
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
   Map<String, dynamic> toFirestore() {
-    return {'name': name, 'cellAmounts': cellAmounts, 'done': done};
+    return {
+      'name': name,
+      'cellAmounts': cellAmounts,
+      'done': done,
+      'createdBy': createdBy,
+    };
   }
 }

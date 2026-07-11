@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/category_model.dart';
 import '../viewmodels/category_providers.dart';
 
@@ -78,6 +79,9 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
             type: _type,
             iconSlug: _iconSlug,
             color: _color,
+            createdBy: widget.category?.createdBy ??
+                ref.read(authStateChangesProvider).value?.uid ??
+                '',
           ),
         );
     if (mounted) Navigator.of(context).pop();

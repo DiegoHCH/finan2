@@ -41,6 +41,7 @@ class Debt {
     this.monthlyPayment = 0,
     this.termMonths = 0,
     this.paidInstallments = 0,
+    this.createdBy = '',
   });
 
   final String id;
@@ -61,6 +62,7 @@ class Debt {
   final int monthlyPayment;
   final int termMonths;
   final int paidInstallments;
+  final String createdBy;
 
   /// El monto contra el que se mide el % pagado: cupo total para tarjetas,
   /// monto original para los demás.
@@ -96,6 +98,7 @@ class Debt {
       monthlyPayment: (data['monthlyPayment'] as num?)?.toInt() ?? 0,
       termMonths: (data['termMonths'] as num?)?.toInt() ?? 0,
       paidInstallments: (data['paidInstallments'] as num?)?.toInt() ?? 0,
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -114,6 +117,7 @@ class Debt {
       'monthlyPayment': monthlyPayment,
       'termMonths': termMonths,
       'paidInstallments': paidInstallments,
+      'createdBy': createdBy,
     };
   }
 }

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/investment_model.dart';
 import '../viewmodels/investment_providers.dart';
 
@@ -62,6 +63,9 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
           : 0,
       investedAmount: int.tryParse(_investedController.text) ?? 0,
       currentValue: int.tryParse(_currentValueController.text) ?? 0,
+      createdBy: widget.investment?.createdBy ??
+          ref.read(authStateChangesProvider).value?.uid ??
+          '',
     );
     await ref.read(investmentControllerProvider.notifier).save(investment);
     if (mounted) Navigator.of(context).pop();

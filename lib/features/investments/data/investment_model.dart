@@ -28,6 +28,7 @@ class Investment {
     required this.rate,
     required this.investedAmount,
     required this.currentValue,
+    this.createdBy = '',
   });
 
   final String id;
@@ -38,6 +39,7 @@ class Investment {
   final double rate;
   final int investedAmount;
   final int currentValue;
+  final String createdBy;
 
   int get returnAmount => currentValue - investedAmount;
 
@@ -50,6 +52,7 @@ class Investment {
       rate: (data['rate'] as num?)?.toDouble() ?? 0,
       investedAmount: (data['investedAmount'] as num?)?.toInt() ?? 0,
       currentValue: (data['currentValue'] as num?)?.toInt() ?? 0,
+      createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
@@ -60,6 +63,7 @@ class Investment {
       'rate': rate,
       'investedAmount': investedAmount,
       'currentValue': currentValue,
+      'createdBy': createdBy,
     };
   }
 }

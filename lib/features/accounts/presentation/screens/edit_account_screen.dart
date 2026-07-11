@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
@@ -48,6 +49,9 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
             type: _type,
             balance: balance,
             includeInAvailable: _includeInAvailable,
+            createdBy: widget.account?.createdBy ??
+                ref.read(authStateChangesProvider).value?.uid ??
+                '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
