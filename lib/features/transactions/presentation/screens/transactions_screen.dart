@@ -63,6 +63,7 @@ class TransactionsScreen extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                   decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(color: colors.line),
                     borderRadius: BorderRadius.circular(13),
                   ),
