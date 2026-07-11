@@ -43,8 +43,13 @@ AvalancheResult computeAvalanche(List<Debt> debts, {DateTime? now}) {
   }
 
   final balances = {for (final d in active) d.id: d.balance.toDouble()};
+  // The contractual minimum only (not Debt.monthlyBasePayment, which folds a
+  // card's extraPayment into the total) - the extra is handled separately
+  // via extraPool below, so a card's own extra isn't counted twice when it
+  // happens to be the current avalanche target.
   final basePayments = {
-    for (final d in active) d.id: d.monthlyBasePayment.toDouble(),
+    for (final d in active)
+      d.id: (d.type.isCard ? d.minPayment : d.monthlyPayment).toDouble(),
   };
   final monthlyRates = {
     for (final d in active) d.id: math.pow(1 + d.rate / 100, 1 / 12) - 1,
