@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
 import '../viewmodels/transaction_providers.dart';
 import 'edit_transaction_screen.dart';
@@ -179,6 +180,15 @@ class TransactionsScreen extends ConsumerWidget {
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => const RecurringBillsScreen(),
+                              ),
+                            ),
+                          ),
+                          Finan2ListRow(
+                            icon: Icons.sticky_note_2_outlined,
+                            label: 'Notas',
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const MonthlyNotesScreen(),
                               ),
                             ),
                           ),

@@ -89,6 +89,10 @@ service cloud.firestore {
       match /investments/{investmentId} {
         allow create: if isMember();
       }
+
+      match /monthlyNotes/{noteId} {
+        allow create: if isMember();
+      }
     }
   }
 }
