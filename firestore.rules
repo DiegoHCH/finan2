@@ -77,6 +77,10 @@ service cloud.firestore {
       match /notifications/{notificationId} {
         allow create: if isMember();
       }
+
+      match /transfers/{transferId} {
+        allow create: if isMember();
+      }
     }
   }
 }
