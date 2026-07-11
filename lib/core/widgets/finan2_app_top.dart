@@ -12,12 +12,17 @@ class Finan2AppTop extends StatelessWidget {
     required this.label,
     required this.title,
     this.household,
+    this.trailing,
     super.key,
   });
 
   final String label;
   final String title;
   final Household? household;
+
+  /// Overrides the member-avatars stack on the right (e.g. Deudas shows a
+  /// strategy badge there instead).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +62,9 @@ class Finan2AppTop extends StatelessWidget {
               ],
             ),
           ),
-          if (members.isNotEmpty)
+          if (trailing != null)
+            trailing!
+          else if (members.isNotEmpty)
             SizedBox(
               width: 30.0 + (members.length - 1).clamp(0, 10) * 21,
               height: 30,
