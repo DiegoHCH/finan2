@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   cloud_firestore: ^6.6.0
+  csv: ^8.0.0
   firebase_auth: ^6.5.4
   firebase_core: ^4.11.0
   fl_chart: ^1.2.0
@@ -18,6 +19,9 @@ dependencies:
   flutter_timezone: ^5.1.0
   google_sign_in: ^7.2.0
   intl: ^0.20.3
+  pdf: ^3.13.0
+  printing: ^5.15.0
+  share_plus: ^13.2.0
   shared_preferences: ^2.5.5
   timezone: ^0.11.1
 
