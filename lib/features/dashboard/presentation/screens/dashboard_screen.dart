@@ -7,22 +7,24 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
 import '../../../budget/presentation/screens/budget_screen.dart';
 import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../investments/presentation/screens/investments_screen.dart';
 import '../../../investments/presentation/viewmodels/investment_providers.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/viewmodels/notification_providers.dart';
+import '../../../savings_goals/presentation/viewmodels/savings_goal_providers.dart';
 import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 
 /// "Inicio": the household's pulse for the current month - income vs.
-/// expenses and where the money is going by category. Patrimonio neto is
-/// deliberately left out until Deudas/Ahorros (Fase 4/5) exist to feed it.
+/// expenses, patrimonio neto, and where the money is going by category.
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({required this.household, super.key});
 
@@ -40,6 +42,10 @@ class DashboardScreen extends ConsumerWidget {
         .fold(0, (sum, v) => sum + v);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
+    final netWorth = ref.watch(availableBalanceProvider) +
+        ref.watch(totalSavedProvider) +
+        totalInvestments -
+        ref.watch(totalDebtProvider);
 
     final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
@@ -52,6 +58,48 @@ class DashboardScreen extends ConsumerWidget {
               label: 'Hogar',
               title: household.name,
               household: household,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Finan2Space.xl,
+                0,
+                Finan2Space.xl,
+                Finan2Space.sm,
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(Finan2Space.md),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                  ),
+                  borderRadius: BorderRadius.circular(Finan2Radius.card),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Patrimonio neto',
+                      style: TextStyle(color: Colors.white, fontSize: 11.5),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      formatMoney(netWorth),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      'Cuentas + ahorros + inversiones − deudas',
+                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
             ),
             Expanded(
               child: transactionsAsync.when(
