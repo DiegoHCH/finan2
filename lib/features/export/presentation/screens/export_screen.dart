@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_chip.dart';
+import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/csv_report_writer.dart';
@@ -110,23 +111,27 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(height: Finan2Space.sm),
-                    _ToggleRow(
-                      icon: Icons.receipt_long_outlined,
-                      label: 'Movimientos',
-                      value: _includeTransactions,
-                      onChanged: (v) => setState(() => _includeTransactions = v),
-                    ),
-                    _ToggleRow(
-                      icon: Icons.donut_large_outlined,
-                      label: 'Presupuesto',
-                      value: _includeBudget,
-                      onChanged: (v) => setState(() => _includeBudget = v),
-                    ),
-                    _ToggleRow(
-                      icon: Icons.credit_card_outlined,
-                      label: 'Deudas y ahorros',
-                      value: _includeDebtsAndSavings,
-                      onChanged: (v) => setState(() => _includeDebtsAndSavings = v),
+                    Finan2ListCard(
+                      children: [
+                        _ToggleRow(
+                          icon: Icons.receipt_long_outlined,
+                          label: 'Movimientos',
+                          value: _includeTransactions,
+                          onChanged: (v) => setState(() => _includeTransactions = v),
+                        ),
+                        _ToggleRow(
+                          icon: Icons.donut_large_outlined,
+                          label: 'Presupuesto',
+                          value: _includeBudget,
+                          onChanged: (v) => setState(() => _includeBudget = v),
+                        ),
+                        _ToggleRow(
+                          icon: Icons.credit_card_outlined,
+                          label: 'Deudas y ahorros',
+                          value: _includeDebtsAndSavings,
+                          onChanged: (v) => setState(() => _includeDebtsAndSavings = v),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: Finan2Space.lg),
                     FilledButton(
@@ -169,7 +174,7 @@ class _ToggleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
       child: Row(
         children: [
           Container(

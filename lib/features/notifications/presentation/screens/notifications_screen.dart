@@ -156,7 +156,7 @@ class _NotificationRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _relativeTime(notification.createdAt),
+                  _relativeTime(notification.createdAt).toUpperCase(),
                   style: TextStyle(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w600,
