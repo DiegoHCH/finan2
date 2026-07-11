@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/dev/mock_data_seeder.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
@@ -260,26 +259,6 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: Finan2Space.lg),
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      final messenger = ScaffoldMessenger.of(context);
-                      try {
-                        await MockDataSeeder(ref).seed();
-                        messenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('Datos de ejemplo cargados'),
-                          ),
-                        );
-                      } catch (error) {
-                        messenger.showSnackBar(
-                          SnackBar(content: Text('Error: $error')),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.auto_awesome_outlined),
-                    label: const Text('Cargar datos de ejemplo'),
-                  ),
-                  const SizedBox(height: Finan2Space.sm),
                   OutlinedButton(
                     onPressed: () =>
                         ref.read(authControllerProvider.notifier).signOut(),
