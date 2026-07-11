@@ -73,6 +73,10 @@ service cloud.firestore {
       match /savingsChallenges/{challengeId} {
         allow create: if isMember();
       }
+
+      match /notifications/{notificationId} {
+        allow create: if isMember();
+      }
     }
   }
 }

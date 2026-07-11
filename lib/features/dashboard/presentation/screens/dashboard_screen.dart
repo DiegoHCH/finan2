@@ -13,6 +13,8 @@ import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../notifications/presentation/screens/notifications_screen.dart';
+import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 
@@ -34,6 +36,7 @@ class DashboardScreen extends ConsumerWidget {
     final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {})
         .values
         .fold(0, (sum, v) => sum + v);
+    final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
 
     final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
@@ -206,6 +209,16 @@ class DashboardScreen extends ConsumerWidget {
                               MaterialPageRoute(
                                 builder: (_) =>
                                     AnnualSummaryScreen(household: household),
+                              ),
+                            ),
+                          ),
+                          Finan2ListRow(
+                            icon: Icons.notifications_outlined,
+                            label: 'Notificaciones',
+                            value: unreadNotifications > 0 ? '$unreadNotifications' : null,
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const NotificationsScreen(),
                               ),
                             ),
                           ),
