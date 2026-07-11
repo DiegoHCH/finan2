@@ -10,6 +10,12 @@ final transferRepositoryProvider = Provider<TransferRepository>((ref) {
   return TransferRepository();
 });
 
+final transfersProvider = StreamProvider<List<Transfer>>((ref) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const []);
+  return ref.watch(transferRepositoryProvider).watchTransfers(householdId);
+});
+
 class TransferController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
@@ -20,6 +26,15 @@ class TransferController extends AsyncNotifier<void> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
       () => ref.read(transferRepositoryProvider).createTransfer(householdId, transfer),
+    );
+  }
+
+  Future<void> deleteTransfer(Transfer transfer) async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (householdId == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(transferRepositoryProvider).deleteTransfer(householdId, transfer),
     );
   }
 }

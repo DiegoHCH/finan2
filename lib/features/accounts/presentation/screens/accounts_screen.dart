@@ -6,6 +6,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../transfers/presentation/screens/transfer_history_screen.dart';
 import '../../../transfers/presentation/screens/transfer_screen.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
@@ -137,20 +138,33 @@ class AccountsScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      if (accounts.length >= 2) ...[
-                        const SizedBox(height: Finan2Space.lg),
-                        Center(
-                          child: TextButton.icon(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const TransferScreen(),
+                      const SizedBox(height: Finan2Space.lg),
+                      Center(
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          children: [
+                            if (accounts.length >= 2)
+                              TextButton.icon(
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const TransferScreen(),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.swap_horiz),
+                                label: const Text('Transferir entre cuentas'),
                               ),
+                            TextButton.icon(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const TransferHistoryScreen(),
+                                ),
+                              ),
+                              icon: const Icon(Icons.history),
+                              label: const Text('Historial'),
                             ),
-                            icon: const Icon(Icons.swap_horiz),
-                            label: const Text('Transferir entre cuentas'),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ],
                   );
                 },
