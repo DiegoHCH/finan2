@@ -13,6 +13,7 @@ import '../../../categories/presentation/screens/categories_screen.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
 
 const _currencies = {'COP': 'Peso COP · \$', 'USD': 'Dólar USD · US\$'};
 const _weekStarts = {'monday': 'Lunes', 'sunday': 'Domingo'};
@@ -238,6 +239,15 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Finan2Icons.miembros,
                         label: 'Miembros del hogar',
                         value: memberNames,
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.notifications_outlined,
+                        label: 'Notificaciones',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const NotificationPreferencesScreen(),
+                          ),
+                        ),
                       ),
                     ],
                   ),
