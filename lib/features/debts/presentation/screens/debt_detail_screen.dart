@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
+import '../../../../core/widgets/finan2_stat_box.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/avalanche_calculator.dart';
 import '../../data/debt_model.dart';
@@ -99,14 +100,16 @@ class DebtDetailScreen extends ConsumerWidget {
                     children: current.type.isCard
                         ? [
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Pago mín.',
                                 value: formatMoney(current.minPayment),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Abono extra',
                                 value: formatMoney(current.extraPayment),
                                 valueColor: Theme.of(context).colorScheme.primary,
@@ -114,7 +117,8 @@ class DebtDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Pagado',
                                 value: '${(current.paidFraction * 100).round()}%',
                               ),
@@ -122,14 +126,16 @@ class DebtDetailScreen extends ConsumerWidget {
                           ]
                         : [
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Cuota mensual',
                                 value: formatMoney(current.monthlyPayment),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Cuotas restantes',
                                 value:
                                     '${(current.termMonths - current.paidInstallments).clamp(0, current.termMonths)}',
@@ -137,7 +143,8 @@ class DebtDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: _TrioStat(
+                              child: Finan2StatBox(
+                                dense: true,
                                 label: 'Pagado',
                                 value: '${(current.paidFraction * 100).round()}%',
                               ),
@@ -193,50 +200,6 @@ class DebtDetailScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _TrioStat extends StatelessWidget {
-  const _TrioStat({required this.label, required this.value, this.valueColor});
-
-  final String label;
-  final String value;
-  final Color? valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: colors.line),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-              color: colors.inkFaint,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w700,
-              color: valueColor ?? colors.ink,
-            ),
-          ),
-        ],
       ),
     );
   }

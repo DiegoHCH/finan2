@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../core/widgets/finan2_stat_box.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -84,7 +85,7 @@ class DashboardScreen extends ConsumerWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: _StatCard(
+                            child: Finan2StatBox(
                               dotColor: colors.income,
                               label: 'Ingresos',
                               value: formatMoney(income),
@@ -93,7 +94,7 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: Finan2Space.sm),
                           Expanded(
-                            child: _StatCard(
+                            child: Finan2StatBox(
                               dotColor: colors.expense,
                               label: 'Gastos',
                               value: formatMoney(expense),
@@ -184,67 +185,6 @@ class DashboardScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.dotColor,
-    required this.label,
-    required this.value,
-    required this.valueColor,
-  });
-
-  final Color dotColor;
-  final String label;
-  final String value;
-  final Color valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: colors.line),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 7,
-                height: 7,
-                decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.4,
-                  color: colors.inkFaint,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.1,
-              color: valueColor,
-            ),
-          ),
-        ],
       ),
     );
   }
