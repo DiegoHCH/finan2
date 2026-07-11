@@ -13,6 +13,8 @@ import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../investments/presentation/screens/investments_screen.dart';
+import '../../../investments/presentation/viewmodels/investment_providers.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
@@ -37,6 +39,7 @@ class DashboardScreen extends ConsumerWidget {
         .values
         .fold(0, (sum, v) => sum + v);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
+    final totalInvestments = ref.watch(totalInvestmentValueProvider);
 
     final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
@@ -219,6 +222,16 @@ class DashboardScreen extends ConsumerWidget {
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => const NotificationsScreen(),
+                              ),
+                            ),
+                          ),
+                          Finan2ListRow(
+                            icon: Icons.trending_up,
+                            label: 'Inversiones',
+                            value: formatMoney(totalInvestments),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const InvestmentsScreen(),
                               ),
                             ),
                           ),

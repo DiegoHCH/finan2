@@ -85,6 +85,10 @@ service cloud.firestore {
       match /recurringBills/{billId} {
         allow create: if isMember();
       }
+
+      match /investments/{investmentId} {
+        allow create: if isMember();
+      }
     }
   }
 }
