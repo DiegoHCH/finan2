@@ -7,7 +7,6 @@ import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
-import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../viewmodels/transaction_providers.dart';
@@ -48,9 +47,38 @@ class TransactionsScreen extends ConsumerWidget {
           children: [
             Finan2AppTop(
               label: 'Movimientos',
-              title: currentTransactions.isEmpty ? monthLabelCap : formatCop(net),
+              title: currentTransactions.isEmpty
+                  ? monthLabelCap
+                  : '${formatCop(net)} neto',
               household: household,
             ),
+            if (currentTransactions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.xl,
+                  0,
+                  Finan2Space.xl,
+                  Finan2Space.sm,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: colors.line),
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.chevron_left, color: colors.inkFaint),
+                      Text(
+                        monthLabelCap,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                      ),
+                      Icon(Icons.chevron_right, color: colors.inkFaint),
+                    ],
+                  ),
+                ),
+              ),
             Expanded(
               child: transactionsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -95,7 +123,7 @@ class TransactionsScreen extends ConsumerWidget {
                             ? (category?.name ?? '')
                             : tx.description,
                         subLabel:
-                            '${category?.type.plural ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
+                            '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
                         avatarLabel: memberName.isEmpty
                             ? '?'
                             : memberName.substring(0, 1).toUpperCase(),
