@@ -25,8 +25,9 @@ class NotificationScanner {
     required List<Category> categories,
     required NotificationPrefs prefs,
     required String Function(num) formatMoney,
+    DateTime? now,
   }) async {
-    final now = DateTime.now();
+    now ??= DateTime.now();
 
     if (prefs.debtPayments) {
       await _scanDebts(householdId, debts, now, formatMoney);
