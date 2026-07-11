@@ -85,7 +85,9 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
     final isEditing = widget.goal != null;
-    final contributions = [...widget.goal?.contributions ?? const []];
+    final contributions = <Contribution>[
+      ...widget.goal?.contributions ?? const <Contribution>[],
+    ];
     if (!isEditing) {
       final seed = int.tryParse(_seedController.text) ?? 0;
       if (seed > 0) {
