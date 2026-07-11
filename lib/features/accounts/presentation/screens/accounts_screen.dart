@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
-import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transfers/presentation/screens/transfer_screen.dart';
 import '../../data/account_model.dart';
@@ -97,25 +97,45 @@ class AccountsScreen extends ConsumerWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'en ${accounts.length} cuenta'
+                              '${accounts.length == 1 ? '' : 's'} del hogar',
+                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: Finan2Space.lg),
-                      Finan2ListCard(
-                        children: [
-                          for (final account in accounts)
-                            Finan2ListRow(
-                              icon: _accountIcons[account.type]!,
-                              label: account.name,
-                              value: formatMoney(account.balance),
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EditAccountScreen(account: account),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          border: Border.all(color: colors.line),
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < accounts.length; i++) ...[
+                              if (i > 0) Divider(height: 1, color: colors.line),
+                              Finan2TransactionRow(
+                                icon: _accountIcons[accounts[i].type]!,
+                                iconColor: colors.inkSoft,
+                                description: accounts[i].name,
+                                subLabel: accounts[i].type.label,
+                                amountText: formatMoney(accounts[i].balance),
+                                amountColor: colors.ink,
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        EditAccountScreen(account: accounts[i]),
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                            ],
+                          ],
+                        ),
                       ),
                       if (accounts.length >= 2) ...[
                         const SizedBox(height: Finan2Space.lg),
