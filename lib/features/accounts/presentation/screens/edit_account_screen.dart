@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
+import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_form_top.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
 
@@ -61,9 +63,9 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final isEditing = widget.account != null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Editar cuenta' : 'Nueva cuenta'),
-        actions: [TextButton(onPressed: _save, child: const Text('Guardar'))],
+      appBar: Finan2FormTop(
+        title: isEditing ? 'Editar cuenta' : 'Nueva cuenta',
+        onSave: _save,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
@@ -77,10 +79,11 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
               runSpacing: 7,
               children: [
                 for (final type in AccountType.values)
-                  ChoiceChip(
-                    label: Text(type.label),
+                  Finan2Chip(
+                    icon: Finan2Icons.cuenta(type.name),
+                    label: type.label,
                     selected: _type == type,
-                    onSelected: (_) => setState(() => _type = type),
+                    onTap: () => setState(() => _type = type),
                   ),
               ],
             ),

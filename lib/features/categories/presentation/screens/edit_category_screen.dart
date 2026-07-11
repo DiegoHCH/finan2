@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_form_top.dart';
 import '../../data/category_model.dart';
 import '../viewmodels/category_providers.dart';
 
@@ -95,11 +97,9 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
     final icons = _iconsByType[_type]!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Editar categoría' : 'Nueva categoría'),
-        actions: [
-          TextButton(onPressed: _save, child: const Text('Guardar')),
-        ],
+      appBar: Finan2FormTop(
+        title: isEditing ? 'Editar categoría' : 'Nueva categoría',
+        onSave: _save,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
@@ -159,10 +159,10 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               runSpacing: 7,
               children: [
                 for (final type in CategoryType.values)
-                  ChoiceChip(
-                    label: Text(type.label),
+                  Finan2Chip(
+                    label: type.label,
                     selected: _type == type,
-                    onSelected: (_) => _onTypeChanged(type),
+                    onTap: () => _onTypeChanged(type),
                   ),
               ],
             ),
@@ -174,14 +174,10 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               runSpacing: 7,
               children: [
                 for (final slug in icons)
-                  ChoiceChip(
-                    label: Icon(
-                      Finan2Icons.categoria(slug),
-                      size: 18,
-                      color: _iconSlug == slug ? Colors.white : colors.inkSoft,
-                    ),
+                  Finan2Chip(
+                    icon: Finan2Icons.categoria(slug),
                     selected: _iconSlug == slug,
-                    onSelected: (_) => setState(() => _iconSlug = slug),
+                    onTap: () => setState(() => _iconSlug = slug),
                   ),
               ],
             ),

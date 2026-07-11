@@ -236,6 +236,16 @@ abstract class Finan2Icons {
   static const billeteraDigital = Icons.smartphone_outlined;
   static const tarjetaDebito = Icons.credit_card_outlined;
 
+  static const _cuentaPorTipo = <String, IconData>{
+    'efectivo': efectivo,
+    'banco': banco,
+    'billetera': billeteraDigital,
+    'debito': tarjetaDebito,
+  };
+
+  /// Icono de cuenta por el nombre de su [AccountType] (`type.name`).
+  static IconData cuenta(String typeName) => _cuentaPorTipo[typeName] ?? cuentas;
+
   /// Icono por tipo de categoría / concepto financiero.
   /// La clave es un slug estable que guardas en Firestore junto a la categoría.
   static const _categoria = <String, IconData>{

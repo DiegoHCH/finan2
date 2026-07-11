@@ -4,7 +4,12 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
+import '../../../../core/widgets/finan2_avatar.dart';
+import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_segmented_control.dart';
+import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -13,6 +18,29 @@ import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
+
+enum _Segment { ingreso, gasto, ahorro }
+
+extension on _Segment {
+  String get label => switch (this) {
+        _Segment.ingreso => 'Ingreso',
+        _Segment.gasto => 'Gasto',
+        _Segment.ahorro => 'Ahorro',
+      };
+
+  bool matches(CategoryType type) => switch (this) {
+        _Segment.ingreso => type == CategoryType.ingreso,
+        _Segment.gasto =>
+          type == CategoryType.gasto || type == CategoryType.factura,
+        _Segment.ahorro => type == CategoryType.ahorro,
+      };
+}
+
+_Segment _segmentFor(CategoryType type) => switch (type) {
+      CategoryType.ingreso => _Segment.ingreso,
+      CategoryType.factura || CategoryType.gasto => _Segment.gasto,
+      CategoryType.ahorro => _Segment.ahorro,
+    };
 
 class EditTransactionScreen extends ConsumerStatefulWidget {
   const EditTransactionScreen({this.transaction, super.key});
@@ -33,7 +61,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   late final _descriptionController = TextEditingController(
     text: widget.transaction?.description ?? '',
   );
-  late CategoryType _type = widget.transaction?.type ?? CategoryType.gasto;
+  late _Segment _segment =
+      _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
   late String? _categoryId = widget.transaction?.categoryId;
   late String? _accountId = widget.transaction?.accountId;
   late DateTime _date = widget.transaction?.date ?? DateTime.now();
@@ -54,6 +83,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           children: [
             for (final account in accounts)
               ListTile(
+                leading: Icon(Finan2Icons.cuenta(account.type.name)),
                 title: Text(account.name),
                 onTap: () => Navigator.of(context).pop(account.id),
               ),
@@ -77,7 +107,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   Future<void> _save() async {
     final amount = int.tryParse(_amountController.text) ?? 0;
     final user = ref.read(authStateChangesProvider).value;
-    if (amount <= 0 || _categoryId == null || _accountId == null || user == null) {
+    final categories = ref.read(categoriesProvider).value ?? const [];
+    Category? category;
+    for (final c in categories) {
+      if (c.id == _categoryId) category = c;
+    }
+    if (amount <= 0 || category == null || _accountId == null || user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Completa el monto, la categoría y la cuenta.'),
@@ -89,8 +124,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           Movement(
             id: widget.transaction?.id ?? '',
             amount: amount,
-            type: _type,
-            categoryId: _categoryId!,
+            type: category.type,
+            categoryId: category.id,
             accountId: _accountId!,
             description: _descriptionController.text.trim(),
             date: _date,
@@ -116,13 +151,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.transaction != null;
 
-    final categoriesOfType =
-        categories.where((c) => c.type == _type).toList();
+    final categoriesOfSegment =
+        categories.where((c) => _segment.matches(c.type)).toList();
     if (_categoryId != null &&
-        !categoriesOfType.any((c) => c.id == _categoryId)) {
+        !categoriesOfSegment.any((c) => c.id == _categoryId)) {
       _categoryId = null;
     }
-    _categoryId ??= categoriesOfType.isNotEmpty ? categoriesOfType.first.id : null;
+    _categoryId ??=
+        categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
 
     Account? selectedAccount;
     for (final a in accounts) {
@@ -137,39 +173,35 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final creatorName = creatorUid == null
         ? ''
         : (household?.memberInfo[creatorUid]?.name ?? user?.displayName ?? '');
+    final creatorIndex =
+        creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Editar movimiento' : 'Nuevo movimiento'),
-        actions: [TextButton(onPressed: _save, child: const Text('Guardar'))],
+      appBar: Finan2FormTop(
+        title: isEditing ? 'Editar movimiento' : 'Nuevo movimiento',
+        onSave: _save,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Wrap(
-              spacing: 7,
-              runSpacing: 7,
-              alignment: WrapAlignment.center,
-              children: [
-                for (final type in CategoryType.values)
-                  ChoiceChip(
-                    label: Text(type.label),
-                    selected: _type == type,
-                    onSelected: (_) => setState(() {
-                      _type = type;
-                      _categoryId = null;
-                    }),
-                  ),
-              ],
+            Finan2SegmentedControl<_Segment>(
+              options: {
+                for (final s in _Segment.values) s: s.label,
+              },
+              selected: _segment,
+              onChanged: (s) => setState(() {
+                _segment = s;
+                _categoryId = null;
+              }),
             ),
             const SizedBox(height: Finan2Space.sm),
             Finan2AmountInput(controller: _amountController),
             const SizedBox(height: Finan2Space.lg),
             Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
-            if (categoriesOfType.isEmpty)
+            if (categoriesOfSegment.isEmpty)
               Text(
                 'No hay categorías de este tipo todavía. Créalas en Ajustes.',
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
@@ -179,57 +211,31 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 spacing: 7,
                 runSpacing: 7,
                 children: [
-                  for (final category in categoriesOfType)
-                    ChoiceChip(
-                      avatar: Icon(
-                        Finan2Icons.categoria(category.iconSlug),
-                        size: 16,
-                        color: _categoryId == category.id
-                            ? Colors.white
-                            : Color(category.color),
-                      ),
-                      label: Text(category.name),
+                  for (final category in categoriesOfSegment)
+                    Finan2Chip(
+                      icon: Finan2Icons.categoria(category.iconSlug),
+                      label: category.name,
                       selected: _categoryId == category.id,
-                      onSelected: (_) =>
-                          setState(() => _categoryId = category.id),
+                      onTap: () => setState(() => _categoryId = category.id),
                     ),
                 ],
               ),
             const SizedBox(height: Finan2Space.lg),
-            Text('Cuenta', style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
             if (accounts.isEmpty)
               Text(
                 'No hay cuentas todavía. Créalas en Ajustes.',
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
-              InkWell(
-                onTap: () => _pickAccount(accounts),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 13,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: colors.line),
-                    borderRadius: BorderRadius.circular(Finan2Radius.field),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          selectedAccount?.name ?? 'Selecciona una cuenta',
-                          style: const TextStyle(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Icon(Icons.chevron_right, color: colors.inkFaint),
-                    ],
-                  ),
+              Finan2TapField(
+                label: 'Cuenta',
+                value: selectedAccount?.name ?? 'Selecciona una cuenta',
+                leading: Icon(
+                  Finan2Icons.cuenta(selectedAccount?.type.name ?? 'banco'),
+                  size: 18,
+                  color: colors.inkSoft,
                 ),
+                onTap: () => _pickAccount(accounts),
               ),
             const SizedBox(height: Finan2Space.md),
             Finan2Field(
@@ -237,37 +243,22 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               controller: _descriptionController,
             ),
             const SizedBox(height: Finan2Space.md),
-            InkWell(
+            Finan2TapField(
+              label: 'Fecha',
+              value: DateFormat('dd MMM yyyy', 'es').format(_date),
               onTap: _pickDate,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-                decoration: BoxDecoration(
-                  border: Border.all(color: colors.line),
-                  borderRadius: BorderRadius.circular(Finan2Radius.field),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        DateFormat('dd MMM yyyy', 'es').format(_date),
-                        style: const TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    Icon(Icons.calendar_today_outlined,
-                        size: 16, color: colors.inkFaint),
-                  ],
-                ),
-              ),
             ),
             if (creatorName.isNotEmpty) ...[
               const SizedBox(height: Finan2Space.md),
-              Text(
-                'Registrado por $creatorName',
-                style: TextStyle(fontSize: 12, color: colors.inkFaint),
+              Finan2TapField(
+                label: 'Registrado por',
+                value: creatorName,
+                leading: Finan2Avatar(
+                  label: creatorName.substring(0, 1).toUpperCase(),
+                  memberIndex: creatorIndex < 0 ? 0 : creatorIndex,
+                  size: 22,
+                  borderWidth: 0,
+                ),
               ),
             ],
             if (isEditing) ...[
