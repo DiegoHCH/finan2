@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/debts/presentation/screens/debts_screen.dart';
 import '../../features/household/data/household_model.dart';
+import '../../features/savings_goals/presentation/screens/savings_goals_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../theme/app_theme.dart';
-import 'finan2_coming_soon.dart';
 import 'finan2_list_icon.dart';
 
 /// The app's root navigation once a household exists: bottom nav with the
-/// 5 destinations from the design mockup. Deudas/Metas are placeholders
-/// until Fase 4/5.
+/// 5 destinations from the design mockup.
 class Finan2HomeShell extends StatefulWidget {
   const Finan2HomeShell({required this.household, super.key});
 
@@ -30,7 +29,7 @@ class _Finan2HomeShellState extends State<Finan2HomeShell> {
       DashboardScreen(household: widget.household),
       const TransactionsScreen(),
       const DebtsScreen(),
-      const Finan2ComingSoon(title: 'Metas', icon: Finan2Icons.metas),
+      const SavingsGoalsScreen(),
       SettingsScreen(household: widget.household),
     ];
 
