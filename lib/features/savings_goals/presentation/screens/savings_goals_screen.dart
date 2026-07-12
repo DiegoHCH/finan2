@@ -35,14 +35,16 @@ class SavingsGoalsScreen extends ConsumerWidget {
     final now = DateTime.now();
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'savingsGoalsFab',
-        backgroundColor: colors.saving,
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditSavingsGoalScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: goalsAsync.value?.isEmpty ?? true
+          ? null
+          : FloatingActionButton(
+              heroTag: 'savingsGoalsFab',
+              backgroundColor: colors.saving,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditSavingsGoalScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [

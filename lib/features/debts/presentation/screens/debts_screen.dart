@@ -30,13 +30,15 @@ class DebtsScreen extends ConsumerWidget {
     final formatMoney = ref.watch(moneyFormatterProvider);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'debtsFab',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditDebtScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: debtsAsync.value?.isEmpty ?? true
+          ? null
+          : FloatingActionButton(
+              heroTag: 'debtsFab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditDebtScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [
