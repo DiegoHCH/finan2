@@ -141,9 +141,9 @@ conversación; resumen de lo construido:
   se abre en ~7 días.
 - **Push en web**: `web/firebase-messaging-sw.js` nuevo, y `push_service.dart` ya pasa una
   VAPID key en `getToken()` y guarda `platform: 'web'` (el lado del Worker ya lo esperaba).
-  **Falta generar la VAPID key real** en Firebase Console (Cloud Messaging > Web Push
-  certificates) y ponerla en `.secrets/dart-defines.json` bajo `FINAN2_FCM_VAPID_KEY` (hoy
-  vacía).
+  La VAPID key real ya está generada y en `.secrets/dart-defines.json` bajo
+  `FINAN2_FCM_VAPID_KEY` - recuerda compilar/correr con
+  `--dart-define-from-file=.secrets/dart-defines.json` para que se incluya.
 - **Recordatorios programados en servidor**: `flutter_local_notifications` no tiene
   scheduling real en background en web, así que se movieron al Cron Trigger nuevo en
   `cloudflare/finan2-notifications/worker.js` (`wrangler.toml` ya tiene `[triggers] crons =
@@ -168,9 +168,6 @@ bien la hora de Colombia, y no disparó nada porque ninguna condición coincidí
 
 ## Pendientes
 
-- [ ] Generar la VAPID key real de Firebase Cloud Messaging (Cloud Messaging > Web Push
-  certificates en la consola - no existe forma de generarla por CLI/API) y ponerla en
-  `.secrets/dart-defines.json` bajo `FINAN2_FCM_VAPID_KEY`
 - [ ] Implementar login con Google en web (botón embebido `renderButton()`) - hoy la SPA solo
   tiene correo/contraseña
 - [ ] Probar la instalación y el push reales en un iPhone/Safari
