@@ -126,12 +126,19 @@ Flutter (`web/`) como PWA. Investigación completa y diseño en el historial de 
 conversación; resumen de lo construido:
 
 - **Base web**: `web/manifest.json`/`index.html` con metadata real (nombre, descripción,
-  meta tags de iOS). Login con Google **oculto en web** (`kIsWeb` en `login_screen.dart`) -
-  el flujo `GoogleSignIn.authenticate()` que usa `auth_repository.dart` lanza
-  `UnimplementedError` en el plugin web, que exige un botón embebido (`renderButton()`) en
-  vez de un popup; no se implementó esa pieza en esta pasada, así que en web solo se puede
-  entrar con correo/contraseña. Todo lo demás (Firestore, Firebase Auth por
-  correo/contraseña, `cryptography`) funciona igual sin cambios.
+  meta tags de iOS). Todo lo demás (Firestore, Firebase Auth, `cryptography`) funciona igual
+  sin cambios.
+- **Login con Google en web**: `GoogleSignIn.authenticate()` (lo que usa
+  `auth_repository.dart` en móvil) lanza `UnimplementedError` en el plugin web - GIS exige que
+  el usuario interactúe con su propio botón renderizado, no un popup disparado desde código.
+  En web se usa `GoogleSignInWebButton`
+  (`lib/features/auth/presentation/widgets/google_sign_in_web_button*.dart`, patrón
+  condicional igual al de `core/pwa/`) que envuelve `renderButton()` de
+  `google_sign_in_web/web_only.dart`, y `AuthRepository.googleWebSignInEvents` escucha el
+  stream de eventos de autenticación para completar el login contra Firebase - `AuthGate` ya
+  reacciona solo una vez que eso sucede. El client ID web usado es el "Web client"
+  auto-creado por Google (mismo que ya usa Android internamente, sacado de
+  `google-services.json`).
 - **Instalación + riesgo de la llave**: banner en `Finan2HomeShell` que explica cómo instalar
   en iOS ("Compartir → Agregar a inicio", no hay prompt automático), y
   `lib/core/pwa/storage_persistence.dart` pide la Persistent Storage API del navegador al
@@ -168,9 +175,8 @@ bien la hora de Colombia, y no disparó nada porque ninguna condición coincidí
 
 ## Pendientes
 
-- [ ] Implementar login con Google en web (botón embebido `renderButton()`) - hoy la SPA solo
-  tiene correo/contraseña
-- [ ] Probar la instalación y el push reales en un iPhone/Safari
+- [ ] Probar login con Google, instalación y push reales en un iPhone/Safari - el botón
+  embebido compila (`flutter build web`) pero nunca se ha hecho clic en uno de verdad
 - [ ] Capturas de pantalla para las fichas de tienda - necesitan la app corriendo con datos
   reales en un dispositivo/simulador; no se generaron en esta pasada (fue una decisión
   explícita para no meterle datos ficticios a las capturas)
