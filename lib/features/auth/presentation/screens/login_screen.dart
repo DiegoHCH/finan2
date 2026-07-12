@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_google_icon.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../viewmodels/auth_providers.dart';
+import '../widgets/google_sign_in_web_button.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      // Lets GoogleSignInWebButton's embedded GIS button actually render -
+      // otherwise it has nothing to wait on.
+      ref.read(authRepositoryProvider).ensureGoogleWebButtonReady();
+    }
+  }
 
   @override
   void dispose() {
@@ -48,6 +59,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
       }
     });
+    if (kIsWeb) {
+      // Keeps this repository stream subscribed while the screen is visible
+      // (and unsubscribes automatically once it isn't) - authStateChanges()
+      // picks up the resulting sign-in on its own, this is only watched to
+      // surface errors the same way the controller-driven flows do above.
+      ref.watch(googleWebSignInEventsProvider);
+      ref.listen<AsyncValue<void>>(googleWebSignInEventsProvider, (previous, next) {
+        if (next.hasError && !next.isLoading) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(authErrorMessage(next.error))),
+          );
+        }
+      });
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -112,27 +137,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         )
                       : const Text('Iniciar sesión'),
                 ),
-                // Google Sign-In on web needs a fundamentally different flow
-                // (an embedded GIS button, not the authenticate() popup this
-                // app uses) - not built yet, so web sticks to email/password.
-                if (!kIsWeb) ...[
-                  const SizedBox(height: Finan2Space.md),
-                  Row(
-                    children: [
-                      const Expanded(child: Divider()),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Finan2Space.sm,
-                        ),
-                        child: Text(
-                          'o',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+                const SizedBox(height: Finan2Space.md),
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Finan2Space.sm,
                       ),
-                      const Expanded(child: Divider()),
-                    ],
-                  ),
-                  const SizedBox(height: Finan2Space.md),
+                      child: Text(
+                        'o',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: Finan2Space.md),
+                // Web can't reuse the same button: GoogleSignIn.authenticate()
+                // throws UnimplementedError there - GIS requires the user to
+                // interact with its own rendered button instead of a popup
+                // this app triggers imperatively.
+                if (kIsWeb)
+                  const GoogleSignInWebButton()
+                else
                   OutlinedButton.icon(
                     onPressed: authState.isLoading
                         ? null
@@ -142,7 +170,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     icon: const Finan2GoogleIcon(),
                     label: const Text('Continuar con Google'),
                   ),
-                ],
                 const SizedBox(height: Finan2Space.lg),
                 Center(
                   child: TextButton(

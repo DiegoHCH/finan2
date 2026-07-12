@@ -1,5 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
+
+/// The auto-created "Web client" OAuth ID for the finan2 Firebase project
+/// (from android/app/google-services.json's oauth_client, client_type 3 -
+/// the same client Google generates for you and that Android already uses
+/// internally). Only needed on web; native platforms read their client ID
+/// from GoogleService-Info.plist/google-services.json instead.
+const _webGoogleClientId =
+    '1048748616099-m1mphbsbin27i0kab9adf0lv8c8ebf8m.apps.googleusercontent.com';
 
 /// Wraps Firebase Auth (email/password + Google) for the household app.
 ///
@@ -13,7 +22,16 @@ class AuthRepository {
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
-  bool _googleSignInInitialized = false;
+  Future<void>? _googleSignInInit;
+
+  /// [GoogleSignIn.initialize] must be called exactly once and awaited
+  /// before any other method - caching the future (not just a bool) means
+  /// concurrent callers await the same in-flight call instead of racing.
+  Future<void> _ensureGoogleSignInInitialized() {
+    return _googleSignInInit ??= _googleSignIn.initialize(
+      clientId: kIsWeb ? _webGoogleClientId : null,
+    );
+  }
 
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
@@ -47,15 +65,34 @@ class AuthRepository {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
+  /// Native platforms only - the web plugin's `authenticate()` throws
+  /// `UnimplementedError`. Web uses [ensureGoogleWebButtonReady] +
+  /// [googleWebSignInEvents] instead, since GIS requires the user to
+  /// interact with its own rendered button (see login_screen.dart).
   Future<UserCredential> signInWithGoogle() async {
-    if (!_googleSignInInitialized) {
-      await _googleSignIn.initialize();
-      _googleSignInInitialized = true;
-    }
+    await _ensureGoogleSignInInitialized();
     final account = await _googleSignIn.authenticate();
     final idToken = account.authentication.idToken;
     final credential = GoogleAuthProvider.credential(idToken: idToken);
     return _auth.signInWithCredential(credential);
+  }
+
+  /// Web only: initializes google_sign_in so the embedded GIS button
+  /// (GoogleSignInWebButton) has something to render. Safe to call more
+  /// than once.
+  Future<void> ensureGoogleWebButtonReady() => _ensureGoogleSignInInitialized();
+
+  /// Web only: fires whenever the embedded GIS button completes a sign-in,
+  /// already exchanged for a signed-in Firebase user. AuthGate reacts to
+  /// authStateChanges() on its own once this succeeds - callers only need
+  /// to surface errors (a sign-in the user cancelled, a network failure).
+  Stream<void> get googleWebSignInEvents {
+    return _googleSignIn.authenticationEvents.asyncMap((event) async {
+      if (event is! GoogleSignInAuthenticationEventSignIn) return;
+      final idToken = event.user.authentication.idToken;
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      await _auth.signInWithCredential(credential);
+    });
   }
 
   Future<void> signOut() async {
@@ -79,10 +116,7 @@ class AuthRepository {
   Future<void> reauthenticateWithGoogle() async {
     final user = _auth.currentUser;
     if (user == null) return;
-    if (!_googleSignInInitialized) {
-      await _googleSignIn.initialize();
-      _googleSignInInitialized = true;
-    }
+    await _ensureGoogleSignInInitialized();
     final account = await _googleSignIn.authenticate();
     final idToken = account.authentication.idToken;
     final credential = GoogleAuthProvider.credential(idToken: idToken);
