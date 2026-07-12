@@ -154,19 +154,23 @@ conversación; resumen de lo construido:
   Ajustes (antes eran solo locales). Reglas de Firestore actualizadas para permitir ese
   nuevo subcollection.
 
-**Validado en esta pasada:** `flutter analyze`/`flutter test` en verde, `flutter build web`
-compila, `node --check worker.js` sin errores de sintaxis, `wrangler deploy --dry-run`
-empaqueta bien, `firebase deploy --only firestore:rules --dry-run` compila las reglas
-nuevas. **No validado** (requiere infraestructura viva/dispositivos reales, no lo hice yo):
-probar el cron con datos reales (`wrangler dev --test-scheduled`), desplegar el Worker
-actualizado (`wrangler deploy`), ni instalar/usar la PWA en un iPhone real.
+**Validado:** `flutter analyze`/`flutter test` en verde, `flutter build web` compila,
+`firestore.rules` desplegable (`firebase deploy --only firestore:rules --dry-run`). El Worker
+tiene un modo `DRY_RUN` (env var, nunca un secreto real desplegado) que lee Firestore real sin
+llamar a FCM ni escribir `sentReminders` - se probó localmente con
+`wrangler dev --test-scheduled` contra el proyecto real: encontró el hogar existente, calculó
+bien la hora de Colombia, y no disparó nada porque ninguna condición coincidía en ese momento
+(no se validó en vivo el camino positivo "sí envía", solo que lee/decide correctamente).
+
+**Desplegado (2026-07-12):** `wrangler deploy` ya corrió - el Cron Trigger
+(`0 * * * *`, cada hora) está activo en producción en
+`https://finan2-notifications.katanalabs-6002.workers.dev`.
 
 ## Pendientes
 
-- [ ] Generar la VAPID key real de Firebase Cloud Messaging y ponerla en
-  `.secrets/dart-defines.json`
-- [ ] Desplegar el Worker actualizado (`wrangler deploy` en `cloudflare/finan2-notifications/`)
-  y probar el cron contra un hogar de prueba antes de confiar en que no duplica envíos
+- [ ] Generar la VAPID key real de Firebase Cloud Messaging (Cloud Messaging > Web Push
+  certificates en la consola - no existe forma de generarla por CLI/API) y ponerla en
+  `.secrets/dart-defines.json` bajo `FINAN2_FCM_VAPID_KEY`
 - [ ] Implementar login con Google en web (botón embebido `renderButton()`) - hoy la SPA solo
   tiene correo/contraseña
 - [ ] Probar la instalación y el push reales en un iPhone/Safari
