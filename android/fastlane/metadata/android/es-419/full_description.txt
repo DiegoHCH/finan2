@@ -1,0 +1,22 @@
+Finan2 es la app de finanzas para el hogar de dos personas: cada quien entra con su propia cuenta, pero ambos comparten un mismo hogar con transacciones, presupuesto, deudas, metas de ahorro e inversiones.
+
+QUÉ INCLUYE
+
+• Movimientos: registra ingresos, gastos, facturas y ahorros por categoría y cuenta, con el nombre de quién lo registró.
+• Cuentas: efectivo, banco, billetera digital o débito, con el dinero disponible siempre a la vista.
+• Presupuesto: cuánto planean gastar por categoría cada mes vs. lo que realmente gastaron.
+• Deudas: tarjetas de crédito y créditos con estrategia de pago avalancha, y cuándo quedan libres de deudas.
+• Metas de ahorro: progreso por meta, aportes con fecha y autor, interés compuesto opcional.
+• Reto de ahorro: la cuadrícula clásica de ahorro por casillas, interactiva.
+• Inversiones: portafolio con ganancias o pérdidas, sumado al patrimonio neto.
+• Facturas recurrentes: arriendo, servicios y demás gastos fijos se registran solos cada mes.
+• Resumen anual, notas del mes, y exportar reporte en PDF o CSV.
+• Notificaciones cuando tu pareja registra algo, se acerca una fecha de pago, o se pasan del presupuesto.
+
+PRIVACIDAD PRIMERO
+
+Los montos de tu hogar (transacciones, saldos, deudas, metas, inversiones) se cifran en el dispositivo antes de guardarse. La llave de cifrado nunca sale de sus dos teléfonos - ni siquiera con acceso administrativo a la base de datos se pueden leer los montos reales de un hogar.
+
+Sin anuncios. Sin rastreo. Sin vender datos a terceros. Finan2 solo existe para que ustedes dos vean sus finanzas, nadie más.
+
+Hecho para hogares que llevan sus cuentas en pesos colombianos, pero funciona con cualquier moneda.

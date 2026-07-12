@@ -1,0 +1,87 @@
+# App Store Connect - ficha de Finan2 (EN PAUSA)
+
+> **No se va a publicar una app nativa de iOS en App Store.** La decisión (2026-07-12) es
+> convertir Finan2 en una SPA para iOS (probablemente el target web de Flutter en `web/`,
+> como PWA) en vez de pasar por review de Apple. Este documento queda guardado por si esa
+> decisión cambia más adelante, pero no representa el plan actual.
+
+Campos para copiar/pegar en App Store Connect al crear la ficha. Los límites de caracteres
+son los que impone Apple.
+
+## Nombre (máx. 30)
+
+```
+Finan2
+```
+
+## Subtítulo (máx. 30)
+
+```
+Finanzas del hogar en pareja
+```
+
+## Texto promocional (máx. 170, editable sin re-review)
+
+```
+Registra gastos, deudas y metas con tu pareja. Los montos se cifran en el dispositivo: ni con acceso a la base de datos se leen. Sin anuncios ni rastreo.
+```
+
+## Descripción (máx. 4000)
+
+```
+Finan2 es la app de finanzas para el hogar de dos personas: cada quien entra con su propia cuenta, pero ambos comparten un mismo hogar con transacciones, presupuesto, deudas, metas de ahorro e inversiones.
+
+QUÉ INCLUYE
+
+• Movimientos: registra ingresos, gastos, facturas y ahorros por categoría y cuenta, con el nombre de quién lo registró.
+• Cuentas: efectivo, banco, billetera digital o débito, con el dinero disponible siempre a la vista.
+• Presupuesto: cuánto planean gastar por categoría cada mes vs. lo que realmente gastaron.
+• Deudas: tarjetas de crédito y créditos con estrategia de pago avalancha, y cuándo quedan libres de deudas.
+• Metas de ahorro: progreso por meta, aportes con fecha y autor, interés compuesto opcional.
+• Reto de ahorro: la cuadrícula clásica de ahorro por casillas, interactiva.
+• Inversiones: portafolio con ganancias o pérdidas, sumado al patrimonio neto.
+• Facturas recurrentes: arriendo, servicios y demás gastos fijos se registran solos cada mes.
+• Resumen anual, notas del mes, y exportar reporte en PDF o CSV.
+• Notificaciones cuando tu pareja registra algo, se acerca una fecha de pago, o se pasan del presupuesto.
+
+PRIVACIDAD PRIMERO
+
+Los montos de tu hogar (transacciones, saldos, deudas, metas, inversiones) se cifran en el dispositivo antes de guardarse. La llave de cifrado nunca sale de sus dos teléfonos - ni siquiera con acceso administrativo a la base de datos se pueden leer los montos reales de un hogar.
+
+Sin anuncios. Sin rastreo. Sin vender datos a terceros. Finan2 solo existe para que ustedes dos vean sus finanzas, nadie más.
+
+Hecho para hogares que llevan sus cuentas en pesos colombianos, pero funciona con cualquier moneda.
+```
+
+## Palabras clave (máx. 100, separadas por coma sin espacios)
+
+```
+finanzas,hogar,pareja,presupuesto,gastos,deudas,ahorro,inversiones,pagos,dinero,cuentas
+```
+
+## Categoría
+
+Finanzas (primaria). Sin categoría secundaria necesaria.
+
+## Clasificación por edad
+
+4+ - sin contenido objetable.
+
+## URLs requeridas
+
+- **Política de privacidad**: https://claude.ai/code/artifact/07ca9609-ec69-4b85-be4b-f8ccc5e5f9c0
+  (fuente en `store/privacy_policy.md`). Ese link es un Artifact privado de Claude - antes de
+  enviar a review, compártelo desde el menú de la página (o migra el contenido a una URL
+  propia, ej. GitHub Pages) para que quede públicamente accesible; Apple y Google validan que
+  la URL cargue sin login.
+- **URL de soporte**: Apple exige una página o `mailto:` donde el usuario pueda pedir ayuda.
+  No existe todavía - defínela antes de crear la ficha (un `mailto:katanalabs.6002@gmail.com`
+  sirve como mínimo viable).
+- **URL de marketing** (opcional): se puede dejar vacía.
+
+## Notas
+
+- Esta es una app de 2 usuarios por hogar (no hay flujo de registro abierto tipo red social),
+  aclara eso si Apple pregunta en el review sobre el modelo de cuentas.
+- Login con Google ya está configurado en `ios/Runner/Info.plist` (`CFBundleURLTypes` con el
+  reversed client ID real) - nada pendiente ahí.
