@@ -6,8 +6,18 @@
 // Auth model: a shared secret sent in the request body (WORKER_SECRET). The
 // actual push send is authenticated as a Google service account, whose
 // private key is minted into a short-lived OAuth token per request.
+//
+// This Worker also runs a Cron Trigger (see wrangler.toml) that fires the
+// reminders `NotificationService` schedules locally on native platforms
+// (daily/weekly/debt payment) - flutter_local_notifications has no real
+// background-scheduling equivalent on web, so those reminders have to come
+// from somewhere with its own clock. See handleScheduled() below.
 
 const ICON_URL = 'https://finan2.web.app/icons/Icon-192.png';
+
+// Colombia is UTC-5 year-round (no DST) - this whole file assumes that
+// single fixed offset rather than pulling in a timezone library.
+const CO_UTC_OFFSET_HOURS = 5;
 
 export default {
   async fetch(request, env) {
@@ -51,7 +61,178 @@ export default {
       return Response.json({ error: e.message }, { status: 500 });
     }
   },
+
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(handleScheduled(env));
+  },
 };
+
+async function handleScheduled(env) {
+  const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
+  const projectId = env.FIREBASE_PROJECT_ID;
+  const co = coNow();
+
+  const households = await listHouseholds(accessToken, projectId);
+
+  for (const household of households) {
+    const tokens = await getHouseholdTokens(accessToken, projectId, household.id);
+    if (tokens.length === 0) continue;
+    const tokensByUid = {};
+    for (const t of tokens) {
+      (tokensByUid[t.uid] ??= []).push(t);
+    }
+
+    let debts = null; // fetched lazily, at most once per household per run
+
+    for (const uid of household.members) {
+      const memberTokens = tokensByUid[uid] ?? [];
+      if (memberTokens.length === 0) continue;
+      const prefs = await getMemberPrefs(accessToken, projectId, household.id, uid);
+
+      if (prefs.dailyReminder && prefs.dailyReminderHour === co.hour) {
+        await sendOnce({
+          accessToken,
+          projectId,
+          householdId: household.id,
+          marker: `daily_${uid}_${co.dateStr}`,
+          tokens: memberTokens,
+          title: 'Registra tus gastos de hoy',
+          body: 'No olvides anotar lo que ingresó o gastó el hogar hoy.',
+        });
+      }
+
+      if (prefs.weeklySummary && co.weekday === 0 && co.hour === 19) {
+        await sendOnce({
+          accessToken,
+          projectId,
+          householdId: household.id,
+          marker: `weekly_${uid}_${co.dateStr}`,
+          tokens: memberTokens,
+          title: 'Resumen semanal listo',
+          body: 'Revisa cómo le fue al hogar esta semana en Finan2.',
+        });
+      }
+
+      if (prefs.debtPayments && co.hour === 9) {
+        debts ??= await getHouseholdDebts(accessToken, projectId, household.id);
+        for (const debt of debts) {
+          if (!debt.hasBalance) continue;
+          if (co.day !== debtReminderDay(debt.paymentDay)) continue;
+          await sendOnce({
+            accessToken,
+            projectId,
+            householdId: household.id,
+            marker: `debt_${debt.id}_${uid}_${co.monthStr}`,
+            tokens: memberTokens,
+            title: `Pago de ${debt.name} pronto`,
+            body: `La cuota de ${debt.name} vence pronto.`,
+          });
+        }
+      }
+    }
+  }
+}
+
+/// Mirrors NotificationService.scheduleDebtPaymentReminders' reminderDay
+/// calculation (lib/core/notifications/notification_service.dart).
+function debtReminderDay(paymentDay) {
+  return paymentDay - 2 < 1 ? 1 : paymentDay - 2;
+}
+
+function coNow() {
+  const shifted = new Date(Date.now() - CO_UTC_OFFSET_HOURS * 60 * 60 * 1000);
+  return {
+    hour: shifted.getUTCHours(),
+    day: shifted.getUTCDate(),
+    weekday: shifted.getUTCDay(), // 0 = Sunday
+    dateStr: shifted.toISOString().slice(0, 10), // YYYY-MM-DD
+    monthStr: shifted.toISOString().slice(0, 7), // YYYY-MM
+  };
+}
+
+async function sendOnce({ accessToken, projectId, householdId, marker, tokens, title, body }) {
+  if (await alreadySent(accessToken, projectId, householdId, marker)) return;
+  await Promise.allSettled(
+    tokens.map((t) =>
+      sendToToken({ title, body, accessToken, projectId, token: t.token, platform: t.platform }),
+    ),
+  );
+  await markSent(accessToken, projectId, householdId, marker);
+}
+
+async function listHouseholds(accessToken, projectId) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households?pageSize=1000`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  const data = await res.json();
+  if (!data.documents) return [];
+  return data.documents.map((doc) => ({
+    id: doc.name.split('/').pop(),
+    members: (doc.fields?.members?.arrayValue?.values ?? [])
+      .map((v) => v.stringValue)
+      .filter(Boolean),
+  }));
+}
+
+async function getMemberPrefs(accessToken, projectId, householdId, uid) {
+  const defaults = {
+    dailyReminder: true,
+    dailyReminderHour: 20,
+    weeklySummary: true,
+    debtPayments: true,
+  };
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/memberPrefs/${uid}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  if (res.status !== 200) return defaults;
+  const f = (await res.json()).fields ?? {};
+  return {
+    dailyReminder: f.dailyReminder?.booleanValue ?? defaults.dailyReminder,
+    dailyReminderHour: f.dailyReminderHour?.integerValue != null
+      ? parseInt(f.dailyReminderHour.integerValue, 10)
+      : defaults.dailyReminderHour,
+    weeklySummary: f.weeklySummary?.booleanValue ?? defaults.weeklySummary,
+    debtPayments: f.debtPayments?.booleanValue ?? defaults.debtPayments,
+  };
+}
+
+async function getHouseholdDebts(accessToken, projectId, householdId) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/debts?pageSize=1000`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  const data = await res.json();
+  if (!data.documents) return [];
+  return data.documents.map((doc) => ({
+    id: doc.name.split('/').pop(),
+    name: doc.fields?.name?.stringValue ?? '',
+    paymentDay: doc.fields?.paymentDay?.integerValue
+      ? parseInt(doc.fields.paymentDay.integerValue, 10)
+      : 1,
+    hasBalance: doc.fields?.hasBalance?.booleanValue ?? false,
+  }));
+}
+
+async function alreadySent(accessToken, projectId, householdId, markerId) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/sentReminders/${markerId}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  return res.status === 200;
+}
+
+async function markSent(accessToken, projectId, householdId, markerId) {
+  await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/sentReminders?documentId=${markerId}`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { sentAt: { timestampValue: new Date().toISOString() } } }),
+    },
+  );
+}
 
 async function getHouseholdTokens(accessToken, projectId, householdId) {
   const res = await fetch(

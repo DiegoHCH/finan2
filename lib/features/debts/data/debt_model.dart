@@ -121,6 +121,11 @@ class Debt {
       'name': name,
       'type': type.name,
       'balance': await crypto.encryptAmount(householdId, balance),
+      // Plaintext mirror of "is there anything left to pay" - lets the
+      // reminder Cron Trigger in cloudflare/finan2-notifications/worker.js
+      // skip a paid-off debt's reminder without needing the household's
+      // encryption key, which the server deliberately never has.
+      'hasBalance': balance > 0,
       'rate': rate,
       'paymentDay': paymentDay,
       'creditLimit': await crypto.encryptAmount(householdId, creditLimit),

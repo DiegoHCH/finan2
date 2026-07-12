@@ -3,6 +3,12 @@ main = "worker.js"
 compatibility_date = "2026-01-01"
 workers_dev = true
 
+# Fires handleScheduled() in worker.js hourly, on the hour (UTC) - it checks
+# each household's reminder prefs against the current Colombia-local time
+# itself, so a coarser-than-exact cron is fine (see CO_UTC_OFFSET_HOURS).
+[triggers]
+crons = ["0 * * * *"]
+
 # Secrets - set with wrangler secret put (never in this file):
 #   wrangler secret put WORKER_SECRET
 #   wrangler secret put FIREBASE_SERVICE_ACCOUNT

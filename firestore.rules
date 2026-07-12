@@ -106,6 +106,15 @@ service cloud.firestore {
         allow create: if isMember()
           && request.resource.data.uid == request.auth.uid;
       }
+
+      // Doc ID is the member's own uid - only they can create/overwrite
+      // their own scheduling prefs, mirrored here so the reminder Cron
+      // Trigger in cloudflare/finan2-notifications/worker.js can read them
+      // (it authenticates as a service account, which isn't subject to
+      // these rules at all - this only gates the client SDK writes).
+      match /memberPrefs/{uid} {
+        allow create: if isMember() && uid == request.auth.uid;
+      }
     }
   }
 }
