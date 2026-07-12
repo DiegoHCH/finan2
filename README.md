@@ -175,10 +175,16 @@ bien la hora de Colombia, y no disparó nada porque ninguna condición coincidí
 
 ## Pendientes
 
-- [ ] Probar login con Google, instalación y push reales en un iPhone/Safari - el botón
-  embebido compila (`flutter build web`) pero nunca se ha hecho clic en uno de verdad
 - [ ] Capturas de pantalla para las fichas de tienda - necesitan la app corriendo con datos
   reales en un dispositivo/simulador; no se generaron en esta pasada (fue una decisión
   explícita para no meterle datos ficticios a las capturas)
+
+**Pospuesto a propósito (decisión 2026-07-12), no olvidado:**
+
+- [ ] Probar login con Google, instalación y push reales en un iPhone/Safari - el botón
+  embebido compila (`flutter build web`) pero nunca se ha hecho clic en uno de verdad
 - [ ] QA manual en dispositivo/emulador de los flujos completos (login → hogar → cada feature) — hasta ahora solo hay cobertura de tests unitarios/widget
-- [ ] Datos de prueba existentes en Firestore (si los hay) tienen montos en texto plano — no compatibles con el nuevo formato cifrado, hay que borrarlos antes de volver a usar la app en el proyecto real
+
+Firestore de producción quedó vacío (0 hogares) - se borró el único hogar de prueba que
+existía (`Q5N2AZ`, sin datos financieros reales, ver historial de esta conversación) antes de
+que quedara incompatible con el formato de montos cifrados.
