@@ -111,17 +111,65 @@ publicar la primera versión — no dependas de que este equipo no falle.
 - **Play Store**: `android/fastlane/metadata/android/es-419/` (título, descripción corta y
   larga - formato fastlane estándar, listo para `fastlane deploy` o carga manual en Play
   Console).
-- **iOS**: no se va a publicar nativo en App Store - la app para iOS será una SPA (probablemente
-  el target web de Flutter en `web/`, como PWA), decisión tomada el 2026-07-12. El borrador de
-  ficha de App Store Connect que se había preparado quedó guardado sin usar en
-  `store/app_store_metadata.md.on-hold` por si esto cambia.
+- **iOS**: no se va a publicar nativo en App Store - la app para iOS es la SPA/PWA descrita
+  abajo. El borrador de ficha de App Store Connect que se había preparado quedó guardado sin
+  usar en `store/app_store_metadata.md.on-hold` por si esto cambia.
 - **Política de privacidad**: `store/privacy_policy.md` (fuente), publicada en
   https://claude.ai/code/artifact/07ca9609-ec69-4b85-be4b-f8ccc5e5f9c0 - **ese link empieza
   privado**, hay que compartirlo desde el menú de la página antes de pegarlo en Play Console
   (o donde termine viviendo la SPA de iOS), o migrar el contenido a una URL propia.
 
+## SPA/PWA para iOS
+
+Decisión (2026-07-12): en vez de publicar nativo en App Store, iOS usa el target web de
+Flutter (`web/`) como PWA. Investigación completa y diseño en el historial de esta
+conversación; resumen de lo construido:
+
+- **Base web**: `web/manifest.json`/`index.html` con metadata real (nombre, descripción,
+  meta tags de iOS). Login con Google **oculto en web** (`kIsWeb` en `login_screen.dart`) -
+  el flujo `GoogleSignIn.authenticate()` que usa `auth_repository.dart` lanza
+  `UnimplementedError` en el plugin web, que exige un botón embebido (`renderButton()`) en
+  vez de un popup; no se implementó esa pieza en esta pasada, así que en web solo se puede
+  entrar con correo/contraseña. Todo lo demás (Firestore, Firebase Auth por
+  correo/contraseña, `cryptography`) funciona igual sin cambios.
+- **Instalación + riesgo de la llave**: banner en `Finan2HomeShell` que explica cómo instalar
+  en iOS ("Compartir → Agregar a inicio", no hay prompt automático), y
+  `lib/core/pwa/storage_persistence.dart` pide la Persistent Storage API del navegador al
+  entrar (con permiso de notificaciones primero, que Safari respeta más). Si el navegador no
+  la concede, Ajustes muestra un aviso recomendando guardar el código completo del hogar en
+  otro lado - iOS puede borrar el storage local (y con él, la llave de cifrado) si la PWA no
+  se abre en ~7 días.
+- **Push en web**: `web/firebase-messaging-sw.js` nuevo, y `push_service.dart` ya pasa una
+  VAPID key en `getToken()` y guarda `platform: 'web'` (el lado del Worker ya lo esperaba).
+  **Falta generar la VAPID key real** en Firebase Console (Cloud Messaging > Web Push
+  certificates) y ponerla en `.secrets/dart-defines.json` bajo `FINAN2_FCM_VAPID_KEY` (hoy
+  vacía).
+- **Recordatorios programados en servidor**: `flutter_local_notifications` no tiene
+  scheduling real en background en web, así que se movieron al Cron Trigger nuevo en
+  `cloudflare/finan2-notifications/worker.js` (`wrangler.toml` ya tiene `[triggers] crons =
+  ["0 * * * *"]`). Para que el cron pueda decidir sin la llave de cifrado del hogar, cada
+  deuda ahora guarda también un campo plano `hasBalance` (junto al `balance` cifrado), y las
+  preferencias de recordatorio relevantes (`dailyReminder`, `weeklySummary`, `debtPayments`)
+  se sincronizan a `households/{hid}/memberPrefs/{uid}` cuando el usuario las cambia en
+  Ajustes (antes eran solo locales). Reglas de Firestore actualizadas para permitir ese
+  nuevo subcollection.
+
+**Validado en esta pasada:** `flutter analyze`/`flutter test` en verde, `flutter build web`
+compila, `node --check worker.js` sin errores de sintaxis, `wrangler deploy --dry-run`
+empaqueta bien, `firebase deploy --only firestore:rules --dry-run` compila las reglas
+nuevas. **No validado** (requiere infraestructura viva/dispositivos reales, no lo hice yo):
+probar el cron con datos reales (`wrangler dev --test-scheduled`), desplegar el Worker
+actualizado (`wrangler deploy`), ni instalar/usar la PWA en un iPhone real.
+
 ## Pendientes
 
+- [ ] Generar la VAPID key real de Firebase Cloud Messaging y ponerla en
+  `.secrets/dart-defines.json`
+- [ ] Desplegar el Worker actualizado (`wrangler deploy` en `cloudflare/finan2-notifications/`)
+  y probar el cron contra un hogar de prueba antes de confiar en que no duplica envíos
+- [ ] Implementar login con Google en web (botón embebido `renderButton()`) - hoy la SPA solo
+  tiene correo/contraseña
+- [ ] Probar la instalación y el push reales en un iPhone/Safari
 - [ ] Capturas de pantalla para las fichas de tienda - necesitan la app corriendo con datos
   reales en un dispositivo/simulador; no se generaron en esta pasada (fue una decisión
   explícita para no meterle datos ficticios a las capturas)
