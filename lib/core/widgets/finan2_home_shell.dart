@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/accounts/presentation/viewmodels/account_providers.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
@@ -24,6 +25,7 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
+import '../notifications/notification_primer_sheet.dart';
 import '../notifications/notification_providers.dart';
 import '../pwa/ios_install_detection.dart';
 import '../pwa/pwa_providers.dart';
@@ -102,6 +104,26 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     }
   }
 
+  static const _notifPrimerShownKey = 'notif_primer_shown';
+
+  /// Registering the push token is what triggers the OS notification
+  /// permission prompt automatically on first launch - shows our own
+  /// explainer bottom sheet once, right before that happens, instead of
+  /// hitting the user with a bare system dialog with no context.
+  Future<void> _maybeRegisterPushToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_notifPrimerShownKey) == true) {
+      await _registerPushToken();
+      return;
+    }
+    await prefs.setBool(_notifPrimerShownKey, true);
+    if (!mounted) return;
+    final proceed = await showNotificationPrimerSheet(context);
+    if (proceed) {
+      await _registerPushToken();
+    }
+  }
+
   Future<void> _rescheduleDebtReminders() async {
     final prefs =
         ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
@@ -122,7 +144,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       _runScan();
       _rescheduleDebtReminders();
       _runRecurringBillScan();
-      _registerPushToken();
+      _maybeRegisterPushToken();
       ref.read(persistentStorageStatusProvider.notifier).requestIfNeeded();
     });
     // FCM doesn't surface a system-tray alert for messages that arrive while
