@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_code_box.dart';
@@ -65,21 +65,20 @@ class InviteHouseholdScreen extends StatelessWidget {
               ),
               const SizedBox(height: Finan2Space.lg),
               FilledButton.icon(
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: shareCode));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Código copiado')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.copy_outlined),
-                label: const Text('Copiar código'),
+                onPressed: () => SharePlus.instance.share(
+                  ShareParams(
+                    text: shareCode,
+                    title: 'Invitación a nuestro hogar en Finan2',
+                    subject: 'Invitación a nuestro hogar en Finan2',
+                  ),
+                ),
+                icon: const Icon(Icons.ios_share_outlined),
+                label: const Text('Compartir invitación'),
               ),
               const SizedBox(height: Finan2Space.sm),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Continuar'),
+                child: const Text('Omitir por ahora'),
               ),
             ],
           ),
