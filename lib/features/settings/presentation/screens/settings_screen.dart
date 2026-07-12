@@ -10,14 +10,21 @@ import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../accounts/presentation/screens/accounts_screen.dart';
+import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
 import '../../../auth/presentation/screens/login_screen.dart' show authErrorMessage;
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
+import '../../../budget/presentation/screens/budget_screen.dart';
+import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/screens/categories_screen.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../export/presentation/screens/export_screen.dart';
+import '../../../investments/presentation/screens/investments_screen.dart';
+import '../../../investments/presentation/viewmodels/investment_providers.dart';
 import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
+import '../../../notifications/presentation/screens/notifications_screen.dart';
+import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 
 const _currencies = {'COP': 'Peso COP · \$', 'USD': 'Dólar USD · US\$'};
 const _weekStarts = {'monday': 'Lunes', 'sunday': 'Domingo'};
@@ -209,6 +216,12 @@ class SettingsScreen extends ConsumerWidget {
     final memberNames = members
         .map((uid) => household.memberInfo[uid]?.name ?? '?')
         .join(', ');
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {})
+        .values
+        .fold(0, (sum, v) => sum + v);
+    final totalInvestments = ref.watch(totalInvestmentValueProvider);
+    final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -411,6 +424,45 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Exportar reporte',
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const ExportScreen()),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Finan2Space.lg),
+                  Finan2ListCard(
+                    children: [
+                      Finan2ListRow(
+                        icon: Icons.donut_large_outlined,
+                        label: 'Presupuesto',
+                        value: '${formatMoney(totalPlanned)} planeado',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const BudgetScreen()),
+                        ),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.bar_chart_outlined,
+                        label: 'Resumen anual',
+                        value: '${DateTime.now().year}',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => AnnualSummaryScreen(household: household),
+                          ),
+                        ),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.trending_up,
+                        label: 'Inversiones',
+                        value: formatMoney(totalInvestments),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const InvestmentsScreen()),
+                        ),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.notifications_none_outlined,
+                        label: 'Centro de notificaciones',
+                        value: unreadNotifications > 0 ? '$unreadNotifications' : null,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                         ),
                       ),
                     ],

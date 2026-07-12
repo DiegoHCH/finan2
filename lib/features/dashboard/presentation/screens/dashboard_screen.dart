@@ -4,23 +4,14 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
-import '../../../../core/widgets/finan2_empty_state.dart';
-import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
-import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
-import '../../../budget/presentation/screens/budget_screen.dart';
-import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../../investments/presentation/screens/investments_screen.dart';
 import '../../../investments/presentation/viewmodels/investment_providers.dart';
-import '../../../notifications/presentation/screens/notifications_screen.dart';
-import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 import '../../../savings_goals/presentation/viewmodels/savings_goal_providers.dart';
-import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 
 /// "Inicio": the household's pulse for the current month - income vs.
@@ -37,10 +28,6 @@ class DashboardScreen extends ConsumerWidget {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final formatMoney = ref.watch(moneyFormatterProvider);
     final categoryById = {for (final c in categories) c.id: c};
-    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {})
-        .values
-        .fold(0, (sum, v) => sum + v);
-    final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
     final netWorth = ref.watch(availableBalanceProvider) +
         ref.watch(totalSavedProvider) +
@@ -62,42 +49,46 @@ class DashboardScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 Finan2Space.xl,
-                0,
+                Finan2Space.md,
                 Finan2Space.xl,
                 Finan2Space.sm,
               ),
-              child: Container(
-                padding: const EdgeInsets.all(Finan2Space.md),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+              child: SizedBox(
+                width: double.infinity,
+                child: Container(
+                  padding: const EdgeInsets.all(Finan2Space.md),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                    ),
+                    borderRadius: BorderRadius.circular(Finan2Radius.card),
                   ),
-                  borderRadius: BorderRadius.circular(Finan2Radius.card),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Patrimonio neto',
-                      style: TextStyle(color: Colors.white, fontSize: 11.5),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      formatMoney(netWorth),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Patrimonio neto',
+                        style: TextStyle(color: Colors.white, fontSize: 11.5),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text(
-                      'Cuentas + ahorros + inversiones − deudas',
-                      style: TextStyle(color: Colors.white, fontSize: 11),
-                    ),
-                  ],
+                      const SizedBox(height: 3),
+                      Text(
+                        formatMoney(netWorth),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        'Cuentas + ahorros + inversiones − deudas',
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -106,22 +97,11 @@ class DashboardScreen extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Center(child: Text('$error')),
                 data: (transactions) {
-                  if (transactions.isEmpty) {
-                    return Finan2EmptyState(
-                      icon: Icons.pie_chart_outline_rounded,
-                      title: 'Aún no hay movimientos',
-                      description:
-                          'Registra ingresos y gastos en Movimientos para ver '
-                          'aquí el resumen del mes.',
-                      actionLabel: '+ Agregar el primero',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditTransactionScreen(),
-                        ),
-                      ),
-                    );
-                  }
-
+                  // No early-return empty state here on purpose: Inicio
+                  // always shows its normal layout (stat boxes at $0, the
+                  // existing "no hay gastos categorizados" fallback where
+                  // the bars would go) - "aún no hay movimientos" is
+                  // Movimientos' own empty state, not Inicio's.
                   var income = 0;
                   var expense = 0;
                   final byCategory = <String, int>{};
@@ -238,52 +218,6 @@ class DashboardScreen extends ConsumerWidget {
                               ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: Finan2Space.lg),
-                      Finan2ListCard(
-                        children: [
-                          Finan2ListRow(
-                            icon: Icons.donut_large_outlined,
-                            label: 'Presupuesto',
-                            value: '${formatMoney(totalPlanned)} planeado',
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const BudgetScreen(),
-                              ),
-                            ),
-                          ),
-                          Finan2ListRow(
-                            icon: Icons.bar_chart_outlined,
-                            label: 'Resumen anual',
-                            value: '${DateTime.now().year}',
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    AnnualSummaryScreen(household: household),
-                              ),
-                            ),
-                          ),
-                          Finan2ListRow(
-                            icon: Icons.notifications_outlined,
-                            label: 'Notificaciones',
-                            value: unreadNotifications > 0 ? '$unreadNotifications' : null,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const NotificationsScreen(),
-                              ),
-                            ),
-                          ),
-                          Finan2ListRow(
-                            icon: Icons.trending_up,
-                            label: 'Inversiones',
-                            value: formatMoney(totalInvestments),
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const InvestmentsScreen(),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   );
