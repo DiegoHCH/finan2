@@ -27,13 +27,15 @@ class InvestmentsScreen extends ConsumerWidget {
     final formatMoney = ref.watch(moneyFormatterProvider);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'investmentsFab',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditInvestmentScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: investmentsAsync.value?.isEmpty ?? true
+          ? null
+          : FloatingActionButton(
+              heroTag: 'investmentsFab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditInvestmentScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [
@@ -41,6 +43,7 @@ class InvestmentsScreen extends ConsumerWidget {
               label: 'Inversiones',
               title: formatMoney(total),
               household: household,
+              showBackButton: true,
             ),
             Expanded(
               child: investmentsAsync.when(

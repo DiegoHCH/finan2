@@ -75,7 +75,11 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(label: 'Exportar reporte', title: 'PDF o CSV'),
+            const Finan2AppTop(
+              label: 'Exportar reporte',
+              title: 'PDF o CSV',
+              showBackButton: true,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(Finan2Space.xl),

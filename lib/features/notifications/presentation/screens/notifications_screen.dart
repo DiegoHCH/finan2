@@ -45,6 +45,7 @@ class NotificationsScreen extends ConsumerWidget {
                       ),
                     )
                   : null,
+              showBackButton: true,
             ),
             Expanded(
               child: notificationsAsync.when(

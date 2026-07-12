@@ -24,13 +24,15 @@ class RecurringBillsScreen extends ConsumerWidget {
     final formatMoney = ref.watch(moneyFormatterProvider);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'recurringBillsFab',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditRecurringBillScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: billsAsync.value?.isEmpty ?? true
+          ? null
+          : FloatingActionButton(
+              heroTag: 'recurringBillsFab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditRecurringBillScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [
@@ -44,6 +46,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                   label: 'Facturas recurrentes',
                   title: '${formatMoney(totalFactura)} al mes',
                   trailing: bills.isEmpty ? null : const _AutoBadge(),
+                  showBackButton: true,
                 );
               },
             ),

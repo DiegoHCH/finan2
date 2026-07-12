@@ -13,6 +13,7 @@ class Finan2AppTop extends StatelessWidget {
     required this.title,
     this.household,
     this.trailing,
+    this.showBackButton = false,
     super.key,
   });
 
@@ -23,6 +24,11 @@ class Finan2AppTop extends StatelessWidget {
   /// Overrides the member-avatars stack on the right (e.g. Deudas shows a
   /// strategy badge there instead).
   final Widget? trailing;
+
+  /// Set on every screen reached via Navigator.push (not one of the 5
+  /// bottom-nav tabs) - not everyone knows or uses the back gesture, so
+  /// pushed screens need a visible way back too.
+  final bool showBackButton;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +45,14 @@ class Finan2AppTop extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (showBackButton)
+            Padding(
+              padding: const EdgeInsets.only(right: 4, top: 2),
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Icon(Icons.chevron_left, size: 26, color: colors.inkSoft),
+              ),
+            ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

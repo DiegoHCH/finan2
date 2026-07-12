@@ -31,13 +31,15 @@ class AccountsScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'accountsFab',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditAccountScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: accountsAsync.value?.isEmpty ?? true
+          ? null
+          : FloatingActionButton(
+              heroTag: 'accountsFab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditAccountScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [
@@ -45,6 +47,7 @@ class AccountsScreen extends ConsumerWidget {
               label: 'Cuentas',
               title: 'Dinero disponible',
               household: household,
+              showBackButton: true,
             ),
             Expanded(
               child: accountsAsync.when(

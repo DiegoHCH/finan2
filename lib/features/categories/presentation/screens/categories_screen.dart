@@ -19,19 +19,22 @@ class CategoriesScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'categoriesFab',
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
-        ),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: categories.isEmpty
+          ? null
+          : FloatingActionButton(
+              heroTag: 'categoriesFab',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
+              ),
+              child: const Icon(Icons.add),
+            ),
       body: SafeArea(
         child: Column(
           children: [
             Finan2AppTop(
               label: 'Categorías',
               title: '${categories.length} activa${categories.length == 1 ? '' : 's'}',
+              showBackButton: true,
             ),
             Expanded(
               child: categoriesAsync.when(

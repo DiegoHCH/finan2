@@ -19,7 +19,11 @@ class NotificationPreferencesScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(label: 'Notificaciones', title: 'Preferencias'),
+            const Finan2AppTop(
+              label: 'Notificaciones',
+              title: 'Preferencias',
+              showBackButton: true,
+            ),
             Expanded(
               child: prefsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),

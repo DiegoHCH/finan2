@@ -36,6 +36,7 @@ class AnnualSummaryScreen extends ConsumerWidget {
               label: 'Resumen anual',
               title: '$year',
               household: household,
+              showBackButton: true,
             ),
             Expanded(
               child: ListView(

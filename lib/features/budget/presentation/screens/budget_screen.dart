@@ -69,6 +69,7 @@ class BudgetScreen extends ConsumerWidget {
               trailing: pctAsignado != null
                   ? _Badge(text: '$pctAsignado% asignado')
                   : null,
+              showBackButton: true,
             ),
             Expanded(
               child: ListView(

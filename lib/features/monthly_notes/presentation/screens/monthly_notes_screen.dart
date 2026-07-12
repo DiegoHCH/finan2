@@ -23,7 +23,12 @@ class MonthlyNotesScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Finan2AppTop(label: 'Notas', title: monthLabelCap, household: household),
+            Finan2AppTop(
+              label: 'Notas',
+              title: monthLabelCap,
+              household: household,
+              showBackButton: true,
+            ),
             Expanded(
               child: notesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
