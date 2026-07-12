@@ -48,3 +48,6 @@ app.*.map.json
 .secrets/
 cloudflare/**/.dev.vars
 cloudflare/**/.wrangler/
+
+# Firebase CLI local deploy cache
+.firebase/
