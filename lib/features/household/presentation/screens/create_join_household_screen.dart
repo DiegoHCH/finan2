@@ -43,10 +43,14 @@ class _CreateJoinHouseholdScreenState
       await controller.createHousehold(
         householdName: _householdNameController.text.trim(),
       );
+      // ref.read must come after the mounted check - reading it first (as in
+      // `ref.read(...) && mounted`) still evaluates ref.read() even when the
+      // widget was unmounted during the await above, which throws.
+      if (!mounted) return;
       final state = ref.read(householdControllerProvider);
       final household = state.value;
       final shareCode = controller.lastShareCode ?? household?.inviteCode;
-      if (household != null && shareCode != null && mounted) {
+      if (household != null && shareCode != null) {
         await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => InviteHouseholdScreen(shareCode: shareCode),

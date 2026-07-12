@@ -39,6 +39,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
+    // SignupScreen is pushed on top of LoginScreen, which is what AuthGate
+    // actually swaps to the household flow once signed in - without popping
+    // back to it here, a successful signup leaves this screen stuck on top,
+    // hiding that the app already moved on underneath.
+    //
+    // The mounted check must come before ref.read(), not combined into one
+    // `ref.read(...) && mounted` condition - `&&` still evaluates ref.read()
+    // first, which throws if the widget was unmounted during the await above.
+    if (!mounted) return;
+    if (!ref.read(authControllerProvider).hasError) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
