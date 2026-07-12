@@ -168,7 +168,6 @@ class SettingsScreen extends ConsumerWidget {
                       Finan2ListRow(
                         icon: Icons.tune,
                         label: 'Ajustes financieros',
-                        value: 'Moneda, año, categorías, cuentas',
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => FinancialSettingsScreen(household: household),
