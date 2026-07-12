@@ -65,7 +65,6 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           transfers: ref.read(transfersProvider).value ?? const [],
           savingsChallenge: ref.read(savingsChallengeProvider).value,
           prefs: prefs,
-          formatMoney: ref.read(moneyFormatterProvider),
         );
     for (final notification in created) {
       await ref.read(pushServiceProvider).sendPush(

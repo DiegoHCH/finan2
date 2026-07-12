@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
+
 const _daysPerMonth = 30.436875;
 
 /// A single contribution toward a goal - who added it, when, and how much.
@@ -16,18 +18,28 @@ class Contribution {
   final int amount;
   final String createdBy;
 
-  factory Contribution.fromMap(Map<String, dynamic> map) {
+  static Future<Contribution> fromMap(
+    Map<String, dynamic> map,
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return Contribution(
       date: (map['date'] as Timestamp).toDate(),
-      amount: (map['amount'] as num).toInt(),
+      amount: await crypto.decryptAmount(
+        householdId,
+        map['amount'] as String,
+      ),
       createdBy: map['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Future<Map<String, dynamic>> toMap(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'date': Timestamp.fromDate(date),
-      'amount': amount,
+      'amount': await crypto.encryptAmount(householdId, amount),
       'createdBy': createdBy,
     };
   }
@@ -97,33 +109,55 @@ class SavingsGoal {
     return monthlyContribution >= neededMonthly;
   }
 
-  factory SavingsGoal.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static Future<SavingsGoal> fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     final data = doc.data()!;
     final rawContributions = (data['contributions'] as List?) ?? const [];
     return SavingsGoal(
       id: doc.id,
       name: data['name'] as String? ?? '',
       iconSlug: data['iconSlug'] as String? ?? 'otro',
-      targetAmount: (data['targetAmount'] as num?)?.toInt() ?? 0,
+      targetAmount: await crypto.decryptAmount(
+        householdId,
+        data['targetAmount'] as String,
+      ),
       targetDate: (data['targetDate'] as Timestamp?)?.toDate(),
-      monthlyContribution: (data['monthlyContribution'] as num?)?.toInt() ?? 0,
+      monthlyContribution: await crypto.decryptAmount(
+        householdId,
+        data['monthlyContribution'] as String,
+      ),
       interestRate: (data['interestRate'] as num?)?.toDouble() ?? 0,
-      contributions: rawContributions
-          .map((c) => Contribution.fromMap((c as Map).cast<String, dynamic>()))
-          .toList(),
+      contributions: await Future.wait(
+        rawContributions.map(
+          (c) => Contribution.fromMap(
+            (c as Map).cast<String, dynamic>(),
+            crypto,
+            householdId,
+          ),
+        ),
+      ),
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Future<Map<String, dynamic>> toFirestore(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'name': name,
       'iconSlug': iconSlug,
-      'targetAmount': targetAmount,
+      'targetAmount': await crypto.encryptAmount(householdId, targetAmount),
       'targetDate': targetDate == null ? null : Timestamp.fromDate(targetDate!),
-      'monthlyContribution': monthlyContribution,
+      'monthlyContribution':
+          await crypto.encryptAmount(householdId, monthlyContribution),
       'interestRate': interestRate,
-      'contributions': contributions.map((c) => c.toMap()).toList(),
+      'contributions': await Future.wait(
+        contributions.map((c) => c.toMap(crypto, householdId)),
+      ),
       'createdBy': createdBy,
     };
   }

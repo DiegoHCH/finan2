@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
 import 'transfer_model.dart';
 
 class TransferRepository {
-  TransferRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+  TransferRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
+      : _db = firestore ?? FirebaseFirestore.instance,
+        _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
+  final HouseholdCrypto _crypto;
 
   DocumentReference<Map<String, dynamic>> _household(String householdId) =>
       _db.collection('households').doc(householdId);
@@ -16,7 +19,23 @@ class TransferRepository {
         .collection('transfers')
         .orderBy('date', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map(Transfer.fromFirestore).toList());
+        .asyncMap((snap) => Future.wait(
+              snap.docs.map(
+                (doc) => Transfer.fromFirestore(doc, _crypto, householdId),
+              ),
+            ));
+  }
+
+  /// Decrypts an already-fetched account snapshot's `balance` field. Takes
+  /// the snapshot (not a ref+get) so a transaction never reads the same
+  /// document twice.
+  Future<int> _decryptBalance(
+    DocumentSnapshot<Map<String, dynamic>> snap,
+    String householdId,
+  ) async {
+    final packed = snap.data()?['balance'] as String?;
+    if (packed == null) return 0;
+    return _crypto.decryptAmount(householdId, packed);
   }
 
   /// Atomically: debits [Transfer.fromAccountId], credits
@@ -31,12 +50,22 @@ class TransferRepository {
     return _db.runTransaction((tx) async {
       final fromSnap = await tx.get(fromRef);
       final toSnap = await tx.get(toRef);
-      final fromBalance = (fromSnap.data()?['balance'] as num?)?.toInt() ?? 0;
-      final toBalance = (toSnap.data()?['balance'] as num?)?.toInt() ?? 0;
+      final fromBalance = await _decryptBalance(fromSnap, householdId);
+      final toBalance = await _decryptBalance(toSnap, householdId);
 
-      tx.update(fromRef, {'balance': fromBalance - transfer.amount});
-      tx.update(toRef, {'balance': toBalance + transfer.amount});
-      tx.set(transferRef, transfer.toFirestore());
+      tx.update(fromRef, {
+        'balance': await _crypto.encryptAmount(
+          householdId,
+          fromBalance - transfer.amount,
+        ),
+      });
+      tx.update(toRef, {
+        'balance': await _crypto.encryptAmount(
+          householdId,
+          toBalance + transfer.amount,
+        ),
+      });
+      tx.set(transferRef, await transfer.toFirestore(_crypto, householdId));
     });
   }
 
@@ -54,12 +83,22 @@ class TransferRepository {
       final toSnap = await tx.get(toRef);
 
       if (fromSnap.exists) {
-        final fromBalance = (fromSnap.data()?['balance'] as num?)?.toInt() ?? 0;
-        tx.update(fromRef, {'balance': fromBalance + transfer.amount});
+        final fromBalance = await _decryptBalance(fromSnap, householdId);
+        tx.update(fromRef, {
+          'balance': await _crypto.encryptAmount(
+            householdId,
+            fromBalance + transfer.amount,
+          ),
+        });
       }
       if (toSnap.exists) {
-        final toBalance = (toSnap.data()?['balance'] as num?)?.toInt() ?? 0;
-        tx.update(toRef, {'balance': toBalance - transfer.amount});
+        final toBalance = await _decryptBalance(toSnap, householdId);
+        tx.update(toRef, {
+          'balance': await _crypto.encryptAmount(
+            householdId,
+            toBalance - transfer.amount,
+          ),
+        });
       }
       tx.delete(transferRef);
     });

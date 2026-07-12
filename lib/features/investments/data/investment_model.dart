@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
+
 /// Matches the Firestore schema's `kind` field.
 enum InvestmentKind { rentaFija, rentaVariable, cripto }
 
@@ -43,26 +45,39 @@ class Investment {
 
   int get returnAmount => currentValue - investedAmount;
 
-  factory Investment.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static Future<Investment> fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     final data = doc.data()!;
     return Investment(
       id: doc.id,
       name: data['name'] as String? ?? '',
       kind: InvestmentKindLabel.fromName(data['kind'] as String? ?? 'rentaVariable'),
       rate: (data['rate'] as num?)?.toDouble() ?? 0,
-      investedAmount: (data['investedAmount'] as num?)?.toInt() ?? 0,
-      currentValue: (data['currentValue'] as num?)?.toInt() ?? 0,
+      investedAmount: await crypto.decryptAmount(
+        householdId,
+        data['investedAmount'] as String,
+      ),
+      currentValue: await crypto.decryptAmount(
+        householdId,
+        data['currentValue'] as String,
+      ),
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Future<Map<String, dynamic>> toFirestore(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'name': name,
       'kind': kind.name,
       'rate': rate,
-      'investedAmount': investedAmount,
-      'currentValue': currentValue,
+      'investedAmount': await crypto.encryptAmount(householdId, investedAmount),
+      'currentValue': await crypto.encryptAmount(householdId, currentValue),
       'createdBy': createdBy,
     };
   }

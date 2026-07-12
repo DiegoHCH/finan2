@@ -220,12 +220,23 @@ class SettingsScreen extends ConsumerWidget {
                   InkWell(
                     borderRadius: BorderRadius.circular(Finan2Radius.card),
                     onTap: () async {
-                      await Clipboard.setData(
-                        ClipboardData(text: household.inviteCode),
-                      );
+                      final key = await ref
+                          .read(householdCryptoProvider)
+                          .exportKey(household.id);
+                      final shareCode = key == null
+                          ? household.inviteCode
+                          : '${household.inviteCode}.$key';
+                      await Clipboard.setData(ClipboardData(text: shareCode));
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Código copiado')),
+                          SnackBar(
+                            content: Text(
+                              key == null
+                                  ? 'Código copiado (sin llave: este '
+                                      'dispositivo no puede ver montos)'
+                                  : 'Código copiado',
+                            ),
+                          ),
                         );
                       }
                     },

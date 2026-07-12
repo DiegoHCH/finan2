@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
+
 /// Matches the Firestore schema's `type` field for debts. Tarjeta (card) is
 /// a revolving line of credit; the other three are fixed-installment loans
 /// that share the same form fields.
@@ -81,40 +83,54 @@ class Debt {
   int get monthlyBasePayment =>
       type.isCard ? minPayment + extraPayment : monthlyPayment;
 
-  factory Debt.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static Future<Debt> fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     final data = doc.data()!;
+    Future<int> amount(String field) async {
+      final packed = data[field] as String?;
+      return packed == null ? 0 : crypto.decryptAmount(householdId, packed);
+    }
+
     return Debt(
       id: doc.id,
       name: data['name'] as String? ?? '',
       type: DebtTypeLabel.fromName(data['type'] as String? ?? 'credito'),
-      balance: (data['balance'] as num?)?.toInt() ?? 0,
+      balance: await amount('balance'),
       rate: (data['rate'] as num?)?.toDouble() ?? 0,
       paymentDay: (data['paymentDay'] as num?)?.toInt() ?? 1,
-      creditLimit: (data['creditLimit'] as num?)?.toInt() ?? 0,
-      minPayment: (data['minPayment'] as num?)?.toInt() ?? 0,
-      extraPayment: (data['extraPayment'] as num?)?.toInt() ?? 0,
+      creditLimit: await amount('creditLimit'),
+      minPayment: await amount('minPayment'),
+      extraPayment: await amount('extraPayment'),
       cutoffDay: (data['cutoffDay'] as num?)?.toInt() ?? 0,
-      originalAmount: (data['originalAmount'] as num?)?.toInt() ?? 0,
-      monthlyPayment: (data['monthlyPayment'] as num?)?.toInt() ?? 0,
+      originalAmount: await amount('originalAmount'),
+      monthlyPayment: await amount('monthlyPayment'),
       termMonths: (data['termMonths'] as num?)?.toInt() ?? 0,
       paidInstallments: (data['paidInstallments'] as num?)?.toInt() ?? 0,
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Future<Map<String, dynamic>> toFirestore(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'name': name,
       'type': type.name,
-      'balance': balance,
+      'balance': await crypto.encryptAmount(householdId, balance),
       'rate': rate,
       'paymentDay': paymentDay,
-      'creditLimit': creditLimit,
-      'minPayment': minPayment,
-      'extraPayment': extraPayment,
+      'creditLimit': await crypto.encryptAmount(householdId, creditLimit),
+      'minPayment': await crypto.encryptAmount(householdId, minPayment),
+      'extraPayment': await crypto.encryptAmount(householdId, extraPayment),
       'cutoffDay': cutoffDay,
-      'originalAmount': originalAmount,
-      'monthlyPayment': monthlyPayment,
+      'originalAmount':
+          await crypto.encryptAmount(householdId, originalAmount),
+      'monthlyPayment':
+          await crypto.encryptAmount(householdId, monthlyPayment),
       'termMonths': termMonths,
       'paidInstallments': paidInstallments,
       'createdBy': createdBy,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
 import '../../categories/data/category_model.dart';
 
 /// A fixed monthly income or bill (salary, rent, utilities...) that
@@ -27,9 +28,11 @@ class RecurringBill {
   final int dayOfMonth;
   final String createdBy;
 
-  factory RecurringBill.fromFirestore(
+  static Future<RecurringBill> fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     final data = doc.data()!;
     return RecurringBill(
       id: doc.id,
@@ -37,19 +40,25 @@ class RecurringBill {
       type: CategoryTypeLabel.fromName(data['type'] as String? ?? 'factura'),
       categoryId: data['categoryId'] as String? ?? '',
       accountId: data['accountId'] as String? ?? '',
-      amount: (data['amount'] as num?)?.toInt() ?? 0,
+      amount: await crypto.decryptAmount(
+        householdId,
+        data['amount'] as String,
+      ),
       dayOfMonth: (data['dayOfMonth'] as num?)?.toInt() ?? 1,
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Future<Map<String, dynamic>> toFirestore(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'name': name,
       'type': type.name,
       'categoryId': categoryId,
       'accountId': accountId,
-      'amount': amount,
+      'amount': await crypto.encryptAmount(householdId, amount),
       'dayOfMonth': dayOfMonth,
       'createdBy': createdBy,
     };

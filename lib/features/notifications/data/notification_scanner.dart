@@ -32,7 +32,6 @@ class NotificationScanner {
     required List<Movement> transactionsThisMonth,
     required List<Category> categories,
     required NotificationPrefs prefs,
-    required String Function(num) formatMoney,
     List<Account> accounts = const [],
     List<Investment> investments = const [],
     List<RecurringBill> recurringBills = const [],
@@ -44,7 +43,7 @@ class NotificationScanner {
     final created = <HouseholdNotification>[];
 
     if (prefs.debtPayments) {
-      await _scanDebts(created, householdId, debts, now, formatMoney);
+      await _scanDebts(created, householdId, debts, now);
     }
     if (prefs.goalProgress) {
       await _scanGoalProgress(created, householdId, goals, now);
@@ -57,11 +56,10 @@ class NotificationScanner {
         transactionsThisMonth,
         categories,
         now,
-        formatMoney,
       );
     }
     if (prefs.partnerActivity) {
-      await _scanContributions(created, householdId, goals, currentUid, formatMoney);
+      await _scanContributions(created, householdId, goals, currentUid);
       await _scanPartnerCreated(
         created: created,
         householdId: householdId,
@@ -76,7 +74,6 @@ class NotificationScanner {
         categories: categories,
         savingsChallenge: savingsChallenge,
         goals: goals,
-        formatMoney: formatMoney,
       );
     }
     return created;
@@ -87,7 +84,6 @@ class NotificationScanner {
     String householdId,
     List<Debt> debts,
     DateTime now,
-    String Function(num) formatMoney,
   ) async {
     for (final debt in debts) {
       if (debt.balance <= 0) continue;
@@ -102,7 +98,6 @@ class NotificationScanner {
           type: NotificationType.debtDue,
           title: 'Pago de ${debt.name} pronto',
           body: 'La cuota de ${debt.name} '
-              '(${formatMoney(debt.monthlyBasePayment)}) '
               '${daysUntil == 0 ? 'vence hoy' : 'vence en $daysUntil días'}.',
           createdAt: now,
           read: false,
@@ -145,7 +140,6 @@ class NotificationScanner {
     List<Movement> transactionsThisMonth,
     List<Category> categories,
     DateTime now,
-    String Function(num) formatMoney,
   ) async {
     final spendByCategory = <String, int>{};
     for (final tx in transactionsThisMonth) {
@@ -168,8 +162,7 @@ class NotificationScanner {
           id: id,
           type: NotificationType.budgetExceeded,
           title: 'Te pasaste del presupuesto',
-          body: '$categoryName superó lo planeado por '
-              '${formatMoney(real - planned)}.',
+          body: '$categoryName superó lo planeado este mes.',
           createdAt: now,
           read: false,
         ),
@@ -183,7 +176,6 @@ class NotificationScanner {
     String householdId,
     List<SavingsGoal> goals,
     String currentUid,
-    String Function(num) formatMoney,
   ) async {
     for (final goal in goals) {
       for (final contribution in goal.contributions) {
@@ -198,8 +190,7 @@ class NotificationScanner {
             id: id,
             type: NotificationType.contribution,
             title: 'Aporte registrado',
-            body: 'Tu pareja agregó ${formatMoney(contribution.amount)} '
-                'a ${goal.name}.',
+            body: 'Tu pareja agregó un aporte a ${goal.name}.',
             createdAt: contribution.date,
             read: false,
           ),
@@ -226,7 +217,6 @@ class NotificationScanner {
     required List<Category> categories,
     required SavingsChallenge? savingsChallenge,
     required List<SavingsGoal> goals,
-    required String Function(num) formatMoney,
   }) async {
     Future<void> notify(
       String idSuffix,
@@ -257,7 +247,7 @@ class NotificationScanner {
         'tx_${tx.id}',
         tx.createdBy,
         'Nuevo movimiento',
-        '${tx.description} · ${formatMoney(tx.amount)}',
+        tx.description.isEmpty ? 'Tu pareja registró un movimiento.' : tx.description,
         tx.date,
       );
     }
@@ -266,7 +256,7 @@ class NotificationScanner {
         'transfer_${transfer.id}',
         transfer.createdBy,
         'Nueva transferencia',
-        'Transferencia de ${formatMoney(transfer.amount)}',
+        'Tu pareja registró una transferencia entre cuentas.',
         transfer.date,
       );
     }

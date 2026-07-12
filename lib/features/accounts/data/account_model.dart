@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
+
 enum AccountType { efectivo, banco, billetera, debito }
 
 extension AccountTypeLabel on AccountType {
@@ -33,23 +35,34 @@ class Account {
   final bool includeInAvailable;
   final String createdBy;
 
-  factory Account.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static Future<Account> fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     final data = doc.data()!;
+    final balance = await crypto.decryptAmount(
+      householdId,
+      data['balance'] as String,
+    );
     return Account(
       id: doc.id,
       name: data['name'] as String? ?? '',
       type: AccountTypeLabel.fromName(data['type'] as String? ?? 'banco'),
-      balance: (data['balance'] as num?)?.toInt() ?? 0,
+      balance: balance,
       includeInAvailable: data['includeInAvailable'] as bool? ?? true,
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Future<Map<String, dynamic>> toFirestore(
+    HouseholdCrypto crypto,
+    String householdId,
+  ) async {
     return {
       'name': name,
       'type': type.name,
-      'balance': balance,
+      'balance': await crypto.encryptAmount(householdId, balance),
       'includeInAvailable': includeInAvailable,
       'createdBy': createdBy,
     };

@@ -1,10 +1,13 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_scanner.dart';
 import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../helpers/test_household_crypto.dart';
 
 const _householdId = 'h1';
 final _now = DateTime(2026, 7, 9); // day 9
@@ -28,12 +31,15 @@ RecurringBill _bill({
 
 void main() {
   late FakeFirebaseFirestore firestore;
+  late HouseholdCrypto crypto;
   late TransactionRepository transactionRepository;
   late RecurringBillScanner scanner;
 
-  setUp(() {
+  setUp(() async {
     firestore = FakeFirebaseFirestore();
-    transactionRepository = TransactionRepository(firestore: firestore);
+    crypto = await testHouseholdCrypto(_householdId);
+    transactionRepository =
+        TransactionRepository(firestore: firestore, crypto: crypto);
     scanner = RecurringBillScanner(transactionRepository);
   });
 
@@ -43,7 +49,9 @@ void main() {
         .doc(_householdId)
         .collection('transactions')
         .get();
-    return snap.docs.map(Movement.fromFirestore).toList();
+    return Future.wait(
+      snap.docs.map((doc) => Movement.fromFirestore(doc, crypto, _householdId)),
+    );
   }
 
   test('generates the Movement once the bill day has arrived', () async {
@@ -106,7 +114,7 @@ void main() {
         .doc(_householdId)
         .collection('transactions')
         .doc(id)
-        .update({'amount': 1250000});
+        .update({'amount': await crypto.encryptAmount(_householdId, 1250000)});
 
     // Re-scan with the template still saying 1,300,000 - the user's manual
     // correction on the generated transaction should survive.

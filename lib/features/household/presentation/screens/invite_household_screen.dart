@@ -6,10 +6,17 @@ import '../../../../core/widgets/finan2_code_box.dart';
 
 /// Shown right after creating a household: the code the creator shares with
 /// their partner so they can join the same household.
+///
+/// [shareCode] is `<code>.<key>` - the short human-readable invite code the
+/// UI displays, plus the household's data encryption key riding along after
+/// the dot (never sent to Firestore). Copying always copies the full string;
+/// only the code half is shown in the big code box.
 class InviteHouseholdScreen extends StatelessWidget {
-  const InviteHouseholdScreen({required this.inviteCode, super.key});
+  const InviteHouseholdScreen({required this.shareCode, super.key});
 
-  final String inviteCode;
+  final String shareCode;
+
+  String get _displayCode => shareCode.split('.').first;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +50,23 @@ class InviteHouseholdScreen extends StatelessWidget {
                     ?.copyWith(color: colors.inkSoft),
               ),
               const SizedBox(height: Finan2Space.lg),
-              Finan2CodeBox(code: inviteCode),
+              Finan2CodeBox(code: _displayCode),
+              const SizedBox(height: Finan2Space.sm),
+              Text(
+                'Usa el botón de copiar y envíalo por WhatsApp o mensaje - '
+                'no lo dictes de viva voz, lleva pegada una llave más larga '
+                'que no se ve aquí. Sin el código completo, tu pareja no '
+                'podrá ver los montos.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: colors.inkSoft),
+              ),
               const SizedBox(height: Finan2Space.lg),
               FilledButton.icon(
                 onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: inviteCode));
+                  await Clipboard.setData(ClipboardData(text: shareCode));
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Código copiado')),

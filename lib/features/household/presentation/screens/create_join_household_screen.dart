@@ -45,17 +45,28 @@ class _CreateJoinHouseholdScreenState
       );
       final state = ref.read(householdControllerProvider);
       final household = state.value;
-      if (household != null && mounted) {
+      final shareCode = controller.lastShareCode ?? household?.inviteCode;
+      if (household != null && shareCode != null && mounted) {
         await Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => InviteHouseholdScreen(
-              inviteCode: household.inviteCode,
-            ),
+            builder: (_) => InviteHouseholdScreen(shareCode: shareCode),
           ),
         );
       }
     } else {
       await controller.joinHousehold(code: _codeController.text.trim());
+      if (controller.joinedWithoutKey && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Te uniste al hogar, pero este código no traía la llave para '
+              'ver montos. Pide a tu pareja el código completo que copió al '
+              'crear el hogar.',
+            ),
+            duration: Duration(seconds: 6),
+          ),
+        );
+      }
     }
   }
 
@@ -120,9 +131,8 @@ class _CreateJoinHouseholdScreenState
                   )
                 else
                   Finan2Field(
-                    label: 'Código del hogar',
+                    label: 'Código del hogar (pega el código completo)',
                     controller: _codeController,
-                    textCapitalization: TextCapitalization.characters,
                     validator: (value) => (value == null || value.trim().isEmpty)
                         ? 'Ingresa el código que te compartieron'
                         : null,

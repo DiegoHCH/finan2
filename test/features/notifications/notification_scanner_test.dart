@@ -14,7 +14,6 @@ import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:finan2/features/transfers/data/transfer_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-String _fmt(num n) => '\$$n';
 const _householdId = 'h1';
 final _now = DateTime(2026, 7, 9);
 
@@ -86,7 +85,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(returned, hasLength(1));
@@ -106,7 +104,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -122,7 +119,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -140,7 +136,6 @@ void main() {
           transactionsThisMonth: const [],
           categories: const [],
           prefs: NotificationPrefs.defaults,
-          formatMoney: _fmt,
           now: _now,
         );
         expect(returned, i == 0 ? hasLength(1) : isEmpty);
@@ -158,7 +153,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(debtPayments: false),
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -180,7 +174,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -202,7 +195,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -222,7 +214,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -251,7 +242,6 @@ void main() {
         ],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -280,7 +270,6 @@ void main() {
         ],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -303,7 +292,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -324,7 +312,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -343,7 +330,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -361,7 +347,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -379,7 +364,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -408,7 +392,6 @@ void main() {
         ],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -436,7 +419,6 @@ void main() {
           ),
         ],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       final notifications = await readAll();
@@ -504,7 +486,6 @@ void main() {
           createdBy: 'partner',
         ),
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), hasLength(5));
@@ -520,7 +501,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -536,7 +516,6 @@ void main() {
         transactionsThisMonth: const [],
         categories: const [],
         prefs: NotificationPrefs.defaults,
-        formatMoney: _fmt,
         now: _now,
       );
       expect(await readAll(), isEmpty);
@@ -554,7 +533,6 @@ void main() {
           transactionsThisMonth: const [],
           categories: const [],
           prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
-          formatMoney: _fmt,
           now: _now,
         );
       }

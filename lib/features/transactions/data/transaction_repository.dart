@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/household_crypto.dart';
 import 'transaction_model.dart';
 
 class TransactionRepository {
-  TransactionRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+  TransactionRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
+      : _db = firestore ?? FirebaseFirestore.instance,
+        _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
+  final HouseholdCrypto _crypto;
 
   CollectionReference<Map<String, dynamic>> _transactions(
     String householdId,
@@ -25,7 +28,11 @@ class TransactionRepository {
         .where('month', isEqualTo: month)
         .orderBy('date', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map(Movement.fromFirestore).toList());
+        .asyncMap((snap) => Future.wait(
+              snap.docs.map(
+                (doc) => Movement.fromFirestore(doc, _crypto, householdId),
+              ),
+            ));
   }
 
   Stream<List<Movement>> watchTransactionsForYear(
@@ -36,11 +43,17 @@ class TransactionRepository {
         .where('year', isEqualTo: year)
         .orderBy('date', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map(Movement.fromFirestore).toList());
+        .asyncMap((snap) => Future.wait(
+              snap.docs.map(
+                (doc) => Movement.fromFirestore(doc, _crypto, householdId),
+              ),
+            ));
   }
 
-  Future<void> createTransaction(String householdId, Movement tx) {
-    return _transactions(householdId).add(tx.toFirestore());
+  Future<void> createTransaction(String householdId, Movement tx) async {
+    await _transactions(householdId).add(
+      await tx.toFirestore(_crypto, householdId),
+    );
   }
 
   /// Writes [tx] under the deterministic [id] only if no document with that
@@ -50,11 +63,13 @@ class TransactionRepository {
     final ref = _transactions(householdId).doc(id);
     final snap = await ref.get();
     if (snap.exists) return;
-    await ref.set(tx.toFirestore());
+    await ref.set(await tx.toFirestore(_crypto, householdId));
   }
 
-  Future<void> updateTransaction(String householdId, Movement tx) {
-    return _transactions(householdId).doc(tx.id).update(tx.toFirestore());
+  Future<void> updateTransaction(String householdId, Movement tx) async {
+    await _transactions(householdId).doc(tx.id).update(
+          await tx.toFirestore(_crypto, householdId),
+        );
   }
 
   Future<void> deleteTransaction(String householdId, String txId) {
