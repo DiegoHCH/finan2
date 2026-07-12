@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,6 +25,8 @@ import '../../features/transactions/presentation/screens/transactions_screen.dar
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
 import '../notifications/notification_providers.dart';
+import '../pwa/ios_install_detection.dart';
+import '../pwa/pwa_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
 
@@ -44,6 +47,7 @@ class Finan2HomeShell extends ConsumerStatefulWidget {
 
 class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   var _index = 0;
+  var _installBannerDismissed = false;
 
   Future<void> _runScan() async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
@@ -119,6 +123,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       _rescheduleDebtReminders();
       _runRecurringBillScan();
       _registerPushToken();
+      ref.read(persistentStorageStatusProvider.notifier).requestIfNeeded();
     });
     // FCM doesn't surface a system-tray alert for messages that arrive while
     // the app is foregrounded - show it ourselves the same way local
@@ -160,8 +165,31 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       SettingsScreen(household: widget.household),
     ];
 
+    final showInstallBanner = kIsWeb &&
+        !_installBannerDismissed &&
+        isIOSSafariNotInstalled;
+
     return Scaffold(
-      body: IndexedStack(index: _index, children: tabs),
+      body: Column(
+        children: [
+          if (showInstallBanner)
+            MaterialBanner(
+              content: const Text(
+                'Para recibir notificaciones y que tus datos no se borren '
+                'solos, instala Finan2: toca Compartir y luego '
+                '"Agregar a inicio".',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () =>
+                      setState(() => _installBannerDismissed = true),
+                  child: const Text('Entendido'),
+                ),
+              ],
+            ),
+          Expanded(child: IndexedStack(index: _index, children: tabs)),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),

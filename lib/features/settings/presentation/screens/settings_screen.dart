@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/pwa/pwa_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
@@ -217,6 +219,36 @@ class SettingsScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
                 children: [
+                  if (kIsWeb && ref.watch(persistentStorageStatusProvider) == false)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Finan2Space.md),
+                      child: Container(
+                        padding: const EdgeInsets.all(Finan2Space.md),
+                        decoration: BoxDecoration(
+                          color: colors.savingTint,
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
+                          border: Border.all(color: colors.saving),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.warning_amber_rounded, color: colors.saving),
+                            const SizedBox(width: Finan2Space.sm),
+                            Expanded(
+                              child: Text(
+                                'Tu navegador no garantizó que los datos de Finan2 '
+                                'se conserven. Si no abres la app por varios días, '
+                                'podrías perder el acceso a los montos cifrados de '
+                                'este dispositivo. Toca la tarjeta del hogar abajo '
+                                'para copiar el código completo y guárdalo en un '
+                                'lugar seguro.',
+                                style: TextStyle(color: colors.ink, fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   InkWell(
                     borderRadius: BorderRadius.circular(Finan2Radius.card),
                     onTap: () async {
