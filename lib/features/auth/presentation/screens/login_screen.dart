@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -111,32 +112,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         )
                       : const Text('Iniciar sesión'),
                 ),
-                const SizedBox(height: Finan2Space.md),
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Finan2Space.sm,
+                // Google Sign-In on web needs a fundamentally different flow
+                // (an embedded GIS button, not the authenticate() popup this
+                // app uses) - not built yet, so web sticks to email/password.
+                if (!kIsWeb) ...[
+                  const SizedBox(height: Finan2Space.md),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Finan2Space.sm,
+                        ),
+                        child: Text(
+                          'o',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ),
-                      child: Text(
-                        'o',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: Finan2Space.md),
-                OutlinedButton.icon(
-                  onPressed: authState.isLoading
-                      ? null
-                      : () => ref
-                          .read(authControllerProvider.notifier)
-                          .signInWithGoogle(),
-                  icon: const Finan2GoogleIcon(),
-                  label: const Text('Continuar con Google'),
-                ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: Finan2Space.md),
+                  OutlinedButton.icon(
+                    onPressed: authState.isLoading
+                        ? null
+                        : () => ref
+                            .read(authControllerProvider.notifier)
+                            .signInWithGoogle(),
+                    icon: const Finan2GoogleIcon(),
+                    label: const Text('Continuar con Google'),
+                  ),
+                ],
                 const SizedBox(height: Finan2Space.lg),
                 Center(
                   child: TextButton(

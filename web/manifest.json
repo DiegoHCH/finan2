@@ -1,11 +1,11 @@
 {
-    "name": "finan2",
-    "short_name": "finan2",
+    "name": "Finan2 - Finanzas del hogar",
+    "short_name": "Finan2",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0F9D74",
     "theme_color": "#0F9D74",
-    "description": "A new Flutter project.",
+    "description": "Finanzas del hogar compartidas entre dos personas: transacciones, presupuesto, deudas, metas de ahorro e inversiones, con montos cifrados de extremo a extremo.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
