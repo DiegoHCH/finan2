@@ -71,8 +71,15 @@ async function handleScheduled(env) {
   const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = env.FIREBASE_PROJECT_ID;
   const co = coNow();
+  // DRY_RUN='true' (set via `wrangler dev --test-scheduled` + .dev.vars, or
+  // temporarily as a real secret) reads real data and logs what it would
+  // do, but never calls FCM or writes a sentReminders marker - lets this
+  // run safely against production Firestore for testing.
+  const dryRun = env.DRY_RUN === 'true';
+  if (dryRun) console.log(`[dry-run] co=${JSON.stringify(co)}`);
 
   const households = await listHouseholds(accessToken, projectId);
+  if (dryRun) console.log(`[dry-run] scanning ${households.length} household(s)`);
 
   for (const household of households) {
     const tokens = await getHouseholdTokens(accessToken, projectId, household.id);
@@ -92,6 +99,7 @@ async function handleScheduled(env) {
       if (prefs.dailyReminder && prefs.dailyReminderHour === co.hour) {
         await sendOnce({
           accessToken,
+          dryRun,
           projectId,
           householdId: household.id,
           marker: `daily_${uid}_${co.dateStr}`,
@@ -104,6 +112,7 @@ async function handleScheduled(env) {
       if (prefs.weeklySummary && co.weekday === 0 && co.hour === 19) {
         await sendOnce({
           accessToken,
+          dryRun,
           projectId,
           householdId: household.id,
           marker: `weekly_${uid}_${co.dateStr}`,
@@ -120,6 +129,7 @@ async function handleScheduled(env) {
           if (co.day !== debtReminderDay(debt.paymentDay)) continue;
           await sendOnce({
             accessToken,
+            dryRun,
             projectId,
             householdId: household.id,
             marker: `debt_${debt.id}_${uid}_${co.monthStr}`,
@@ -150,8 +160,25 @@ function coNow() {
   };
 }
 
-async function sendOnce({ accessToken, projectId, householdId, marker, tokens, title, body }) {
-  if (await alreadySent(accessToken, projectId, householdId, marker)) return;
+async function sendOnce({
+  accessToken,
+  projectId,
+  householdId,
+  marker,
+  tokens,
+  title,
+  body,
+  dryRun,
+}) {
+  const skip = await alreadySent(accessToken, projectId, householdId, marker);
+  if (dryRun) {
+    console.log(
+      `[dry-run] ${skip ? 'SKIP (already sent)' : 'WOULD SEND'} "${title}" to ` +
+        `${tokens.length} token(s), household=${householdId}, marker=${marker}`,
+    );
+    return;
+  }
+  if (skip) return;
   await Promise.allSettled(
     tokens.map((t) =>
       sendToToken({ title, body, accessToken, projectId, token: t.token, platform: t.platform }),
