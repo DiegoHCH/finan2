@@ -22,7 +22,7 @@ Future<bool> showNotificationPrimerSheet(BuildContext context) async {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 52,
@@ -36,6 +36,7 @@ Future<bool> showNotificationPrimerSheet(BuildContext context) async {
             const SizedBox(height: Finan2Space.md),
             Text(
               'Activa las notificaciones',
+              textAlign: TextAlign.center,
               style: Theme.of(sheetContext).textTheme.titleLarge,
             ),
             const SizedBox(height: Finan2Space.xs),
@@ -43,22 +44,24 @@ Future<bool> showNotificationPrimerSheet(BuildContext context) async {
               'Te avisamos cuando tu pareja registre algo, se acerque una fecha '
               'de pago, o se pasen del presupuesto. Puedes ajustar esto después '
               'en Ajustes.',
+              textAlign: TextAlign.center,
               style: Theme.of(sheetContext)
                   .textTheme
                   .bodyMedium
                   ?.copyWith(color: colors.inkSoft),
             ),
             const SizedBox(height: Finan2Space.lg),
-            FilledButton(
-              onPressed: () => Navigator.of(sheetContext).pop(true),
-              child: const Text('Activar notificaciones'),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.of(sheetContext).pop(true),
+                child: const Text('Activar notificaciones'),
+              ),
             ),
             const SizedBox(height: Finan2Space.xs),
-            Center(
-              child: TextButton(
-                onPressed: () => Navigator.of(sheetContext).pop(false),
-                child: const Text('Ahora no'),
-              ),
+            TextButton(
+              onPressed: () => Navigator.of(sheetContext).pop(false),
+              child: const Text('Ahora no'),
             ),
           ],
         ),
