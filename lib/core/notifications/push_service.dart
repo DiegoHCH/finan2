@@ -29,13 +29,20 @@ class PushService {
   static const _workerUrl = 'https://finan2-notifications.katanalabs-6002.workers.dev';
   static const _workerSecret = String.fromEnvironment('FINAN2_PUSH_WORKER_SECRET');
 
+  /// Web push requires a VAPID key (Firebase Console > Project Settings >
+  /// Cloud Messaging > Web configuration > Web Push certificates) - unlike
+  /// the worker secret, native platforms don't need this at all.
+  static const _vapidKey = String.fromEnvironment('FINAN2_FCM_VAPID_KEY');
+
   /// Requests permission, grabs this device's FCM token and saves it under
   /// the household so the Worker can find it, then keeps it fresh.
   Future<void> registerToken(String householdId, String uid) async {
     final settings = await _messaging.requestPermission();
     if (settings.authorizationStatus == AuthorizationStatus.denied) return;
 
-    final token = await _messaging.getToken();
+    final token = await _messaging.getToken(
+      vapidKey: kIsWeb && _vapidKey.isNotEmpty ? _vapidKey : null,
+    );
     if (token != null) {
       await _saveToken(householdId, uid, token);
     }
@@ -51,7 +58,9 @@ class PushService {
         .set({
       'token': token,
       'uid': uid,
-      'platform': defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
+      'platform': kIsWeb
+          ? 'web'
+          : (defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android'),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
