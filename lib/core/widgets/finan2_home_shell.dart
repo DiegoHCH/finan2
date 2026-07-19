@@ -72,12 +72,12 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           savingsChallenge: ref.read(savingsChallengeProvider).value,
           prefs: prefs,
         );
-    for (final notification in created) {
+    for (final hit in created) {
       await ref.read(pushServiceProvider).sendPush(
             householdId: householdId,
-            excludeUid: uid,
-            title: notification.title,
-            body: notification.body,
+            excludeUid: hit.excludePushUid,
+            title: hit.notification.title,
+            body: hit.notification.body,
           );
     }
   }

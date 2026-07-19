@@ -11,6 +11,20 @@ import '../../transfers/data/transfer_model.dart';
 import 'notification_model.dart';
 import 'notification_repository.dart';
 
+/// A notification the scan just created, plus who its push should skip.
+/// For a household-level alert (debt due, budget exceeded...) that's the
+/// current device, since whoever's scan just detected it is presumably
+/// looking at the app right now. For something a household member DID
+/// (partner activity, a contribution), it's THAT member - not the current
+/// device - since they're the one who already sees it live; the whole point
+/// of the push is to reach the other member who didn't just act.
+class ScannedNotification {
+  const ScannedNotification({required this.notification, required this.excludePushUid});
+
+  final HouseholdNotification notification;
+  final String excludePushUid;
+}
+
 /// Detects the household's alert-worthy conditions and writes any missing
 /// notification (deterministic IDs keep re-scans idempotent). Runs entirely
 /// on the client - there's no backend to trigger this on a schedule, so it
@@ -23,7 +37,7 @@ class NotificationScanner {
   /// Returns every notification actually created this scan (as opposed to
   /// ones that already existed) - callers use this to trigger a real push
   /// only for genuinely new alerts.
-  Future<List<HouseholdNotification>> scan({
+  Future<List<ScannedNotification>> scan({
     required String householdId,
     required String currentUid,
     required List<Debt> debts,
@@ -40,13 +54,13 @@ class NotificationScanner {
     DateTime? now,
   }) async {
     now ??= DateTime.now();
-    final created = <HouseholdNotification>[];
+    final created = <ScannedNotification>[];
 
     if (prefs.debtPayments) {
-      await _scanDebts(created, householdId, debts, now);
+      await _scanDebts(created, householdId, debts, now, currentUid);
     }
     if (prefs.goalProgress) {
-      await _scanGoalProgress(created, householdId, goals, now);
+      await _scanGoalProgress(created, householdId, goals, now, currentUid);
     }
     if (prefs.budgetExceeded) {
       await _scanBudget(
@@ -56,6 +70,7 @@ class NotificationScanner {
         transactionsThisMonth,
         categories,
         now,
+        currentUid,
       );
     }
     if (prefs.partnerActivity) {
@@ -80,10 +95,11 @@ class NotificationScanner {
   }
 
   Future<void> _scanDebts(
-    List<HouseholdNotification> created,
+    List<ScannedNotification> created,
     String householdId,
     List<Debt> debts,
     DateTime now,
+    String currentUid,
   ) async {
     for (final debt in debts) {
       if (debt.balance <= 0) continue;
@@ -103,15 +119,18 @@ class NotificationScanner {
           read: false,
         ),
       );
-      if (notification != null) created.add(notification);
+      if (notification != null) {
+        created.add(ScannedNotification(notification: notification, excludePushUid: currentUid));
+      }
     }
   }
 
   Future<void> _scanGoalProgress(
-    List<HouseholdNotification> created,
+    List<ScannedNotification> created,
     String householdId,
     List<SavingsGoal> goals,
     DateTime now,
+    String currentUid,
   ) async {
     for (final goal in goals) {
       final fraction = goal.progressFractionAsOf(now);
@@ -129,17 +148,20 @@ class NotificationScanner {
           read: false,
         ),
       );
-      if (notification != null) created.add(notification);
+      if (notification != null) {
+        created.add(ScannedNotification(notification: notification, excludePushUid: currentUid));
+      }
     }
   }
 
   Future<void> _scanBudget(
-    List<HouseholdNotification> created,
+    List<ScannedNotification> created,
     String householdId,
     Map<String, int> budget,
     List<Movement> transactionsThisMonth,
     List<Category> categories,
     DateTime now,
+    String currentUid,
   ) async {
     final spendByCategory = <String, int>{};
     for (final tx in transactionsThisMonth) {
@@ -167,12 +189,14 @@ class NotificationScanner {
           read: false,
         ),
       );
-      if (notification != null) created.add(notification);
+      if (notification != null) {
+        created.add(ScannedNotification(notification: notification, excludePushUid: currentUid));
+      }
     }
   }
 
   Future<void> _scanContributions(
-    List<HouseholdNotification> created,
+    List<ScannedNotification> created,
     String householdId,
     List<SavingsGoal> goals,
     String currentUid,
@@ -195,7 +219,14 @@ class NotificationScanner {
             read: false,
           ),
         );
-        if (notification != null) created.add(notification);
+        if (notification != null) {
+          created.add(
+            ScannedNotification(
+              notification: notification,
+              excludePushUid: contribution.createdBy,
+            ),
+          );
+        }
       }
     }
   }
@@ -204,7 +235,7 @@ class NotificationScanner {
   /// entity that tracks a `createdBy`. Deterministic per-record IDs keep
   /// this idempotent the same way every other scan is.
   Future<void> _scanPartnerCreated({
-    required List<HouseholdNotification> created,
+    required List<ScannedNotification> created,
     required String householdId,
     required String currentUid,
     required DateTime now,
@@ -239,7 +270,9 @@ class NotificationScanner {
           read: false,
         ),
       );
-      if (notification != null) created.add(notification);
+      if (notification != null) {
+        created.add(ScannedNotification(notification: notification, excludePushUid: createdBy));
+      }
     }
 
     for (final tx in transactionsThisMonth) {

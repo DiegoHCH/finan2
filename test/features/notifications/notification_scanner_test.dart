@@ -88,7 +88,10 @@ void main() {
         now: _now,
       );
       expect(returned, hasLength(1));
-      expect(returned.single.type, NotificationType.debtDue);
+      expect(returned.single.notification.type, NotificationType.debtDue);
+      // A household-level alert (nobody "did" this) excludes the scanning
+      // device's own user - they're presumably looking at the app right now.
+      expect(returned.single.excludePushUid, 'u1');
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.debtDue);
@@ -283,7 +286,7 @@ void main() {
       final goal = _goal(
         contributions: [Contribution(date: _now, amount: 500000, createdBy: 'partner')],
       );
-      await scanner.scan(
+      final returned = await scanner.scan(
         householdId: _householdId,
         currentUid: 'me',
         debts: const [],
@@ -297,6 +300,9 @@ void main() {
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.contribution);
+      // The push must exclude the contributor ("partner"), not the current
+      // device ("me") - "me" is exactly who needs to be told about it.
+      expect(returned.single.excludePushUid, 'partner');
     });
 
     test('does not notify for my own contribution', () async {
@@ -338,7 +344,7 @@ void main() {
 
   group('partner created an entity', () {
     test('a new debt from the partner notifies', () async {
-      await scanner.scan(
+      final returned = await scanner.scan(
         householdId: _householdId,
         currentUid: 'me',
         debts: [_debt(paymentDay: _now.day + 20, createdBy: 'partner')],
@@ -352,6 +358,10 @@ void main() {
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.partnerActivity);
+      // The push must exclude the creator ("partner"), not the current
+      // device ("me") - this was the bug: it used to exclude "me" instead,
+      // so the person who needed the push never got it.
+      expect(returned.single.excludePushUid, 'partner');
     });
 
     test('a new savings goal from the partner notifies', () async {
