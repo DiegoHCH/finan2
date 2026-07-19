@@ -48,25 +48,35 @@ class Finan2StatBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
               ],
-              Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.4,
-                  color: colors.inkFaint,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    label.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
+                      color: colors.inkFaint,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: dense ? 13.5 : 16.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.1,
-              color: valueColor ?? colors.ink,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: dense ? 13.5 : 16.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.1,
+                color: valueColor ?? colors.ink,
+              ),
             ),
           ),
         ],

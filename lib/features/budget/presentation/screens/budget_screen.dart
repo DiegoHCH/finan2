@@ -318,37 +318,53 @@ class _BudgetRow extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Finan2Icons.categoria(category.iconSlug),
-                      size: 14,
-                      color: colors.inkSoft,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      category.name,
-                      style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-                Text.rich(
-                  TextSpan(
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextSpan(
-                        text: formatMoney(real),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: over ? colors.expense : colors.ink,
-                        ),
+                      Icon(
+                        Finan2Icons.categoria(category.iconSlug),
+                        size: 14,
+                        color: colors.inkSoft,
                       ),
-                      TextSpan(
-                        text: ' / ${formatMoney(planned)}',
-                        style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            category.name,
+                            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  style: const TextStyle(fontSize: 12.5),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: formatMoney(real),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: over ? colors.expense : colors.ink,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' / ${formatMoney(planned)}',
+                            style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
+                          ),
+                        ],
+                      ),
+                      style: const TextStyle(fontSize: 12.5),
+                    ),
+                  ),
                 ),
               ],
             ),

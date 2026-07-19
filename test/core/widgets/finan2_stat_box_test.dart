@@ -28,4 +28,28 @@ void main() {
     // No dot variant (dense trio stat) should still render fine without one.
     expect(find.text('PAGO MÍN.'), findsOneWidget);
   });
+
+  testWidgets('does not overflow in a narrow dense trio with a long label and big value',
+      (tester) async {
+    await pumpFinan2(
+      tester,
+      SizedBox(
+        width: 108,
+        child: Row(
+          children: const [
+            Expanded(
+              child: Finan2StatBox(
+                dense: true,
+                label: 'Cuotas restantes',
+                value: '\$123.456.789',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text('CUOTAS RESTANTES'), findsOneWidget);
+    expect(find.text('\$123.456.789'), findsOneWidget);
+  });
 }

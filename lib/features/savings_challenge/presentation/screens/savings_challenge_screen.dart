@@ -210,20 +210,27 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
                     'Progreso',
                     style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
                   ),
-                  Text.rich(
-                    TextSpan(
-                      children: [
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text.rich(
                         TextSpan(
-                          text: formatMoney(challenge.saved),
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: formatMoney(challenge.saved),
+                              style: const TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            TextSpan(
+                              text: ' / ${formatMoney(challenge.target)}',
+                              style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: ' / ${formatMoney(challenge.target)}',
-                          style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
-                        ),
-                      ],
+                        style: TextStyle(fontSize: 12.5, color: colors.ink),
+                      ),
                     ),
-                    style: TextStyle(fontSize: 12.5, color: colors.ink),
                   ),
                 ],
               ),

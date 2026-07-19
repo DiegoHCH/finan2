@@ -247,9 +247,16 @@ class _InvestmentCard extends StatelessWidget {
                   'Valor actual',
                   style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
                 ),
-                Text(
-                  formatMoney(investment.currentValue),
-                  style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      formatMoney(investment.currentValue),
+                      style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                    ),
+                  ),
                 ),
               ],
             ),

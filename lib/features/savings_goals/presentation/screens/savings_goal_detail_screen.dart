@@ -148,21 +148,34 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${(fraction * 100).round()}% de ${formatMoney(current.targetAmount)}',
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '${(fraction * 100).round()}% de ${formatMoney(current.targetAmount)}',
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
-                            Text(
-                              current.targetDate == null
-                                  ? 'sin fecha'
-                                  : 'meta ${_monthYearLabel(current.targetDate!)}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: colors.inkFaint,
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  current.targetDate == null
+                                      ? 'sin fecha'
+                                      : 'meta ${_monthYearLabel(current.targetDate!)}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.inkFaint,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -181,23 +194,37 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${formatMoney(current.monthlyContribution)}/mes',
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                                color: colors.inkFaint,
-                              ),
-                            ),
-                            if (onTrack != null)
-                              Text(
-                                onTrack ? 'a tiempo ✓' : 'atrasado',
-                                style: TextStyle(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: onTrack ? colors.income : colors.expense,
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '${formatMoney(current.monthlyContribution)}/mes',
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.inkFaint,
+                                  ),
                                 ),
                               ),
+                            ),
+                            if (onTrack != null) ...[
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    onTrack ? 'a tiempo ✓' : 'atrasado',
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: onTrack ? colors.income : colors.expense,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ],

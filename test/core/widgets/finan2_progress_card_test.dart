@@ -48,4 +48,28 @@ void main() {
     await pumpFinan2(tester, buildCard());
     expect(find.byType(InkWell), findsNothing);
   });
+
+  testWidgets('does not overflow when foot values are long, big peso amounts',
+      (tester) async {
+    await pumpFinan2(
+      tester,
+      SizedBox(
+        width: 340,
+        child: Finan2ProgressCard(
+          icon: Icons.credit_card_outlined,
+          iconBackground: Colors.red,
+          iconColor: Colors.white,
+          title: 'Tarjeta Bancolombia',
+          subtitle: 'Tasa 28.5% · mín. \$1.250.000/mes',
+          percentText: '100%',
+          percentColor: Colors.red,
+          progressFraction: 1,
+          progressColor: Colors.red,
+          footLeft: 'Pagado \$45.780.000',
+          footRight: 'Saldo \$123.456.789',
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
