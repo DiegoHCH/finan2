@@ -2,14 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_mode_providers.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../core/widgets/finan2_option_card.dart';
 import '../../../auth/presentation/screens/login_screen.dart' show authErrorMessage;
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
+
+const _themeModeLabels = <ThemeMode, String>{
+  ThemeMode.light: 'Claro',
+  ThemeMode.dark: 'Oscuro',
+  ThemeMode.system: 'Sistema',
+};
+
+const _themeModeSubtitles = <ThemeMode, String>{
+  ThemeMode.light: 'Siempre fondo claro.',
+  ThemeMode.dark: 'Siempre fondo oscuro.',
+  ThemeMode.system: 'Sigue el ajuste de tu dispositivo.',
+};
+
+const _themeModeIcons = <ThemeMode, IconData>{
+  ThemeMode.light: Icons.light_mode_outlined,
+  ThemeMode.dark: Icons.dark_mode_outlined,
+  ThemeMode.system: Icons.brightness_auto_outlined,
+};
 
 class AccountSettingsScreen extends ConsumerWidget {
   const AccountSettingsScreen({required this.household, super.key});
@@ -128,6 +148,42 @@ class AccountSettingsScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _pickThemeMode(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeMode current,
+  ) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(Finan2Space.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Tema', style: Theme.of(sheetContext).textTheme.titleMedium),
+              const SizedBox(height: Finan2Space.md),
+              for (final mode in ThemeMode.values) ...[
+                Finan2OptionCard(
+                  icon: _themeModeIcons[mode]!,
+                  title: _themeModeLabels[mode]!,
+                  subtitle: _themeModeSubtitles[mode]!,
+                  selected: current == mode,
+                  onTap: () {
+                    ref.read(themeModeControllerProvider.notifier).setThemeMode(mode);
+                    Navigator.of(sheetContext).pop();
+                  },
+                ),
+                if (mode != ThemeMode.values.last) const SizedBox(height: Finan2Space.sm),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
@@ -135,6 +191,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     final memberNames = members
         .map((uid) => household.memberInfo[uid]?.name ?? '?')
         .join(', ');
+    final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
 
     return Scaffold(
       body: SafeArea(
@@ -164,6 +221,12 @@ class AccountSettingsScreen extends ConsumerWidget {
                             builder: (_) => const NotificationPreferencesScreen(),
                           ),
                         ),
+                      ),
+                      Finan2ListRow(
+                        icon: _themeModeIcons[themeMode]!,
+                        label: 'Tema',
+                        value: _themeModeLabels[themeMode],
+                        onTap: () => _pickThemeMode(context, ref, themeMode),
                       ),
                     ],
                   ),
