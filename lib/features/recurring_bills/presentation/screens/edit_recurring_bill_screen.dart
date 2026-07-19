@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -80,7 +81,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
   }
 
   Future<void> _save() async {
-    final name = _nameController.text.trim();
+    final name = toTitleCase(_nameController.text);
     final amount = int.tryParse(_amountController.text) ?? 0;
     final day = int.tryParse(_dayController.text) ?? 0;
     final categoryId = _categoryId;

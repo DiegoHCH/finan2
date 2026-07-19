@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/account_model.dart';
@@ -39,7 +40,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   }
 
   Future<void> _save() async {
-    final name = _nameController.text.trim();
+    final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final balance = int.tryParse(_balanceController.text) ?? 0;
     await ref.read(accountControllerProvider.notifier).save(

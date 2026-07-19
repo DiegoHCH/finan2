@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -82,7 +83,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
   }
 
   Future<void> _save() async {
-    final name = _nameController.text.trim();
+    final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final isEditing = widget.goal != null;
     final contributions = <Contribution>[

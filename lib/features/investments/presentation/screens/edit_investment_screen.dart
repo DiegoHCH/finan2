@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
@@ -52,7 +53,7 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
   }
 
   Future<void> _save() async {
-    final name = _nameController.text.trim();
+    final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final investment = Investment(
       id: widget.investment?.id ?? '',

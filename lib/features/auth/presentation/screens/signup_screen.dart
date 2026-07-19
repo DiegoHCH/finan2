@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -35,7 +36,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     await ref.read(authControllerProvider.notifier).signUpWithEmail(
-          name: _nameController.text.trim(),
+          name: toTitleCase(_nameController.text),
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
@@ -41,7 +42,7 @@ class _CreateJoinHouseholdScreenState
     final controller = ref.read(householdControllerProvider.notifier);
     if (_choice == _HouseholdChoice.create) {
       await controller.createHousehold(
-        householdName: _householdNameController.text.trim(),
+        householdName: toTitleCase(_householdNameController.text),
       );
       // ref.read must come after the mounted check - reading it first (as in
       // `ref.read(...) && mounted`) still evaluates ref.read() even when the

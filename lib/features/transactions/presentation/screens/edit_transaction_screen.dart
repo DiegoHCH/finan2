@@ -11,6 +11,7 @@ import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -157,7 +158,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             categoryId: category.id,
             accountId: _accountId ?? '',
             cardDebtId: _cardDebtId ?? '',
-            description: _descriptionController.text.trim(),
+            description: toTitleCase(_descriptionController.text),
             date: _date,
             createdBy: widget.transaction?.createdBy ?? user.uid,
           ),

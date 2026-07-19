@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -35,7 +36,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
       _basePattern.length * _rows,
       (i) => _basePattern[i % _basePattern.length],
     );
-    final name = _nameController.text.trim();
+    final name = toTitleCase(_nameController.text);
     await ref
         .read(savingsChallengeControllerProvider.notifier)
         .create(name.isEmpty ? 'Reto de ahorro' : name, cells);
