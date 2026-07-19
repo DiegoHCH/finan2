@@ -56,7 +56,6 @@ class Debt {
   // Solo tarjeta
   final int creditLimit;
   final int minPayment;
-  final int extraPayment;
   final int cutoffDay;
 
   // Solo crédito/hipoteca/vehículo
@@ -64,6 +63,10 @@ class Debt {
   final int monthlyPayment;
   final int termMonths;
   final int paidInstallments;
+
+  // Abono extra sobre el pago base - aplica a cualquier tipo de deuda y
+  // alimenta la bolsa compartida de la Avalancha (ver avalanche_calculator.dart).
+  final int extraPayment;
   final String createdBy;
 
   /// El monto contra el que se mide el % pagado: cupo total para tarjetas,
@@ -77,11 +80,11 @@ class Debt {
     return (paidAmount / referenceAmount).clamp(0.0, 1.0);
   }
 
-  /// El pago mensual "base" usado por la calculadora Avalancha: para
-  /// tarjetas es el mínimo más el abono extra; para créditos es la cuota
-  /// fija.
+  /// El pago mensual "base" más el abono extra: para tarjetas es el mínimo,
+  /// para créditos es la cuota fija - en ambos casos más lo que se declare
+  /// como abono extra.
   int get monthlyBasePayment =>
-      type.isCard ? minPayment + extraPayment : monthlyPayment;
+      (type.isCard ? minPayment : monthlyPayment) + extraPayment;
 
   static Future<Debt> fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,

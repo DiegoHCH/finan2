@@ -28,6 +28,7 @@ Debt _loan({
   int balance = 3000000,
   double rate = 16,
   int monthlyPayment = 420000,
+  int extraPayment = 0,
 }) {
   return Debt(
     id: id,
@@ -38,6 +39,7 @@ Debt _loan({
     paymentDay: 10,
     originalAmount: balance + 1000000,
     monthlyPayment: monthlyPayment,
+    extraPayment: extraPayment,
   );
 }
 
@@ -107,6 +109,27 @@ void main() {
       loanSchedule[monthsCardTakes].payment,
       greaterThan(loan.monthlyPayment),
     );
+  });
+
+  test('a loan\'s own extraPayment is added on top of its base cuota', () {
+    final loan = _loan(extraPayment: 100000);
+    final result = computeAvalanche([loan], now: now);
+    final schedule = result.scheduleByDebtId['loan']!;
+    expect(schedule.first.payment, loan.monthlyPayment + 100000);
+  });
+
+  test('a loan\'s extraPayment also feeds the shared pool for a higher-rate card', () {
+    final card = _card(extraPayment: 0); // 28%, no extra of its own
+    final loan = _loan(extraPayment: 200000); // 16%, but contributes to the pool
+    final result = computeAvalanche([loan, card], now: now);
+
+    // The card is the higher-rate target, so it should receive its own base
+    // payment plus the loan's extra, funneled through the shared pool.
+    final cardSchedule = result.scheduleByDebtId['card']!;
+    expect(cardSchedule.first.payment, card.minPayment + 200000);
+    // The loan, not being the target, only pays its own base cuota.
+    final loanSchedule = result.scheduleByDebtId['loan']!;
+    expect(loanSchedule.first.payment, loan.monthlyPayment);
   });
 
   test('freeDate lands after the horizon-bounded schedule length in months', () {

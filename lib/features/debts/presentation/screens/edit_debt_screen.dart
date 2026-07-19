@@ -222,23 +222,29 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Plazo (cuotas)',
-                  controller: _termMonthsController,
+                  label: 'Abono extra',
+                  controller: _extraPaymentController,
                   keyboardType: TextInputType.number,
                 ),
               ),
               const SizedBox(height: 9),
               _FieldRow(
                 left: Finan2Field(
+                  label: 'Plazo (cuotas)',
+                  controller: _termMonthsController,
+                  keyboardType: TextInputType.number,
+                ),
+                right: Finan2Field(
                   label: 'Cuotas pagadas',
                   controller: _paidInstallmentsController,
                   keyboardType: TextInputType.number,
                 ),
-                right: Finan2Field(
-                  label: 'Día de pago',
-                  controller: _paymentDayController,
-                  keyboardType: TextInputType.number,
-                ),
+              ),
+              const SizedBox(height: 9),
+              Finan2Field(
+                label: 'Día de pago',
+                controller: _paymentDayController,
+                keyboardType: TextInputType.number,
               ),
             ],
             if (isEditing) ...[

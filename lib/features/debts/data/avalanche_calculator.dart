@@ -31,10 +31,10 @@ const _horizonMonths = 360; // 30 años, tope de seguridad.
 /// Simulates paying off [debts] month by month using the debt Avalancha
 /// strategy: every debt gets its own base payment, and the debt with the
 /// highest interest rate additionally gets a shared "extra" pool (funded by
-/// each card's `extraPayment`). Once a debt is paid off, its base payment
-/// joins the pool, accelerating whichever debt is now the highest-rate one
-/// left. Pure function, no Firestore dependency - safe to call from a
-/// Riverpod `Provider`.
+/// each debt's `extraPayment`, card or not). Once a debt is paid off, its
+/// base payment joins the pool, accelerating whichever debt is now the
+/// highest-rate one left. Pure function, no Firestore dependency - safe to
+/// call from a Riverpod `Provider`.
 AvalancheResult computeAvalanche(List<Debt> debts, {DateTime? now}) {
   final start = now ?? DateTime.now();
   final active = debts.where((d) => d.balance > 0).toList();
@@ -43,9 +43,9 @@ AvalancheResult computeAvalanche(List<Debt> debts, {DateTime? now}) {
   }
 
   final balances = {for (final d in active) d.id: d.balance.toDouble()};
-  // The contractual minimum only (not Debt.monthlyBasePayment, which folds a
-  // card's extraPayment into the total) - the extra is handled separately
-  // via extraPool below, so a card's own extra isn't counted twice when it
+  // The contractual minimum only (not Debt.monthlyBasePayment, which folds
+  // extraPayment into the total) - the extra is handled separately via
+  // extraPool below, so a debt's own extra isn't counted twice when it
   // happens to be the current avalanche target.
   final basePayments = {
     for (final d in active)
@@ -56,9 +56,7 @@ AvalancheResult computeAvalanche(List<Debt> debts, {DateTime? now}) {
   };
   final rateById = {for (final d in active) d.id: d.rate};
 
-  var extraPool = active
-      .where((d) => d.type.isCard)
-      .fold<double>(0, (sum, d) => sum + d.extraPayment);
+  var extraPool = active.fold<double>(0, (sum, d) => sum + d.extraPayment);
 
   final schedule = <String, List<DebtScheduleEntry>>{
     for (final d in active) d.id: [],

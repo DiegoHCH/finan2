@@ -134,12 +134,19 @@ class DebtDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: 'Cuotas restantes',
-                                value:
-                                    '${(current.termMonths - current.paidInstallments).clamp(0, current.termMonths)}',
-                              ),
+                              child: current.extraPayment > 0
+                                  ? Finan2StatBox(
+                                      dense: true,
+                                      label: 'Abono extra',
+                                      value: formatMoney(current.extraPayment),
+                                      valueColor: Theme.of(context).colorScheme.primary,
+                                    )
+                                  : Finan2StatBox(
+                                      dense: true,
+                                      label: 'Cuotas restantes',
+                                      value:
+                                          '${(current.termMonths - current.paidInstallments).clamp(0, current.termMonths)}',
+                                    ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
