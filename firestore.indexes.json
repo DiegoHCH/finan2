@@ -16,6 +16,14 @@
         { "fieldPath": "year", "order": "ASCENDING" },
         { "fieldPath": "date", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "cardPayments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "cardDebtId", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

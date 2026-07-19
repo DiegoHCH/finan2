@@ -3,11 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/currency.dart';
+import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
+import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../accounts/data/account_model.dart';
+import '../../../accounts/presentation/viewmodels/account_providers.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/avalanche_calculator.dart';
+import '../../data/card_payment_model.dart';
 import '../../data/debt_model.dart';
+import '../viewmodels/card_payment_providers.dart';
 import '../viewmodels/debt_providers.dart';
 import 'edit_debt_screen.dart';
 
@@ -41,6 +49,14 @@ class DebtDetailScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      floatingActionButton: current.type.isCard
+          ? FloatingActionButton(
+              heroTag: 'debtDetailFab',
+              backgroundColor: colors.expense,
+              onPressed: () => _registerPayment(context, ref, current.id),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -202,11 +218,211 @@ class DebtDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  if (current.type.isCard) ...[
+                    const SizedBox(height: Finan2Space.lg),
+                    _CardPaymentsSection(cardDebtId: current.id),
+                  ],
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+Future<void> _registerPayment(
+  BuildContext context,
+  WidgetRef ref,
+  String cardDebtId,
+) async {
+  final accounts = ref.read(accountsProvider).value ?? const <Account>[];
+  if (accounts.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Crea una cuenta primero para poder registrar el pago.'),
+      ),
+    );
+    return;
+  }
+  final controller = TextEditingController();
+  final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
+  var selectedAccountId = accounts.first.id;
+  var submitting = false;
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) => StatefulBuilder(
+      builder: (sheetContext, setSheetState) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          Finan2Space.xl,
+          Finan2Space.lg,
+          Finan2Space.xl,
+          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Registrar pago', style: Theme.of(sheetContext).textTheme.titleMedium),
+            const SizedBox(height: Finan2Space.md),
+            Finan2AmountInput(
+              controller: controller,
+              autofocus: true,
+              currencySymbol: currencySymbol,
+            ),
+            const SizedBox(height: Finan2Space.md),
+            Text('Desde', style: Theme.of(sheetContext).textTheme.labelMedium),
+            const SizedBox(height: Finan2Space.sm),
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: [
+                for (final account in accounts)
+                  Finan2Chip(
+                    label: account.name,
+                    selected: selectedAccountId == account.id,
+                    onTap: () => setSheetState(() => selectedAccountId = account.id),
+                  ),
+              ],
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            FilledButton(
+              onPressed: submitting
+                  ? null
+                  : () async {
+                      final amount = int.tryParse(controller.text) ?? 0;
+                      if (amount > 0) {
+                        setSheetState(() => submitting = true);
+                        await ref.read(cardPaymentControllerProvider.notifier).createPayment(
+                              CardPayment(
+                                id: '',
+                                amount: amount,
+                                fromAccountId: selectedAccountId,
+                                cardDebtId: cardDebtId,
+                                date: DateTime.now(),
+                                createdBy:
+                                    ref.read(authStateChangesProvider).value?.uid ?? '',
+                              ),
+                            );
+                      }
+                      if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                    },
+              child: submitting
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Registrar pago'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  controller.dispose();
+}
+
+class _CardPaymentsSection extends ConsumerWidget {
+  const _CardPaymentsSection({required this.cardDebtId});
+
+  final String cardDebtId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final payments = ref.watch(cardPaymentsProvider(cardDebtId)).value ?? const [];
+    final accounts = ref.watch(accountsProvider).value ?? const [];
+    final accountById = {for (final a in accounts) a.id: a};
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(color: colors.line),
+        borderRadius: BorderRadius.circular(Finan2Radius.card),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            child: Text(
+              'Pagos registrados',
+              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: colors.ink),
+            ),
+          ),
+          if (payments.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                'Aún no registras pagos a esta tarjeta.',
+                style: TextStyle(fontSize: 12, color: colors.inkSoft),
+              ),
+            )
+          else
+            for (var i = 0; i < payments.length; i++)
+              _CardPaymentRow(
+                payment: payments[i],
+                accountName: accountById[payments[i].fromAccountId]?.name ?? 'Cuenta eliminada',
+                showDivider: i < payments.length - 1,
+              ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CardPaymentRow extends ConsumerWidget {
+  const _CardPaymentRow({
+    required this.payment,
+    required this.accountName,
+    required this.showDivider,
+  });
+
+  final CardPayment payment;
+  final String accountName;
+  final bool showDivider;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 9),
+      decoration: showDivider
+          ? BoxDecoration(border: Border(bottom: BorderSide(color: colors.line)))
+          : null,
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  accountName,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  DateFormat('dd MMM yyyy', 'es').format(payment.date),
+                  style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            '−${formatMoney(payment.amount)}',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: colors.expense),
+          ),
+          IconButton(
+            icon: Icon(Icons.close, size: 16, color: colors.inkFaint),
+            onPressed: () =>
+                ref.read(cardPaymentControllerProvider.notifier).deletePayment(payment),
+            tooltip: 'Eliminar pago',
+          ),
+        ],
       ),
     );
   }

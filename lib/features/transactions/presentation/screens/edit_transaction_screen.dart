@@ -16,6 +16,8 @@ import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../debts/data/debt_model.dart';
+import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
@@ -65,7 +67,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   late _Segment _segment =
       _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
   late String? _categoryId = widget.transaction?.categoryId;
-  late String? _accountId = widget.transaction?.accountId;
+  late String? _accountId =
+      (widget.transaction != null && widget.transaction!.accountId.isNotEmpty)
+          ? widget.transaction!.accountId
+          : null;
+  late String? _cardDebtId =
+      (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
   late DateTime _date = widget.transaction?.date ?? DateTime.now();
 
   @override
@@ -75,8 +82,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     super.dispose();
   }
 
-  Future<void> _pickAccount(List<Account> accounts) async {
-    final selected = await showModalBottomSheet<String>(
+  Future<void> _pickSource(List<Account> accounts, List<Debt> cards) async {
+    final selected = await showModalBottomSheet<(bool isCard, String id)>(
       context: context,
       builder: (context) => SafeArea(
         child: Column(
@@ -86,13 +93,33 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               ListTile(
                 leading: Icon(Finan2Icons.cuenta(account.type.name)),
                 title: Text(account.name),
-                onTap: () => Navigator.of(context).pop(account.id),
+                onTap: () => Navigator.of(context).pop((false, account.id)),
               ),
+            if (cards.isNotEmpty) ...[
+              const Divider(height: 1),
+              for (final card in cards)
+                ListTile(
+                  leading: const Icon(Icons.credit_card_outlined),
+                  title: Text(card.name),
+                  subtitle: const Text('Tarjeta de crédito'),
+                  onTap: () => Navigator.of(context).pop((true, card.id)),
+                ),
+            ],
           ],
         ),
       ),
     );
-    if (selected != null) setState(() => _accountId = selected);
+    if (selected == null) return;
+    final (isCard, id) = selected;
+    setState(() {
+      if (isCard) {
+        _cardDebtId = id;
+        _accountId = null;
+      } else {
+        _accountId = id;
+        _cardDebtId = null;
+      }
+    });
   }
 
   Future<void> _pickDate() async {
@@ -113,7 +140,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     for (final c in categories) {
       if (c.id == _categoryId) category = c;
     }
-    if (amount <= 0 || category == null || _accountId == null || user == null) {
+    final hasSource = _accountId != null || _cardDebtId != null;
+    if (amount <= 0 || category == null || !hasSource || user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Completa el monto, la categoría y la cuenta.'),
@@ -127,7 +155,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             amount: amount,
             type: category.type,
             categoryId: category.id,
-            accountId: _accountId!,
+            accountId: _accountId ?? '',
+            cardDebtId: _cardDebtId ?? '',
             description: _descriptionController.text.trim(),
             date: _date,
             createdBy: widget.transaction?.createdBy ?? user.uid,
@@ -147,6 +176,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final accounts = ref.watch(accountsProvider).value ?? const [];
+    final cards =
+        (ref.watch(debtsProvider).value ?? const []).where((d) => d.type.isCard).toList();
     final household = ref.watch(currentHouseholdProvider).value;
     final user = ref.watch(authStateChangesProvider).value;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
@@ -166,7 +197,11 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     for (final a in accounts) {
       if (a.id == _accountId) selectedAccount = a;
     }
-    if (_accountId == null && accounts.isNotEmpty) {
+    Debt? selectedCard;
+    for (final c in cards) {
+      if (c.id == _cardDebtId) selectedCard = c;
+    }
+    if (_accountId == null && _cardDebtId == null && accounts.isNotEmpty) {
       _accountId = accounts.first.id;
       selectedAccount = accounts.first;
     }
@@ -226,7 +261,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 ],
               ),
             const SizedBox(height: Finan2Space.lg),
-            if (accounts.isEmpty)
+            if (accounts.isEmpty && cards.isEmpty)
               Text(
                 'No hay cuentas todavía. Créalas en Ajustes.',
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
@@ -234,13 +269,17 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             else
               Finan2TapField(
                 label: 'Cuenta',
-                value: selectedAccount?.name ?? 'Selecciona una cuenta',
+                value: selectedCard != null
+                    ? selectedCard.name
+                    : (selectedAccount?.name ?? 'Selecciona una cuenta'),
                 leading: Icon(
-                  Finan2Icons.cuenta(selectedAccount?.type.name ?? 'banco'),
+                  selectedCard != null
+                      ? Icons.credit_card_outlined
+                      : Finan2Icons.cuenta(selectedAccount?.type.name ?? 'banco'),
                   size: 18,
                   color: colors.inkSoft,
                 ),
-                onTap: () => _pickAccount(accounts),
+                onTap: () => _pickSource(accounts, cards),
               ),
             const SizedBox(height: Finan2Space.md),
             Finan2Field(

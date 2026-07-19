@@ -86,6 +86,10 @@ class ReportBuilder {
     final categoryById = {for (final c in categories) c.id: c};
     final accounts = await accountRepository.watchAccounts(householdId).first;
     final accountById = {for (final a in accounts) a.id: a};
+    final cardById = {
+      for (final d in await debtRepository.watchDebts(householdId).first)
+        if (d.type.isCard) d.id: d,
+    };
 
     if (includeTransactions) {
       final transactions = [
@@ -105,7 +109,9 @@ class ReportBuilder {
                 DateFormat('dd/MM/yyyy').format(tx.date),
                 tx.isIncome ? 'Ingreso' : 'Gasto',
                 categoryById[tx.categoryId]?.name ?? '',
-                accountById[tx.accountId]?.name ?? '',
+                tx.isCardPurchase
+                    ? (cardById[tx.cardDebtId]?.name ?? '')
+                    : (accountById[tx.accountId]?.name ?? ''),
                 tx.description,
                 formatMoney(tx.amount),
               ],

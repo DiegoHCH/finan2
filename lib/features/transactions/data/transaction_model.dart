@@ -13,18 +13,29 @@ class Movement {
     required this.description,
     required this.date,
     required this.createdBy,
+    this.cardDebtId = '',
   });
 
   final String id;
   final int amount;
   final CategoryType type;
   final String categoryId;
+
+  /// The Account this movement is paid from/into. Empty when [cardDebtId] is
+  /// set instead - a movement targets exactly one of the two.
   final String accountId;
+
+  /// A credit-card Debt this movement was charged to, instead of an Account.
+  /// A gasto/factura/ahorro here increases what's owed on the card rather
+  /// than debiting cash on hand; see TransactionRepository's signed delta.
+  final String cardDebtId;
   final String description;
   final DateTime date;
   final String createdBy;
 
   bool get isIncome => type == CategoryType.ingreso;
+
+  bool get isCardPurchase => cardDebtId.isNotEmpty;
 
   /// A plain factory can't be async, so this is a static method - callers
   /// use it identically (`Movement.fromFirestore(doc, crypto, householdId)`).
@@ -47,6 +58,7 @@ class Movement {
       type: CategoryTypeLabel.fromName(data['type'] as String? ?? 'gasto'),
       categoryId: data['categoryId'] as String? ?? '',
       accountId: data['accountId'] as String? ?? '',
+      cardDebtId: data['cardDebtId'] as String? ?? '',
       description: data['description'] as String? ?? '',
       date: date,
       createdBy: data['createdBy'] as String? ?? '',
@@ -62,6 +74,7 @@ class Movement {
       'type': type.name,
       'categoryId': categoryId,
       'accountId': accountId,
+      'cardDebtId': cardDebtId,
       'description': description,
       'date': Timestamp.fromDate(date),
       'year': date.year,
