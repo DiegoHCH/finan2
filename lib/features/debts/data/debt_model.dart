@@ -7,6 +7,9 @@ import '../../../core/crypto/household_crypto.dart';
 /// that share the same form fields.
 enum DebtType { tarjeta, credito, hipoteca, vehiculo }
 
+/// How close a debt is to being paid off, from [Debt.paidFraction].
+enum DebtStatus { critical, warning, good }
+
 extension DebtTypeLabel on DebtType {
   String get label => switch (this) {
         DebtType.tarjeta => 'Tarjeta',
@@ -78,6 +81,17 @@ class Debt {
   double get paidFraction {
     if (referenceAmount <= 0) return 0;
     return (paidAmount / referenceAmount).clamp(0.0, 1.0);
+  }
+
+  /// Rojo→ámbar→verde según [paidFraction]: crítico = recién tomada o la
+  /// tarjeta está al límite del cupo, verde = casi lista o completamente
+  /// pagada. 3 pasos fijos (no un degradado continuo) para que sigan siendo
+  /// distinguibles con daltonismo rojo-verde - ver DebtStatusColor para el
+  /// mapeo a Color.
+  DebtStatus get status {
+    if (paidFraction < 0.40) return DebtStatus.critical;
+    if (paidFraction < 0.75) return DebtStatus.warning;
+    return DebtStatus.good;
   }
 
   /// El pago mensual "base" más el abono extra: para tarjetas es el mínimo,

@@ -15,6 +15,7 @@ import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/avalanche_calculator.dart';
 import '../../data/card_payment_model.dart';
 import '../../data/debt_model.dart';
+import '../debt_status_color.dart';
 import '../viewmodels/card_payment_providers.dart';
 import '../viewmodels/debt_providers.dart';
 import 'edit_debt_screen.dart';
@@ -137,6 +138,7 @@ class DebtDetailScreen extends ConsumerWidget {
                                 dense: true,
                                 label: 'Pagado',
                                 value: '${(current.paidFraction * 100).round()}%',
+                                valueColor: current.status.of(colors),
                               ),
                             ),
                           ]
@@ -170,6 +172,7 @@ class DebtDetailScreen extends ConsumerWidget {
                                 dense: true,
                                 label: 'Pagado',
                                 value: '${(current.paidFraction * 100).round()}%',
+                                valueColor: current.status.of(colors),
                               ),
                             ),
                           ],

@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_progress_card.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/debt_model.dart';
+import '../debt_status_color.dart';
 import '../viewmodels/debt_providers.dart';
 import 'debt_detail_screen.dart';
 import 'edit_debt_screen.dart';
@@ -206,7 +207,7 @@ class _DebtCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final accent = debt.type.isCard ? colors.expense : colors.saving;
+    final accent = debt.status.of(colors);
     final displayMinPayment =
         debt.type.isCard ? debt.minPayment : debt.monthlyPayment;
     final ratePct = debt.rate == debt.rate.roundToDouble()
