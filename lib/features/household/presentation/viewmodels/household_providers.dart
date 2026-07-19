@@ -64,7 +64,9 @@ class HouseholdController extends AsyncNotifier<Household?> {
       final household =
           await ref.read(householdRepositoryProvider).createHousehold(
                 uid: user.uid,
-                displayName: user.displayName ?? user.email ?? 'Yo',
+                // Never falls back to the email - a person's identity in the
+                // UI should always read as a name, never an email address.
+                displayName: user.displayName ?? 'Yo',
                 householdName: householdName,
               );
       final key =
@@ -86,7 +88,9 @@ class HouseholdController extends AsyncNotifier<Household?> {
           await ref.read(householdRepositoryProvider).joinHousehold(
                 code: joinCode,
                 uid: user.uid,
-                displayName: user.displayName ?? user.email ?? 'Yo',
+                // Never falls back to the email - a person's identity in the
+                // UI should always read as a name, never an email address.
+                displayName: user.displayName ?? 'Yo',
               );
       if (key != null) {
         await ref
@@ -98,6 +102,26 @@ class HouseholdController extends AsyncNotifier<Household?> {
             !await ref.read(householdCryptoProvider).hasKey(household.id);
       }
       return household;
+    });
+  }
+
+  /// Updates the signed-in member's own display name, both in Firebase Auth
+  /// (so it's correct the next time they create/join a household) and on
+  /// the current household's memberInfo (so "Registrado por" etc. update
+  /// immediately without needing to leave/rejoin).
+  Future<void> updateMyName(String name) async {
+    final user = ref.read(authStateChangesProvider).value;
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (user == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(authRepositoryProvider).updateDisplayName(name);
+      if (householdId != null) {
+        await ref
+            .read(householdRepositoryProvider)
+            .updateMemberName(householdId, user.uid, name);
+      }
+      return ref.read(currentHouseholdProvider).value;
     });
   }
 }

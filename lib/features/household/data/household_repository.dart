@@ -117,6 +117,10 @@ class HouseholdRepository {
     });
   }
 
+  Future<void> updateMemberName(String householdId, String uid, String name) {
+    return _households.doc(householdId).update({'memberInfo.$uid.name': name});
+  }
+
   Future<void> updateSettings(
     String householdId, {
     String? currency,

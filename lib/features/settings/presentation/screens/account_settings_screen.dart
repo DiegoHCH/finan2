@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode_providers.dart';
+import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
@@ -74,6 +75,31 @@ class AccountSettingsScreen extends ConsumerWidget {
     } catch (error) {
       messenger.showSnackBar(SnackBar(content: Text('Error: $error')));
     }
+  }
+
+  Future<void> _editMyName(BuildContext context, WidgetRef ref, String currentName) async {
+    final controller = TextEditingController(text: currentName);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mi nombre'),
+        content: Finan2Field(label: 'Nombre', controller: controller),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text),
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    final name = toTitleCase(result ?? '');
+    if (name.isEmpty || name == currentName) return;
+    await ref.read(householdControllerProvider.notifier).updateMyName(name);
   }
 
   Future<String?> _askPassword(BuildContext context) async {
@@ -192,6 +218,8 @@ class AccountSettingsScreen extends ConsumerWidget {
         .map((uid) => household.memberInfo[uid]?.name ?? '?')
         .join(', ');
     final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
+    final myUid = ref.watch(authStateChangesProvider).value?.uid;
+    final myName = myUid == null ? '' : (household.memberInfo[myUid]?.name ?? '');
 
     return Scaffold(
       body: SafeArea(
@@ -208,6 +236,13 @@ class AccountSettingsScreen extends ConsumerWidget {
                 children: [
                   Finan2ListCard(
                     children: [
+                      if (myUid != null)
+                        Finan2ListRow(
+                          icon: Icons.badge_outlined,
+                          label: 'Mi nombre',
+                          value: myName,
+                          onTap: () => _editMyName(context, ref, myName),
+                        ),
                       Finan2ListRow(
                         icon: Finan2Icons.miembros,
                         label: 'Miembros del hogar',

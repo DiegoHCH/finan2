@@ -55,7 +55,21 @@ class AuthRepository {
       password: password,
     );
     await credential.user?.updateDisplayName(name);
+    // updateDisplayName() only lands on the server - without a reload the
+    // in-memory `currentUser` (what authStateChangesProvider and every
+    // "displayName ?? email" fallback reads) keeps returning null, so
+    // whoever creates/joins a household right after signup silently gets
+    // their email baked in as their member name instead.
+    await credential.user?.reload();
     return credential;
+  }
+
+  /// Updates the signed-in user's display name in both Firebase Auth and
+  /// the local cached profile (see [signUpWithEmail]'s comment on why the
+  /// reload matters).
+  Future<void> updateDisplayName(String name) async {
+    await _auth.currentUser?.updateDisplayName(name);
+    await _auth.currentUser?.reload();
   }
 
   Future<UserCredential> signInWithEmail({
