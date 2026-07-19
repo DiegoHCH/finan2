@@ -104,17 +104,23 @@ class NotificationScanner {
     for (final debt in debts) {
       if (debt.balance <= 0) continue;
       final daysUntil = _daysUntilDayOfMonth(debt.paymentDay, now);
-      if (daysUntil < 0 || daysUntil > 2) continue;
-      final id = 'debt_due_${debt.id}_${now.year}_${now.month}';
+      if (daysUntil < 0 || daysUntil > 3) continue;
+      // One notification per day of the countdown (day included in the ID),
+      // not one per month - re-scanning the same day never duplicates it,
+      // but each new day of the 4-day window (3, 2, 1, 0 días) gets its own.
+      final id = 'debt_due_${debt.id}_${now.year}_${now.month}_${now.day}';
+      final isToday = daysUntil == 0;
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
           id: id,
           type: NotificationType.debtDue,
-          title: 'Pago de ${debt.name} pronto',
-          body: 'La cuota de ${debt.name} '
-              '${daysUntil == 0 ? 'vence hoy' : 'vence en $daysUntil días'}.',
+          title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
+          body: isToday
+              ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
+              : 'La cuota de ${debt.name} vence en $daysUntil '
+                  '${daysUntil == 1 ? 'día' : 'días'}.',
           createdAt: now,
           read: false,
         ),

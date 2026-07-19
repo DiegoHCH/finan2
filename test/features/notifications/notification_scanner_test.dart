@@ -97,11 +97,47 @@ void main() {
       expect(notifications.single.type, NotificationType.debtDue);
     });
 
-    test('does not notify when payment day is more than 2 days away', () async {
+    test('notifies 3 days before, the start of the countdown', () async {
+      final returned = await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'u1',
+        debts: [_debt(paymentDay: _now.day + 3)],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults,
+        now: _now,
+      );
+      expect(returned, hasLength(1));
+      expect(returned.single.notification.body, contains('vence en 3 días'));
+    });
+
+    test('on the due day itself, uses the "hoy" wording', () async {
+      final returned = await scanner.scan(
+        householdId: _householdId,
+        currentUid: 'u1',
+        debts: [_debt(paymentDay: _now.day)],
+        goals: const [],
+        budget: const {},
+        transactionsThisMonth: const [],
+        categories: const [],
+        prefs: NotificationPrefs.defaults,
+        now: _now,
+      );
+      expect(returned, hasLength(1));
+      expect(returned.single.notification.title, 'Hoy pagas Tarjeta');
+      expect(
+        returned.single.notification.body,
+        'Hoy es el día de pago de tu deuda Tarjeta.',
+      );
+    });
+
+    test('does not notify when payment day is more than 3 days away', () async {
       await scanner.scan(
         householdId: _householdId,
         currentUid: 'u1',
-        debts: [_debt(paymentDay: _now.day + 10)], // 19th, well outside the ≤2-day window
+        debts: [_debt(paymentDay: _now.day + 10)], // well outside the ≤3-day window
         goals: const [],
         budget: const {},
         transactionsThisMonth: const [],
@@ -110,6 +146,27 @@ void main() {
         now: _now,
       );
       expect(await readAll(), isEmpty);
+    });
+
+    test('the countdown fires again on each new day, not just once for the month', () async {
+      final debt = _debt(paymentDay: _now.day + 3);
+      for (var daysBefore = 3; daysBefore >= 0; daysBefore--) {
+        final today = _now.add(Duration(days: 3 - daysBefore));
+        final returned = await scanner.scan(
+          householdId: _householdId,
+          currentUid: 'u1',
+          debts: [debt],
+          goals: const [],
+          budget: const {},
+          transactionsThisMonth: const [],
+          categories: const [],
+          prefs: NotificationPrefs.defaults,
+          now: today,
+        );
+        expect(returned, hasLength(1), reason: 'day $daysBefore before should still notify');
+      }
+      // 4 distinct notifications, one per day of the countdown.
+      expect(await readAll(), hasLength(4));
     });
 
     test('does not notify for an already-paid-off debt', () async {
@@ -127,7 +184,7 @@ void main() {
       expect(await readAll(), isEmpty);
     });
 
-    test('re-scanning the same month never duplicates the notification', () async {
+    test('re-scanning the same day never duplicates the notification', () async {
       final debts = [_debt(paymentDay: _now.day)];
       for (var i = 0; i < 3; i++) {
         final returned = await scanner.scan(

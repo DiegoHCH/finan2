@@ -96,34 +96,47 @@ class NotificationService {
 
   Future<void> cancelWeeklySummary() => _plugin.cancel(id: _weeklySummaryId);
 
-  /// (Re)schedules one reminder per active debt, 2 days before its
-  /// `paymentDay`, repeating monthly. Paid-off debts get their reminder
-  /// cancelled.
+  /// The reminder countdown: one local notification per day, starting 3 días
+  /// antes of `paymentDay` through the day itself (día 0).
+  static const _debtReminderDaysBefore = [3, 2, 1, 0];
+
+  /// (Re)schedules the 4-day reminder countdown for every active debt,
+  /// repeating monthly. Paid-off debts get all 4 cancelled.
   Future<void> scheduleDebtPaymentReminders(List<Debt> debts) async {
     for (final debt in debts) {
-      final id = _debtNotificationId(debt.id);
-      if (debt.balance <= 0) {
-        await _plugin.cancel(id: id);
-        continue;
+      for (final daysBefore in _debtReminderDaysBefore) {
+        final id = _debtNotificationId(debt.id, daysBefore);
+        if (debt.balance <= 0) {
+          await _plugin.cancel(id: id);
+          continue;
+        }
+        final isToday = daysBefore == 0;
+        final reminderDay =
+            debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
+        await _plugin.zonedSchedule(
+          id: id,
+          title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
+          body: isToday
+              ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
+              : 'La cuota de ${debt.name} vence en $daysBefore '
+                  '${daysBefore == 1 ? 'día' : 'días'}.',
+          scheduledDate: _nextInstanceOfMonthDayTime(reminderDay, _debtReminderTime),
+          notificationDetails: const NotificationDetails(
+            android: AndroidNotificationDetails('debt_reminders', 'Pagos de deudas'),
+            iOS: DarwinNotificationDetails(),
+          ),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
+        );
       }
-      final reminderDay = debt.paymentDay - 2 < 1 ? 1 : debt.paymentDay - 2;
-      await _plugin.zonedSchedule(
-        id: id,
-        title: 'Pago de ${debt.name} pronto',
-        body: 'La cuota de ${debt.name} vence pronto.',
-        scheduledDate: _nextInstanceOfMonthDayTime(reminderDay, _debtReminderTime),
-        notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails('debt_reminders', 'Pagos de deudas'),
-          iOS: DarwinNotificationDetails(),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
-      );
     }
   }
 
-  Future<void> cancelDebtPaymentReminder(String debtId) =>
-      _plugin.cancel(id: _debtNotificationId(debtId));
+  Future<void> cancelDebtPaymentReminder(String debtId) async {
+    for (final daysBefore in _debtReminderDaysBefore) {
+      await _plugin.cancel(id: _debtNotificationId(debtId, daysBefore));
+    }
+  }
 
   /// Shows a push immediately - used for FCM messages that arrive while the
   /// app is in the foreground, since Android/iOS don't surface those in the
@@ -140,7 +153,8 @@ class NotificationService {
     );
   }
 
-  int _debtNotificationId(String debtId) => 1000 + (debtId.hashCode & 0xFFFF);
+  int _debtNotificationId(String debtId, int daysBefore) =>
+      1000 + ('$debtId:$daysBefore'.hashCode & 0xFFFF);
 }
 
 tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {

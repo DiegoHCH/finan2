@@ -126,16 +126,24 @@ async function handleScheduled(env) {
         debts ??= await getHouseholdDebts(accessToken, projectId, household.id);
         for (const debt of debts) {
           if (!debt.hasBalance) continue;
-          if (co.day !== debtReminderDay(debt.paymentDay)) continue;
+          const daysBefore = DEBT_REMINDER_DAYS_BEFORE.find(
+            (d) => co.day === debtReminderDay(debt.paymentDay, d),
+          );
+          if (daysBefore === undefined) continue;
+          const isToday = daysBefore === 0;
           await sendOnce({
             accessToken,
             dryRun,
             projectId,
             householdId: household.id,
-            marker: `debt_${debt.id}_${uid}_${co.monthStr}`,
+            // Per-day marker (not per-month) - each day of the countdown
+            // gets its own notification.
+            marker: `debt_${debt.id}_${uid}_${co.dateStr}`,
             tokens: memberTokens,
-            title: `Pago de ${debt.name} pronto`,
-            body: `La cuota de ${debt.name} vence pronto.`,
+            title: isToday ? `Hoy pagas ${debt.name}` : `Pago de ${debt.name} pronto`,
+            body: isToday
+              ? `Hoy es el día de pago de tu deuda ${debt.name}.`
+              : `La cuota de ${debt.name} vence en ${daysBefore} ${daysBefore === 1 ? 'día' : 'días'}.`,
           });
         }
       }
@@ -143,10 +151,12 @@ async function handleScheduled(env) {
   }
 }
 
-/// Mirrors NotificationService.scheduleDebtPaymentReminders' reminderDay
-/// calculation (lib/core/notifications/notification_service.dart).
-function debtReminderDay(paymentDay) {
-  return paymentDay - 2 < 1 ? 1 : paymentDay - 2;
+/// Mirrors NotificationService's reminder countdown (3, 2, 1, 0 días antes)
+/// in lib/core/notifications/notification_service.dart.
+const DEBT_REMINDER_DAYS_BEFORE = [3, 2, 1, 0];
+
+function debtReminderDay(paymentDay, daysBefore) {
+  return paymentDay - daysBefore < 1 ? 1 : paymentDay - daysBefore;
 }
 
 function coNow() {
