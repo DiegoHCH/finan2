@@ -23,6 +23,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Finan2',
+      debugShowCheckedModeBanner: false,
       theme: Finan2Theme.light,
       darkTheme: Finan2Theme.dark,
       themeMode: ThemeMode.system,
