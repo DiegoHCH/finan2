@@ -292,6 +292,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
 Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId) async {
   final controller = TextEditingController();
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
+  var submitting = false;
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -313,17 +314,30 @@ Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId
             currencySymbol: currencySymbol,
           ),
           const SizedBox(height: Finan2Space.lg),
-          FilledButton(
-            onPressed: () async {
-              final amount = int.tryParse(controller.text) ?? 0;
-              if (amount > 0) {
-                await ref
-                    .read(savingsGoalControllerProvider.notifier)
-                    .addContribution(goalId, amount);
-              }
-              if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+          StatefulBuilder(
+            builder: (sheetContext, setSheetState) {
+              return FilledButton(
+                onPressed: submitting
+                    ? null
+                    : () async {
+                        setSheetState(() => submitting = true);
+                        final amount = int.tryParse(controller.text) ?? 0;
+                        if (amount > 0) {
+                          await ref
+                              .read(savingsGoalControllerProvider.notifier)
+                              .addContribution(goalId, amount);
+                        }
+                        if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                      },
+                child: submitting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Guardar'),
+              );
             },
-            child: const Text('Guardar'),
           ),
         ],
       ),

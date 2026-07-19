@@ -87,6 +87,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final challengeAsync = ref.watch(savingsChallengeProvider);
     final formatMoney = ref.watch(moneyFormatterProvider);
+    final creating = ref.watch(savingsChallengeControllerProvider).isLoading;
 
     return Scaffold(
       body: SafeArea(
@@ -107,7 +108,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
                 error: (error, _) => Center(child: Text('$error')),
                 data: (challenge) {
                   if (challenge == null) {
-                    return _buildCreateForm(context, colors);
+                    return _buildCreateForm(context, colors, creating);
                   }
                   return _buildChallenge(context, colors, challenge, formatMoney);
                 },
@@ -119,7 +120,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
     );
   }
 
-  Widget _buildCreateForm(BuildContext context, Finan2Colors colors) {
+  Widget _buildCreateForm(BuildContext context, Finan2Colors colors, bool creating) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(Finan2Space.xl),
       child: Column(
@@ -148,7 +149,16 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
             ],
           ),
           const SizedBox(height: Finan2Space.lg),
-          FilledButton(onPressed: _create, child: const Text('Crear reto')),
+          FilledButton(
+            onPressed: creating ? null : _create,
+            child: creating
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Crear reto'),
+          ),
         ],
       ),
     );

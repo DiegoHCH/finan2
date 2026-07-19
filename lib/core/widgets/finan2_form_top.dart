@@ -4,7 +4,7 @@ import '../theme/app_theme.dart';
 
 /// The form header matching the mockup's `.form-top`: "Cancelar" / title /
 /// "Guardar", instead of a default AppBar.
-class Finan2FormTop extends StatelessWidget implements PreferredSizeWidget {
+class Finan2FormTop extends StatefulWidget implements PreferredSizeWidget {
   const Finan2FormTop({
     required this.title,
     required this.onSave,
@@ -13,11 +13,31 @@ class Finan2FormTop extends StatelessWidget implements PreferredSizeWidget {
   });
 
   final String title;
-  final VoidCallback onSave;
+  final Future<void> Function() onSave;
   final VoidCallback? onCancel;
 
   @override
   Size get preferredSize => const Size.fromHeight(48);
+
+  @override
+  State<Finan2FormTop> createState() => _Finan2FormTopState();
+}
+
+class _Finan2FormTopState extends State<Finan2FormTop> {
+  bool _saving = false;
+
+  Future<void> _handleSave() async {
+    // Guards against the save firing twice from a single tap (e.g. a fast
+    // double-tap, or web occasionally delivering duplicate pointer events),
+    // which was creating duplicate records.
+    if (_saving) return;
+    setState(() => _saving = true);
+    try {
+      await widget.onSave();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +52,8 @@ class Finan2FormTop extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Expanded(
               child: GestureDetector(
-                onTap: onCancel ?? () => Navigator.of(context).pop(),
+                behavior: HitTestBehavior.opaque,
+                onTap: _saving ? null : (widget.onCancel ?? () => Navigator.of(context).pop()),
                 child: Text(
                   'Cancelar',
                   style: TextStyle(
@@ -44,20 +65,34 @@ class Finan2FormTop extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             Text(
-              title,
+              widget.title,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
             ),
             Expanded(
               child: GestureDetector(
-                onTap: onSave,
-                child: Text(
-                  'Guardar',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: brand,
-                  ),
+                key: const Key('finan2FormTopSave'),
+                behavior: HitTestBehavior.opaque,
+                onTap: _saving ? null : _handleSave,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: _saving
+                      ? SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(brand),
+                          ),
+                        )
+                      : Text(
+                          'Guardar',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: brand,
+                          ),
+                        ),
                 ),
               ),
             ),
