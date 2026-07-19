@@ -76,6 +76,25 @@ void main() {
     return (await Debt.fromFirestore(doc, crypto, _householdId)).balance;
   }
 
+  Future<void> seedBudget(String categoryId, int year, int month, int planned) async {
+    await firestore
+        .collection('households')
+        .doc(_householdId)
+        .collection('budgets')
+        .doc('${year}_$month')
+        .set({categoryId: await crypto.encryptAmount(_householdId, planned)});
+  }
+
+  Future<List<String>> readOverCategoryIds(int year, int month) async {
+    final doc = await firestore
+        .collection('households')
+        .doc(_householdId)
+        .collection('budgetAlerts')
+        .doc('${year}_$month')
+        .get();
+    return (doc.data()?['overCategoryIds'] as List?)?.cast<String>() ?? const [];
+  }
+
   Movement movement({
     String id = '',
     int amount = 50000,
@@ -220,5 +239,52 @@ void main() {
     await repository.updateTransaction(_householdId, cardMovement(id: id, amount: 50000));
     expect(await readBalance('acc1'), 500000);
     expect(await readDebtBalance('card1'), 1050000);
+  });
+
+  group('budget alert flag', () {
+    test('creating an expense that exceeds the plan sets the plaintext flag', () async {
+      await seedAccount('acc1', 1000000);
+      await seedBudget('cat', 2026, 7, 100000);
+      await repository.createTransaction(_householdId, movement(amount: 150000));
+      expect(await readOverCategoryIds(2026, 7), ['cat']);
+    });
+
+    test('staying within the plan never sets the flag', () async {
+      await seedAccount('acc1', 1000000);
+      await seedBudget('cat', 2026, 7, 100000);
+      await repository.createTransaction(_householdId, movement(amount: 50000));
+      expect(await readOverCategoryIds(2026, 7), isEmpty);
+    });
+
+    test('deleting the transaction that pushed it over clears the flag', () async {
+      await seedAccount('acc1', 1000000);
+      await seedBudget('cat', 2026, 7, 100000);
+      await repository.createTransaction(_householdId, movement(amount: 150000));
+      expect(await readOverCategoryIds(2026, 7), ['cat']);
+
+      final snap = await firestore
+          .collection('households')
+          .doc(_householdId)
+          .collection('transactions')
+          .get();
+      await repository.deleteTransaction(_householdId, snap.docs.single.id);
+      expect(await readOverCategoryIds(2026, 7), isEmpty);
+    });
+
+    test('a category with no budget set is never flagged', () async {
+      await seedAccount('acc1', 1000000);
+      await repository.createTransaction(_householdId, movement(amount: 150000));
+      expect(await readOverCategoryIds(2026, 7), isEmpty);
+    });
+
+    test('an income transaction does not count toward spend', () async {
+      await seedAccount('acc1', 1000000);
+      await seedBudget('cat', 2026, 7, 100000);
+      await repository.createTransaction(
+        _householdId,
+        movement(amount: 150000, type: CategoryType.ingreso),
+      );
+      expect(await readOverCategoryIds(2026, 7), isEmpty);
+    });
   });
 }

@@ -16,6 +16,11 @@ class SavingsGoalRepository {
       .doc(householdId)
       .collection('savingsGoals');
 
+  CollectionReference<Map<String, dynamic>> _goalAlerts(String householdId) => _db
+      .collection('households')
+      .doc(householdId)
+      .collection('goalAlerts');
+
   Stream<List<SavingsGoal>> watchGoals(String householdId) {
     return _goals(householdId).orderBy('name').snapshots().asyncMap(
           (snap) => Future.wait(
@@ -60,6 +65,30 @@ class SavingsGoalRepository {
         await contribution.toMap(_crypto, householdId),
       ]),
     });
+    await _refreshGoalNearAlert(householdId, goalId);
+  }
+
+  /// Recomputes [SavingsGoal.progressFractionAsOf] and persists a plaintext
+  /// `near` flag on `goalAlerts/{goalId}` - the amounts stay encrypted, but
+  /// "is this goal between 90% and 100%" is readable without the household's
+  /// key. This is what lets the Cloudflare Worker's cron
+  /// (cloudflare/finan2-notifications/worker.js) send the "¡casi logras tu
+  /// meta!" push even with every device closed - the flag is already fresh
+  /// as of whoever last added a contribution, since only a client (with the
+  /// key) can compute it. Best-effort: a failure here must never block the
+  /// contribution write.
+  Future<void> _refreshGoalNearAlert(String householdId, String goalId) async {
+    try {
+      final doc = await _goals(householdId).doc(goalId).get();
+      if (!doc.exists) return;
+      final goal = await SavingsGoal.fromFirestore(doc, _crypto, householdId);
+      final fraction = goal.progressFractionAsOf(DateTime.now());
+      await _goalAlerts(householdId).doc(goalId).set({
+        'near': fraction >= 0.9 && fraction < 1.0,
+      });
+    } catch (_) {
+      // Best-effort - the contribution itself already succeeded.
+    }
   }
 
   Future<void> deleteGoal(String householdId, String goalId) {

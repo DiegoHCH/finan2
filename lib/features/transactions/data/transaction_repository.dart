@@ -24,6 +24,12 @@ class TransactionRepository {
   CollectionReference<Map<String, dynamic>> _debts(String householdId) =>
       _db.collection('households').doc(householdId).collection('debts');
 
+  CollectionReference<Map<String, dynamic>> _budgets(String householdId) =>
+      _db.collection('households').doc(householdId).collection('budgets');
+
+  CollectionReference<Map<String, dynamic>> _budgetAlerts(String householdId) =>
+      _db.collection('households').doc(householdId).collection('budgetAlerts');
+
   /// Decrypts an already-fetched account/debt snapshot's `balance` field.
   /// Takes the snapshot (not a ref+get) so a Firestore transaction never
   /// reads the same document twice.
@@ -55,6 +61,52 @@ class TransactionRepository {
   int _sourceDelta(Movement tx) {
     final accountStyle = tx.isIncome ? tx.amount : -tx.amount;
     return tx.isCardPurchase ? -accountStyle : accountStyle;
+  }
+
+  /// Recomputes real spend vs. planned for [categoryId]/[year]/[month] and
+  /// persists a plaintext `overCategoryIds` flag on `budgetAlerts/{year}_
+  /// {month}` - amounts stay encrypted, but "is this category over budget"
+  /// is readable without the household's key. This is what lets the
+  /// Cloudflare Worker's cron (cloudflare/finan2-notifications/worker.js)
+  /// send the "te pasaste del presupuesto" push even with every device
+  /// closed - the flag is already fresh as of whoever last wrote a
+  /// transaction, since only a client (with the key) can compute it.
+  /// Best-effort: a failure here must never block the transaction write.
+  Future<void> _refreshBudgetAlert(
+    String householdId,
+    String categoryId,
+    int year,
+    int month,
+  ) async {
+    if (categoryId.isEmpty) return;
+    try {
+      final budgetDoc = await _budgets(householdId).doc('${year}_$month').get();
+      final plannedPacked = budgetDoc.data()?[categoryId] as String?;
+      if (plannedPacked == null) return;
+      final planned = await _crypto.decryptAmount(householdId, plannedPacked);
+      if (planned <= 0) return;
+
+      final txSnap = await _transactions(householdId)
+          .where('year', isEqualTo: year)
+          .where('month', isEqualTo: month)
+          .where('categoryId', isEqualTo: categoryId)
+          .get();
+      var real = 0;
+      for (final doc in txSnap.docs) {
+        final tx = await Movement.fromFirestore(doc, _crypto, householdId);
+        if (tx.isIncome) continue;
+        real += tx.amount;
+      }
+
+      final alertRef = _budgetAlerts(householdId).doc('${year}_$month');
+      await alertRef.set({
+        'overCategoryIds': real > planned
+            ? FieldValue.arrayUnion([categoryId])
+            : FieldValue.arrayRemove([categoryId]),
+      }, SetOptions(merge: true));
+    } catch (_) {
+      // Best-effort - the transaction itself already succeeded.
+    }
   }
 
   Stream<List<Movement>> watchTransactions(
@@ -111,6 +163,7 @@ class TransactionRepository {
         });
       }
     });
+    await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
   }
 
   /// Writes [tx] under the deterministic [id] only if no document with that
@@ -122,6 +175,7 @@ class TransactionRepository {
     final ref = _transactions(householdId).doc(id);
     final sourceRef = _sourceRef(householdId, tx);
     final data = await tx.toFirestore(_crypto, householdId);
+    var wasCreated = false;
 
     await _db.runTransaction((transaction) async {
       final snap = await transaction.get(ref);
@@ -129,6 +183,7 @@ class TransactionRepository {
       final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
 
       transaction.set(ref, data);
+      wasCreated = true;
       if (sourceSnap != null && sourceSnap.exists) {
         final balance = await _decryptBalance(sourceSnap, householdId);
         transaction.update(sourceRef!, {
@@ -139,6 +194,9 @@ class TransactionRepository {
         });
       }
     });
+    if (wasCreated) {
+      await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
+    }
   }
 
   /// Updates [tx] and, atomically, corrects the balance(s) it affects:
@@ -151,12 +209,14 @@ class TransactionRepository {
     final newRef = _sourceRef(householdId, tx);
     final data = await tx.toFirestore(_crypto, householdId);
     final newDelta = _sourceDelta(tx);
+    Movement? capturedOldTx;
 
     await _db.runTransaction((transaction) async {
       final oldSnap = await transaction.get(txRef);
       final oldTx = oldSnap.exists
           ? await Movement.fromFirestore(oldSnap, _crypto, householdId)
           : null;
+      capturedOldTx = oldTx;
       final oldRef = oldTx == null ? null : _sourceRef(householdId, oldTx);
       final oldDelta = oldTx == null ? 0 : _sourceDelta(oldTx);
       final samePath = oldRef?.path == newRef?.path;
@@ -200,20 +260,37 @@ class TransactionRepository {
         }
       }
     });
+
+    await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
+    final oldTx = capturedOldTx;
+    if (oldTx != null &&
+        (oldTx.categoryId != tx.categoryId ||
+            oldTx.date.year != tx.date.year ||
+            oldTx.date.month != tx.date.month)) {
+      await _refreshBudgetAlert(
+        householdId,
+        oldTx.categoryId,
+        oldTx.date.year,
+        oldTx.date.month,
+      );
+    }
   }
 
   /// Deletes the transaction with [txId] and, atomically, reverses its
   /// effect on its source's balance. If the account/card was deleted since,
   /// the balance step is simply skipped - nothing to reverse it on.
-  Future<void> deleteTransaction(String householdId, String txId) {
+  Future<void> deleteTransaction(String householdId, String txId) async {
     final txRef = _transactions(householdId).doc(txId);
-    return _db.runTransaction((transaction) async {
+    Movement? deletedTx;
+
+    await _db.runTransaction((transaction) async {
       final snap = await transaction.get(txRef);
       if (!snap.exists) {
         transaction.delete(txRef);
         return;
       }
       final oldTx = await Movement.fromFirestore(snap, _crypto, householdId);
+      deletedTx = oldTx;
       final sourceRef = _sourceRef(householdId, oldTx);
       final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
 
@@ -229,5 +306,10 @@ class TransactionRepository {
         });
       }
     });
+
+    final oldTx = deletedTx;
+    if (oldTx != null) {
+      await _refreshBudgetAlert(householdId, oldTx.categoryId, oldTx.date.year, oldTx.date.month);
+    }
   }
 }

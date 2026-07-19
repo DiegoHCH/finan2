@@ -69,6 +69,20 @@ service cloud.firestore {
         allow create: if isMember();
       }
 
+      // Plaintext "is X over budget / near its goal" flags a client
+      // recomputes and writes at transaction/contribution time (see
+      // TransactionRepository._refreshBudgetAlert and
+      // SavingsGoalRepository._refreshGoalNearAlert) so the Worker's cron
+      // can push about them without ever seeing the encrypted amounts -
+      // not user-attributed, so no createdBy check.
+      match /budgetAlerts/{alertId} {
+        allow create: if isMember();
+      }
+
+      match /goalAlerts/{goalId} {
+        allow create: if isMember();
+      }
+
       match /savingsGoals/{goalId} {
         allow create: if isMember()
           && request.resource.data.createdBy == request.auth.uid;
