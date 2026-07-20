@@ -8,11 +8,20 @@ flutter_native_splash:
   # Android 12+'s SplashScreen API only allows an icon in a fixed circle on
   # a solid color - no custom wordmark/subtitle layout is possible there,
   # so this is the closest fidelity the OS permits on those versions.
+  #
+  # image/image_dark use android12_icon.png (the icon scaled to ~56% of the
+  # canvas with transparent padding around it), NOT the edge-to-edge
+  # app_icon.png - the OS clips this image to an icon mask shape (circle,
+  # squircle, or square depending on the device's system icon-shape setting)
+  # sized close to the full canvas, and app_icon.png's own rounded corners
+  # sit right at the edge, so that mask was cutting them into a hard square
+  # on devices using a square/less-rounded mask. The padding keeps our
+  # rounded icon fully inside the mask regardless of its shape.
   android_12:
-    image: "assets/icon/app_icon.png"
+    image: "assets/splash/android12_icon.png"
     icon_background_color: "#FFFFFF"
     color: "#FFFFFF"
-    image_dark: "assets/icon/app_icon.png"
+    image_dark: "assets/splash/android12_icon.png"
     icon_background_color_dark: "#0F9D74"
     color_dark: "#0F9D74"
 
