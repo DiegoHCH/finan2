@@ -4,20 +4,22 @@ App Flutter de finanzas del hogar para dos personas: cada quien entra con su pro
 
 ## Stack
 
-- **Flutter** (Material 3) + **Riverpod** (MVVM-ligero por feature)
-- **Firebase Auth** + **Cloud Firestore** (offline-first, capa gratuita)
+- **Flutter** 3.44.6 (Material 3) + **Riverpod** (MVVM-ligero por feature)
+- **Firebase Auth** + **Cloud Firestore** + **Cloud Messaging** (offline-first, capa gratuita)
+- **Cloudflare Workers** para push server-side y recordatorios programados (`cloudflare/finan2-notifications/`)
 - **fl_chart** para gráficas, **intl** para formato de moneda/fecha
+- Fuente de marca: **Plus Jakarta Sans** (empaquetada localmente, sin `google_fonts`)
 
 ## Estructura
 
 ```
 lib/
 ├── core/
-│   ├── theme/           # Finan2Theme, paleta, tipografía (Plus Jakarta Sans)
+│   ├── theme/           # Finan2Theme, paleta, tipografía
 │   ├── crypto/          # HouseholdCrypto - cifrado AES-GCM de montos
-│   ├── widgets/         # Finan2* widgets compartidos
+│   ├── widgets/         # Finan2* widgets compartidos (bottom sheets, splash, etc.)
 │   ├── notifications/   # Notificaciones locales (flutter_local_notifications)
-│   └── utils/
+│   └── utils/           # incl. error_messages.dart (mapeo de errores a mensajes en español)
 └── features/
     ├── auth/
     ├── household/
@@ -42,11 +44,26 @@ lib/
 
 Cada feature se organiza como `data/` (modelos + repositorios Firestore) y `presentation/` (`viewmodels/` + `screens/`).
 
+Otras carpetas relevantes en la raíz del repo:
+
+```
+docs/              # sitio público (GitHub Pages) - ver sección abajo
+design-archive/    # mockups/exploraciones de diseño archivados, NO servidos por Pages
+cloudflare/        # Worker de notificaciones push + recordatorios programados
+store/             # metadata de tienda (política de privacidad, ficha de App Store en pausa)
+```
+
 ## Correr el proyecto
 
 ```
 flutter pub get
 flutter run
+```
+
+Para builds que usan Firebase Cloud Messaging (push), incluir los dart-defines:
+
+```
+flutter run --dart-define-from-file=.secrets/dart-defines.json
 ```
 
 ## Firebase
@@ -59,15 +76,22 @@ Proveedores **Email/Password** y **Google** habilitados en Authentication > Sign
 
 - [x] Setup del proyecto, dependencias, theme y esqueleto de carpetas
 - [x] Firebase configurado (Auth + Firestore en `southamerica-east1`) y reglas de seguridad desplegadas
-- [x] Auth (login/registro con email y Google) + Hogar (crear/unirse por código)
-- [x] Ícono de la app generado a partir del mockup
+- [x] Auth (login/registro con email y Google, recuperar contraseña) + Hogar (crear/unirse por código)
+- [x] Ícono de la app (adaptativo/squircle) + ícono monocromático para notificaciones Android
+- [x] Splash screen nativo (Android/iOS, claro y de marca) con handoff a una versión animada en Flutter (puntos de carga) mientras resuelve sesión/hogar
 - [x] Categorías, Cuentas, Transacciones (Movimientos), Transferencias
 - [x] Dashboard, Presupuesto, Deudas (avalancha), Metas de ahorro, Reto de ahorro, Inversiones
 - [x] Facturas recurrentes, Notas del mes, Resumen anual
 - [x] Notificaciones (in-app + push real vía Cloudflare Worker) y preferencias
 - [x] Exportar reporte (PDF/CSV)
 - [x] Cifrado de montos en reposo (ver sección abajo)
-- [x] CI (`flutter analyze` + `flutter test`), suite de tests unitarios/widget (94 tests, todos verdes)
+- [x] Todas las modales de la app son bottom sheets (nunca `AlertDialog` centrado) - helpers
+  compartidos en `lib/core/widgets/finan2_bottom_sheet.dart`
+  (`showFinan2ConfirmSheet`/`showFinan2InputSheet`/`showFinan2ErrorSheet`/`showFinan2InfoSheet`)
+- [x] Errores mostrados al usuario siempre en español y sin exponer el mensaje crudo de la
+  excepción - mapeo único en `lib/core/utils/error_messages.dart`
+- [x] Sitio público en `docs/` listo para GitHub Pages (landing, política de privacidad, términos y condiciones)
+- [x] CI (`flutter analyze` + `flutter test`), suite de tests unitarios/widget (142 tests, todos verdes)
 
 ## Cifrado de montos
 
@@ -110,20 +134,51 @@ publicar la primera versión — no dependas de que este equipo no falle.
 - **Versión**: `1.0.0+1` (`pubspec.yaml`).
 - **Play Store**: `android/fastlane/metadata/android/es-419/` (título, descripción corta y
   larga - formato fastlane estándar, listo para `fastlane deploy` o carga manual en Play
-  Console).
-- **iOS**: no se va a publicar nativo en App Store - la app para iOS es la SPA/PWA descrita
-  abajo. El borrador de ficha de App Store Connect que se había preparado quedó guardado sin
-  usar en `store/app_store_metadata.md.on-hold` por si esto cambia.
-- **Política de privacidad**: `store/privacy_policy.md` (fuente), publicada en
-  https://claude.ai/code/artifact/07ca9609-ec69-4b85-be4b-f8ccc5e5f9c0 - **ese link empieza
-  privado**, hay que compartirlo desde el menú de la página antes de pegarlo en Play Console
-  (o donde termine viviendo la SPA de iOS), o migrar el contenido a una URL propia.
+  Console). Aún no publicada — el badge de Google Play en `docs/index.html` está deshabilitado
+  a propósito hasta que exista una ficha real.
+- **iOS**: decisión revertida (2026-07-20) — sí se va a publicar una app nativa en App Store
+  (se va a comprar la licencia de desarrollador Apple), en vez de depender solo de la PWA
+  descrita más abajo. El borrador de ficha de App Store Connect que se había dejado en pausa
+  está listo para retomar en `store/app_store_metadata.md.on-hold` (quitarle el sufijo
+  `.on-hold` cuando se vaya a usar). El badge de App Store en `docs/index.html` también está
+  deshabilitado hasta que exista la ficha.
+- **Política de privacidad / Términos y condiciones**: fuente en `store/privacy_policy.md` y
+  publicadas como páginas propias en `docs/privacy.html` y `docs/terms.html` (ver sección
+  "Sitio público" abajo) - dejan de depender de un link de artifact de claude.ai.
+
+## Sitio público (GitHub Pages)
+
+`docs/` contiene el sitio que se sirve con GitHub Pages (Settings → Pages → Deploy from a
+branch → `main` → `/docs`):
+
+- `docs/index.html` — landing. Sin ningún CTA hacia la web app (`finan2.web.app`): la
+  distribución es por las tiendas, así que solo muestra los badges de Google Play / App Store
+  (deshabilitados hasta que existan las fichas reales).
+- `docs/privacy.html` — política de privacidad.
+- `docs/terms.html` — términos y condiciones.
+- `docs/assets/` — badges oficiales de las tiendas.
+
+Los 3 documentos son HTML autocontenidos (ícono real de la app y Plus Jakarta Sans embebidos
+como base64, sin dependencias externas) y se enlazan entre sí con rutas relativas. Una vez
+publicado el repo queda en:
+
+```
+https://diegohch.github.io/finan2/
+https://diegohch.github.io/finan2/privacy.html
+https://diegohch.github.io/finan2/terms.html
+```
+
+`design-archive/` guarda copias HTML de mockups/exploraciones de diseño (pantallas completas
+de la app, exploración de nombre/logo) **fuera** de `docs/` a propósito, para que no queden
+públicas por Pages — es solo respaldo interno.
 
 ## SPA/PWA para iOS
 
-Decisión (2026-07-12): en vez de publicar nativo en App Store, iOS usa el target web de
-Flutter (`web/`) como PWA. Investigación completa y diseño en el historial de esta
-conversación; resumen de lo construido:
+Construida el 2026-07-12 como plan de distribución para iOS (ver detalle técnico abajo). Con
+la decisión de comprar la licencia de Apple Developer y publicar nativo (2026-07-20), esta PWA
+deja de ser el canal principal para iOS, pero el código sigue funcionando y puede quedar como
+respaldo (acceso vía navegador sin pasar por la tienda) o retirarse más adelante — no se ha
+tocado nada de esto todavía.
 
 - **Base web**: `web/manifest.json`/`index.html` con metadata real (nombre, descripción,
   meta tags de iOS). Todo lo demás (Firestore, Firebase Auth, `cryptography`) funciona igual
@@ -161,30 +216,20 @@ conversación; resumen de lo construido:
   Ajustes (antes eran solo locales). Reglas de Firestore actualizadas para permitir ese
   nuevo subcollection.
 
-**Validado:** `flutter analyze`/`flutter test` en verde, `flutter build web` compila,
-`firestore.rules` desplegable (`firebase deploy --only firestore:rules --dry-run`). El Worker
-tiene un modo `DRY_RUN` (env var, nunca un secreto real desplegado) que lee Firestore real sin
-llamar a FCM ni escribir `sentReminders` - se probó localmente con
-`wrangler dev --test-scheduled` contra el proyecto real: encontró el hogar existente, calculó
-bien la hora de Colombia, y no disparó nada porque ninguna condición coincidía en ese momento
-(no se validó en vivo el camino positivo "sí envía", solo que lee/decide correctamente).
-
-**Desplegado (2026-07-12):** `wrangler deploy` ya corrió - el Cron Trigger
-(`0 * * * *`, cada hora) está activo en producción en
-`https://finan2-notifications.katanalabs-6002.workers.dev`.
+**Desplegado:** `wrangler deploy` ya corrió - el Cron Trigger (`0 * * * *`, cada hora) está
+activo en producción en `https://finan2-notifications.katanalabs-6002.workers.dev`.
 
 ## Pendientes
 
+- [ ] Comprar la licencia de Apple Developer y publicar la app nativa en App Store (retomar
+  `store/app_store_metadata.md.on-hold`)
+- [ ] Publicar la ficha en Play Store y habilitar el badge correspondiente en `docs/index.html`
+- [ ] Habilitar GitHub Pages en la configuración del repo (`Settings → Pages`, servir desde
+  `main`/`docs`)
 - [ ] Capturas de pantalla para las fichas de tienda - necesitan la app corriendo con datos
-  reales en un dispositivo/simulador; no se generaron en esta pasada (fue una decisión
-  explícita para no meterle datos ficticios a las capturas)
-
-**Pospuesto a propósito (decisión 2026-07-12), no olvidado:**
-
-- [ ] Probar login con Google, instalación y push reales en un iPhone/Safari - el botón
-  embebido compila (`flutter build web`) pero nunca se ha hecho clic en uno de verdad
-- [ ] QA manual en dispositivo/emulador de los flujos completos (login → hogar → cada feature) — hasta ahora solo hay cobertura de tests unitarios/widget
-
-Firestore de producción quedó vacío (0 hogares) - se borró el único hogar de prueba que
-existía (`Q5N2AZ`, sin datos financieros reales, ver historial de esta conversación) antes de
-que quedara incompatible con el formato de montos cifrados.
+  reales en un dispositivo/simulador; no se han generado todavía (decisión explícita de no
+  meterle datos ficticios a las capturas)
+- [ ] Probar login con Google, instalación y push reales de la PWA en un iPhone/Safari - el
+  botón embebido compila (`flutter build web`) pero nunca se ha probado en un dispositivo real
+- [ ] QA manual en dispositivo/emulador de los flujos completos (login → hogar → cada feature)
+  — hasta ahora solo hay cobertura de tests unitarios/widget
