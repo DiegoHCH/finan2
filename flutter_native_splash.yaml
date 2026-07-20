@@ -1,0 +1,21 @@
+flutter_native_splash:
+  # color/color_dark are deliberately omitted: flutter_native_splash treats
+  # color as taking priority over background_image (it silently drops the
+  # image and renders a 1x1 solid fill instead) whenever both are set.
+  background_image: "assets/splash/splash_light.png"
+  background_image_dark: "assets/splash/splash_dark.png"
+
+  # Android 12+'s SplashScreen API only allows an icon in a fixed circle on
+  # a solid color - no custom wordmark/subtitle layout is possible there,
+  # so this is the closest fidelity the OS permits on those versions.
+  android_12:
+    image: "assets/icon/app_icon.png"
+    icon_background_color: "#FFFFFF"
+    color: "#FFFFFF"
+    image_dark: "assets/icon/app_icon.png"
+    icon_background_color_dark: "#0F9D74"
+    color_dark: "#0F9D74"
+
+  android: true
+  ios: true
+  web: false

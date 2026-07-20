@@ -6,6 +6,7 @@ import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/household/presentation/screens/create_join_household_screen.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
 import 'finan2_home_shell.dart';
+import 'finan2_splash_screen.dart';
 
 /// Root of the navigation: signed out -> auth screens; signed in without a
 /// household -> create/join; signed in with a household -> its home.
@@ -50,9 +51,7 @@ class _LoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Finan2SplashScreen();
   }
 }
 
