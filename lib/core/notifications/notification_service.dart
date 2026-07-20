@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/debts/data/debt_model.dart';
+import '../utils/local_timezone.dart';
 
 /// Thin wrapper around flutter_local_notifications for the reminders that
 /// must fire even when the app isn't open: daily reminder, weekly summary,
@@ -24,9 +24,9 @@ class NotificationService {
 
   Future<void> initialize() async {
     tzdata.initializeTimeZones();
-    final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+    final timezoneId = await getLocalTimezone();
     try {
-      tz.setLocalLocation(tz.getLocation(timezoneInfo.identifier));
+      tz.setLocalLocation(tz.getLocation(timezoneId));
     } catch (_) {
       // Unknown/unsupported timezone name - fall back to UTC rather than crash.
     }

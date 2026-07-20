@@ -1,6 +1,8 @@
 import Flutter
 import UIKit
 
+private let timezoneChannelName = "finan2/timezone"
+
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
@@ -12,5 +14,17 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
+    let timezoneChannel = FlutterMethodChannel(
+      name: timezoneChannelName,
+      binaryMessenger: engineBridge.applicationRegistrar.messenger()
+    )
+    timezoneChannel.setMethodCallHandler { call, result in
+      if call.method == "getLocalTimezone" {
+        result(TimeZone.current.identifier)
+      } else {
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 }
