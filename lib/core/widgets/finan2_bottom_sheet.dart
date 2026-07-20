@@ -69,6 +69,37 @@ Future<void> showFinan2ErrorSheet(
   required String message,
   String confirmLabel = 'Entendido',
 }) {
+  return _showFinan2NoticeSheet(
+    context,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+  );
+}
+
+/// A single-button informational notice as a bottom sheet - same rationale
+/// as [showFinan2ErrorSheet], for non-error feedback (e.g. "email sent")
+/// that the app also never puts in a [SnackBar].
+Future<void> showFinan2InfoSheet(
+  BuildContext context, {
+  required String title,
+  required String message,
+  String confirmLabel = 'Entendido',
+}) {
+  return _showFinan2NoticeSheet(
+    context,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+  );
+}
+
+Future<void> _showFinan2NoticeSheet(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     builder: (sheetContext) {

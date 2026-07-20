@@ -68,12 +68,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     final state = ref.read(authControllerProvider);
     if (!state.hasError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Si $trimmedEmail tiene una cuenta, te llegará un correo para recuperarla.',
-          ),
-        ),
+      await showFinan2InfoSheet(
+        context,
+        title: 'Correo enviado',
+        message: 'Si $trimmedEmail tiene una cuenta, te llegará un correo para recuperarla.',
       );
     }
   }

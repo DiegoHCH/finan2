@@ -62,15 +62,11 @@ class _CreateJoinHouseholdScreenState
     } else {
       await controller.joinHousehold(code: _codeController.text.trim());
       if (controller.joinedWithoutKey && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Te uniste al hogar, pero este código no traía la llave para '
-              'ver montos. Pide a tu pareja el código completo que copió al '
-              'crear el hogar.',
-            ),
-            duration: Duration(seconds: 6),
-          ),
+        await showFinan2InfoSheet(
+          context,
+          title: 'Te uniste al hogar',
+          message: 'Este código no traía la llave para ver montos. Pide a tu '
+              'pareja el código completo que copió al crear el hogar.',
         );
       }
     }
