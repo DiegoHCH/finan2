@@ -79,6 +79,14 @@ class AuthRepository {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
+  /// Sends the "reset your password" email. Firebase doesn't reveal whether
+  /// the address actually has an account (a `user-not-found` error is
+  /// possible but shouldn't be surfaced differently - that would let someone
+  /// probe which emails are registered).
+  Future<void> sendPasswordResetEmail(String email) {
+    return _auth.sendPasswordResetEmail(email: email);
+  }
+
   /// Native platforms only - the web plugin's `authenticate()` throws
   /// `UnimplementedError`. Web uses [ensureGoogleWebButtonReady] +
   /// [googleWebSignInEvents] instead, since GIS requires the user to

@@ -56,6 +56,20 @@ class AuthController extends AsyncNotifier<void> {
     );
   }
 
+  /// Never surfaces "user-not-found" distinctly from success - the caller
+  /// always shows the same "revisa tu correo" message either way, so this
+  /// can't be used to probe which emails have an account.
+  Future<void> sendPasswordReset(String email) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      try {
+        await ref.read(authRepositoryProvider).sendPasswordResetEmail(email);
+      } on FirebaseAuthException catch (e) {
+        if (e.code != 'user-not-found') rethrow;
+      }
+    });
+  }
+
   Future<void> signInWithGoogle() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(

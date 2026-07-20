@@ -49,6 +49,53 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
   }
 
+  Future<void> _forgotPassword() async {
+    final controller = TextEditingController(text: _emailController.text.trim());
+    final email = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recuperar contraseña'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Te enviamos un enlace a tu correo para elegir una contraseña nueva.',
+            ),
+            const SizedBox(height: Finan2Space.md),
+            Finan2Field(
+              label: 'Correo',
+              controller: controller,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: const Text('Enviar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (email == null || email.isEmpty || !mounted) return;
+    await ref.read(authControllerProvider.notifier).sendPasswordReset(email);
+    if (!mounted) return;
+    final state = ref.read(authControllerProvider);
+    if (!state.hasError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Si $email tiene una cuenta, te llegará un correo para recuperarla.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -126,7 +173,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ? 'Ingresa tu contraseña'
                       : null,
                 ),
-                const SizedBox(height: Finan2Space.lg),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: authState.isLoading ? null : _forgotPassword,
+                    child: const Text('¿Olvidaste tu contraseña?'),
+                  ),
+                ),
+                const SizedBox(height: Finan2Space.sm),
                 FilledButton(
                   onPressed: authState.isLoading ? null : _submit,
                   child: authState.isLoading
