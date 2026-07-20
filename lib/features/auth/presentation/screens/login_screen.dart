@@ -82,7 +82,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ],
       ),
     );
-    controller.dispose();
+    // Not disposed here on purpose: the dialog route is still animating out
+    // when showDialog's future resolves, and its TextFormField (bound to
+    // this controller) briefly rebuilds during that exit transition -
+    // disposing immediately crashes it mid-animation. Same tradeoff
+    // AccountSettingsScreen._askPassword already makes for the same reason.
     if (email == null || email.isEmpty || !mounted) return;
     await ref.read(authControllerProvider.notifier).sendPasswordReset(email);
     if (!mounted) return;
