@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nombre + logo — Finan2 · Suma2 · Ahorra2</title>
+<style>
+  :root {
+    --ground: #f1f4f2;
+    --surface: #ffffff;
+    --surface-2: #f6f9f7;
+    --ink: #0d1f1a;
+    --ink-soft: #4a5c55;
+    --ink-faint: #869590;
+    --line: #dde5e0;
+    --brand: #0f9d74;
+    --brand-deep: #0a5c47;
+    --brand-tint: #e3f4ee;
+    --accent: #c8892f;         /* el "2" vive aquí */
+    --accent-deep: #9a6817;
+    --accent-tint: #f8eede;
+    --shadow: 0 24px 60px -30px rgba(12, 40, 32, .5);
+    --shadow-tile: 0 16px 34px -14px rgba(15, 157, 116, .55);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0a1210; --surface: #12201b; --surface-2: #17281f; --ink: #e9f1ec;
+      --ink-soft: #a3b4ad; --ink-faint: #6b7d76; --line: #22342c; --brand: #2dd39c;
+      --brand-deep: #1d8b68; --brand-tint: #123028; --accent: #e0ad5e; --accent-deep: #b9863a;
+      --accent-tint: #2c2415; --shadow: 0 28px 70px -32px rgba(0,0,0,.75);
+      --shadow-tile: 0 20px 40px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground:#f1f4f2; --surface:#fff; --surface-2:#f6f9f7; --ink:#0d1f1a; --ink-soft:#4a5c55;
+    --ink-faint:#869590; --line:#dde5e0; --brand:#0f9d74; --brand-deep:#0a5c47; --brand-tint:#e3f4ee;
+    --accent:#c8892f; --accent-deep:#9a6817; --accent-tint:#f8eede;
+    --shadow:0 24px 60px -30px rgba(12,40,32,.5); --shadow-tile:0 16px 34px -14px rgba(15,157,116,.55);
+  }
+  :root[data-theme="dark"] {
+    --ground:#0a1210; --surface:#12201b; --surface-2:#17281f; --ink:#e9f1ec; --ink-soft:#a3b4ad;
+    --ink-faint:#6b7d76; --line:#22342c; --brand:#2dd39c; --brand-deep:#1d8b68; --brand-tint:#123028;
+    --accent:#e0ad5e; --accent-deep:#b9863a; --accent-tint:#2c2415;
+    --shadow:0 28px 70px -32px rgba(0,0,0,.75); --shadow-tile:0 20px 40px -16px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .page {
+    background: var(--ground); color: var(--ink); font-family: var(--font);
+    min-height: 100vh; -webkit-font-smoothing: antialiased; padding: 0 24px 90px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  .theme-toggle {
+    position: fixed; top: 18px; right: 18px; z-index: 50;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 999px; padding: 9px 15px; font-size: 13px; font-weight: 600;
+    font-family: var(--font); cursor: pointer; box-shadow: var(--shadow);
+  }
+  .theme-toggle:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  header.hero { padding: 66px 0 26px; display: flex; flex-direction: column; gap: 16px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); }
+  h1 { font-size: clamp(28px, 5vw, 46px); line-height: 1.06; letter-spacing: -.035em; font-weight: 780; margin: 0; max-width: 18ch; text-wrap: balance; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { font-size: clamp(15px,2vw,17px); color: var(--ink-soft); max-width: 62ch; line-height: 1.55; margin: 0; }
+  .note { font-size: 13px; color: var(--ink-faint); display: flex; align-items: center; gap: 7px; margin-top: 2px; }
+  .note b { color: var(--accent); font-weight: 700; }
+
+  /* logo blocks */
+  .logos { display: flex; flex-direction: column; gap: 26px; margin-top: 40px; }
+  .logo-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 26px;
+    box-shadow: var(--shadow); overflow: hidden;
+    display: grid; grid-template-columns: 300px 1fr;
+  }
+  @media (max-width: 720px) { .logo-card { grid-template-columns: 1fr; } }
+
+  /* left: the app-icon tile on a colored stage */
+  .stage {
+    padding: 34px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    background:
+      radial-gradient(120% 120% at 30% 20%, var(--brand-tint), transparent 60%),
+      var(--surface-2);
+    border-right: 1px solid var(--line);
+  }
+  @media (max-width: 720px) { .stage { border-right: none; border-bottom: 1px solid var(--line); } }
+  .tile {
+    width: 116px; height: 116px; border-radius: 30px; display: grid; place-items: center;
+    color: #fff; box-shadow: var(--shadow-tile); position: relative;
+  }
+  .tile.g-brand { background: linear-gradient(150deg, var(--brand), var(--brand-deep)); }
+  .tile.g-mix   { background: linear-gradient(150deg, var(--brand), var(--accent-deep)); }
+  .tile.g-warm  { background: linear-gradient(150deg, #d99a3e, var(--accent-deep)); }
+  .tile svg { width: 62px; height: 62px; }
+  .tile .badge2 {
+    position: absolute; right: -8px; bottom: -8px; width: 40px; height: 40px; border-radius: 13px;
+    background: var(--surface); color: var(--accent); display: grid; place-items: center;
+    font-weight: 800; font-size: 22px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  .tinylabel { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+
+  /* right: wordmarks + idea */
+  .detail { padding: 30px 32px; display: flex; flex-direction: column; gap: 20px; }
+  .rank { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); }
+
+  .wordmark { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .wordmark .mk { width: 1.15em; height: 1.15em; flex: none; }
+  .wordmark .mk svg { width: 100%; height: 100%; }
+  .wordmark .txt { color: var(--ink); }
+  .wordmark .two { color: var(--accent); }
+  .wm-lg { font-size: 46px; }
+  .wm-sm { font-size: 24px; opacity: .92; }
+
+  .marks-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; padding: 4px 0 2px; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); padding: 18px 0; }
+  .mono { color: var(--ink); }
+  .mono .two { color: var(--ink-faint); }
+  .on-dark {
+    background: var(--ink); border-radius: 14px; padding: 14px 18px; display: inline-flex;
+  }
+  .on-dark .txt { color: #fff; }
+  .on-dark .two { color: var(--accent); }
+  @media (prefers-color-scheme: dark) { .on-dark { background: #05100c; } }
+  :root[data-theme="dark"] .on-dark { background: #05100c; }
+  :root[data-theme="light"] .on-dark { background: var(--ink); }
+
+  .idea h4 { margin: 0 0 5px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
+  .idea p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+  .idea p b { color: var(--ink); font-weight: 680; }
+  .pros { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+  .pill { font-size: 12px; font-weight: 600; color: var(--brand-deep); background: var(--brand-tint); padding: 5px 11px; border-radius: 999px; }
+  :root[data-theme="dark"] .pill { color: var(--brand); }
+  @media (prefers-color-scheme: dark) { .pill { color: var(--brand); } }
+
+  .verdict {
+    margin-top: 42px; background: linear-gradient(150deg, var(--brand-deep), var(--brand));
+    color: #fff; border-radius: 22px; padding: 26px 28px; box-shadow: var(--shadow-tile);
+  }
+  .verdict .vk { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  .verdict h3 { margin: 8px 0 6px; font-size: 22px; letter-spacing: -.02em; }
+  .verdict p { margin: 0; font-size: 14.5px; line-height: 1.55; opacity: .95; max-width: 66ch; }
+  .verdict b { font-weight: 750; }
+
+  footer { margin-top: 40px; font-size: 12.5px; color: var(--ink-faint); text-align: center; }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="tt" aria-label="Cambiar tema">◑ Tema</button>
+
+<div class="page"><div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Identidad · finanzas del hogar para dos</div>
+    <h1>Tres nombres, un mismo gesto: la <em>2</em> es la marca.</h1>
+    <p class="lede">Todos comparten un mismo ADN visual — el verde esmeralda del producto y un <b>2</b> dorado que representa a la pareja. Así, sea cual sea el nombre, el "2" es lo que la gente recuerda. Toca ◑ para verlo en modo oscuro.</p>
+    <div class="note">💡 <b>Regla de marca:</b>&nbsp;raíz financiera en tinta, el <b>2</b> siempre en dorado acento.</div>
+  </header>
+
+  <div class="logos">
+
+    <!-- ============ FINAN2 ============ -->
+    <div class="logo-card">
+      <div class="stage">
+        <div class="tile g-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9m5 9V5m5 13v-6m5 6V8"/></svg>
+          <span class="badge2">2</span>
+        </div>
+        <span class="tinylabel">App icon</span>
+      </div>
+      <div class="detail">
+        <div class="rank">Opción 1 · lo más directo</div>
+        <div class="wordmark wm-lg">
+          <span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9m5 9V5m5 13v-6m5 6V8"/></svg></span>
+          <span><span class="txt">Finan</span><span class="two">2</span></span>
+        </div>
+        <div class="marks-row">
+          <div class="wordmark wm-sm mono"><span class="txt">Finan</span><span class="two">2</span></div>
+          <div class="on-dark"><div class="wordmark wm-sm"><span class="txt">Finan</span><span class="two">2</span></div></div>
+        </div>
+        <div class="idea">
+          <h4>La idea</h4>
+          <p>Se lee <b>"finan-dos"</b>: la palabra <b>finanzas</b> completa, rematada por el 2. El ícono son barras de crecimiento (viene del logo original) y el <b>2</b> se posa como un sello en la esquina.</p>
+          <div class="pros"><span class="pill">Raíz financiera clarísima</span><span class="pill">Se lee solo</span><span class="pill">Serio / confiable</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SUMA2 ============ -->
+    <div class="logo-card">
+      <div class="stage">
+        <div class="tile g-mix">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="badge2">2</span>
+        </div>
+        <span class="tinylabel">App icon</span>
+      </div>
+      <div class="detail">
+        <div class="rank">Opción 2 · la más cálida ★</div>
+        <div class="wordmark wm-lg">
+          <span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span><span class="txt">Suma</span><span class="two">2</span></span>
+        </div>
+        <div class="marks-row">
+          <div class="wordmark wm-sm mono"><span class="txt">Suma</span><span class="two">2</span></div>
+          <div class="on-dark"><div class="wordmark wm-sm"><span class="txt">Suma</span><span class="two">2</span></div></div>
+        </div>
+        <div class="idea">
+          <h4>La idea</h4>
+          <p>Doble sentido perfecto: <b>"sumar"</b> es la operación financiera básica, y el <b>+</b> son <b>dos líneas que se cruzan</b> = dos personas que se unen. Suena a <b>"sumados"</b>. El signo <b>+</b> es el logo — funciona incluso sin texto.</p>
+          <div class="pros"><span class="pill">Doble lectura: sumar + unir</span><span class="pill">Ícono icónico (el +)</span><span class="pill">Emotivo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ AHORRA2 ============ -->
+    <div class="logo-card">
+      <div class="stage">
+        <div class="tile g-warm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><path d="M9 9.2h5.2M9 12h6M9.6 14.8h4"/><path d="M8.4 8.4l1 7.2"/></svg>
+          <span class="badge2">2</span>
+        </div>
+        <span class="tinylabel">App icon</span>
+      </div>
+      <div class="detail">
+        <div class="rank">Opción 3 · tu favorito original</div>
+        <div class="wordmark wm-lg">
+          <span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M9.4 9h5.2M9 12h6M9.7 15h4"/></svg></span>
+          <span><span class="txt">Ahorra</span><span class="two">2</span></span>
+        </div>
+        <div class="marks-row">
+          <div class="wordmark wm-sm mono"><span class="txt">Ahorra</span><span class="two">2</span></div>
+          <div class="on-dark"><div class="wordmark wm-sm"><span class="txt">Ahorra</span><span class="two">2</span></div></div>
+        </div>
+        <div class="idea">
+          <h4>La idea</h4>
+          <p>El más explícito sobre el <b>beneficio</b>: no solo registran, <b>ahorran</b> — y lo hacen entre dos ("ahorrados"). El ícono es una <b>moneda</b> con líneas de valor. Es el más alegre y motivador de los tres.</p>
+          <div class="pros"><span class="pill">Habla del beneficio (ahorrar)</span><span class="pill">Optimista</span><span class="pill">Fácil de recordar</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="verdict">
+    <div class="vk">Mi recomendación</div>
+    <h3>Finan2 para vender confianza · Suma2 para enamorar</h3>
+    <p><b>Finan2</b> gana si quieres que se lea "app de finanzas" al instante. Pero <b>Suma2</b> es el que tiene alma: el signo <b>+</b> dice a la vez "sumar dinero" y "somos dos", y da un ícono memorable que vive sin texto. Dime cuál te late y lo llevo a toda la maqueta de la app — logo, marca y textos.</p>
+  </div>
+
+  <footer>Bocetos de identidad · el "2" en dorado es el elemento constante de marca</footer>
+
+</div></div>
+
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('tt');
+    function current() {
+      if (root.dataset.theme) return root.dataset.theme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn.addEventListener('click', function () {
+      root.dataset.theme = current() === 'dark' ? 'light' : 'dark';
+    });
+  })();
+</script>
+
+</body>
+</html>
