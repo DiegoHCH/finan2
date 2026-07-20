@@ -577,7 +577,13 @@ async function sendToToken({ title, body, accessToken, projectId, token, platfor
     ...(isWeb
       ? { webpush: { notification: { icon: ICON_URL, badge: ICON_URL } } }
       : {
-          android: { notification: { channel_id: 'finan2_activity', sound: 'default' } },
+          android: {
+            notification: {
+              channel_id: 'finan2_activity',
+              sound: 'default',
+              notification_icon: 'ic_stat_finan2',
+            },
+          },
           apns: { payload: { aps: { sound: 'default' } } },
         }),
   };

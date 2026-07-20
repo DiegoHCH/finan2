@@ -35,6 +35,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- Status bar icon for FCM notifications received while the app is
+             backgrounded/terminated (handled by the OS, not flutter_local_notifications).
+             Without this, Android falls back to android:icon above, which has
+             color/alpha it can't render as a mask and shows as a plain white box. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_finan2" />
+
         <!-- flutter_local_notifications: needed for scheduled (daily/weekly/debt
              payment) reminders to survive reboot and fire at their exact time. -->
         <receiver android:exported="false"

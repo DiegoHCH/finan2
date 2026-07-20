@@ -31,7 +31,7 @@ class NotificationService {
       // Unknown/unsupported timezone name - fall back to UTC rather than crash.
     }
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_finan2');
     const iosSettings = DarwinInitializationSettings();
     await _plugin.initialize(
       settings: const InitializationSettings(android: androidSettings, iOS: iosSettings),
