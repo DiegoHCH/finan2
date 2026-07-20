@@ -10,12 +10,35 @@ import 'finan2_splash_screen.dart';
 
 /// Root of the navigation: signed out -> auth screens; signed in without a
 /// household -> create/join; signed in with a household -> its home.
-class AuthGate extends ConsumerWidget {
+class AuthGate extends ConsumerStatefulWidget {
   const AuthGate({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AuthGate> createState() => _AuthGateState();
+}
+
+/// Firebase Auth often resolves a persisted session almost instantly, which
+/// left the splash's loading state on screen for a single frame - too fast
+/// to register as the intended branding moment. This holds it visible for
+/// at least this long regardless of how fast the real check finishes.
+const _minSplashDuration = Duration(seconds: 5);
+
+class _AuthGateState extends ConsumerState<AuthGate> {
+  var _minSplashElapsed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(_minSplashDuration, () {
+      if (mounted) setState(() => _minSplashElapsed = true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authStateChangesProvider);
+
+    if (!_minSplashElapsed) return const _LoadingScreen();
 
     return authState.when(
       loading: () => const _LoadingScreen(),

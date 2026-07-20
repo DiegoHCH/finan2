@@ -29,43 +29,58 @@ class Finan2SplashScreen extends StatelessWidget {
                 : const [Colors.white, Finan2Palette.groundLight],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Finan2AppIcon(size: 96),
-              const SizedBox(height: 22),
-              Text.rich(
-                TextSpan(
-                  style: TextStyle(
-                    fontFamily: Finan2Type.fontFamily,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.4,
-                    color: isDark ? Colors.white : Finan2Palette.inkSoftLight,
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Finan2AppIcon(size: 96),
+                  const SizedBox(height: 22),
+                  Text.rich(
+                    TextSpan(
+                      style: TextStyle(
+                        fontFamily: Finan2Type.fontFamily,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                        color: isDark ? Colors.white : Finan2Palette.inkSoftLight,
+                      ),
+                      children: [
+                        const TextSpan(text: 'Finan'),
+                        TextSpan(text: '2', style: TextStyle(color: saving)),
+                      ],
+                    ),
                   ),
-                  children: [
-                    const TextSpan(text: 'Finan'),
-                    TextSpan(text: '2', style: TextStyle(color: saving)),
-                  ],
+                  const SizedBox(height: 6),
+                  Text(
+                    'Finanzas del hogar - para dos',
+                    style: TextStyle(
+                      fontFamily: Finan2Type.fontFamily,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.84)
+                          : Finan2Palette.inkFaintLight,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Center(
+                    child: _LoadingDots(color: isDark ? Colors.white : Finan2Palette.brand),
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Finanzas del hogar · para dos',
-                style: TextStyle(
-                  fontFamily: Finan2Type.fontFamily,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.84)
-                      : Finan2Palette.inkFaintLight,
-                ),
-              ),
-              const SizedBox(height: 40),
-              _LoadingDots(color: isDark ? Colors.white : Finan2Palette.brand),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
