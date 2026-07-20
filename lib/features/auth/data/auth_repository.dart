@@ -18,7 +18,12 @@ const _webGoogleClientId =
 class AuthRepository {
   AuthRepository({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
       : _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+        _googleSignIn = googleSignIn ?? GoogleSignIn.instance {
+    // Controls the language of every email/SMS Firebase Auth sends on our
+    // behalf (password reset, email verification...) - without this it
+    // defaults to English regardless of the device's locale.
+    _auth.setLanguageCode('es');
+  }
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
