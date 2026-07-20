@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode_providers.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
-import '../../../auth/presentation/screens/login_screen.dart' show authErrorMessage;
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -54,7 +54,6 @@ class AccountSettingsScreen extends ConsumerWidget {
     );
     if (!confirmed || !context.mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
     try {
       final reauthenticated = await _reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
@@ -62,7 +61,8 @@ class AccountSettingsScreen extends ConsumerWidget {
       if (uid == null) return;
       await ref.read(householdRepositoryProvider).leaveHousehold(household.id, uid);
     } catch (error) {
-      messenger.showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
+      if (!context.mounted) return;
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
     }
   }
 
@@ -120,7 +120,6 @@ class AccountSettingsScreen extends ConsumerWidget {
     );
     if (!confirmed || !context.mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
     try {
       final reauthenticated = await _reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
@@ -131,7 +130,8 @@ class AccountSettingsScreen extends ConsumerWidget {
       }
       await authRepo.deleteAccount();
     } catch (error) {
-      messenger.showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
+      if (!context.mounted) return;
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
     }
   }
 

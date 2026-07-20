@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../accounts/presentation/screens/accounts_screen.dart';
 import '../../../categories/presentation/screens/categories_screen.dart';
@@ -25,7 +27,6 @@ class FinancialSettingsScreen extends ConsumerWidget {
     int? startYear,
     String? weekStartsOn,
   }) async {
-    final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(householdRepositoryProvider).updateSettings(
             household.id,
@@ -34,7 +35,8 @@ class FinancialSettingsScreen extends ConsumerWidget {
             weekStartsOn: weekStartsOn,
           );
     } catch (error) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $error')));
+      if (!context.mounted) return;
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
     }
   }
 

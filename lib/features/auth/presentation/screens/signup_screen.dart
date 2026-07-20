@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
@@ -59,9 +61,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final authState = ref.watch(authControllerProvider);
     ref.listen<AsyncValue<void>>(authControllerProvider, (previous, next) {
       if (next.hasError && !next.isLoading) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authErrorMessage(next.error))),
-        );
+        showFinan2ErrorSheet(context, message: friendlyErrorMessage(next.error));
       }
     });
 

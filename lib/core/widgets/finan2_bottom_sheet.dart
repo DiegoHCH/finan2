@@ -61,6 +61,47 @@ Future<bool> showFinan2ConfirmSheet(
   return result ?? false;
 }
 
+/// A single-button error notice as a bottom sheet - the app never shows
+/// errors in a [SnackBar], always a sheet the user must dismiss explicitly.
+Future<void> showFinan2ErrorSheet(
+  BuildContext context, {
+  String title = 'Algo salió mal',
+  required String message,
+  String confirmLabel = 'Entendido',
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    builder: (sheetContext) {
+      final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(Finan2Space.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+              const SizedBox(height: Finan2Space.sm),
+              Text(
+                message,
+                style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
+              ),
+              const SizedBox(height: Finan2Space.lg),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  child: Text(confirmLabel),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 /// A single-field text prompt as a bottom sheet - same rationale as
 /// [showFinan2ConfirmSheet]. Returns the entered text, or null if
 /// cancelled/dismissed. The sheet is scroll-controlled and padded above the

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
-import '../../data/household_repository.dart';
 import '../viewmodels/household_providers.dart';
 import 'invite_household_screen.dart';
 
@@ -81,9 +82,7 @@ class _CreateJoinHouseholdScreenState
     ref.listen<AsyncValue<dynamic>>(householdControllerProvider,
         (previous, next) {
       if (next.hasError && !next.isLoading) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_householdErrorMessage(next.error))),
-        );
+        showFinan2ErrorSheet(context, message: friendlyErrorMessage(next.error));
       }
     });
 
@@ -164,14 +163,4 @@ class _CreateJoinHouseholdScreenState
       ),
     );
   }
-}
-
-String _householdErrorMessage(Object? error) {
-  if (error is HouseholdNotFoundException) {
-    return 'No encontramos un hogar con ese código.';
-  }
-  if (error is HouseholdFullException) {
-    return 'Ese hogar ya tiene 2 miembros.';
-  }
-  return 'Algo salió mal, intenta de nuevo.';
 }

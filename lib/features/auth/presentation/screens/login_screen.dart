@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -83,9 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authControllerProvider);
     ref.listen<AsyncValue<void>>(authControllerProvider, (previous, next) {
       if (next.hasError && !next.isLoading) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authErrorMessage(next.error))),
-        );
+        showFinan2ErrorSheet(context, message: friendlyErrorMessage(next.error));
       }
     });
     if (kIsWeb) {
@@ -96,9 +94,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.watch(googleWebSignInEventsProvider);
       ref.listen<AsyncValue<void>>(googleWebSignInEventsProvider, (previous, next) {
         if (next.hasError && !next.isLoading) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(authErrorMessage(next.error))),
-          );
+          showFinan2ErrorSheet(context, message: friendlyErrorMessage(next.error));
         }
       });
     }
@@ -236,27 +232,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
-}
-
-/// Maps common Firebase Auth errors to short, Spanish, user-facing messages.
-String authErrorMessage(Object? error) {
-  if (error is FirebaseAuthException) {
-    switch (error.code) {
-      case 'invalid-email':
-        return 'El correo no es válido.';
-      case 'user-not-found':
-      case 'invalid-credential':
-      case 'wrong-password':
-        return 'Correo o contraseña incorrectos.';
-      case 'email-already-in-use':
-        return 'Ya existe una cuenta con ese correo.';
-      case 'weak-password':
-        return 'La contraseña es muy débil.';
-      case 'network-request-failed':
-        return 'Problema de conexión, intenta de nuevo.';
-      default:
-        return 'Algo salió mal (${error.code}).';
-    }
-  }
-  return 'Algo salió mal, intenta de nuevo.';
 }
