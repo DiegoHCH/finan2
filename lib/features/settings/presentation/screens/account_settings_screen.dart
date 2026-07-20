@@ -5,7 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode_providers.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
-import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
 import '../../../auth/presentation/screens/login_screen.dart' show authErrorMessage;
@@ -38,65 +38,58 @@ class AccountSettingsScreen extends ConsumerWidget {
   final Household household;
 
   Future<void> _leaveHousehold(BuildContext context, WidgetRef ref) async {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isSolo = household.members.length <= 1;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Salir del hogar'),
-        content: Text(
-          isSolo
-              ? 'Eres el único miembro de "${household.name}". Si sales, nadie '
-                  'podrá volver a acceder a esta información: se vuelve '
-                  'permanentemente inaccesible.'
-              : 'Vas a salir de "${household.name}". Tus cuentas, movimientos y '
-                  'demás datos seguirán disponibles para el resto del hogar. '
-                  'Podrás crear o unirte a otro hogar después.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Salir', style: TextStyle(color: colors.expense)),
-          ),
-        ],
-      ),
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Salir del hogar',
+      message: isSolo
+          ? 'Eres el único miembro de "${household.name}". Si sales, nadie '
+              'podrá volver a acceder a esta información: se vuelve '
+              'permanentemente inaccesible.'
+          : 'Vas a salir de "${household.name}". Tus cuentas, movimientos y '
+              'demás datos seguirán disponibles para el resto del hogar. '
+              'Podrás crear o unirte a otro hogar después.',
+      confirmLabel: 'Salir',
+      destructive: true,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
-    final uid = ref.read(authStateChangesProvider).value?.uid;
-    if (uid == null) return;
     try {
+      final reauthenticated = await _reauthenticate(context, ref);
+      if (!reauthenticated || !context.mounted) return;
+      final uid = ref.read(authRepositoryProvider).currentUser?.uid;
+      if (uid == null) return;
       await ref.read(householdRepositoryProvider).leaveHousehold(household.id, uid);
     } catch (error) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $error')));
+      messenger.showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
     }
+  }
+
+  /// Confirms it's really the account owner before a destructive account
+  /// action (leaving the household, deleting the account): re-signs-in with
+  /// Google, or asks for the password otherwise. Returns false if the user
+  /// cancelled the password prompt.
+  Future<bool> _reauthenticate(BuildContext context, WidgetRef ref) async {
+    final authRepo = ref.read(authRepositoryProvider);
+    if (authRepo.signedInWithGoogle) {
+      await authRepo.reauthenticateWithGoogle();
+      return true;
+    }
+    final password = await _askPassword(context);
+    if (password == null || !context.mounted) return false;
+    await authRepo.reauthenticateWithPassword(password);
+    return true;
   }
 
   Future<void> _editMyName(BuildContext context, WidgetRef ref, String currentName) async {
     final controller = TextEditingController(text: currentName);
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Mi nombre'),
-        content: Finan2Field(label: 'Nombre', controller: controller),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
+    final result = await showFinan2InputSheet(
+      context,
+      title: 'Mi nombre',
+      fieldLabel: 'Nombre',
+      controller: controller,
     );
-    controller.dispose();
     final name = toTitleCase(result ?? '');
     if (name.isEmpty || name == currentName) return;
     await ref.read(householdControllerProvider.notifier).updateMyName(name);
@@ -104,66 +97,34 @@ class AccountSettingsScreen extends ConsumerWidget {
 
   Future<String?> _askPassword(BuildContext context) async {
     final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirma tu contraseña'),
-        content: Finan2Field(
-          label: 'Contraseña',
-          controller: controller,
-          obscureText: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: const Text('Confirmar'),
-          ),
-        ],
-      ),
+    final result = await showFinan2InputSheet(
+      context,
+      title: 'Confirma tu contraseña',
+      fieldLabel: 'Contraseña',
+      controller: controller,
+      obscureText: true,
+      confirmLabel: 'Confirmar',
     );
     return (result == null || result.isEmpty) ? null : result;
   }
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eliminar mi cuenta'),
-        content: const Text(
-          'Perderás el acceso a Finan2 de forma permanente y no se puede '
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar mi cuenta',
+      message: 'Perderás el acceso a Finan2 de forma permanente y no se puede '
           'deshacer. También saldrás de tu hogar - sus datos seguirán '
           'disponibles para el otro miembro.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Continuar', style: TextStyle(color: colors.expense)),
-          ),
-        ],
-      ),
+      confirmLabel: 'Continuar',
+      destructive: true,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
 
-    final authRepo = ref.read(authRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
     try {
-      if (authRepo.signedInWithGoogle) {
-        await authRepo.reauthenticateWithGoogle();
-      } else {
-        final password = await _askPassword(context);
-        if (password == null) return;
-        if (!context.mounted) return;
-        await authRepo.reauthenticateWithPassword(password);
-      }
+      final reauthenticated = await _reauthenticate(context, ref);
+      if (!reauthenticated || !context.mounted) return;
+      final authRepo = ref.read(authRepositoryProvider);
       final uid = authRepo.currentUser?.uid;
       if (uid != null) {
         await ref.read(householdRepositoryProvider).leaveHousehold(household.id, uid);

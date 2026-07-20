@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../accounts/data/account_model.dart';
@@ -20,28 +21,15 @@ class TransferHistoryScreen extends ConsumerWidget {
   const TransferHistoryScreen({super.key});
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Transfer transfer) async {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eliminar transferencia'),
-        content: const Text(
-          'Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no '
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar transferencia',
+      message: 'Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no '
           'se puede deshacer.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Eliminar', style: TextStyle(color: colors.expense)),
-          ),
-        ],
-      ),
+      confirmLabel: 'Eliminar',
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(transferControllerProvider.notifier).deleteTransfer(transfer);
   }
 

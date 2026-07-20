@@ -1,0 +1,138 @@
+import 'package:flutter/material.dart';
+
+import '../theme/app_theme.dart';
+import 'finan2_field.dart';
+
+/// A confirm/cancel prompt as a bottom sheet - the app never shows a
+/// centered [AlertDialog] for these, always a sheet from the bottom.
+/// Returns true only if the user tapped [confirmLabel]; false for Cancelar
+/// or dismissing the sheet.
+Future<bool> showFinan2ConfirmSheet(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+  bool destructive = false,
+}) async {
+  final result = await showModalBottomSheet<bool>(
+    context: context,
+    builder: (sheetContext) {
+      final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(Finan2Space.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+              const SizedBox(height: Finan2Space.sm),
+              Text(
+                message,
+                style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
+              ),
+              const SizedBox(height: Finan2Space.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(false),
+                      child: const Text('Cancelar'),
+                    ),
+                  ),
+                  const SizedBox(width: Finan2Space.sm),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(true),
+                      style: destructive
+                          ? FilledButton.styleFrom(backgroundColor: colors.expense)
+                          : null,
+                      child: Text(confirmLabel),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+  return result ?? false;
+}
+
+/// A single-field text prompt as a bottom sheet - same rationale as
+/// [showFinan2ConfirmSheet]. Returns the entered text, or null if
+/// cancelled/dismissed. The sheet is scroll-controlled and padded above the
+/// keyboard, matching every other input sheet in the app (Nuevo aporte,
+/// Registrar pago...).
+///
+/// [controller] is intentionally never disposed here - the sheet route is
+/// still animating out when this function's Future resolves, and disposing
+/// immediately crashes the still-visible TextFormField mid-transition. The
+/// caller owns [controller] and may dispose it once it's done with it, but
+/// not synchronously after this call.
+Future<String?> showFinan2InputSheet(
+  BuildContext context, {
+  required String title,
+  String? message,
+  required String fieldLabel,
+  required TextEditingController controller,
+  bool obscureText = false,
+  TextInputType? keyboardType,
+  List<String>? autofillHints,
+  String confirmLabel = 'Guardar',
+}) {
+  return showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) {
+      final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+      return Padding(
+        padding: EdgeInsets.fromLTRB(
+          Finan2Space.xl,
+          Finan2Space.lg,
+          Finan2Space.xl,
+          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+            if (message != null) ...[
+              const SizedBox(height: Finan2Space.sm),
+              Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),
+            ],
+            const SizedBox(height: Finan2Space.md),
+            Finan2Field(
+              label: fieldLabel,
+              controller: controller,
+              obscureText: obscureText,
+              keyboardType: keyboardType,
+              autofillHints: autofillHints,
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(sheetContext).pop(),
+                    child: const Text('Cancelar'),
+                  ),
+                ),
+                const SizedBox(width: Finan2Space.sm),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(sheetContext).pop(controller.text),
+                    child: Text(confirmLabel),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}

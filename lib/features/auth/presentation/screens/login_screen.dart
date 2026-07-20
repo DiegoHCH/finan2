@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_google_icon.dart';
@@ -51,50 +52,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _forgotPassword() async {
     final controller = TextEditingController(text: _emailController.text.trim());
-    final email = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Recuperar contraseña'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Te enviamos un enlace a tu correo para elegir una contraseña nueva.',
-            ),
-            const SizedBox(height: Finan2Space.md),
-            Finan2Field(
-              label: 'Correo',
-              controller: controller,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const [AutofillHints.email],
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Enviar'),
-          ),
-        ],
-      ),
+    final email = await showFinan2InputSheet(
+      context,
+      title: 'Recuperar contraseña',
+      message: 'Te enviamos un enlace a tu correo para elegir una contraseña nueva.',
+      fieldLabel: 'Correo',
+      controller: controller,
+      keyboardType: TextInputType.emailAddress,
+      autofillHints: const [AutofillHints.email],
+      confirmLabel: 'Enviar',
     );
-    // Not disposed here on purpose: the dialog route is still animating out
-    // when showDialog's future resolves, and its TextFormField (bound to
-    // this controller) briefly rebuilds during that exit transition -
-    // disposing immediately crashes it mid-animation. Same tradeoff
-    // AccountSettingsScreen._askPassword already makes for the same reason.
-    if (email == null || email.isEmpty || !mounted) return;
-    await ref.read(authControllerProvider.notifier).sendPasswordReset(email);
+    final trimmedEmail = email?.trim();
+    if (trimmedEmail == null || trimmedEmail.isEmpty || !mounted) return;
+    await ref.read(authControllerProvider.notifier).sendPasswordReset(trimmedEmail);
     if (!mounted) return;
     final state = ref.read(authControllerProvider);
     if (!state.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Si $email tiene una cuenta, te llegará un correo para recuperarla.'),
+          content: Text(
+            'Si $trimmedEmail tiene una cuenta, te llegará un correo para recuperarla.',
+          ),
         ),
       );
     }

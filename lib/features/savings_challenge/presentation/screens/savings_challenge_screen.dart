@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -43,32 +44,15 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
   }
 
   Future<void> _delete(SavingsChallenge challenge) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eliminar reto de ahorro'),
-        content: Text(
-          'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar reto de ahorro',
+      message: 'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
           'no se puede deshacer.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
-              'Eliminar',
-              style: TextStyle(
-                color: Theme.of(context).extension<Finan2Colors>()!.expense,
-              ),
-            ),
-          ),
-        ],
-      ),
+      confirmLabel: 'Eliminar',
+      destructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(savingsChallengeControllerProvider.notifier).delete(challenge.id);
   }
 
