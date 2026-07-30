@@ -7,6 +7,7 @@ import '../../../../core/pwa/pwa_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -38,6 +39,7 @@ class SettingsScreen extends ConsumerWidget {
         .fold(0, (sum, v) => sum + v);
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
+    final hasKey = ref.watch(householdHasKeyProvider(household.id)).value;
 
     return Scaffold(
       body: SafeArea(
@@ -48,6 +50,58 @@ class SettingsScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
                 children: [
+                  if (hasKey == false)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Finan2Space.md),
+                      child: Container(
+                        padding: const EdgeInsets.all(Finan2Space.md),
+                        decoration: BoxDecoration(
+                          color: colors.savingTint,
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
+                          border: Border.all(color: colors.saving),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(Icons.vpn_key_outlined, color: colors.saving),
+                                const SizedBox(width: Finan2Space.sm),
+                                Expanded(
+                                  child: Text(
+                                    'Este dispositivo no tiene la llave para ver los '
+                                    'montos de este hogar. Pega el código completo '
+                                    'que tu pareja copió al crear o invitar al hogar.',
+                                    style: TextStyle(color: colors.ink, fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: Finan2Space.sm),
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton(
+                                onPressed: () =>
+                                    _importMissingKey(context, ref, household.id),
+                                child: const Text(
+                                  'Pegar código para desbloquear montos',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: Finan2Space.sm),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () =>
+                                    _recoverWithPin(context, ref, household.id),
+                                child: const Text('Ingresar PIN del hogar'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   if (kIsWeb && ref.watch(persistentStorageStatusProvider) == false)
                     Padding(
                       padding: const EdgeInsets.only(bottom: Finan2Space.md),
@@ -246,6 +300,73 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+Future<void> _importMissingKey(
+  BuildContext context,
+  WidgetRef ref,
+  String householdId,
+) async {
+  final controller = TextEditingController();
+  final pasted = await showFinan2InputSheet(
+    context,
+    title: 'Desbloquear montos',
+    message: 'Pega el código completo (con la llave después del punto) que '
+        'tu pareja copió desde su tarjeta del hogar en Ajustes.',
+    fieldLabel: 'Código completo (CODIGO.llave)',
+    controller: controller,
+    confirmLabel: 'Desbloquear',
+  );
+  if (pasted == null || pasted.trim().isEmpty) return;
+
+  final error = await ref
+      .read(householdControllerProvider.notifier)
+      .importMissingKey(householdId: householdId, pastedCode: pasted);
+  if (!context.mounted) return;
+
+  if (error != null) {
+    await showFinan2ErrorSheet(context, message: error);
+  } else {
+    await showFinan2InfoSheet(
+      context,
+      title: 'Montos desbloqueados',
+      message: 'Ya puedes ver los montos de este hogar.',
+    );
+  }
+}
+
+Future<void> _recoverWithPin(
+  BuildContext context,
+  WidgetRef ref,
+  String householdId,
+) async {
+  final controller = TextEditingController();
+  final pin = await showFinan2InputSheet(
+    context,
+    title: 'Ingresa el PIN de este hogar',
+    message: 'El PIN de 6 dígitos que tu pareja configuró en Ajustes.',
+    fieldLabel: 'PIN (6 dígitos)',
+    controller: controller,
+    obscureText: true,
+    keyboardType: TextInputType.number,
+    confirmLabel: 'Desbloquear',
+  );
+  if (pin == null || pin.isEmpty || !context.mounted) return;
+
+  final error = await ref
+      .read(householdControllerProvider.notifier)
+      .recoverKeyWithPin(householdId: householdId, pin: pin);
+  if (!context.mounted) return;
+
+  if (error != null) {
+    await showFinan2ErrorSheet(context, message: error);
+  } else {
+    await showFinan2InfoSheet(
+      context,
+      title: 'Montos desbloqueados',
+      message: 'Ya puedes ver los montos de este hogar.',
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../viewmodels/monthly_notes_providers.dart';
 import 'edit_monthly_note_screen.dart';
@@ -32,7 +33,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
             Expanded(
               child: notesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (notes) => ListView(
                   padding: const EdgeInsets.all(Finan2Space.xl),
                   children: [

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
@@ -55,7 +56,7 @@ class TransferHistoryScreen extends ConsumerWidget {
             Expanded(
               child: transfersAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (transfers) {
                   if (transfers.isEmpty) {
                     return Finan2EmptyState(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../viewmodels/notification_prefs_providers.dart';
 
@@ -27,7 +28,7 @@ class NotificationPreferencesScreen extends ConsumerWidget {
             Expanded(
               child: prefsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (prefs) => ListView(
                   padding: const EdgeInsets.all(Finan2Space.xl),
                   children: [

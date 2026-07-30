@@ -64,4 +64,36 @@ void main() {
       throwsA(anything),
     );
   });
+
+  group('PIN recovery:', () {
+    test('the right PIN recovers a key onto a device that lost it', () async {
+      await crypto.generateKey('h1');
+      final packed = await crypto.encryptAmount('h1', 5000);
+      final wrapped = await crypto.wrapKeyWithPin('h1', '123456');
+
+      final recovered = HouseholdCrypto(keyStore: _InMemoryKeyStore());
+      final ok = await recovered.tryUnwrapKeyWithPin('h1', '123456', wrapped);
+
+      expect(ok, isTrue);
+      expect(await recovered.decryptAmount('h1', packed), 5000);
+    });
+
+    test('the wrong PIN fails without recovering anything', () async {
+      await crypto.generateKey('h1');
+      final wrapped = await crypto.wrapKeyWithPin('h1', '123456');
+
+      final recovered = HouseholdCrypto(keyStore: _InMemoryKeyStore());
+      final ok = await recovered.tryUnwrapKeyWithPin('h1', '000000', wrapped);
+
+      expect(ok, isFalse);
+      expect(await recovered.hasKey('h1'), isFalse);
+    });
+
+    test('wrapping without a local key throws Finan2CryptoException', () async {
+      expect(
+        () => crypto.wrapKeyWithPin('unknown-household', '123456'),
+        throwsA(isA<Finan2CryptoException>()),
+      );
+    });
+  });
 }

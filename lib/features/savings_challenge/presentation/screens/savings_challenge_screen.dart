@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/text_case.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
@@ -90,7 +91,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
             Expanded(
               child: challengeAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (challenge) {
                   if (challenge == null) {
                     return _buildCreateForm(context, colors, creating);

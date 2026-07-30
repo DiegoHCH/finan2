@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_progress_card.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -53,7 +54,7 @@ class DebtsScreen extends ConsumerWidget {
             Expanded(
               child: debtsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (debts) {
                   if (debts.isEmpty) {
                     return Finan2EmptyState(

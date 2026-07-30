@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../data/notification_model.dart';
 import '../viewmodels/notification_providers.dart';
 
@@ -50,7 +51,7 @@ class NotificationsScreen extends ConsumerWidget {
             Expanded(
               child: notificationsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, _) => Center(child: Text('$error')),
+                error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (notifications) {
                   if (notifications.isEmpty) {
                     return Center(

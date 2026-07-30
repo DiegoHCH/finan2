@@ -29,12 +29,17 @@ service cloud.firestore {
 
       allow delete: if false;
 
-      // Read/update/delete: any household member, for every subcollection.
+      // Read/update/delete: any household member, for every subcollection
+      // except `security` (the PIN-recovery doc below has its own, much
+      // stricter update rule - a member being allowed to freely rewrite it
+      // here would OR-bypass the attempt-count/lockout enforcement entirely,
+      // since Firestore grants access if *any* matching rule allows it).
       // Create is defined per-subcollection below so we can enforce
       // per-document integrity (e.g. transactions.createdBy) - a broader
-      // "allow write" here would OR-bypass those checks.
+      // "allow write" here would OR-bypass those checks too.
       match /{subcol}/{docId} {
         allow read, update, delete: if request.auth != null
+          && subcol != 'security'
           && request.auth.uid in
              get(/databases/$(db)/documents/households/$(hid)).data.members;
       }
@@ -133,6 +138,58 @@ service cloud.firestore {
       // these rules at all - this only gates the client SDK writes).
       match /memberPrefs/{uid} {
         allow create: if isMember() && uid == request.auth.uid;
+      }
+
+      // The household key wrapped under a 6-digit PIN (see
+      // HouseholdCrypto.wrapKeyWithPin), for cross-device recovery when a
+      // device loses its local copy. `attempts`/`lockedUntil` enforce a
+      // 3-tries/1h lockout server-side, so a client with only normal member
+      // access (e.g. a stolen session) can't bypass it by just resetting the
+      // counter itself the way the blanket `{subcol}/{docId}` rule above
+      // would otherwise allow.
+      match /security/pinRecovery {
+        allow read: if isMember();
+
+        allow create: if isMember()
+          && request.resource.data.attempts == 0
+          && request.resource.data.lockedUntil == null;
+
+        allow update: if isMember() && (
+          // Setting a brand-new PIN (fresh wrap) always resets the counter.
+          // This can't be used to brute-force the *old* wrap - only a device
+          // that already holds the plaintext key can produce a wrap worth
+          // anything, so this replaces/destroys the old one rather than
+          // revealing it.
+          (
+            request.resource.data.salt != resource.data.salt
+            && request.resource.data.attempts == 0
+            && request.resource.data.lockedUntil == null
+          )
+          // Recording one more failed guess against the *current* wrap -
+          // rejected outright while locked out.
+          || (
+            request.resource.data.salt == resource.data.salt
+            && request.resource.data.wrappedKey == resource.data.wrappedKey
+            && resource.data.lockedUntil == null
+            && request.resource.data.attempts == resource.data.attempts + 1
+            && request.resource.data.lockedUntil == (
+              request.resource.data.attempts >= 3
+                ? request.time + duration.value(1, 'h')
+                : null
+            )
+          )
+          // The lockout has genuinely expired (server clock, not the
+          // client's) - allowed to reset back to a clean slate against the
+          // *same* wrap, nothing else changing in the same write.
+          || (
+            request.resource.data.salt == resource.data.salt
+            && request.resource.data.wrappedKey == resource.data.wrappedKey
+            && resource.data.lockedUntil != null
+            && request.time > resource.data.lockedUntil
+            && request.resource.data.attempts == 0
+            && request.resource.data.lockedUntil == null
+          )
+        );
       }
     }
   }

@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
+import '../../../../core/widgets/finan2_reauth.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -55,7 +56,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     if (!confirmed || !context.mounted) return;
 
     try {
-      final reauthenticated = await _reauthenticate(context, ref);
+      final reauthenticated = await reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
       final uid = ref.read(authRepositoryProvider).currentUser?.uid;
       if (uid == null) return;
@@ -64,22 +65,6 @@ class AccountSettingsScreen extends ConsumerWidget {
       if (!context.mounted) return;
       await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
     }
-  }
-
-  /// Confirms it's really the account owner before a destructive account
-  /// action (leaving the household, deleting the account): re-signs-in with
-  /// Google, or asks for the password otherwise. Returns false if the user
-  /// cancelled the password prompt.
-  Future<bool> _reauthenticate(BuildContext context, WidgetRef ref) async {
-    final authRepo = ref.read(authRepositoryProvider);
-    if (authRepo.signedInWithGoogle) {
-      await authRepo.reauthenticateWithGoogle();
-      return true;
-    }
-    final password = await _askPassword(context);
-    if (password == null || !context.mounted) return false;
-    await authRepo.reauthenticateWithPassword(password);
-    return true;
   }
 
   Future<void> _editMyName(BuildContext context, WidgetRef ref, String currentName) async {
@@ -95,17 +80,43 @@ class AccountSettingsScreen extends ConsumerWidget {
     await ref.read(householdControllerProvider.notifier).updateMyName(name);
   }
 
-  Future<String?> _askPassword(BuildContext context) async {
+  /// Requires reauth (see [reauthenticate]) since anyone who can set this
+  /// PIN can later use it, from any device, to read every amount in the
+  /// household.
+  Future<void> _setPin(BuildContext context, WidgetRef ref) async {
+    final reauthenticated = await reauthenticate(context, ref);
+    if (!reauthenticated || !context.mounted) return;
+
     final controller = TextEditingController();
-    final result = await showFinan2InputSheet(
+    final pin = await showFinan2InputSheet(
       context,
-      title: 'Confirma tu contraseña',
-      fieldLabel: 'Contraseña',
+      title: 'PIN de respaldo',
+      message: 'Si algún día ambos pierden el acceso a este hogar, este PIN '
+          'permite recuperar los montos desde cualquier dispositivo. Elige '
+          '6 dígitos y no los compartas con nadie más que tu pareja.',
+      fieldLabel: 'PIN (6 dígitos)',
       controller: controller,
       obscureText: true,
-      confirmLabel: 'Confirmar',
+      keyboardType: TextInputType.number,
+      confirmLabel: 'Guardar',
     );
-    return (result == null || result.isEmpty) ? null : result;
+    if (pin == null || pin.isEmpty || !context.mounted) return;
+
+    final error = await ref
+        .read(householdControllerProvider.notifier)
+        .setPin(householdId: household.id, pin: pin);
+    if (!context.mounted) return;
+
+    if (error != null) {
+      await showFinan2ErrorSheet(context, message: error);
+    } else {
+      await showFinan2InfoSheet(
+        context,
+        title: 'PIN guardado',
+        message: 'Ya pueden usarlo para recuperar los montos de este hogar '
+            'desde cualquier dispositivo.',
+      );
+    }
   }
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
@@ -121,7 +132,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     if (!confirmed || !context.mounted) return;
 
     try {
-      final reauthenticated = await _reauthenticate(context, ref);
+      final reauthenticated = await reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
       final authRepo = ref.read(authRepositoryProvider);
       final uid = authRepo.currentUser?.uid;
@@ -223,6 +234,12 @@ class AccountSettingsScreen extends ConsumerWidget {
                         label: 'Tema',
                         value: _themeModeLabels[themeMode],
                         onTap: () => _pickThemeMode(context, ref, themeMode),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.vpn_key_outlined,
+                        label: 'PIN de respaldo',
+                        value: 'Recuperar montos si pierden la llave',
+                        onTap: () => _setPin(context, ref),
                       ),
                     ],
                   ),

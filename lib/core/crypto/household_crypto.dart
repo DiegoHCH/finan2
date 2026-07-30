@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,6 +14,19 @@ class Finan2CryptoException implements Exception {
 
   @override
   String toString() => message;
+}
+
+/// A household's data encryption key, wrapped under a 6-digit PIN so it can
+/// be stashed in Firestore as a cross-device recovery path without ever
+/// exposing the raw key - [HouseholdCrypto.tryUnwrapKeyWithPin] is the only
+/// way back to something useful, and only with the right PIN. [salt] isn't
+/// secret (it has to be readable to derive the wrapping key at all); secrecy
+/// comes entirely from the PIN.
+class PinWrappedKey {
+  const PinWrappedKey({required this.salt, required this.ciphertext});
+
+  final String salt;
+  final String ciphertext;
 }
 
 /// Where [HouseholdCrypto] persists each household's key. Kept as an
@@ -49,6 +63,17 @@ class HouseholdCrypto {
 
   final Finan2KeyStore _keyStore;
   static final _algorithm = AesGcm.with256bits();
+  // The 3-attempts/1h lockout in firestore.rules is what actually stops an
+  // offline guessing sweep over the 6-digit (1M-combination) PIN space - this
+  // package has no native/hardware-accelerated backend wired in
+  // (cryptography_flutter isn't a dependency), so iterations stays modest to
+  // keep a single legitimate PIN check fast on real phones. Benchmark this on
+  // a real low-end device before shipping if it ever needs to move.
+  static final _pinKdf = Pbkdf2(
+    macAlgorithm: Hmac.sha256(),
+    iterations: 100000,
+    bits: 256,
+  );
 
   String _storageKey(String householdId) => 'household_dek_$householdId';
 
@@ -110,5 +135,61 @@ class HouseholdCrypto {
     );
     final clear = await _algorithm.decrypt(secretBox, secretKey: key);
     return int.parse(utf8.decode(clear));
+  }
+
+  /// Wraps this device's already-stored key for [householdId] under [pin]
+  /// (6 digits) so it can be saved to Firestore as a cross-device recovery
+  /// path. Throws [Finan2CryptoException] if this device doesn't have the
+  /// key either - there's nothing to wrap.
+  Future<PinWrappedKey> wrapKeyWithPin(String householdId, String pin) async {
+    final key = await _keyFor(householdId);
+    final salt = _randomBytes(16);
+    final kek = await _pinKdf.deriveKey(
+      secretKey: SecretKey(utf8.encode(pin)),
+      nonce: salt,
+    );
+    final secretBox = await _algorithm.encrypt(
+      await key.extractBytes(),
+      secretKey: kek,
+    );
+    return PinWrappedKey(
+      salt: base64Url.encode(salt),
+      ciphertext: base64Url.encode(secretBox.concatenation()),
+    );
+  }
+
+  /// Tries [pin] against [wrapped]; if it's correct, persists the recovered
+  /// key locally for [householdId] and returns true. Returns false (leaving
+  /// local storage untouched) if the PIN is wrong. Counting failed attempts
+  /// and enforcing any lockout is the caller's responsibility (see
+  /// HouseholdRepository's pin recovery methods) - this only does the
+  /// cryptography.
+  Future<bool> tryUnwrapKeyWithPin(
+    String householdId,
+    String pin,
+    PinWrappedKey wrapped,
+  ) async {
+    final kek = await _pinKdf.deriveKey(
+      secretKey: SecretKey(utf8.encode(pin)),
+      nonce: base64Url.decode(wrapped.salt),
+    );
+    final secretBox = SecretBox.fromConcatenation(
+      base64Url.decode(wrapped.ciphertext),
+      nonceLength: _algorithm.nonceLength,
+      macLength: _algorithm.macAlgorithm.macLength,
+    );
+    final List<int> rawKey;
+    try {
+      rawKey = await _algorithm.decrypt(secretBox, secretKey: kek);
+    } on SecretBoxAuthenticationError {
+      return false;
+    }
+    await _keyStore.write(_storageKey(householdId), base64Url.encode(rawKey));
+    return true;
+  }
+
+  List<int> _randomBytes(int length) {
+    final rand = Random.secure();
+    return List<int>.generate(length, (_) => rand.nextInt(256));
   }
 }
