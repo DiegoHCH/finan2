@@ -14,7 +14,7 @@ import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/budget_summary.dart';
+import '../../domain/budget_summary.dart';
 import '../viewmodels/budget_providers.dart';
 
 class BudgetScreen extends ConsumerStatefulWidget {

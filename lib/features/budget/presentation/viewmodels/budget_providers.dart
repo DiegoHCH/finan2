@@ -8,8 +8,8 @@ import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../data/budget_repository.dart';
-import '../../data/budget_summary.dart';
-import '../../data/carry_over.dart';
+import '../../domain/budget_summary.dart';
+import '../../domain/carry_over.dart';
 
 final budgetRepositoryProvider = Provider<BudgetRepository>((ref) {
   return BudgetRepository();

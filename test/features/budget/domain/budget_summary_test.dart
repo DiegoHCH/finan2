@@ -1,4 +1,4 @@
-import 'package:finan2/features/budget/data/budget_summary.dart';
+import 'package:finan2/features/budget/domain/budget_summary.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:flutter_test/flutter_test.dart';

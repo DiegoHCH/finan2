@@ -1,4 +1,4 @@
-import 'package:finan2/features/budget/data/carry_over.dart';
+import 'package:finan2/features/budget/domain/carry_over.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:flutter_test/flutter_test.dart';
