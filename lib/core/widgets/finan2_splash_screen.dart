@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'finan2_app_icon.dart';
 
@@ -57,7 +58,7 @@ class Finan2SplashScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Finanzas del hogar - para dos',
+                    context.l10n.coreSplashTagline,
                     style: TextStyle(
                       fontFamily: Finan2Type.fontFamily,
                       fontSize: 13,

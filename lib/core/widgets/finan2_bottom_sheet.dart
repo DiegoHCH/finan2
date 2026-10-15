@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'finan2_field.dart';
 
@@ -34,7 +35,7 @@ Future<bool> showFinan2ConfirmSheet(
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(sheetContext).pop(false),
-                      child: const Text('Cancelar'),
+                      child: Text(sheetContext.l10n.commonCancel),
                     ),
                   ),
                   const SizedBox(width: Finan2Space.sm),
@@ -60,17 +61,19 @@ Future<bool> showFinan2ConfirmSheet(
 
 /// A single-button error notice as a bottom sheet - the app never shows
 /// errors in a [SnackBar], always a sheet the user must dismiss explicitly.
+/// [title] and [confirmLabel] default to a generic "something went wrong" /
+/// "got it" in the app's language.
 Future<void> showFinan2ErrorSheet(
   BuildContext context, {
-  String title = 'Algo salió mal',
+  String? title,
   required String message,
-  String confirmLabel = 'Entendido',
+  String? confirmLabel,
 }) {
   return _showFinan2NoticeSheet(
     context,
-    title: title,
+    title: title ?? context.l10n.coreSheetErrorTitle,
     message: message,
-    confirmLabel: confirmLabel,
+    confirmLabel: confirmLabel ?? context.l10n.commonGotIt,
   );
 }
 
@@ -81,13 +84,13 @@ Future<void> showFinan2InfoSheet(
   BuildContext context, {
   required String title,
   required String message,
-  String confirmLabel = 'Entendido',
+  String? confirmLabel,
 }) {
   return _showFinan2NoticeSheet(
     context,
     title: title,
     message: message,
-    confirmLabel: confirmLabel,
+    confirmLabel: confirmLabel ?? context.l10n.commonGotIt,
   );
 }
 
@@ -147,8 +150,9 @@ Future<String?> showFinan2InputSheet(
   bool obscureText = false,
   TextInputType? keyboardType,
   List<String>? autofillHints,
-  String confirmLabel = 'Guardar',
+  String? confirmLabel,
 }) {
+  final resolvedConfirmLabel = confirmLabel ?? context.l10n.commonSave;
   return showModalBottomSheet<String>(
     context: context,
     isScrollControlled: true,
@@ -184,14 +188,14 @@ Future<String?> showFinan2InputSheet(
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(sheetContext).pop(),
-                    child: const Text('Cancelar'),
+                    child: Text(sheetContext.l10n.commonCancel),
                   ),
                 ),
                 const SizedBox(width: Finan2Space.sm),
                 Expanded(
                   child: FilledButton(
                     onPressed: () => Navigator.of(sheetContext).pop(controller.text),
-                    child: Text(confirmLabel),
+                    child: Text(resolvedConfirmLabel),
                   ),
                 ),
               ],

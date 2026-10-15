@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// The mockup's `.month-pick`: ‹ period › in a bordered pill. Tapping the
@@ -11,8 +12,8 @@ class Finan2PeriodPicker extends StatelessWidget {
     required this.onPrevious,
     required this.onNext,
     this.onReset,
-    this.previousTooltip = 'Anterior',
-    this.nextTooltip = 'Siguiente',
+    this.previousTooltip,
+    this.nextTooltip,
     super.key,
   });
 
@@ -20,8 +21,10 @@ class Finan2PeriodPicker extends StatelessWidget {
   final VoidCallback? onPrevious;
   final VoidCallback? onNext;
   final VoidCallback? onReset;
-  final String previousTooltip;
-  final String nextTooltip;
+
+  /// Default to a generic "previous"/"next" in the app's language.
+  final String? previousTooltip;
+  final String? nextTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class Finan2PeriodPicker extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: previousTooltip,
+            tooltip: previousTooltip ?? context.l10n.corePeriodPrevious,
             visualDensity: VisualDensity.compact,
             onPressed: onPrevious,
             icon: Icon(Icons.chevron_left, color: colors.inkFaint),
@@ -54,7 +57,7 @@ class Finan2PeriodPicker extends StatelessWidget {
                   ),
                   if (onReset != null)
                     Text(
-                      'Volver a hoy',
+                      context.l10n.corePeriodBackToToday,
                       style: TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w600,
@@ -66,7 +69,7 @@ class Finan2PeriodPicker extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: nextTooltip,
+            tooltip: nextTooltip ?? context.l10n.commonNext,
             visualDensity: VisualDensity.compact,
             onPressed: onNext,
             icon: Icon(Icons.chevron_right, color: colors.inkFaint),

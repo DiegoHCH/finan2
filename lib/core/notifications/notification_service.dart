@@ -4,6 +4,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/debts/data/debt_model.dart';
+import '../../l10n/l10n.dart';
 import '../utils/local_timezone.dart';
 import '../observability/error_reporter.dart';
 
@@ -60,13 +61,14 @@ class NotificationService {
   }
 
   Future<void> scheduleDailyReminder(TimeOfDay time) {
+    final l10n = currentL10n;
     return _plugin.zonedSchedule(
       id: _dailyReminderId,
-      title: 'Registra tus gastos de hoy',
-      body: 'No olvides anotar lo que ingresó o gastó el hogar hoy.',
+      title: l10n.reminderDailyTitle,
+      body: l10n.reminderDailyBody,
       scheduledDate: _nextInstanceOfTime(time),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('daily_reminder', 'Recordatorio diario'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('daily_reminder', l10n.reminderDailyChannel),
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -77,13 +79,14 @@ class NotificationService {
   Future<void> cancelDailyReminder() => _plugin.cancel(id: _dailyReminderId);
 
   Future<void> scheduleWeeklySummary() {
+    final l10n = currentL10n;
     return _plugin.zonedSchedule(
       id: _weeklySummaryId,
-      title: 'Resumen semanal listo',
-      body: 'Revisa cómo le fue al hogar esta semana en Finan2.',
+      title: l10n.reminderWeeklyTitle,
+      body: l10n.reminderWeeklyBody,
       scheduledDate: _nextInstanceOfWeekdayTime(_weeklySummaryWeekday, _weeklySummaryTime),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('weekly_summary', 'Resumen semanal'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('weekly_summary', l10n.reminderWeeklyChannel),
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -93,13 +96,14 @@ class NotificationService {
 
   Future<void> cancelWeeklySummary() => _plugin.cancel(id: _weeklySummaryId);
 
-  /// The reminder countdown: one local notification per day, starting 3 días
-  /// antes of `paymentDay` through the day itself (día 0).
+  /// The reminder countdown: one local notification per day, starting 3 days
+  /// before `paymentDay` through the day itself (day 0).
   static const _debtReminderDaysBefore = [3, 2, 1, 0];
 
   /// (Re)schedules the 4-day reminder countdown for every active debt,
   /// repeating monthly. Paid-off debts get all 4 cancelled.
   Future<void> scheduleDebtPaymentReminders(List<Debt> debts) async {
+    final l10n = currentL10n;
     for (final debt in debts) {
       for (final daysBefore in _debtReminderDaysBefore) {
         final id = _debtNotificationId(debt.id, daysBefore);
@@ -111,14 +115,15 @@ class NotificationService {
         final reminderDay = debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
         await _plugin.zonedSchedule(
           id: id,
-          title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
+          title: isToday
+              ? l10n.reminderDebtTodayTitle(debt.name)
+              : l10n.reminderDebtSoonTitle(debt.name),
           body: isToday
-              ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
-              : 'La cuota de ${debt.name} vence en $daysBefore '
-                    '${daysBefore == 1 ? 'día' : 'días'}.',
+              ? l10n.reminderDebtTodayBody(debt.name)
+              : l10n.reminderDebtSoonBody(debt.name, daysBefore),
           scheduledDate: _nextInstanceOfMonthDayTime(reminderDay, _debtReminderTime),
-          notificationDetails: const NotificationDetails(
-            android: AndroidNotificationDetails('debt_reminders', 'Pagos de deudas'),
+          notificationDetails: NotificationDetails(
+            android: AndroidNotificationDetails('debt_reminders', l10n.reminderDebtChannel),
             iOS: DarwinNotificationDetails(),
           ),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -142,8 +147,8 @@ class NotificationService {
       id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
       title: title,
       body: body,
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('finan2_activity', 'Actividad del hogar'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('finan2_activity', currentL10n.reminderActivityChannel),
         iOS: DarwinNotificationDetails(),
       ),
     );

@@ -386,5 +386,127 @@
   "settingsActiveYear": "Año activo",
   "settingsWeekStartsOn": "La semana inicia en",
   "settingsCategories": "Categorías",
-  "settingsAccounts": "Cuentas"
+  "settingsAccounts": "Cuentas",
+  "coreSheetErrorTitle": "Algo salió mal",
+  "coreReauthTitle": "Confirma tu contraseña",
+  "corePassword": "Contraseña",
+  "corePeriodPrevious": "Anterior",
+  "@corePeriodPrevious": {
+    "description": "Default tooltip of the period picker's back arrow."
+  },
+  "corePeriodBackToToday": "Volver a hoy",
+  "@corePeriodBackToToday": {
+    "description": "Shown under the period label when browsing another period; tapping jumps back to the current one."
+  },
+  "coreGoToSettings": "Ir a Ajustes",
+  "coreMissingKeyInline": "Falta la llave de este hogar para ver estos montos.",
+  "@coreMissingKeyInline": {
+    "description": "The device lacks the household's encryption key."
+  },
+  "coreMissingKeyTitle": "Falta la llave de este hogar",
+  "coreMissingKeyBody": "Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.",
+  "coreNotificationPrimerTitle": "Activa las notificaciones",
+  "coreNotificationPrimerBody": "Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.",
+  "coreNotificationPrimerEnable": "Activar notificaciones",
+  "coreInstallBanner": "Para recibir notificaciones y que tus datos no se borren solos, instala Finan2: toca Compartir y luego \"Agregar a inicio\".",
+  "@coreInstallBanner": {
+    "description": "iOS Safari banner; the quoted text is the Safari menu item, in the device's language."
+  },
+  "coreHomeTabHome": "Inicio",
+  "coreHomeTabMovements": "Movimientos",
+  "@coreHomeTabMovements": {
+    "description": "Bottom nav tab with the list of income and expenses."
+  },
+  "coreHomeTabDebts": "Deudas",
+  "coreHomeTabGoals": "Metas",
+  "@coreHomeTabGoals": {
+    "description": "Bottom nav tab for savings goals."
+  },
+  "coreHomeTabSettings": "Ajustes",
+  "coreSplashTagline": "Finanzas del hogar - para dos",
+  "errorInvalidEmail": "El correo no es válido.",
+  "errorWrongCredentials": "Correo o contraseña incorrectos.",
+  "errorEmailInUse": "Ya existe una cuenta con ese correo.",
+  "errorWeakPassword": "La contraseña es muy débil.",
+  "errorNetwork": "Problema de conexión, intenta de nuevo.",
+  "errorUnknownWithCode": "Algo salió mal ({code}).",
+  "@errorUnknownWithCode": {
+    "description": "code is a Firebase Auth error code.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "errorInviteNotFound": "Esa invitación no existe o ya venció. Pide a tu pareja una nueva desde Ajustes.",
+  "errorHouseholdFull": "No pudimos unirte: el hogar ya tiene 2 miembros o la invitación dejó de ser válida.",
+  "errorGeneric": "Algo salió mal, intenta de nuevo.",
+  "errorMissingKey": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pide a tu pareja el código de invitación completo.",
+  "errorRecoveryPhraseWordCount": "La frase debe tener {expected} palabras (escribiste {typed}).",
+  "@errorRecoveryPhraseWordCount": {
+    "placeholders": {
+      "expected": {
+        "type": "int"
+      },
+      "typed": {
+        "type": "int"
+      }
+    }
+  },
+  "errorRecoveryPhraseUnknownWord": "\"{word}\" no es una palabra de la frase. Revisa que esté bien escrita.",
+  "@errorRecoveryPhraseUnknownWord": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "errorRecoveryPhraseInvalid": "La frase no es válida. Revisa que las palabras estén en el orden correcto y bien escritas.",
+  "validationPasswordPolicy": "Mínimo 8 caracteres, con una mayúscula y una minúscula",
+  "reminderDailyChannel": "Recordatorio diario",
+  "@reminderDailyChannel": {
+    "description": "Android notification channel name, shown in the OS settings."
+  },
+  "reminderDailyTitle": "Registra tus gastos de hoy",
+  "reminderDailyBody": "No olvides anotar lo que ingresó o gastó el hogar hoy.",
+  "reminderWeeklyChannel": "Resumen semanal",
+  "reminderWeeklyTitle": "Resumen semanal listo",
+  "reminderWeeklyBody": "Revisa cómo le fue al hogar esta semana en Finan2.",
+  "reminderDebtChannel": "Pagos de deudas",
+  "reminderDebtTodayTitle": "Hoy pagas {debt}",
+  "@reminderDebtTodayTitle": {
+    "placeholders": {
+      "debt": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDebtTodayBody": "Hoy es el día de pago de tu deuda {debt}.",
+  "@reminderDebtTodayBody": {
+    "placeholders": {
+      "debt": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDebtSoonTitle": "Pago de {debt} pronto",
+  "@reminderDebtSoonTitle": {
+    "placeholders": {
+      "debt": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDebtSoonBody": "La cuota de {debt} vence en {days, plural, =1{1 día} other{{days} días}}.",
+  "@reminderDebtSoonBody": {
+    "placeholders": {
+      "debt": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminderActivityChannel": "Actividad del hogar"
 }
