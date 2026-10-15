@@ -121,83 +121,85 @@ abstract class Finan2Palette {
 // TIPOGRAFÍA — escala de tipos (tamaños, pesos, tracking)
 // ─────────────────────────────────────────────────────────────────────────
 
-/// Escala tipográfica del mockup, mapeada al sistema de Material 3.
-/// Fuente: stack del sistema (la app puede cambiar a 'Inter' si se incluye).
+/// Escala tipográfica del rediseño (`design-archive/rediseno-app.html`),
+/// mapeada a Material 3. Plus Jakarta Sans en todo; las cifras de dinero
+/// llevan números tabulares para que las columnas cuadren.
 ///
-/// | Rol                        | px  | peso | tracking |
-/// |----------------------------|-----|------|----------|
-/// | Cifra hero (patrimonio)    | 30  | 750  | -0.5     |
-/// | Título de pantalla / H2    | 22  | 720  | -0.4     |
-/// | Título de card / H3        | 18  | 700  | -0.2     |
-/// | Subtítulo / app-top        | 15  | 650  |  0       |
-/// | Cuerpo                     | 14  | 400  |  0       |
-/// | Cuerpo secundario (soft)   | 13  | 400  |  0       |
-/// | Micro (faint)              | 11.5| 500  |  0       |
-/// | Botón                      | 14  | 700  |  0.1     |
-/// | Chip                       | 12  | 600  |  0.1     |
-/// | Label (MAYÚS)              | 10.5| 700  |  0.8     |
+/// | Rol                               | Material       | px   | peso | tracking |
+/// |-----------------------------------|----------------|------|------|----------|
+/// | Monto al anotar                   | displayLarge   | 54   | 700  | -2.4     |
+/// | Cifra principal («Les queda»)     | displayMedium  | 46   | 700  | -1.8     |
+/// | Cifra de tarjeta / estado vacío   | displaySmall   | 24   | 700  | -0.5     |
+/// | Título de pantalla                | headlineSmall  | 24   | 800  | -0.7     |
+/// | Título de hoja / modal            | titleLarge     | 18   | 700  | -0.36    |
+/// | Monto de una fila / barra de hoja | titleMedium    | 15   | 700  | -0.15    |
+/// | Título de sección                 | titleSmall     | 13   | 700  | 0        |
+/// | Cuerpo: concepto de una fila      | bodyLarge      | 14   | 600  | 0        |
+/// | Cuerpo secundario (soft)          | bodyMedium     | 13   | 400  | 0        |
+/// | Detalle bajo una fila (faint)     | bodySmall      | 11.5 | 500  | 0        |
+/// | Botón                             | labelLarge     | 14.5 | 700  | 0        |
+/// | Chip / segmento                   | labelMedium    | 12.5 | 600  | 0        |
+/// | Etiqueta en MAYÚSCULAS            | labelSmall     | 11   | 800  | 0.88     |
 abstract class Finan2Type {
-  static const _feat = [FontFeature.tabularFigures()];
+  static const _tabular = [FontFeature.tabularFigures()];
 
-  static TextTheme textTheme({required Color ink, required Color soft}) {
+  static TextTheme textTheme({required Color ink, required Color soft, required Color faint}) {
     return TextTheme(
-      // Cifras grandes de dinero (balance, meta, saldo)
-      displayMedium: TextStyle(
-        fontSize: 30,
+      displayLarge: TextStyle(
+        fontSize: 54,
         fontWeight: FontWeight.w700,
-        letterSpacing: -0.5,
-        height: 1.05,
+        letterSpacing: -2.4,
+        height: 1,
         color: ink,
-        fontFeatures: _feat,
+        fontFeatures: _tabular,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 46,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1.8,
+        height: 1.02,
+        color: ink,
+        fontFeatures: _tabular,
       ),
       displaySmall: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
+        letterSpacing: -0.5,
+        height: 1.15,
         color: ink,
-        fontFeatures: _feat,
+        fontFeatures: _tabular,
       ),
-      // Título de pantalla / sección
       headlineSmall: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.7,
+        height: 1.1,
         color: ink,
       ),
-      // Título de card
       titleLarge: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w700,
-        letterSpacing: -0.2,
+        letterSpacing: -0.36,
         color: ink,
       ),
-      // Subtítulo / encabezado de app
-      titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ink),
-      titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ink),
-      // Cuerpo
-      bodyLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: ink),
+      titleMedium: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.15,
+        color: ink,
+        fontFeatures: _tabular,
+      ),
+      titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ink),
+      bodyLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ink),
       bodyMedium: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: soft, height: 1.45),
-      bodySmall: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: soft),
-      // Botón
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.1,
-        color: ink,
-      ),
-      // Chip
-      labelMedium: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.1,
-        color: soft,
-      ),
-      // Label en MAYÚSCULAS (eyebrows, encabezados de campo)
+      bodySmall: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: faint),
+      labelLarge: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700, color: ink),
+      labelMedium: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: soft),
       labelSmall: TextStyle(
-        fontSize: 10.5,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.8,
-        color: soft,
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.88,
+        color: faint,
       ),
     );
   }
@@ -210,7 +212,16 @@ abstract class Finan2Type {
     fontFamily: fontFamily,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: _tabular,
+  );
+
+  /// El signo «$» junto a una cifra grande: a la mitad de su tamaño y en
+  /// el color terciario, como en el mockup (`.big small`).
+  static TextStyle currencyOf(TextStyle figure, Color faint) => figure.copyWith(
+    fontSize: (figure.fontSize ?? 46) * 0.48,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.4,
+    color: faint,
   );
 }
 
@@ -606,6 +617,7 @@ abstract class Finan2Theme {
     final textTheme = Finan2Type.textTheme(
       ink: ink,
       soft: soft,
+      faint: ext.inkFaint,
     ).apply(fontFamily: Finan2Type.fontFamily);
 
     return base.copyWith(
