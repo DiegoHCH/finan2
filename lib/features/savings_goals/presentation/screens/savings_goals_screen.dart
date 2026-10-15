@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_progress_card.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../savings_challenge/presentation/screens/savings_challenge_screen.dart';
 import '../../data/savings_goal_model.dart';
@@ -50,7 +51,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Metas de ahorro',
+              label: context.l10n.savingsGoalsTitle,
               title: formatMoney(totalSaved),
               household: household,
             ),
@@ -71,8 +72,8 @@ class SavingsGoalsScreen extends ConsumerWidget {
                       if (goals.isNotEmpty) ...[
                         _Banner(
                           label: falta > 0
-                              ? 'Total ahorrado · falta ${formatMoney(falta)}'
-                              : 'Total ahorrado',
+                              ? context.l10n.savingsGoalsTotalSavedRemaining(formatMoney(falta))
+                              : context.l10n.savingsGoalsTotalSaved,
                           value: formatMoney(totalSaved),
                         ),
                         const SizedBox(height: Finan2Space.lg),
@@ -80,11 +81,9 @@ class SavingsGoalsScreen extends ConsumerWidget {
                       if (goals.isEmpty)
                         Finan2EmptyState(
                           icon: Icons.savings_outlined,
-                          title: 'Aún no tienes metas',
-                          description:
-                              'Crea una meta de ahorro para llevarle el pulso '
-                              'con tu pareja.',
-                          actionLabel: '+ Nueva meta',
+                          title: context.l10n.savingsGoalsEmptyTitle,
+                          description: context.l10n.savingsGoalsEmptyDescription,
+                          actionLabel: context.l10n.savingsGoalsEmptyAction,
                           onAction: () => Navigator.of(context).push(
                             MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen()),
                           ),
@@ -109,7 +108,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                         children: [
                           Finan2ListRow(
                             icon: Icons.emoji_events_outlined,
-                            label: 'Reto de ahorro',
+                            label: context.l10n.savingsGoalsChallengeLink,
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => const SavingsChallengeScreen(),
@@ -188,7 +187,10 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final brand = Theme.of(context).colorScheme.primary;
-    final dateLabel = goal.targetDate == null ? 'sin fecha' : _monthYearLabel(goal.targetDate!);
+    final l10n = context.l10n;
+    final dateLabel = goal.targetDate == null
+        ? l10n.savingsGoalsNoDate
+        : _monthYearLabel(goal.targetDate!);
     final current = goal.currentAmountAsOf(now);
 
     return Finan2ProgressCard(
@@ -196,13 +198,13 @@ class _GoalCard extends StatelessWidget {
       iconBackground: colors.brandTint,
       iconColor: brand,
       title: goal.name,
-      subtitle: 'Meta ${formatMoney(goal.targetAmount)} · $dateLabel',
+      subtitle: l10n.savingsGoalsCardSubtitle(formatMoney(goal.targetAmount), dateLabel),
       percentText: '${(goal.progressFractionAsOf(now) * 100).round()}%',
       percentColor: brand,
       progressFraction: goal.progressFractionAsOf(now),
       progressColor: brand,
-      footLeft: '${formatMoney(goal.monthlyContribution)}/mes',
-      footRight: 'Ahorrado ${formatMoney(current)}',
+      footLeft: l10n.savingsGoalsPerMonth(formatMoney(goal.monthlyContribution)),
+      footRight: l10n.savingsGoalsSavedAmount(formatMoney(current)),
       onTap: onTap,
     );
   }

@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
+import '../../../l10n/l10n.dart';
 
 /// Matches the Firestore schema's `kind` field.
 enum InvestmentKind { rentaFija, rentaVariable, cripto }
 
 extension InvestmentKindLabel on InvestmentKind {
+  /// Display name in the app's current language - not the stored value,
+  /// which is [name].
   String get label => switch (this) {
-    InvestmentKind.rentaFija => 'Renta fija',
-    InvestmentKind.rentaVariable => 'Renta variable',
-    InvestmentKind.cripto => 'Alto riesgo',
+    InvestmentKind.rentaFija => currentL10n.investmentsKindFixedIncome,
+    InvestmentKind.rentaVariable => currentL10n.investmentsKindVariableIncome,
+    InvestmentKind.cripto => currentL10n.investmentsKindHighRisk,
   };
 
   static InvestmentKind fromName(String name) => InvestmentKind.values.firstWhere(

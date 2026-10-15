@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/debt_model.dart';
@@ -116,10 +117,9 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
     if (debt == null) return;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar deuda',
-      message:
-          'Se eliminará "${debt.name}". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.debtsDelete,
+      message: context.l10n.debtsDeleteMessage(debt.name),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -132,15 +132,19 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
     final isEditing = widget.debt != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: Finan2FormTop(title: isEditing ? 'Editar deuda' : 'Nueva deuda', onSave: _save),
+      appBar: Finan2FormTop(
+        title: isEditing ? l10n.debtsEditTitle : l10n.debtsNewTitle,
+        onSave: _save,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tipo de deuda', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.debtsTypeField, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -156,10 +160,10 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Text(
-              'Saldo actual',
+              l10n.debtsCurrentBalance,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
@@ -168,12 +172,12 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
             if (_type.isCard) ...[
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Cupo total',
+                  label: l10n.debtsCreditLimit,
                   controller: _creditLimitController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Tasa E.A. %',
+                  label: l10n.debtsRatePercent,
                   controller: _rateController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
@@ -181,12 +185,12 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               const SizedBox(height: 9),
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Pago mínimo',
+                  label: l10n.debtsMinPayment,
                   controller: _minPaymentController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Abono extra',
+                  label: l10n.debtsExtraPayment,
                   controller: _extraPaymentController,
                   keyboardType: TextInputType.number,
                 ),
@@ -194,12 +198,12 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               const SizedBox(height: 9),
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Día de corte',
+                  label: l10n.debtsCutoffDay,
                   controller: _cutoffDayController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Día de pago',
+                  label: l10n.debtsPaymentDay,
                   controller: _paymentDayController,
                   keyboardType: TextInputType.number,
                 ),
@@ -207,12 +211,12 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
             ] else ...[
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Monto original',
+                  label: l10n.debtsOriginalAmount,
                   controller: _originalAmountController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Tasa E.A. %',
+                  label: l10n.debtsRatePercent,
                   controller: _rateController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
@@ -220,12 +224,12 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               const SizedBox(height: 9),
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Cuota mensual',
+                  label: l10n.debtsMonthlyInstallment,
                   controller: _monthlyPaymentController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Abono extra',
+                  label: l10n.debtsExtraPayment,
                   controller: _extraPaymentController,
                   keyboardType: TextInputType.number,
                 ),
@@ -233,19 +237,19 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               const SizedBox(height: 9),
               _FieldRow(
                 left: Finan2Field(
-                  label: 'Plazo (cuotas)',
+                  label: l10n.debtsTermInstallments,
                   controller: _termMonthsController,
                   keyboardType: TextInputType.number,
                 ),
                 right: Finan2Field(
-                  label: 'Cuotas pagadas',
+                  label: l10n.debtsPaidInstallments,
                   controller: _paidInstallmentsController,
                   keyboardType: TextInputType.number,
                 ),
               ),
               const SizedBox(height: 9),
               Finan2Field(
-                label: 'Día de pago',
+                label: l10n.debtsPaymentDay,
                 controller: _paymentDayController,
                 keyboardType: TextInputType.number,
               ),
@@ -255,7 +259,7 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar deuda'),
+                child: Text(l10n.debtsDelete),
               ),
             ],
           ],

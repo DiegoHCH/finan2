@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
+import '../../../l10n/l10n.dart';
 
 /// Matches the Firestore schema's `type` field for debts. Tarjeta (card) is
 /// a revolving line of credit; the other three are fixed-installment loans
@@ -11,11 +12,13 @@ enum DebtType { tarjeta, credito, hipoteca, vehiculo }
 enum DebtStatus { critical, warning, good }
 
 extension DebtTypeLabel on DebtType {
+  /// Display name in the app's current language - not the stored value,
+  /// which is [name].
   String get label => switch (this) {
-    DebtType.tarjeta => 'Tarjeta',
-    DebtType.credito => 'Crédito',
-    DebtType.hipoteca => 'Hipoteca',
-    DebtType.vehiculo => 'Vehículo',
+    DebtType.tarjeta => currentL10n.debtsTypeCard,
+    DebtType.credito => currentL10n.debtsTypeLoan,
+    DebtType.hipoteca => currentL10n.debtsTypeMortgage,
+    DebtType.vehiculo => currentL10n.debtsTypeVehicle,
   };
 
   bool get isCard => this == DebtType.tarjeta;

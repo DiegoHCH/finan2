@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/investment_model.dart';
 import '../viewmodels/investment_providers.dart';
@@ -41,7 +42,7 @@ class InvestmentsScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Inversiones',
+              label: context.l10n.investmentsTitle,
               title: formatMoney(total),
               household: household,
               showBackButton: true,
@@ -54,11 +55,9 @@ class InvestmentsScreen extends ConsumerWidget {
                   if (investments.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.trending_up,
-                      title: 'Aún no hay inversiones',
-                      description:
-                          'Agrega tu CDT, fondo o cripto para llevarle el pulso '
-                          'a tu portafolio.',
-                      actionLabel: '+ Nueva inversión',
+                      title: context.l10n.investmentsEmptyTitle,
+                      description: context.l10n.investmentsEmptyDescription,
+                      actionLabel: context.l10n.investmentsEmptyAction,
                       onAction: () => Navigator.of(
                         context,
                       ).push(MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen())),
@@ -83,9 +82,9 @@ class InvestmentsScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Valor del portafolio',
-                              style: TextStyle(color: Colors.white, fontSize: 11.5),
+                            Text(
+                              context.l10n.investmentsPortfolioValue,
+                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
@@ -113,7 +112,7 @@ class InvestmentsScreen extends ConsumerWidget {
                                             '${totalReturn >= 0 ? '+' : ''}${formatMoney(totalReturn)}',
                                         style: const TextStyle(fontWeight: FontWeight.w700),
                                       ),
-                                      const TextSpan(text: ' de rendimiento total'),
+                                      TextSpan(text: context.l10n.investmentsTotalReturnSuffix),
                                     ],
                                   ),
                                   style: const TextStyle(color: Colors.white, fontSize: 11.5),
@@ -166,7 +165,7 @@ class _InvestmentCard extends StatelessWidget {
     final gainColor = gain ? colors.income : colors.expense;
 
     final subtitle = investment.kind == InvestmentKind.rentaFija
-        ? '${investment.kind.label} · ${_formatRate(investment.rate)}% E.A.'
+        ? context.l10n.investmentsKindWithRate(investment.kind.label, _formatRate(investment.rate))
         : investment.kind.label;
 
     return InkWell(
@@ -222,7 +221,7 @@ class _InvestmentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Valor actual',
+                  context.l10n.investmentsCurrentValue,
                   style: TextStyle(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w600,
