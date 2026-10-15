@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart' show FirebaseException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/crypto/recovery_phrase.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
+import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../data/household_model.dart';
 import '../../data/household_repository.dart';
 
@@ -82,6 +84,14 @@ class HouseholdController extends AsyncNotifier<Household?> {
       final key =
           await ref.read(householdCryptoProvider).generateKey(household.id);
       lastShareCode = '$inviteCode.$key';
+      // Separate write: the category rules check membership against the
+      // household as stored, so it has to exist first. Not worth failing
+      // the household over - categories can always be added by hand.
+      try {
+        await ref.read(categoryRepositoryProvider).addDefaults(household.id, user.uid);
+      } on FirebaseException {
+        // Offline or denied: the household is created all the same.
+      }
       return household;
     });
   }

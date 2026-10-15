@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'category_model.dart';
+import 'default_categories.dart';
 
 class CategoryRepository {
   CategoryRepository({FirebaseFirestore? firestore})
@@ -21,6 +22,18 @@ class CategoryRepository {
   Future<String> createCategory(String householdId, Category category) async {
     final doc = await _categories(householdId).add(category.toFirestore());
     return doc.id;
+  }
+
+  /// Adds [defaultCategories] to a new household, attributed to [uid].
+  Future<void> addDefaults(String householdId, String uid) {
+    final batch = _db.batch();
+    for (final category in defaultCategories) {
+      batch.set(_categories(householdId).doc(), {
+        ...category.toFirestore(),
+        'createdBy': uid,
+      });
+    }
+    return batch.commit();
   }
 
   Future<void> updateCategory(String householdId, Category category) {
