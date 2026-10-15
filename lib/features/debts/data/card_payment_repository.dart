@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'card_payment_model.dart';
 
@@ -20,11 +21,7 @@ class CardPaymentRepository {
         .where('cardDebtId', isEqualTo: cardDebtId)
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => CardPayment.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => CardPayment.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Decrypts an already-fetched account/debt snapshot's `balance` field.

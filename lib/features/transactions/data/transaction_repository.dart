@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'transaction_model.dart';
 import '../../../core/observability/error_reporter.dart';
@@ -114,11 +115,7 @@ class TransactionRepository {
         .where('month', isEqualTo: month)
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => Movement.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => Movement.fromFirestore(doc, _crypto, householdId));
   }
 
   Stream<List<Movement>> watchTransactionsForYear(String householdId, {required int year}) {
@@ -126,11 +123,7 @@ class TransactionRepository {
         .where('year', isEqualTo: year)
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => Movement.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => Movement.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Creates [tx] and, atomically, applies its effect on its account's or

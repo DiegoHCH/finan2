@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'recurring_bill_model.dart';
 
@@ -18,11 +19,7 @@ class RecurringBillRepository {
     return _bills(householdId)
         .orderBy('dayOfMonth')
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => RecurringBill.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => RecurringBill.fromFirestore(doc, _crypto, householdId));
   }
 
   Future<String> createBill(String householdId, RecurringBill bill) async {

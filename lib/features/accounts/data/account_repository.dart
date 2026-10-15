@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'account_model.dart';
 
@@ -18,10 +19,7 @@ class AccountRepository {
     return _accounts(householdId)
         .orderBy('name')
         .snapshots()
-        .asyncMap(
-          (snap) =>
-              Future.wait(snap.docs.map((doc) => Account.fromFirestore(doc, _crypto, householdId))),
-        );
+        .decryptEach((doc) => Account.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Returns the new account's generated ID.

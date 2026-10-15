@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'savings_goal_model.dart';
 import '../../../core/observability/error_reporter.dart';
@@ -22,11 +23,7 @@ class SavingsGoalRepository {
     return _goals(householdId)
         .orderBy('name')
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => SavingsGoal.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => SavingsGoal.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Returns the new goal's generated ID.

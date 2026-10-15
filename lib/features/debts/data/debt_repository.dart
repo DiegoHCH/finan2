@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'debt_model.dart';
 
@@ -18,10 +19,7 @@ class DebtRepository {
     return _debts(householdId)
         .orderBy('name')
         .snapshots()
-        .asyncMap(
-          (snap) =>
-              Future.wait(snap.docs.map((doc) => Debt.fromFirestore(doc, _crypto, householdId))),
-        );
+        .decryptEach((doc) => Debt.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Returns the new debt's generated ID.

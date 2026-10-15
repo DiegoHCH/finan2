@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'investment_model.dart';
 
@@ -18,11 +19,7 @@ class InvestmentRepository {
     return _investments(householdId)
         .orderBy('name')
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => Investment.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => Investment.fromFirestore(doc, _crypto, householdId));
   }
 
   Future<String> createInvestment(String householdId, Investment investment) async {

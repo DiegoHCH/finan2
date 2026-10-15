@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'transfer_model.dart';
 
@@ -19,11 +20,7 @@ class TransferRepository {
         .collection('transfers')
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => Transfer.fromFirestore(doc, _crypto, householdId)),
-          ),
-        );
+        .decryptEach((doc) => Transfer.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Decrypts an already-fetched account snapshot's `balance` field. Takes
