@@ -77,7 +77,7 @@ class AccountsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                            colors: [colors.heroStart, colors.heroEnd],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
@@ -86,13 +86,13 @@ class AccountsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               l10n.accountsTotalAvailable,
-                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                              style: TextStyle(color: colors.onHero, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
                               formatMoney(available),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colors.onHero,
                                 fontSize: 26,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -100,7 +100,7 @@ class AccountsScreen extends ConsumerWidget {
                             const SizedBox(height: 5),
                             Text(
                               l10n.accountsCountInHousehold(accounts.length),
-                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                              style: TextStyle(color: colors.onHero, fontSize: 11.5),
                             ),
                           ],
                         ),

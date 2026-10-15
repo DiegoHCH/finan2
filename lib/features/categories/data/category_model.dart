@@ -54,7 +54,7 @@ class Category {
       name: data['name'] as String? ?? '',
       type: CategoryTypeLabel.fromName(data['type'] as String? ?? 'gasto'),
       iconSlug: data['icon'] as String? ?? 'label',
-      color: data['color'] as int? ?? 0xFF0F9D74,
+      color: data['color'] as int? ?? 0xFF7C3AED,
       rollover: data['rollover'] as bool? ?? false,
       createdBy: data['createdBy'] as String? ?? '',
     );

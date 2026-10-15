@@ -76,8 +76,8 @@ class Finan2TransactionRow extends StatelessWidget {
                           alignment: Alignment.center,
                           child: Text(
                             avatarLabel,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: colors.onAccent,
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
                             ),

@@ -81,7 +81,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                            colors: [colors.heroStart, colors.heroEnd],
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -90,8 +90,8 @@ class RecurringBillsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               context.l10n.recurringBillsAutoLogged,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colors.onHero,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -103,8 +103,8 @@ class RecurringBillsScreen extends ConsumerWidget {
                                     .length;
                                 return Text(
                                   context.l10n.recurringBillsActiveCount(active),
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: colors.onHero,
                                     fontSize: 21,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: -0.2,

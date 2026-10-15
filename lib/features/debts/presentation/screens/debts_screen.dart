@@ -156,7 +156,7 @@ class _FreeDateBanner extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+          colors: [colors.heroStart, colors.heroEnd],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -165,12 +165,12 @@ class _FreeDateBanner extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colors.onHero, fontSize: 11, fontWeight: FontWeight.w600),
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.onHero,
               fontSize: 21,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.2,

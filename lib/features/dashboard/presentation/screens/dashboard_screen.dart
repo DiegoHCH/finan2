@@ -65,7 +65,7 @@ class DashboardScreen extends ConsumerWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                      colors: [colors.heroStart, colors.heroEnd],
                     ),
                     borderRadius: BorderRadius.circular(Finan2Radius.card),
                   ),
@@ -75,13 +75,13 @@ class DashboardScreen extends ConsumerWidget {
                     children: [
                       Text(
                         l10n.dashboardNetWorth,
-                        style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                        style: TextStyle(color: colors.onHero, fontSize: 11.5),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         formatMoney(netWorth),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colors.onHero,
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
                         ),
@@ -89,7 +89,7 @@ class DashboardScreen extends ConsumerWidget {
                       const SizedBox(height: 5),
                       Text(
                         l10n.dashboardNetWorthFormula,
-                        style: const TextStyle(color: Colors.white, fontSize: 11),
+                        style: TextStyle(color: colors.onHero, fontSize: 11),
                       ),
                     ],
                   ),

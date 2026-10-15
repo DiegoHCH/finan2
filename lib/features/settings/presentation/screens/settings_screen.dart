@@ -34,7 +34,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final brand = Theme.of(context).colorScheme.primary;
     final members = household.members;
     final formatMoney = ref.watch(moneyFormatterProvider);
     final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {}).values.fold(
@@ -135,7 +134,7 @@ class SettingsScreen extends ConsumerWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [brand, colors.brandDeep],
+                          colors: [colors.heroStart, colors.heroEnd],
                         ),
                         borderRadius: BorderRadius.circular(Finan2Radius.card),
                       ),
@@ -164,8 +163,8 @@ class SettingsScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   household.name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: colors.onHero,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -173,7 +172,7 @@ class SettingsScreen extends ConsumerWidget {
                                 Text(
                                   '${l10n.settingsMemberCount(members.length)} · '
                                   '${members.length < 2 ? l10n.settingsTapToInvite : l10n.settingsTapToShareKey}',
-                                  style: const TextStyle(color: Colors.white, fontSize: 11),
+                                  style: TextStyle(color: colors.onHero, fontSize: 11),
                                 ),
                               ],
                             ),

@@ -111,7 +111,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                        colors: [colors.heroStart, colors.heroEnd],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -120,16 +120,16 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                       children: [
                         Text(
                           bannerLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colors.onHero,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           bannerValue,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colors.onHero,
                             fontSize: 21,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,

@@ -36,7 +36,7 @@ class Finan2Avatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         label,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: size * 0.4),
+        style: TextStyle(color: colors.onAccent, fontWeight: FontWeight.w700, fontSize: size * 0.4),
       ),
     );
   }

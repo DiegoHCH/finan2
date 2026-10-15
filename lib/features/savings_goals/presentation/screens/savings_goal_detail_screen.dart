@@ -49,7 +49,6 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         heroTag: 'savingsGoalDetailFab',
-        backgroundColor: colors.saving,
         onPressed: () => _addContribution(context, ref, current.id),
         child: const Icon(Icons.add),
       ),
@@ -75,7 +74,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [const Color(0xFF9A6817), colors.saving],
+                        colors: [colors.goalStart, colors.goalEnd],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -86,16 +85,16 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                           falta > 0
                               ? l10n.savingsGoalsSavedRemaining(formatMoney(falta))
                               : l10n.savingsGoalsSavedReached,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colors.onHero,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           formatMoney(currentAmount),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colors.onHero,
                             fontSize: 21,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,

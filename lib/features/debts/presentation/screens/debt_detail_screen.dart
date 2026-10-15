@@ -56,7 +56,6 @@ class DebtDetailScreen extends ConsumerWidget {
       floatingActionButton: current.type.isCard
           ? FloatingActionButton(
               heroTag: 'debtDetailFab',
-              backgroundColor: colors.expense,
               onPressed: () => _registerPayment(context, ref, current.id),
               child: const Icon(Icons.add),
             )

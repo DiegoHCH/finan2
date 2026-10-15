@@ -29,7 +29,6 @@ class SavingsGoalsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
     final goalsAsync = ref.watch(savingsGoalsProvider);
     final totalSaved = ref.watch(totalSavedProvider);
     final formatMoney = ref.watch(moneyFormatterProvider);
@@ -41,7 +40,6 @@ class SavingsGoalsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'savingsGoalsFab',
-              backgroundColor: colors.saving,
               onPressed: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen())),
@@ -144,7 +142,7 @@ class _Banner extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [const Color(0xFF9A6817), colors.saving],
+          colors: [colors.goalStart, colors.goalEnd],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -153,12 +151,12 @@ class _Banner extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colors.onHero, fontSize: 11, fontWeight: FontWeight.w600),
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.onHero,
               fontSize: 21,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.2,

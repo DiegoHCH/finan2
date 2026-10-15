@@ -31,7 +31,7 @@ const _iconsByType = <CategoryType, List<String>>{
   CategoryType.ahorro: ['viaje', 'emergencia', 'meta', 'casa'],
 };
 
-const _colorSwatches = [0xFF0F9D74, 0xFFD4453F, 0xFFC8892F, 0xFF7C5CE0, 0xFF2F7FC8, 0xFFD466A6];
+const _colorSwatches = Finan2Palette.categorySwatches;
 
 class EditCategoryScreen extends ConsumerStatefulWidget {
   const EditCategoryScreen({this.category, super.key});
@@ -220,7 +220,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                         borderRadius: BorderRadius.circular(9),
                       ),
                       alignment: Alignment.center,
-                      child: Icon(Finan2Icons.categoria(_iconSlug), size: 15, color: Colors.white),
+                      child: Icon(Finan2Icons.categoria(_iconSlug), size: 15, color: colors.onHero),
                     ),
                     const SizedBox(width: 8),
                     Text(

@@ -194,7 +194,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [const Color(0xFF9A6817), colors.saving],
+              colors: [colors.goalStart, colors.goalEnd],
             ),
             borderRadius: BorderRadius.circular(16),
           ),
@@ -203,16 +203,12 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
             children: [
               Text(
                 context.l10n.savingsChallengeGoal,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: colors.onHero, fontSize: 11, fontWeight: FontWeight.w600),
               ),
               Text(
                 formatMoney(challenge.target),
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: colors.onHero,
                   fontSize: 21,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
@@ -314,7 +310,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
                   style: TextStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: done ? Colors.white : colors.inkSoft,
+                    color: done ? colors.onAccent : colors.inkSoft,
                   ),
                 ),
               ),

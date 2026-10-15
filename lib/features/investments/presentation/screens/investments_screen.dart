@@ -75,7 +75,7 @@ class InvestmentsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
+                            colors: [colors.heroStart, colors.heroEnd],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
@@ -84,13 +84,13 @@ class InvestmentsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               context.l10n.investmentsPortfolioValue,
-                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                              style: TextStyle(color: colors.onHero, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
                               formatMoney(total),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: colors.onHero,
                                 fontSize: 26,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -101,7 +101,7 @@ class InvestmentsScreen extends ConsumerWidget {
                                 Icon(
                                   totalReturn >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
                                   size: 12,
-                                  color: Colors.white,
+                                  color: colors.onHero,
                                 ),
                                 const SizedBox(width: 4),
                                 Text.rich(
@@ -115,7 +115,7 @@ class InvestmentsScreen extends ConsumerWidget {
                                       TextSpan(text: context.l10n.investmentsTotalReturnSuffix),
                                     ],
                                   ),
-                                  style: const TextStyle(color: Colors.white, fontSize: 11.5),
+                                  style: TextStyle(color: colors.onHero, fontSize: 11.5),
                                 ),
                               ],
                             ),

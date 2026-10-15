@@ -26,49 +26,95 @@ import 'package:flutter/material.dart';
 // PALETA
 // ─────────────────────────────────────────────────────────────────────────
 
-/// Fuente única de verdad de los colores de marca.
+/// Fuente única de verdad de los colores de marca: la paleta «Violeta
+/// moderno» del rediseño (`design-archive/rediseno-app.html`).
 abstract class Finan2Palette {
-  // Marca
-  static const brand = Color(0xFF0F9D74); // esmeralda
-  static const brandDeep = Color(0xFF0A5C47);
-  static const brandTintLight = Color(0xFFE3F4EE);
-  static const brandTintDark = Color(0xFF123028);
-  static const brandDarkMode = Color(0xFF2DD39C);
-  static const brandDeepDark = Color(0xFF1D8B68);
+  // Acción: el violeta es la única acción de cada pantalla.
+  static const brand = Color(0xFF7C3AED);
+  static const brandDeep = Color(0xFF5B21B6);
+  static const brandTintLight = Color(0xFFEDE9FE);
+  static const brandTintDark = Color(0xFF2A2145);
+  static const brandDarkMode = Color(0xFFA78BFA);
+  static const brandDeepDark = Color(0xFF6D28D9);
+  static const onBrandLight = Color(0xFFFFFFFF);
+  static const onBrandDark = Color(0xFF0B0B12);
 
-  // Acento
-  static const gold = Color(0xFFC8892F); // ahorros / metas
-  static const goldDark = Color(0xFFE0AD5E);
+  // Tarjetas destacadas (degradado violeta con texto blanco en los dos temas).
+  static const heroStartLight = Color(0xFF8B5CF6);
+  static const heroEndLight = Color(0xFF6D28D9);
+  static const heroStartDark = Color(0xFF7C3AED);
+  static const heroEndDark = Color(0xFF4C1D95);
+  static const onHero = Color(0xFFFFFFFF);
 
-  // Semántica
-  static const positive = Color(0xFF0F9D74); // ingreso
-  static const negative = Color(0xFFD4453F); // gasto / deuda
-  static const positiveDark = Color(0xFF2DD39C);
-  static const negativeDark = Color(0xFFF2726C);
+  // El «2» del logo: ámbar sobre la baldosa violeta.
+  static const logoAccent = Color(0xFFF59E0B);
 
-  // Colores de usuario (dos miembros del hogar)
-  static const userA = Color(0xFF0F9D74);
-  static const userB = Color(0xFF7C5CE0);
-  static const userADark = Color(0xFF2DD39C);
-  static const userBDark = Color(0xFFA48BFF);
+  // Semántica: verde para lo que entra, rojo solo cuando algo se pasa.
+  static const positive = Color(0xFF16A34A);
+  static const positiveTint = Color(0xFFDCFCE7);
+  static const negative = Color(0xFFDC2626);
+  static const negativeTint = Color(0xFFFEE2E2);
+  static const warning = Color(0xFFD97706);
+  static const info = Color(0xFF0284C7);
+  static const positiveDark = Color(0xFF4ADE80);
+  static const positiveTintDark = Color(0xFF12301E);
+  static const negativeDark = Color(0xFFF87171);
+  static const negativeTintDark = Color(0xFF3A1919);
+  static const warningDark = Color(0xFFFBBF24);
+  static const infoDark = Color(0xFF38BDF8);
 
-  // Neutros — LIGHT (sesgo verde-frío, elegidos)
-  static const groundLight = Color(0xFFEEF2F0);
+  // Ahorro y metas: el verde de «ahorro» y su degradado.
+  static const gold = positive;
+  static const goldDark = positiveDark;
+  static const goalStartLight = Color(0xFF16A34A);
+  static const goalEndLight = Color(0xFF15803D);
+  static const goalStartDark = Color(0xFF15803D);
+  static const goalEndDark = Color(0xFF14532D);
+
+  // Colores de persona, fijos (R5): el primer miembro en azul, el segundo en
+  // naranja. El violeta no, porque ya es la acción.
+  static const userA = Color(0xFF0284C7);
+  static const userB = Color(0xFFEA580C);
+  static const userATint = Color(0xFFE0F2FE);
+  static const userBTint = Color(0xFFFFEDD5);
+  static const userADark = Color(0xFF38BDF8);
+  static const userBDark = Color(0xFFFB923C);
+  static const userATintDark = Color(0xFF0C2A3A);
+  static const userBTintDark = Color(0xFF33200F);
+
+  // Neutros — LIGHT
+  static const groundLight = Color(0xFFF8FAFC);
   static const surfaceLight = Color(0xFFFFFFFF);
-  static const surface2Light = Color(0xFFF4F7F5);
-  static const inkLight = Color(0xFF0D1F1A);
-  static const inkSoftLight = Color(0xFF4A5C55);
-  static const inkFaintLight = Color(0xFF869590);
-  static const lineLight = Color(0xFFDFE6E2);
+  static const surface2Light = Color(0xFFF1F5F9);
+  static const inkLight = Color(0xFF111827);
+  static const inkSoftLight = Color(0xFF64748B);
+  static const inkFaintLight = Color(0xFF94A3B8);
+  static const lineLight = Color(0xFFE2E8F0);
 
-  // Neutros — DARK (verde-negro profundo)
-  static const groundDark = Color(0xFF0A1210);
-  static const surfaceDark = Color(0xFF12201B);
-  static const surface2Dark = Color(0xFF17281F);
-  static const inkDark = Color(0xFFE9F1EC);
-  static const inkSoftDark = Color(0xFFA3B4AD);
-  static const inkFaintDark = Color(0xFF6B7D76);
-  static const lineDark = Color(0xFF22342C);
+  // Neutros — DARK
+  static const groundDark = Color(0xFF0B0B12);
+  static const surfaceDark = Color(0xFF151521);
+  static const surface2Dark = Color(0xFF1E1E2D);
+  static const inkDark = Color(0xFFF8FAFC);
+  static const inkSoftDark = Color(0xFFA1A1AA);
+  static const inkFaintDark = Color(0xFF71717A);
+  static const lineDark = Color(0xFF29293B);
+
+  /// Colores que se ofrecen al crear una categoría. Se guardan en Firestore
+  /// tal cual, así que sirven en los dos temas: mercado, casa, transporte,
+  /// ocio, servicios, ahorro, más el violeta, el azul y el naranja.
+  static const categorySwatches = <int>[
+    0xFF65A30D,
+    0xFF0F766E,
+    0xFFB45309,
+    0xFFDB2777,
+    0xFF475569,
+    0xFF16A34A,
+    0xFF7C3AED,
+    0xFF0284C7,
+    0xFFEA580C,
+    0xFFDC2626,
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -307,13 +353,25 @@ abstract class Finan2Icons {
 @immutable
 class Finan2Colors extends ThemeExtension<Finan2Colors> {
   final Color income; // ingreso (verde)
-  final Color expense; // gasto / deuda (rojo)
-  final Color saving; // ahorro / meta (ámbar)
+  final Color incomeTint;
+  final Color expense; // gasto / se pasó (rojo)
+  final Color expenseTint;
+  final Color saving; // ahorro / meta
   final Color savingTint;
+  final Color warning; // atención: vence pronto, deuda en riesgo
+  final Color info;
   final Color brandTint;
   final Color brandDeep; // fin de degradado de marca, reactivo al tema
-  final Color userA;
-  final Color userB;
+  final Color onAccent; // texto e iconos sobre el violeta de acción
+  final Color heroStart; // degradado de las tarjetas destacadas
+  final Color heroEnd;
+  final Color onHero; // texto sobre heroStart/heroEnd y goalStart/goalEnd
+  final Color goalStart; // degradado de las tarjetas de ahorro
+  final Color goalEnd;
+  final Color userA; // primer miembro del hogar
+  final Color userATint;
+  final Color userB; // segundo miembro
+  final Color userBTint;
   final Color ink; // texto principal
   final Color inkSoft; // texto secundario
   final Color inkFaint; // texto terciario / labels
@@ -322,13 +380,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
 
   const Finan2Colors({
     required this.income,
+    required this.incomeTint,
     required this.expense,
+    required this.expenseTint,
     required this.saving,
     required this.savingTint,
+    required this.warning,
+    required this.info,
     required this.brandTint,
     required this.brandDeep,
+    required this.onAccent,
+    required this.heroStart,
+    required this.heroEnd,
+    required this.onHero,
+    required this.goalStart,
+    required this.goalEnd,
     required this.userA,
+    required this.userATint,
     required this.userB,
+    required this.userBTint,
     required this.ink,
     required this.inkSoft,
     required this.inkFaint,
@@ -338,13 +408,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
 
   static const light = Finan2Colors(
     income: Finan2Palette.positive,
+    incomeTint: Finan2Palette.positiveTint,
     expense: Finan2Palette.negative,
+    expenseTint: Finan2Palette.negativeTint,
     saving: Finan2Palette.gold,
-    savingTint: Color(0xFFF8EEDE),
+    savingTint: Finan2Palette.positiveTint,
+    warning: Finan2Palette.warning,
+    info: Finan2Palette.info,
     brandTint: Finan2Palette.brandTintLight,
     brandDeep: Finan2Palette.brandDeep,
+    onAccent: Finan2Palette.onBrandLight,
+    heroStart: Finan2Palette.heroStartLight,
+    heroEnd: Finan2Palette.heroEndLight,
+    onHero: Finan2Palette.onHero,
+    goalStart: Finan2Palette.goalStartLight,
+    goalEnd: Finan2Palette.goalEndLight,
     userA: Finan2Palette.userA,
+    userATint: Finan2Palette.userATint,
     userB: Finan2Palette.userB,
+    userBTint: Finan2Palette.userBTint,
     ink: Finan2Palette.inkLight,
     inkSoft: Finan2Palette.inkSoftLight,
     inkFaint: Finan2Palette.inkFaintLight,
@@ -354,13 +436,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
 
   static const dark = Finan2Colors(
     income: Finan2Palette.positiveDark,
+    incomeTint: Finan2Palette.positiveTintDark,
     expense: Finan2Palette.negativeDark,
+    expenseTint: Finan2Palette.negativeTintDark,
     saving: Finan2Palette.goldDark,
-    savingTint: Color(0xFF2C2415),
+    savingTint: Finan2Palette.positiveTintDark,
+    warning: Finan2Palette.warningDark,
+    info: Finan2Palette.infoDark,
     brandTint: Finan2Palette.brandTintDark,
     brandDeep: Finan2Palette.brandDeepDark,
+    onAccent: Finan2Palette.onBrandDark,
+    heroStart: Finan2Palette.heroStartDark,
+    heroEnd: Finan2Palette.heroEndDark,
+    onHero: Finan2Palette.onHero,
+    goalStart: Finan2Palette.goalStartDark,
+    goalEnd: Finan2Palette.goalEndDark,
     userA: Finan2Palette.userADark,
+    userATint: Finan2Palette.userATintDark,
     userB: Finan2Palette.userBDark,
+    userBTint: Finan2Palette.userBTintDark,
     ink: Finan2Palette.inkDark,
     inkSoft: Finan2Palette.inkSoftDark,
     inkFaint: Finan2Palette.inkFaintDark,
@@ -371,13 +465,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
   @override
   Finan2Colors copyWith({
     Color? income,
+    Color? incomeTint,
     Color? expense,
+    Color? expenseTint,
     Color? saving,
     Color? savingTint,
+    Color? warning,
+    Color? info,
     Color? brandTint,
     Color? brandDeep,
+    Color? onAccent,
+    Color? heroStart,
+    Color? heroEnd,
+    Color? onHero,
+    Color? goalStart,
+    Color? goalEnd,
     Color? userA,
+    Color? userATint,
     Color? userB,
+    Color? userBTint,
     Color? ink,
     Color? inkSoft,
     Color? inkFaint,
@@ -386,13 +492,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
   }) {
     return Finan2Colors(
       income: income ?? this.income,
+      incomeTint: incomeTint ?? this.incomeTint,
       expense: expense ?? this.expense,
+      expenseTint: expenseTint ?? this.expenseTint,
       saving: saving ?? this.saving,
       savingTint: savingTint ?? this.savingTint,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
       brandTint: brandTint ?? this.brandTint,
       brandDeep: brandDeep ?? this.brandDeep,
+      onAccent: onAccent ?? this.onAccent,
+      heroStart: heroStart ?? this.heroStart,
+      heroEnd: heroEnd ?? this.heroEnd,
+      onHero: onHero ?? this.onHero,
+      goalStart: goalStart ?? this.goalStart,
+      goalEnd: goalEnd ?? this.goalEnd,
       userA: userA ?? this.userA,
+      userATint: userATint ?? this.userATint,
       userB: userB ?? this.userB,
+      userBTint: userBTint ?? this.userBTint,
       ink: ink ?? this.ink,
       inkSoft: inkSoft ?? this.inkSoft,
       inkFaint: inkFaint ?? this.inkFaint,
@@ -406,13 +524,25 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
     if (other is! Finan2Colors) return this;
     return Finan2Colors(
       income: Color.lerp(income, other.income, t)!,
+      incomeTint: Color.lerp(incomeTint, other.incomeTint, t)!,
       expense: Color.lerp(expense, other.expense, t)!,
+      expenseTint: Color.lerp(expenseTint, other.expenseTint, t)!,
       saving: Color.lerp(saving, other.saving, t)!,
       savingTint: Color.lerp(savingTint, other.savingTint, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      info: Color.lerp(info, other.info, t)!,
       brandTint: Color.lerp(brandTint, other.brandTint, t)!,
       brandDeep: Color.lerp(brandDeep, other.brandDeep, t)!,
+      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
+      heroStart: Color.lerp(heroStart, other.heroStart, t)!,
+      heroEnd: Color.lerp(heroEnd, other.heroEnd, t)!,
+      onHero: Color.lerp(onHero, other.onHero, t)!,
+      goalStart: Color.lerp(goalStart, other.goalStart, t)!,
+      goalEnd: Color.lerp(goalEnd, other.goalEnd, t)!,
       userA: Color.lerp(userA, other.userA, t)!,
+      userATint: Color.lerp(userATint, other.userATint, t)!,
       userB: Color.lerp(userB, other.userB, t)!,
+      userBTint: Color.lerp(userBTint, other.userBTint, t)!,
       ink: Color.lerp(ink, other.ink, t)!,
       inkSoft: Color.lerp(inkSoft, other.inkSoft, t)!,
       inkFaint: Color.lerp(inkFaint, other.inkFaint, t)!,
@@ -462,7 +592,7 @@ abstract class Finan2Theme {
     final scheme = ColorScheme.fromSeed(
       seedColor: brand,
       brightness: brightness,
-    ).copyWith(primary: brand, surface: surface, onSurface: ink);
+    ).copyWith(primary: brand, onPrimary: ext.onAccent, surface: surface, onSurface: ink);
 
     final base = ThemeData(
       useMaterial3: true,
@@ -492,16 +622,16 @@ abstract class Finan2Theme {
         ),
       ),
       // Material 3's default FAB uses colorScheme.primaryContainer (a pale
-      // tint), not the vivid brand green from the mockup's .fab - force it.
+      // tint), not the vivid brand violet from the mockup's .fab - force it.
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: brand,
-        foregroundColor: Colors.white,
+        foregroundColor: ext.onAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: brand,
-          foregroundColor: Colors.white,
+          foregroundColor: ext.onAccent,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.field)),
           textStyle: const TextStyle(
