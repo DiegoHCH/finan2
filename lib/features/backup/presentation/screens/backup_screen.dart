@@ -11,13 +11,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
-import '../../../auth/presentation/viewmodels/auth_providers.dart';
-import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/backup_repository.dart';
-
-final backupRepositoryProvider = Provider<BackupRepository>((ref) {
-  return BackupRepository(crypto: ref.watch(householdCryptoProvider));
-});
+import '../viewmodels/backup_providers.dart';
 
 class BackupScreen extends ConsumerStatefulWidget {
   const BackupScreen({super.key});
@@ -48,9 +43,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _create() => _run(() async {
-        final householdId = ref.read(currentHouseholdProvider).value?.id;
-        if (householdId == null) return;
-        final bytes = await ref.read(backupRepositoryProvider).create(householdId);
+        final bytes = await ref.read(backupControllerProvider.notifier).create();
+        if (bytes == null) return;
         final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
         await SharePlus.instance.share(
           ShareParams(
@@ -66,14 +60,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       });
 
   Future<void> _restore() => _run(() async {
-        final householdId = ref.read(currentHouseholdProvider).value?.id;
-        final uid = ref.read(authStateChangesProvider).value?.uid;
-        if (householdId == null || uid == null) return;
         final file = await FilePicker.pickFile();
         if (file == null) return;
         final bytes = await file.readAsBytes();
-        final repo = ref.read(backupRepositoryProvider);
-        final info = repo.inspect(bytes);
+        final backup = ref.read(backupControllerProvider.notifier);
+        final info = backup.inspect(bytes);
         if (!mounted) return;
         final confirmed = await showFinan2ConfirmSheet(
           context,
@@ -86,8 +77,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           destructive: true,
         );
         if (!confirmed) return;
-        final result = await repo.restore(householdId, bytes, currentUid: uid);
-        if (!mounted) return;
+        final result = await backup.restore(bytes);
+        if (result == null || !mounted) return;
         await showFinan2InfoSheet(
           context,
           title: 'Copia restaurada',

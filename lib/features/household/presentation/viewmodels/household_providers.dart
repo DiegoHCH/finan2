@@ -245,6 +245,21 @@ class HouseholdController extends AsyncNotifier<Household?> {
     await ref.read(authRepositoryProvider).deleteAccount();
   }
 
+  /// Throws on failure - the settings screens show it in an error sheet.
+  Future<void> updateSettings(
+    String householdId, {
+    String? currency,
+    int? startYear,
+    String? weekStartsOn,
+  }) {
+    return ref.read(householdRepositoryProvider).updateSettings(
+          householdId,
+          currency: currency,
+          startYear: startYear,
+          weekStartsOn: weekStartsOn,
+        );
+  }
+
   /// Updates the signed-in member's own display name, both in Firebase Auth
   /// (so it's correct the next time they create/join a household) and on
   /// the current household's memberInfo (so "Registrado por" etc. update

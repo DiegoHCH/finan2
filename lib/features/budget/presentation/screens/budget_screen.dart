@@ -11,9 +11,7 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../categories/data/category_model.dart';
-import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../data/budget_summary.dart';
 import '../viewmodels/budget_providers.dart';
 
@@ -38,38 +36,19 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final budgetAsync = ref.watch(budgetOfMonthProvider(_month));
-    final budget = budgetAsync.value ?? const {};
-    final previousBudget =
-        ref.watch(budgetOfMonthProvider(_month.plusMonths(-1))).value ?? const {};
-    final categories = ref.watch(categoriesProvider).value ?? const [];
-    final transactions = ref.watch(transactionsOfMonthProvider(_month)).value ?? const [];
+    final view = ref.watch(budgetMonthViewProvider(_month));
     final formatMoney = ref.watch(moneyFormatterProvider);
     final copying = ref.watch(budgetControllerProvider).isLoading;
 
     final monthLabelCap = _month.monthLabel;
     final previousMonthLabel = _month.plusMonths(-1).monthLabel;
-    // Only once the month's budget has loaded, so it doesn't flash.
-    final offerCopy = budgetAsync.hasValue && budget.isEmpty && previousBudget.isNotEmpty;
-
-    final summary = computeBudgetSummary(budget: budget, transactions: transactions);
+    final budget = view.budget;
+    final summary = view.summary;
     final spendByCategory = summary.spendByCategory;
-    // Carried amounts adjust each row's limit but not the banner: they
-    // aren't new money to assign.
-    final carryOver = ref.watch(carryOverProvider(_month));
-    final visibleIds = {...summary.visibleCategoryIds, ...carryOver.keys};
-
-    final budgetable = categories.where((c) => c.type != CategoryType.ingreso).toList();
+    final carryOver = view.carryOver;
+    final rows = view.rows;
+    final unbudgeted = view.unbudgeted;
     final totalPlanned = summary.totalPlanned;
-
-    final rows = budgetable
-        .where((c) => visibleIds.contains(c.id))
-        .toList()
-      ..sort(
-        (a, b) => (spendByCategory[b.id] ?? 0).compareTo(spendByCategory[a.id] ?? 0),
-      );
-    final unbudgeted =
-        budgetable.where((c) => !visibleIds.contains(c.id)).toList();
 
     final pctAsignado = summary.pctAsignado;
 
@@ -114,10 +93,10 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                         : () => setState(() => _month = currentYearMonth()),
                   ),
                   const SizedBox(height: Finan2Space.lg),
-                  if (offerCopy) ...[
+                  if (view.offerCopy) ...[
                     _CopyBudgetCard(
                       fromLabel: previousMonthLabel,
-                      categories: previousBudget.length,
+                      categories: view.previousMonthCategories,
                       busy: copying,
                       onCopy: _copyPreviousMonth,
                     ),

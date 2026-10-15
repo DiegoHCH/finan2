@@ -9,9 +9,9 @@ import 'finan2_bottom_sheet.dart';
 /// re-signs-in with Google, or asks for the password otherwise. Returns
 /// false if the user cancelled the password prompt.
 Future<bool> reauthenticate(BuildContext context, WidgetRef ref) async {
-  final authRepo = ref.read(authRepositoryProvider);
-  if (authRepo.signedInWithGoogle) {
-    await authRepo.reauthenticateWithGoogle();
+  final auth = ref.read(authControllerProvider.notifier);
+  if (auth.signedInWithGoogle) {
+    await auth.reauthenticateWithGoogle();
     return true;
   }
   final controller = TextEditingController();
@@ -24,6 +24,6 @@ Future<bool> reauthenticate(BuildContext context, WidgetRef ref) async {
     confirmLabel: 'Confirmar',
   );
   if (password == null || password.isEmpty || !context.mounted) return false;
-  await authRepo.reauthenticateWithPassword(password);
+  await auth.reauthenticateWithPassword(password);
   return true;
 }

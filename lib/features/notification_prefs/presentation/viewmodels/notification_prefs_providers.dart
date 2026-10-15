@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/notifications/notification_providers.dart';
@@ -46,36 +45,11 @@ class NotificationPrefsController extends AsyncNotifier<NotificationPrefs> {
     }
   }
 
-  /// Mirrors every toggle the server-side reminder cron needs (see
-  /// cloudflare/finan2-notifications/worker.js) to Firestore - only
-  /// [NotificationPrefs.dailyReminderTime]'s minute-level precision and the
-  /// on-device local-notification scheduling stay purely client-side. A
-  /// server cron can't fire the reminders `NotificationService` schedules
-  /// locally on native (there's no client there to run
-  /// `flutter_local_notifications`), nor detect partner activity/budget/goal
-  /// conditions without a client's decryption key open at some point - this
-  /// is the piece that fills both gaps. A missing doc means "use
-  /// NotificationPrefs.defaults", so a member who never opens notification
-  /// settings still gets reminders.
   Future<void> _syncSchedulingPrefs(NotificationPrefs prefs) async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId == null || uid == null) return;
-    await FirebaseFirestore.instance
-        .collection('households')
-        .doc(householdId)
-        .collection('memberPrefs')
-        .doc(uid)
-        .set({
-      'dailyReminder': prefs.dailyReminder,
-      'dailyReminderHour': prefs.dailyReminderTime.hour,
-      'dailyReminderMinute': prefs.dailyReminderTime.minute,
-      'weeklySummary': prefs.weeklySummary,
-      'debtPayments': prefs.debtPayments,
-      'goalProgress': prefs.goalProgress,
-      'budgetExceeded': prefs.budgetExceeded,
-      'partnerActivity': prefs.partnerActivity,
-    });
+    await ref.read(notificationPrefsRepositoryProvider).syncToHousehold(householdId, uid, prefs);
   }
 }
 

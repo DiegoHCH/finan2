@@ -31,7 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (kIsWeb) {
       // Lets GoogleSignInWebButton's embedded GIS button actually render -
       // otherwise it has nothing to wait on.
-      ref.read(authRepositoryProvider).ensureGoogleWebButtonReady();
+      ref.read(authControllerProvider.notifier).prepareGoogleWebButton();
     }
   }
 

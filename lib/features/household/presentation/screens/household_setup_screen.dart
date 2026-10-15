@@ -85,7 +85,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
     final household = ref.read(currentHouseholdProvider).value;
     if (household != null && household.currency != _currency) {
       await ref
-          .read(householdRepositoryProvider)
+          .read(householdControllerProvider.notifier)
           .updateSettings(household.id, currency: _currency);
     }
     _next();

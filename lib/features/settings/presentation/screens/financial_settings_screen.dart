@@ -28,7 +28,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
     String? weekStartsOn,
   }) async {
     try {
-      await ref.read(householdRepositoryProvider).updateSettings(
+      await ref.read(householdControllerProvider.notifier).updateSettings(
             household.id,
             currency: currency,
             startYear: startYear,
