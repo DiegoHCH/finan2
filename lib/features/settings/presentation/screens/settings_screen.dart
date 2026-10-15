@@ -16,6 +16,7 @@ import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/screens/invite_household_screen.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../backup/presentation/screens/backup_screen.dart';
 import '../../../export/presentation/screens/export_screen.dart';
 import '../../../investments/presentation/screens/investments_screen.dart';
 import '../../../investments/presentation/viewmodels/investment_providers.dart';
@@ -224,6 +225,13 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Exportar reporte',
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const ExportScreen()),
+                        ),
+                      ),
+                      Finan2ListRow(
+                        icon: Icons.cloud_sync_outlined,
+                        label: 'Copia de seguridad',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const BackupScreen()),
                         ),
                       ),
                     ],
