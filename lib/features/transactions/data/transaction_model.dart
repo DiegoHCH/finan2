@@ -14,6 +14,8 @@ class Movement {
     required this.date,
     required this.createdBy,
     this.cardDebtId = '',
+    this.paidBy = '',
+    this.tags = const [],
   });
 
   final String id;
@@ -32,6 +34,16 @@ class Movement {
   final String description;
   final DateTime date;
   final String createdBy;
+
+  /// Which member paid (or received) it - not necessarily who logged it.
+  /// Empty means the same as [createdBy]; read [payer] instead.
+  final String paidBy;
+
+  String get payer => paidBy.isEmpty ? createdBy : paidBy;
+
+  /// Free labels that cut across categories ("viaje-cartagena",
+  /// "cumple-ana"), already normalized - see normalizeTag.
+  final List<String> tags;
 
   bool get isIncome => type == CategoryType.ingreso;
 
@@ -62,6 +74,8 @@ class Movement {
       description: data['description'] as String? ?? '',
       date: date,
       createdBy: data['createdBy'] as String? ?? '',
+      paidBy: data['paidBy'] as String? ?? '',
+      tags: [for (final t in data['tags'] as List? ?? const []) t as String],
     );
   }
 
@@ -80,6 +94,8 @@ class Movement {
       'year': date.year,
       'month': date.month,
       'createdBy': createdBy,
+      'paidBy': payer,
+      'tags': tags,
     };
   }
 }

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -46,20 +47,28 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
             includeBudget: _includeBudget,
             includeDebtsAndSavings: _includeDebtsAndSavings,
             formatMoney: ref.read(moneyFormatterProvider),
+            memberNames: {
+              for (final entry in household.memberInfo.entries) entry.key: entry.value.name,
+            },
+            plainValues: _format == _ExportFormat.csv,
           );
       if (_format == _ExportFormat.pdf) {
         final bytes = await const PdfReportWriter().write(report);
         await Printing.sharePdf(bytes: bytes, filename: 'finan2_reporte.pdf');
       } else {
-        final bytes = const CsvReportWriter().write(report);
+        final files = const CsvReportWriter().write(
+          report,
+          stamp: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        );
         await SharePlus.instance.share(
           ShareParams(
             files: [
-              XFile.fromData(
-                Uint8List.fromList(bytes),
-                mimeType: 'text/csv',
-                name: 'finan2_reporte.csv',
-              ),
+              for (final MapEntry(key: name, value: bytes) in files.entries)
+                XFile.fromData(
+                  Uint8List.fromList(bytes),
+                  mimeType: 'text/csv',
+                  name: name,
+                ),
             ],
           ),
         );
@@ -94,6 +103,17 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                       selected: _format,
                       onChanged: (v) => setState(() => _format = v),
                     ),
+                    if (_format == _ExportFormat.csv) ...[
+                      const SizedBox(height: Finan2Space.sm),
+                      Text(
+                        'Un archivo por sección, con montos sin formato y fechas '
+                        'AAAA-MM-DD, listo para una hoja de cálculo.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).extension<Finan2Colors>()!.inkSoft,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: Finan2Space.lg),
                     Text('Periodo', style: Theme.of(context).textTheme.labelMedium),
                     const SizedBox(height: Finan2Space.sm),

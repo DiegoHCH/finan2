@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -61,8 +63,38 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   Future<void> _delete() async {
     final account = widget.account;
     if (account == null) return;
-    await ref.read(accountControllerProvider.notifier).delete(account.id);
-    if (mounted) Navigator.of(context).pop();
+    final controller = ref.read(accountControllerProvider.notifier);
+    final usage = await controller.usage(account.id);
+    if (!mounted) return;
+    // Moving those records to another account would change both balances
+    // after the fact, so the account simply stays until they're gone.
+    if (usage > 0) {
+      await showFinan2InfoSheet(
+        context,
+        title: 'No se puede eliminar',
+        message: '"${account.name}" tiene ${usage == 1 ? '1 registro' : '$usage registros'} '
+            '(movimientos, transferencias, pagos de tarjeta o facturas recurrentes). '
+            'Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, '
+            'desactiva "Incluir en dinero disponible".',
+      );
+      return;
+    }
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar cuenta',
+      message: 'Se eliminará "${account.name}". Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    );
+    if (!confirmed) return;
+    await controller.delete(account.id);
+    if (!mounted) return;
+    final result = ref.read(accountControllerProvider);
+    if (result.hasError) {
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(result.error!));
+      return;
+    }
+    Navigator.of(context).pop();
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/debts/data/debt_model.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_model.dart';
 import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/data/tags.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_household_crypto.dart';
@@ -36,7 +37,10 @@ void main() {
     List<Enum> enumValues,
   ) async {
     final body = ruleFunction(function);
-    expect(quotedList(body, 'hasExactly(').toSet(), written.keys.toSet(), reason: function);
+    final allowed = body.contains('hasFields(')
+        ? {...quotedList(body, 'hasFields('), ...quotedList(body, '],')}
+        : quotedList(body, 'hasExactly(').toSet();
+    expect(allowed, written.keys.toSet(), reason: function);
     expect(
       quotedList(body, 'd.type in').toSet(),
       enumValues.map((e) => e.name).toSet(),
@@ -80,6 +84,10 @@ void main() {
       createdBy: 'u1',
     ).toFirestore(crypto, householdId);
     await expectMatches('validTransaction', written, CategoryType.values);
+  });
+
+  test('the tag limit matches the app', () {
+    expect(ruleFunction('maxTags'), contains('return $maxTagsPerMovement;'));
   });
 
   test('debts', () async {

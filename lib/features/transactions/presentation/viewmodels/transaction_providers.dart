@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/year_month.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/transaction_model.dart';
 import '../../data/transaction_repository.dart';
@@ -10,12 +11,13 @@ final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
   return TransactionRepository();
 });
 
-/// Movimientos always shows the current month - browsing past months is a
-/// separate "historial" feature, not this screen.
+/// The current month's transactions - what Inicio, Presupuesto's alerts and
+/// the notification scanner work from. Screens that browse other months use
+/// [transactionsOfMonthProvider].
 final transactionsForMonthProvider = StreamProvider<List<Movement>>((ref) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
-  final now = DateTime.now();
+  final now = currentYearMonth();
   return ref.watch(transactionRepositoryProvider).watchTransactions(
         householdId,
         year: now.year,
@@ -23,15 +25,27 @@ final transactionsForMonthProvider = StreamProvider<List<Movement>>((ref) {
       );
 });
 
-/// All of the current year's transactions - used by Resumen anual to
-/// compute yearly totals and the month-by-month spend chart.
-final transactionsForYearProvider = StreamProvider<List<Movement>>((ref) {
+/// Any month's transactions, for Movimientos and Presupuesto while browsing.
+final transactionsOfMonthProvider =
+    StreamProvider.autoDispose.family<List<Movement>, YearMonth>((ref, month) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
-  final now = DateTime.now();
+  return ref.watch(transactionRepositoryProvider).watchTransactions(
+        householdId,
+        year: month.year,
+        month: month.month,
+      );
+});
+
+/// All of a year's transactions - used by Resumen anual to compute yearly
+/// totals and the month-by-month spend chart.
+final transactionsForYearProvider =
+    StreamProvider.autoDispose.family<List<Movement>, int>((ref, year) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const []);
   return ref
       .watch(transactionRepositoryProvider)
-      .watchTransactionsForYear(householdId, year: now.year);
+      .watchTransactionsForYear(householdId, year: year);
 });
 
 class TransactionController extends AsyncNotifier<void> {

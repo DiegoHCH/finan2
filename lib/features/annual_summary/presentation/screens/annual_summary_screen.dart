@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -14,18 +15,28 @@ import '../viewmodels/annual_summary_providers.dart';
 /// "Inicio"). The year's savings-goal card is left out on purpose: Metas
 /// (Fase 5) doesn't exist yet to feed it, same call already made for the
 /// Dashboard's patrimonio neto card.
-class AnnualSummaryScreen extends ConsumerWidget {
+class AnnualSummaryScreen extends ConsumerStatefulWidget {
   const AnnualSummaryScreen({required this.household, super.key});
 
   final Household household;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AnnualSummaryScreen> createState() => _AnnualSummaryScreenState();
+}
+
+class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
+  final _currentYear = DateTime.now().year;
+  late var _year = _currentYear;
+
+  @override
+  Widget build(BuildContext context) {
+    final household = widget.household;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final summary = ref.watch(annualSummaryProvider);
+    final summary = ref.watch(annualSummaryProvider(_year));
     final formatMoney = ref.watch(moneyFormatterProvider);
-    final year = DateTime.now().year;
-    final currentMonthIndex = DateTime.now().month - 1;
+    final year = _year;
+    // Only the current year has a month in progress to highlight.
+    final currentMonthIndex = year == _currentYear ? DateTime.now().month - 1 : -1;
     final maxSpend = summary.gastoPorMes.fold(0, (m, v) => v > m ? v : m);
 
     return Scaffold(
@@ -42,6 +53,18 @@ class AnnualSummaryScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.all(Finan2Space.xl),
                 children: [
+                  Finan2PeriodPicker(
+                    label: '$year',
+                    previousTooltip: 'Año anterior',
+                    nextTooltip: 'Año siguiente',
+                    onPrevious: () => setState(() => _year--),
+                    // Future years have nothing to show yet.
+                    onNext: year >= _currentYear ? null : () => setState(() => _year++),
+                    onReset: year == _currentYear
+                        ? null
+                        : () => setState(() => _year = _currentYear),
+                  ),
+                  const SizedBox(height: Finan2Space.lg),
                   Row(
                     children: [
                       Expanded(

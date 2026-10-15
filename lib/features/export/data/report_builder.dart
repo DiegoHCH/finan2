@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../../accounts/data/account_repository.dart';
 import '../../budget/data/budget_repository.dart';
+import '../../categories/data/category_model.dart';
 import '../../categories/data/category_repository.dart';
 import '../../debts/data/debt_model.dart';
 import '../../debts/data/debt_repository.dart';
@@ -77,7 +78,14 @@ class ReportBuilder {
     required bool includeBudget,
     required bool includeDebtsAndSavings,
     required String Function(num) formatMoney,
+    Map<String, String> memberNames = const {},
+
+    /// For CSV: amounts as bare integers and ISO dates, so the file can be
+    /// summed in a spreadsheet and read back in.
+    bool plainValues = false,
   }) async {
+    final money = plainValues ? (num v) => v.round().toString() : formatMoney;
+    final dateFormat = DateFormat(plainValues ? 'yyyy-MM-dd' : 'dd/MM/yyyy');
     final now = DateTime.now();
     final months = _monthsFor(period, now);
     final sections = <ReportSection>[];
@@ -102,18 +110,30 @@ class ReportBuilder {
       sections.add(
         ReportSection(
           title: 'Movimientos',
-          headers: const ['Fecha', 'Tipo', 'Categoría', 'Cuenta', 'Descripción', 'Monto'],
+          headers: [
+            'Fecha',
+            'Tipo',
+            'Categoría',
+            'Cuenta',
+            'Descripción',
+            'Monto',
+            if (plainValues) ...['Pagó', 'Etiquetas'],
+          ],
           rows: [
             for (final tx in transactions)
               [
-                DateFormat('dd/MM/yyyy').format(tx.date),
-                tx.isIncome ? 'Ingreso' : 'Gasto',
+                dateFormat.format(tx.date),
+                tx.type.label,
                 categoryById[tx.categoryId]?.name ?? '',
                 tx.isCardPurchase
                     ? (cardById[tx.cardDebtId]?.name ?? '')
                     : (accountById[tx.accountId]?.name ?? ''),
                 tx.description,
-                formatMoney(tx.amount),
+                money(tx.amount),
+                if (plainValues) ...[
+                  memberNames[tx.payer] ?? '',
+                  tx.tags.join(' '),
+                ],
               ],
           ],
         ),
@@ -148,8 +168,8 @@ class ReportBuilder {
             for (final id in categoryIds)
               [
                 categoryById[id]?.name ?? '',
-                formatMoney(plannedTotals[id] ?? 0),
-                formatMoney(realTotals[id] ?? 0),
+                money(plannedTotals[id] ?? 0),
+                money(realTotals[id] ?? 0),
               ],
           ],
         ),
@@ -161,14 +181,19 @@ class ReportBuilder {
       sections.add(
         ReportSection(
           title: 'Deudas',
-          headers: const ['Nombre', 'Tipo', 'Saldo', 'Tasa E.A.'],
+          headers: [
+            'Nombre',
+            'Tipo',
+            'Saldo',
+            plainValues ? 'Tasa E.A. (%)' : 'Tasa E.A.',
+          ],
           rows: [
             for (final debt in debts)
               [
                 debt.name,
                 debt.type.label,
-                formatMoney(debt.balance),
-                '${debt.rate}%',
+                money(debt.balance),
+                plainValues ? '${debt.rate}' : '${debt.rate}%',
               ],
           ],
         ),
@@ -178,14 +203,19 @@ class ReportBuilder {
       sections.add(
         ReportSection(
           title: 'Metas de ahorro',
-          headers: const ['Nombre', 'Ahorrado', 'Meta', '% Completado'],
+          headers: [
+            'Nombre',
+            'Ahorrado',
+            'Meta',
+            plainValues ? 'Completado (%)' : '% Completado',
+          ],
           rows: [
             for (final goal in goals)
               [
                 goal.name,
-                formatMoney(goal.currentAmountAsOf(now)),
-                formatMoney(goal.targetAmount),
-                '${(goal.progressFractionAsOf(now) * 100).round()}%',
+                money(goal.currentAmountAsOf(now)),
+                money(goal.targetAmount),
+                '${(goal.progressFractionAsOf(now) * 100).round()}${plainValues ? '' : '%'}',
               ],
           ],
         ),

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/utils/error_messages.dart';
+import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
+import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -14,34 +17,59 @@ import '../../../transactions/presentation/viewmodels/transaction_providers.dart
 import '../../data/budget_summary.dart';
 import '../viewmodels/budget_providers.dart';
 
-class BudgetScreen extends ConsumerWidget {
+class BudgetScreen extends ConsumerStatefulWidget {
   const BudgetScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final budget = ref.watch(currentMonthBudgetProvider).value ?? const {};
-    final categories = ref.watch(categoriesProvider).value ?? const [];
-    final transactions = ref.watch(transactionsForMonthProvider).value ?? const [];
-    final formatMoney = ref.watch(moneyFormatterProvider);
+  ConsumerState<BudgetScreen> createState() => _BudgetScreenState();
+}
 
-    final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
-    final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
+class _BudgetScreenState extends ConsumerState<BudgetScreen> {
+  YearMonth _month = currentYearMonth();
+
+  Future<void> _copyPreviousMonth() async {
+    await ref.read(budgetControllerProvider.notifier).copyPreviousMonth(_month);
+    final result = ref.read(budgetControllerProvider);
+    if (result.hasError && mounted) {
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(result.error!));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final budgetAsync = ref.watch(budgetOfMonthProvider(_month));
+    final budget = budgetAsync.value ?? const {};
+    final previousBudget =
+        ref.watch(budgetOfMonthProvider(_month.plusMonths(-1))).value ?? const {};
+    final categories = ref.watch(categoriesProvider).value ?? const [];
+    final transactions = ref.watch(transactionsOfMonthProvider(_month)).value ?? const [];
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    final copying = ref.watch(budgetControllerProvider).isLoading;
+
+    final monthLabelCap = _month.monthLabel;
+    final previousMonthLabel = _month.plusMonths(-1).monthLabel;
+    // Only once the month's budget has loaded, so it doesn't flash.
+    final offerCopy = budgetAsync.hasValue && budget.isEmpty && previousBudget.isNotEmpty;
 
     final summary = computeBudgetSummary(budget: budget, transactions: transactions);
     final spendByCategory = summary.spendByCategory;
+    // Carried amounts adjust each row's limit but not the banner: they
+    // aren't new money to assign.
+    final carryOver = ref.watch(carryOverProvider(_month));
+    final visibleIds = {...summary.visibleCategoryIds, ...carryOver.keys};
 
     final budgetable = categories.where((c) => c.type != CategoryType.ingreso).toList();
     final totalPlanned = summary.totalPlanned;
 
     final rows = budgetable
-        .where((c) => summary.visibleCategoryIds.contains(c.id))
+        .where((c) => visibleIds.contains(c.id))
         .toList()
       ..sort(
         (a, b) => (spendByCategory[b.id] ?? 0).compareTo(spendByCategory[a.id] ?? 0),
       );
     final unbudgeted =
-        budgetable.where((c) => !summary.visibleCategoryIds.contains(c.id)).toList();
+        budgetable.where((c) => !visibleIds.contains(c.id)).toList();
 
     final pctAsignado = summary.pctAsignado;
 
@@ -75,6 +103,26 @@ class BudgetScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.all(Finan2Space.xl),
                 children: [
+                  Finan2PeriodPicker(
+                    label: _month.label,
+                    previousTooltip: 'Mes anterior',
+                    nextTooltip: 'Mes siguiente',
+                    onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
+                    onNext: () => setState(() => _month = _month.plusMonths(1)),
+                    onReset: _month.isCurrent
+                        ? null
+                        : () => setState(() => _month = currentYearMonth()),
+                  ),
+                  const SizedBox(height: Finan2Space.lg),
+                  if (offerCopy) ...[
+                    _CopyBudgetCard(
+                      fromLabel: previousMonthLabel,
+                      categories: previousBudget.length,
+                      busy: copying,
+                      onCopy: _copyPreviousMonth,
+                    ),
+                    const SizedBox(height: Finan2Space.lg),
+                  ],
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                     decoration: BoxDecoration(
@@ -144,10 +192,12 @@ class BudgetScreen extends ConsumerWidget {
                                     category: category,
                                     real: spendByCategory[category.id] ?? 0,
                                     planned: budget[category.id] ?? 0,
+                                    carry: carryOver[category.id] ?? 0,
                                     formatMoney: formatMoney,
                                     onTap: () => _editCategoryBudget(
                                       context,
                                       ref,
+                                      _month,
                                       category,
                                       budget[category.id] ?? 0,
                                     ),
@@ -162,7 +212,8 @@ class BudgetScreen extends ConsumerWidget {
                     const SizedBox(height: Finan2Space.md),
                     Center(
                       child: TextButton(
-                        onPressed: () => _pickCategoryToBudget(context, ref, unbudgeted),
+                        onPressed: () =>
+                            _pickCategoryToBudget(context, ref, _month, unbudgeted),
                         child: const Text('+ Presupuestar otra categoría'),
                       ),
                     ),
@@ -180,6 +231,7 @@ class BudgetScreen extends ConsumerWidget {
 Future<void> _editCategoryBudget(
   BuildContext context,
   WidgetRef ref,
+  YearMonth month,
   Category category,
   int currentAmount,
 ) async {
@@ -216,7 +268,7 @@ Future<void> _editCategoryBudget(
               final amount = int.tryParse(controller.text) ?? 0;
               await ref
                   .read(budgetControllerProvider.notifier)
-                  .setCategoryAmount(category.id, amount);
+                  .setCategoryAmount(month, category.id, amount);
               if (sheetContext.mounted) Navigator.of(sheetContext).pop();
             },
             child: const Text('Guardar'),
@@ -231,6 +283,7 @@ Future<void> _editCategoryBudget(
 Future<void> _pickCategoryToBudget(
   BuildContext context,
   WidgetRef ref,
+  YearMonth month,
   List<Category> options,
 ) async {
   final selected = await showModalBottomSheet<Category>(
@@ -255,7 +308,61 @@ Future<void> _pickCategoryToBudget(
     ),
   );
   if (selected != null && context.mounted) {
-    await _editCategoryBudget(context, ref, selected, 0);
+    await _editCategoryBudget(context, ref, month, selected, 0);
+  }
+}
+
+/// Shown on a month with no budget yet when the one before has one.
+class _CopyBudgetCard extends StatelessWidget {
+  const _CopyBudgetCard({
+    required this.fromLabel,
+    required this.categories,
+    required this.busy,
+    required this.onCopy,
+  });
+
+  final String fromLabel;
+  final int categories;
+  final bool busy;
+  final VoidCallback onCopy;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    return Container(
+      padding: const EdgeInsets.all(Finan2Space.md),
+      decoration: BoxDecoration(
+        color: colors.brandTint,
+        borderRadius: BorderRadius.circular(Finan2Radius.card),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Este mes aún no tiene presupuesto',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  categories == 1
+                      ? 'Copia la categoría que planeaste en $fromLabel.'
+                      : 'Copia las $categories categorías que planeaste en $fromLabel.',
+                  style: TextStyle(fontSize: 12, color: colors.inkSoft),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: Finan2Space.md),
+          FilledButton(
+            onPressed: busy ? null : onCopy,
+            child: Text(busy ? 'Copiando…' : 'Copiar'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -291,21 +398,30 @@ class _BudgetRow extends StatelessWidget {
     required this.category,
     required this.real,
     required this.planned,
+    required this.carry,
     required this.formatMoney,
     required this.onTap,
   });
 
   final Category category;
   final int real;
+
+  /// This month's own budget, before [carry].
   final int planned;
+
+  /// Brought in from earlier months: + left over, - overspent.
+  final int carry;
   final String Function(num) formatMoney;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final over = planned > 0 && real > planned;
-    final fraction = planned > 0 ? (real / planned).clamp(0.0, 1.0) : (real > 0 ? 1.0 : 0.0);
+    final limit = planned + carry;
+    // Spending with no budget at all isn't "over" anything, as before; a
+    // limit eaten by earlier overspending is.
+    final over = (planned > 0 || carry != 0) && real > limit;
+    final fraction = limit > 0 ? (real / limit).clamp(0.0, 1.0) : (real > 0 ? 1.0 : 0.0);
     final barColor = over ? colors.expense : Theme.of(context).colorScheme.primary;
 
     return InkWell(
@@ -357,7 +473,7 @@ class _BudgetRow extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' / ${formatMoney(planned)}',
+                            text: ' / ${formatMoney(limit)}',
                             style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
                           ),
                         ],
@@ -368,6 +484,19 @@ class _BudgetRow extends StatelessWidget {
                 ),
               ],
             ),
+            if (carry != 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  carry > 0
+                      ? 'Incluye ${formatMoney(carry)} que sobró antes'
+                      : 'Descuenta ${formatMoney(-carry)} que te pasaste antes',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: carry > 0 ? colors.income : colors.expense,
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             ClipRRect(
               borderRadius: BorderRadius.circular(999),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/category_model.dart';
+import '../../data/category_usage.dart';
 import '../../data/category_repository.dart';
 
 final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
@@ -32,16 +33,24 @@ class CategoryController extends AsyncNotifier<void> {
     );
   }
 
-  Future<void> delete(String categoryId) async {
+  Future<CategoryUsage> usage(String categoryId) async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (householdId == null) return const CategoryUsage(movements: 0, recurringBills: 0);
+    return ref.read(categoryRepositoryProvider).usage(householdId, categoryId);
+  }
+
+  /// Deletes [categoryId], first moving whatever uses it to [moveTo].
+  Future<void> delete(String categoryId, {String? moveTo}) async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     if (householdId == null) return;
+    final repo = ref.read(categoryRepositoryProvider);
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(categoryRepositoryProvider).deleteCategory(
-            householdId,
-            categoryId,
-          ),
-    );
+    state = await AsyncValue.guard(() async {
+      if (moveTo != null) {
+        await repo.reassign(householdId, fromId: categoryId, toId: moveTo);
+      }
+      await repo.deleteCategory(householdId, categoryId);
+    });
   }
 }
 

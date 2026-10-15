@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_goal_model.dart';
@@ -118,6 +119,14 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
   Future<void> _delete() async {
     final goal = widget.goal;
     if (goal == null) return;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar meta',
+      message: 'Se eliminará "${goal.name}" con todos sus aportes. Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    );
+    if (!confirmed) return;
     await ref.read(savingsGoalControllerProvider.notifier).delete(goal.id);
     if (mounted) Navigator.of(context).pop();
   }

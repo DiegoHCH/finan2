@@ -154,6 +154,35 @@ class HouseholdCrypto {
     return SecretKey(base64Url.decode(encoded));
   }
 
+  /// Seals [clear] under the household key, bound to [context] (and the
+  /// household) so a sealed blob can't be passed off as a different kind of
+  /// data or as another household's. Nonce, ciphertext and MAC together.
+  Future<List<int>> seal(String householdId, String context, List<int> clear) async {
+    final key = await _keyFor(householdId);
+    final secretBox = await _algorithm.encrypt(
+      clear,
+      secretKey: key,
+      aad: utf8.encode('$context:$householdId'),
+    );
+    return secretBox.concatenation();
+  }
+
+  /// Opens what [seal] produced. Throws [SecretBoxAuthenticationError] when
+  /// the key, context or household don't match, or the bytes were altered.
+  Future<List<int>> open(String householdId, String context, List<int> sealed) async {
+    final key = await _keyFor(householdId);
+    final secretBox = SecretBox.fromConcatenation(
+      sealed,
+      nonceLength: _algorithm.nonceLength,
+      macLength: _algorithm.macAlgorithm.macLength,
+    );
+    return _algorithm.decrypt(
+      secretBox,
+      secretKey: key,
+      aad: utf8.encode('$context:$householdId'),
+    );
+  }
+
   Future<String> encryptAmount(String householdId, int amount) async {
     final key = await _keyFor(householdId);
     final secretBox = await _algorithm.encrypt(

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
@@ -20,6 +21,7 @@ import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/data/debt_model.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../data/tags.dart';
 import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
 
@@ -47,9 +49,14 @@ _Segment _segmentFor(CategoryType type) => switch (type) {
     };
 
 class EditTransactionScreen extends ConsumerStatefulWidget {
-  const EditTransactionScreen({this.transaction, super.key});
+  const EditTransactionScreen({this.transaction, this.initialDate, super.key});
 
+  /// Popping with this movement as the result means "delete it" - see
+  /// TransactionsScreen._deleteWithUndo.
   final Movement? transaction;
+
+  /// Date for a new movement - the month being browsed in Movimientos.
+  final DateTime? initialDate;
 
   @override
   ConsumerState<EditTransactionScreen> createState() =>
@@ -65,6 +72,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   late final _descriptionController = TextEditingController(
     text: widget.transaction?.description ?? '',
   );
+  final _tagController = TextEditingController();
+  late final _tags = [...?widget.transaction?.tags];
   late _Segment _segment =
       _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
   late String? _categoryId = widget.transaction?.categoryId;
@@ -74,13 +83,32 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           : null;
   late String? _cardDebtId =
       (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
-  late DateTime _date = widget.transaction?.date ?? DateTime.now();
+  late DateTime _date = widget.transaction?.date ?? widget.initialDate ?? DateTime.now();
+
+  /// null until the user picks - then whoever is logging it.
+  late String? _paidBy = widget.transaction?.payer;
 
   @override
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _tagController.dispose();
     super.dispose();
+  }
+
+  void _addTag(String input) {
+    final tag = normalizeTag(input);
+    _tagController.clear();
+    if (tag.isEmpty || _tags.contains(tag)) return;
+    if (_tags.length >= maxTagsPerMovement) {
+      showFinan2InfoSheet(
+        context,
+        title: 'Máximo $maxTagsPerMovement etiquetas',
+        message: 'Quita una antes de añadir otra.',
+      );
+      return;
+    }
+    setState(() => _tags.add(tag));
   }
 
   Future<void> _pickSource(List<Account> accounts, List<Debt> cards) async {
@@ -150,6 +178,9 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
       );
       return;
     }
+    // A tag typed but not added yet still counts.
+    final pending = normalizeTag(_tagController.text);
+    final tags = {..._tags, if (pending.isNotEmpty) pending}.take(maxTagsPerMovement).toList();
     await ref.read(transactionControllerProvider.notifier).save(
           Movement(
             id: widget.transaction?.id ?? '',
@@ -161,16 +192,19 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             description: toTitleCase(_descriptionController.text),
             date: _date,
             createdBy: widget.transaction?.createdBy ?? user.uid,
+            paidBy: _paidBy ?? user.uid,
+            tags: tags,
           ),
         );
     if (mounted) Navigator.of(context).pop();
   }
 
-  Future<void> _delete() async {
+  /// Hands the movement back to Movimientos instead of deleting it here,
+  /// so the list can offer "Deshacer" before anything is written.
+  void _delete() {
     final tx = widget.transaction;
     if (tx == null) return;
-    await ref.read(transactionControllerProvider.notifier).delete(tx.id);
-    if (mounted) Navigator.of(context).pop();
+    Navigator.of(context).pop(tx);
   }
 
   @override
@@ -213,6 +247,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         : (household?.memberInfo[creatorUid]?.name ?? user?.displayName ?? '');
     final creatorIndex =
         creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
+    final members = household?.members ?? const <String>[];
+    final payer = _paidBy ?? user?.uid;
+    final suggestedTags = tagsByUse(ref.watch(transactionsForYearProvider(_date.year)).value ?? const [])
+        .where((t) => !_tags.contains(t))
+        .take(8)
+        .toList();
 
     return Scaffold(
       appBar: Finan2FormTop(
@@ -293,7 +333,77 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               value: DateFormat('dd MMM yyyy', 'es').format(_date),
               onTap: _pickDate,
             ),
-            if (creatorName.isNotEmpty) ...[
+            const SizedBox(height: Finan2Space.lg),
+            Text('Etiquetas', style: Theme.of(context).textTheme.labelMedium),
+            const SizedBox(height: Finan2Space.sm),
+            if (_tags.isNotEmpty) ...[
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final tag in _tags)
+                    Finan2Chip(
+                      icon: Icons.close,
+                      label: '#$tag',
+                      selected: true,
+                      onTap: () => setState(() => _tags.remove(tag)),
+                    ),
+                ],
+              ),
+              const SizedBox(height: Finan2Space.sm),
+            ],
+            TextField(
+              controller: _tagController,
+              onSubmitted: _addTag,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Añadir etiqueta, por ejemplo viaje-cartagena',
+                hintStyle: TextStyle(fontSize: 13, color: colors.inkFaint),
+                suffixIcon: IconButton(
+                  tooltip: 'Añadir etiqueta',
+                  icon: const Icon(Icons.add),
+                  onPressed: () => _addTag(_tagController.text),
+                ),
+              ),
+            ),
+            if (suggestedTags.isNotEmpty) ...[
+              const SizedBox(height: Finan2Space.sm),
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final tag in suggestedTags)
+                    Finan2Chip(
+                      label: '#$tag',
+                      selected: false,
+                      onTap: () => _addTag(tag),
+                    ),
+                ],
+              ),
+            ],
+            // Only worth asking once there's a partner to tell apart.
+            if (members.length > 1) ...[
+              const SizedBox(height: Finan2Space.lg),
+              Text(
+                _segment == _Segment.ingreso ? 'Lo recibió' : 'Pagó',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: Finan2Space.sm),
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final uid in members)
+                    Finan2Chip(
+                      label: household?.memberInfo[uid]?.name ?? '?',
+                      selected: payer == uid,
+                      onTap: () => setState(() => _paidBy = uid),
+                    ),
+                ],
+              ),
+            ],
+            if (isEditing && creatorName.isNotEmpty) ...[
               const SizedBox(height: Finan2Space.md),
               Finan2TapField(
                 label: 'Registrado por',

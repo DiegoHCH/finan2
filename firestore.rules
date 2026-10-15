@@ -118,6 +118,14 @@ service cloud.firestore {
           && request.resource.data.keys().hasAll(keys);
       }
 
+      // For fields added after documents already existed: the app always
+      // writes them, but an older document without them must still accept a
+      // partial update (CategoryRepository.reassign touches categoryId only).
+      function hasFields(required, optional) {
+        return request.resource.data.keys().hasOnly(required.concat(optional))
+          && request.resource.data.keys().hasAll(required);
+      }
+
       function text(v, max) {
         return v is string && v.size() <= max;
       }
@@ -130,11 +138,12 @@ service cloud.firestore {
 
       function validCategory() {
         let d = request.resource.data;
-        return hasExactly(['name', 'type', 'icon', 'color', 'createdBy'])
+        return hasFields(['name', 'type', 'icon', 'color', 'createdBy'], ['rollover'])
           && text(d.name, 200)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.icon, 50)
-          && d.color is int;
+          && d.color is int
+          && d.get('rollover', false) is bool;
       }
 
       function validAccount() {
@@ -148,16 +157,24 @@ service cloud.firestore {
 
       // year/month aren't checked against date: they're the device's local
       // calendar, the timestamp is UTC.
+      // Mirrors maxTagsPerMovement in lib/features/transactions/data/tags.dart.
+      function maxTags() {
+        return 10;
+      }
+
       function validTransaction() {
         let d = request.resource.data;
-        return hasExactly(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
-                           'description', 'date', 'year', 'month', 'createdBy'])
+        return hasFields(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
+                          'description', 'date', 'year', 'month', 'createdBy'],
+                         ['paidBy', 'tags'])
           && encryptedAmount(d.amount)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.categoryId, 100)
           && text(d.accountId, 100)
           && text(d.cardDebtId, 100)
           && text(d.description, 1000)
+          && text(d.get('paidBy', ''), 128)
+          && d.get('tags', []) is list && d.get('tags', []).size() <= maxTags()
           && d.date is timestamp
           && d.year is int
           && d.month is int && d.month >= 1 && d.month <= 12;
@@ -305,6 +322,25 @@ service cloud.firestore {
         allow read, delete: if isMember()
           && (uid == request.auth.uid || isSoleMember());
         allow create, update: if isMember() && uid == request.auth.uid;
+      }
+
+      // A recurring bill's date that came due, left by the Worker's cron
+      // (it can't encrypt the amount itself). The first member to open the
+      // app turns it into a movement and deletes it - see
+      // RecurringBillScanner.confirmPending.
+      match /pendingBills/{movementId} {
+        allow read, delete: if isMember();
+        allow create, update: if false;
+      }
+
+      // One per recurring movement ever generated, kept after the movement
+      // is deleted so it isn't generated again.
+      match /recurringDone/{movementId} {
+        allow read, delete: if isMember();
+        allow create: if isMember()
+          && request.resource.data.keys().hasOnly(['doneAt'])
+          && request.resource.data.doneAt is timestamp;
+        allow update: if false;
       }
 
       // Dedup markers only the Worker writes (as a service account).

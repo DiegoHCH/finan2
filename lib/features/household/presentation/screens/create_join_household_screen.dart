@@ -10,7 +10,6 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
 import '../viewmodels/household_providers.dart';
-import 'invite_household_screen.dart';
 
 enum _HouseholdChoice { create, join }
 
@@ -42,23 +41,10 @@ class _CreateJoinHouseholdScreenState
     if (!_formKey.currentState!.validate()) return;
     final controller = ref.read(householdControllerProvider.notifier);
     if (_choice == _HouseholdChoice.create) {
+      // The home screen takes over from here - see householdSetupProvider.
       await controller.createHousehold(
         householdName: toTitleCase(_householdNameController.text),
       );
-      // ref.read must come after the mounted check - reading it first (as in
-      // `ref.read(...) && mounted`) still evaluates ref.read() even when the
-      // widget was unmounted during the await above, which throws.
-      if (!mounted) return;
-      final state = ref.read(householdControllerProvider);
-      final household = state.value;
-      final shareCode = controller.lastShareCode;
-      if (household != null && shareCode != null) {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => InviteHouseholdScreen(shareCode: shareCode),
-          ),
-        );
-      }
     } else {
       await controller.joinHousehold(code: _codeController.text.trim());
       if (controller.joinedWithoutKey && mounted) {

@@ -40,6 +40,12 @@ class AccountController extends AsyncNotifier<void> {
     );
   }
 
+  Future<int> usage(String accountId) async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (householdId == null) return 0;
+    return ref.read(accountRepositoryProvider).usage(householdId, accountId);
+  }
+
   Future<void> delete(String accountId) async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     if (householdId == null) return;

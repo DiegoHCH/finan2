@@ -6,6 +6,7 @@ import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/investment_model.dart';
 import '../viewmodels/investment_providers.dart';
@@ -75,6 +76,14 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
   Future<void> _delete() async {
     final investment = widget.investment;
     if (investment == null) return;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar inversión',
+      message: 'Se eliminará "${investment.name}". Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    );
+    if (!confirmed) return;
     await ref.read(investmentControllerProvider.notifier).delete(investment.id);
     if (mounted) Navigator.of(context).pop();
   }

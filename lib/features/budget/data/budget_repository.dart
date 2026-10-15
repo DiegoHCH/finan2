@@ -43,6 +43,48 @@ class BudgetRepository {
     });
   }
 
+  /// Every month's budget for [year]: month (1-12) -> categoryId ->
+  /// planned amount. Months never budgeted are absent.
+  Stream<Map<int, Map<String, int>>> watchBudgetsForYear(
+    String householdId, {
+    required int year,
+  }) {
+    return _budgets(householdId).snapshots().asyncMap((snap) async {
+      final result = <int, Map<String, int>>{};
+      for (final doc in snap.docs) {
+        final parts = doc.id.split('_');
+        if (parts.length != 2 || parts[0] != '$year') continue;
+        final month = int.tryParse(parts[1]);
+        if (month == null) continue;
+        result[month] = {
+          for (final entry in doc.data().entries)
+            entry.key: await _crypto.decryptAmount(householdId, entry.value as String),
+        };
+      }
+      return result;
+    });
+  }
+
+  /// Copies every category's planned amount from one month into another
+  /// that has no budget yet. Returns how many categories were copied - 0 if
+  /// the source is empty or the target already has a budget.
+  Future<int> copyBudget(
+    String householdId, {
+    required ({int year, int month}) from,
+    required ({int year, int month}) to,
+  }) {
+    final source = _budgets(householdId).doc(_docId(from.year, from.month));
+    final target = _budgets(householdId).doc(_docId(to.year, to.month));
+    return _db.runTransaction((tx) async {
+      final sourceData = (await tx.get(source)).data() ?? const {};
+      final targetData = (await tx.get(target)).data() ?? const {};
+      if (sourceData.isEmpty || targetData.isNotEmpty) return 0;
+      // Same household, same key: the encrypted amounts copy as they are.
+      tx.set(target, sourceData);
+      return sourceData.length;
+    });
+  }
+
   Future<void> setCategoryAmount(
     String householdId, {
     required int year,
