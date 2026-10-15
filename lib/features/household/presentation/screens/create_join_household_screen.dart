@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
+import '../../../../l10n/l10n.dart';
 import '../viewmodels/household_providers.dart';
 
 enum _HouseholdChoice { create, join }
@@ -24,9 +25,20 @@ class CreateJoinHouseholdScreen extends ConsumerStatefulWidget {
 
 class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _householdNameController = TextEditingController(text: 'Nuestro hogar');
+  // Prefilled in didChangeDependencies, once there's a context to localize
+  // the suggested name with.
+  final _householdNameController = TextEditingController();
+  var _prefilled = false;
   final _codeController = TextEditingController();
   var _choice = _HouseholdChoice.create;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_prefilled) return;
+    _prefilled = true;
+    _householdNameController.text = context.l10n.householdDefaultName;
+  }
 
   @override
   void dispose() {
@@ -46,11 +58,8 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
       if (controller.joinedWithoutKey && mounted) {
         await showFinan2InfoSheet(
           context,
-          title: 'Te uniste al hogar',
-          message:
-              'Este código no traía la llave para ver montos. Pide a tu '
-              'pareja que te comparta el código completo desde la tarjeta del '
-              'hogar en Ajustes.',
+          title: context.l10n.householdJoinedWithoutKeyTitle,
+          message: context.l10n.householdJoinedWithoutKeyMessage,
         );
       }
     }
@@ -65,6 +74,7 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
       }
     });
 
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -75,44 +85,45 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
               children: [
                 const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
-                Text('Un último paso', style: Theme.of(context).textTheme.headlineSmall),
+                Text(
+                  l10n.householdCreateJoinTitle,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
                 const SizedBox(height: Finan2Space.xs),
                 Text(
-                  'Crea el hogar desde cero o únete al que ya tiene tu pareja.',
+                  l10n.householdCreateJoinSubtitle,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 Finan2OptionCard(
                   icon: Icons.home_work_outlined,
-                  title: 'Crear un hogar nuevo',
-                  subtitle: 'Empiezas de cero e invitas a tu pareja.',
+                  title: l10n.householdCreateOptionTitle,
+                  subtitle: l10n.householdCreateOptionSubtitle,
                   selected: _choice == _HouseholdChoice.create,
                   onTap: () => setState(() => _choice = _HouseholdChoice.create),
                 ),
                 const SizedBox(height: Finan2Space.sm),
                 Finan2OptionCard(
                   icon: Icons.vpn_key_outlined,
-                  title: 'Unirme con un código',
-                  subtitle: 'Tu pareja ya creó el hogar.',
+                  title: l10n.householdJoinOptionTitle,
+                  subtitle: l10n.householdJoinOptionSubtitle,
                   selected: _choice == _HouseholdChoice.join,
                   onTap: () => setState(() => _choice = _HouseholdChoice.join),
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 if (_choice == _HouseholdChoice.create)
                   Finan2Field(
-                    label: 'Nombre del hogar',
+                    label: l10n.householdNameLabel,
                     controller: _householdNameController,
-                    validator: (value) => (value == null || value.trim().isEmpty)
-                        ? 'Ponle un nombre a tu hogar'
-                        : null,
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty) ? l10n.householdNameRequired : null,
                   )
                 else
                   Finan2Field(
-                    label: 'Código del hogar (pega el código completo)',
+                    label: l10n.householdCodeLabel,
                     controller: _codeController,
-                    validator: (value) => (value == null || value.trim().isEmpty)
-                        ? 'Ingresa el código que te compartieron'
-                        : null,
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty) ? l10n.householdCodeRequired : null,
                   ),
                 const SizedBox(height: Finan2Space.lg),
                 FilledButton(
@@ -124,7 +135,9 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          _choice == _HouseholdChoice.create ? 'Crear hogar' : 'Entrar al hogar',
+                          _choice == _HouseholdChoice.create
+                              ? l10n.householdCreateButton
+                              : l10n.householdJoinButton,
                         ),
                 ),
               ],
