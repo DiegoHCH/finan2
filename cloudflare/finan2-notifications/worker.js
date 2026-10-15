@@ -3,8 +3,10 @@
 // the change live in the app). Stateless: reads tokens from Firestore on
 // every call, no KV/D1 involved.
 //
-// Auth model: a shared secret sent in the request body (WORKER_SECRET). The
-// actual push send is authenticated as a Google service account, whose
+// Auth model: the caller sends its Firebase ID token (Authorization: Bearer).
+// The Worker verifies its signature against Google's public keys and only
+// relays to a household the token's uid is a member of - nothing secret ships
+// inside the app. The push itself is sent as a Google service account, whose
 // private key is minted into a short-lived OAuth token per request.
 //
 // This Worker also runs a Cron Trigger (see wrangler.toml) that fires the
@@ -19,46 +21,97 @@ const ICON_URL = 'https://finan2.web.app/icons/Icon-192.png';
 // single fixed offset rather than pulling in a timezone library.
 const CO_UTC_OFFSET_HOURS = 5;
 
+// The web build calls this cross-origin; native apps don't send an Origin.
+const ALLOWED_ORIGINS = ['https://finan2.web.app', 'https://finan2.firebaseapp.com'];
+
+const MAX_TITLE_LENGTH = 120;
+const MAX_BODY_LENGTH = 400;
+
 export default {
   async fetch(request, env) {
+    const cors = corsHeaders(request);
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: cors });
+    }
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+      return new Response('Method not allowed', { status: 405, headers: cors });
+    }
+
+    const projectId = env.FIREBASE_PROJECT_ID;
+    const authHeader = request.headers.get('Authorization') ?? '';
+    const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    let uid;
+    try {
+      uid = idToken ? await verifyFirebaseIdToken(idToken, projectId) : null;
+    } catch (e) {
+      console.warn(`ID token rejected: ${e.message}`);
+      uid = null;
+    }
+    if (!uid) {
+      return new Response('Unauthorized', { status: 401, headers: cors });
+    }
+
+    if (env.PUSH_LIMITER) {
+      const { success } = await env.PUSH_LIMITER.limit({ key: uid });
+      if (!success) return new Response('Too many requests', { status: 429, headers: cors });
     }
 
     let body;
     try {
       body = await request.json();
     } catch {
-      return new Response('Invalid JSON', { status: 400 });
+      return new Response('Invalid JSON', { status: 400, headers: cors });
     }
 
-    const { householdId, title, body: notifBody, secret, excludeUid } = body;
-    if (!secret || secret !== env.WORKER_SECRET) {
-      return new Response('Unauthorized', { status: 401 });
+    const { householdId, title, body: notifBody, excludeUid } = body;
+    if (
+      typeof householdId !== 'string' ||
+      !/^[A-Za-z0-9]{1,40}$/.test(householdId) ||
+      typeof title !== 'string' ||
+      typeof notifBody !== 'string' ||
+      !title ||
+      !notifBody
+    ) {
+      return new Response('Missing householdId, title or body', { status: 400, headers: cors });
     }
-    if (!householdId || !title || !notifBody) {
-      return new Response('Missing householdId, title or body', { status: 400 });
+    if (title.length > MAX_TITLE_LENGTH || notifBody.length > MAX_BODY_LENGTH) {
+      return new Response('Title or body too long', { status: 400, headers: cors });
     }
 
     try {
       const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
-      const projectId = env.FIREBASE_PROJECT_ID;
+
+      const members = await getHouseholdMembers(accessToken, projectId, householdId);
+      if (!members.includes(uid)) {
+        return new Response('Forbidden', { status: 403, headers: cors });
+      }
+      // Whoever triggered it - the caller by default, or the partner when
+      // the caller's device is relaying the partner's activity.
+      const skipUid = members.includes(excludeUid) ? excludeUid : uid;
 
       const allTokens = await getHouseholdTokens(accessToken, projectId, householdId);
-      const tokens = excludeUid ? allTokens.filter((t) => t.uid !== excludeUid) : allTokens;
+      // Tokens of someone who left the household never get its pushes.
+      const tokens = allTokens.filter((t) => members.includes(t.uid) && t.uid !== skipUid);
 
       const results = await Promise.allSettled(
         tokens.map(({ token, platform }) =>
           sendToToken({ title, body: notifBody, accessToken, projectId, token, platform }),
         ),
       );
+      for (const r of results) {
+        if (r.status === 'rejected') console.error(r.reason?.message ?? r.reason);
+      }
 
-      return Response.json({
-        tokensSent: tokens.length,
-        errors: results.filter((r) => r.status === 'rejected').length,
-      });
+      return Response.json(
+        {
+          tokensSent: tokens.length,
+          errors: results.filter((r) => r.status === 'rejected').length,
+        },
+        { headers: cors },
+      );
     } catch (e) {
-      return Response.json({ error: e.message }, { status: 500 });
+      console.error(e);
+      return Response.json({ error: 'Internal error' }, { status: 500, headers: cors });
     }
   },
 
@@ -66,6 +119,110 @@ export default {
     ctx.waitUntil(handleScheduled(env));
   },
 };
+
+function corsHeaders(request) {
+  const origin = request.headers.get('Origin');
+  if (!origin || !ALLOWED_ORIGINS.includes(origin)) return {};
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Max-Age': '86400',
+    Vary: 'Origin',
+  };
+}
+
+// Google's public keys for Firebase ID tokens, cached for as long as the
+// response's Cache-Control allows (per isolate).
+const FIREBASE_JWKS_URL =
+  'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com';
+let jwksCache = { keys: null, expiresAt: 0, fetchedAt: 0 };
+const JWKS_MIN_REFETCH_MS = 60 * 1000;
+
+async function getFirebasePublicKeys() {
+  if (jwksCache.keys && Date.now() < jwksCache.expiresAt) return jwksCache.keys;
+  const res = await fetch(FIREBASE_JWKS_URL);
+  if (!res.ok) throw new Error(`JWKS fetch failed: ${res.status}`);
+  const { keys } = await res.json();
+  const maxAge = /max-age=(\d+)/.exec(res.headers.get('Cache-Control') ?? '');
+  jwksCache = {
+    keys,
+    fetchedAt: Date.now(),
+    expiresAt: Date.now() + (maxAge ? parseInt(maxAge[1], 10) : 3600) * 1000,
+  };
+  return keys;
+}
+
+function b64urlToBytes(s) {
+  const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
+}
+
+function b64urlToJson(s) {
+  return JSON.parse(new TextDecoder().decode(b64urlToBytes(s)));
+}
+
+/// Verifies a Firebase Auth ID token as documented in
+/// https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library
+/// and returns its uid. Throws on anything off.
+async function verifyFirebaseIdToken(token, projectId) {
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('malformed token');
+  const [headerB64, payloadB64, signatureB64] = parts;
+  const header = b64urlToJson(headerB64);
+  const payload = b64urlToJson(payloadB64);
+
+  if (header.alg !== 'RS256' || !header.kid) throw new Error('bad header');
+  const now = Math.floor(Date.now() / 1000);
+  const skew = 300;
+  if (typeof payload.exp !== 'number' || payload.exp <= now) throw new Error('expired');
+  if (typeof payload.iat !== 'number' || payload.iat > now + skew) throw new Error('bad iat');
+  if (typeof payload.auth_time !== 'number' || payload.auth_time > now + skew) {
+    throw new Error('bad auth_time');
+  }
+  if (payload.aud !== projectId) throw new Error('bad aud');
+  if (payload.iss !== `https://securetoken.google.com/${projectId}`) throw new Error('bad iss');
+  if (typeof payload.sub !== 'string' || !payload.sub || payload.sub.length > 128) {
+    throw new Error('bad sub');
+  }
+
+  let jwk = (await getFirebasePublicKeys()).find((k) => k.kid === header.kid);
+  if (!jwk && Date.now() - jwksCache.fetchedAt > JWKS_MIN_REFETCH_MS) {
+    // Keys rotate - refetch once before giving up, but not more than once a
+    // minute: this runs before auth, so a forged kid mustn't force a fetch
+    // on every request.
+    jwksCache.expiresAt = 0;
+    jwk = (await getFirebasePublicKeys()).find((k) => k.kid === header.kid);
+  }
+  if (!jwk) throw new Error('unknown kid');
+
+  const key = await crypto.subtle.importKey(
+    'jwk',
+    jwk,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['verify'],
+  );
+  const valid = await crypto.subtle.verify(
+    'RSASSA-PKCS1-v1_5',
+    key,
+    b64urlToBytes(signatureB64),
+    new TextEncoder().encode(`${headerB64}.${payloadB64}`),
+  );
+  if (!valid) throw new Error('bad signature');
+  return payload.sub;
+}
+
+async function getHouseholdMembers(accessToken, projectId, householdId) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  if (res.status !== 200) return [];
+  const doc = await res.json();
+  return (doc.fields?.members?.arrayValue?.values ?? []).map((v) => v.stringValue).filter(Boolean);
+}
 
 async function handleScheduled(env) {
   const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
@@ -601,7 +758,11 @@ async function getAccessToken(serviceAccountJson) {
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     iss: sa.client_email,
-    scope: 'https://www.googleapis.com/auth/cloud-platform',
+    // Only what this Worker uses: Firestore reads/writes and FCM sends.
+    scope: [
+      'https://www.googleapis.com/auth/datastore',
+      'https://www.googleapis.com/auth/firebase.messaging',
+    ].join(' '),
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,

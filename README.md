@@ -19,6 +19,7 @@ inversiones y facturas recurrentes. Los montos se cifran en el dispositivo antes
 - **Flutter** (Material 3) + **Riverpod** para estado (MVVM ligero por feature)
 - **Firebase**: Auth (email/password + Google), Cloud Firestore, Cloud Messaging
 - **Cloudflare Workers** para el envío de push server-side y recordatorios programados por cron
+  (cada envío se autentica con el ID token de Firebase del usuario; no hay secreto en la app)
 - **fl_chart** para gráficas, **intl** para formato de moneda/fecha
 - Tipografía de marca: Plus Jakarta Sans (empaquetada localmente)
 
@@ -73,11 +74,18 @@ android/fastlane/  # metadata de Play Store
 
 Los campos monetarios (`amount`, `balance`, `targetAmount`, etc. — no nombres ni
 descripciones) se cifran con AES-256-GCM (`lib/core/crypto/household_crypto.dart`) antes de
-escribirse a Firestore. La llave se genera en el dispositivo al crear un hogar y nunca se sube
-a Firestore: viaja pegada al código de invitación (`CODIGO.llave`) y se guarda localmente con
-`flutter_secure_storage` (Keychain/Keystore). Ni con acceso admin al proyecto de
-Firebase/GCP se pueden leer los montos reales de un hogar — solo los 2 dispositivos que tienen
-el código completo pueden descifrarlos.
+escribirse a Firestore. La llave se genera en el dispositivo al crear un hogar, viaja pegada al
+código de invitación (`INVITACION.llave`) y se guarda localmente con `flutter_secure_storage`
+(Keychain/Keystore).
+
+La única copia que llega a Firestore es la de respaldo, cifrada con la **frase de recuperación**
+del hogar: 12 palabras (128 bits aleatorios, codificación BIP39 sobre la lista en español) que
+la app genera, muestra una vez y no guarda. Con 128 bits no hay barrido offline posible, así que
+ni con acceso admin al proyecto de Firebase/GCP se pueden leer los montos sin la llave o la
+frase.
+
+Las invitaciones son códigos de 10 caracteres, de un solo uso y con vencimiento de 7 días,
+separados del ID del hogar. Un hogar solo lo pueden leer sus miembros.
 
 Nombres, descripciones y notas de texto no están cifrados en esta versión.
 
@@ -88,7 +96,7 @@ flutter pub get
 flutter run
 ```
 
-Para builds que usan Firebase Cloud Messaging (push), incluir los dart-defines:
+Para builds web con push, incluir los dart-defines (la clave VAPID de FCM):
 
 ```
 flutter run --dart-define-from-file=.secrets/dart-defines.json

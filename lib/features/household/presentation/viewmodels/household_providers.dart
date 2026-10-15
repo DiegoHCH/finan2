@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/crypto/household_crypto.dart';
+import '../../../../core/crypto/recovery_phrase.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/household_model.dart';
@@ -70,7 +71,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
     if (user == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final household =
+      final (household, inviteCode) =
           await ref.read(householdRepositoryProvider).createHousehold(
                 uid: user.uid,
                 // Never falls back to the email - a person's identity in the
@@ -80,7 +81,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
               );
       final key =
           await ref.read(householdCryptoProvider).generateKey(household.id);
-      lastShareCode = '${household.id}.$key';
+      lastShareCode = '$inviteCode.$key';
       return household;
     });
   }
@@ -101,7 +102,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
                 // UI should always read as a name, never an email address.
                 displayName: user.displayName ?? 'Yo',
               );
-      if (key != null) {
+      if (key != null && HouseholdCrypto.isWellFormedKey(key)) {
         await ref
             .read(householdCryptoProvider)
             .importKey(household.id, key);
@@ -114,96 +115,121 @@ class HouseholdController extends AsyncNotifier<Household?> {
     });
   }
 
-  /// Imports the data encryption key from the full `<code>.<key>` string a
-  /// partner shares, for a device that's already a member of [householdId]
-  /// but never got the key locally (reinstall, new device, or it joined
-  /// pasting only the short code). Unlike [joinHousehold] this never touches
-  /// Firestore membership - the device is already a member, only its local
-  /// key is missing. Returns a Spanish error message, or null on success.
+  /// Imports the data encryption key from a shared `<code>.<key>` string,
+  /// for a device that's already a member of [householdId] but never got the
+  /// key locally (reinstall, new device, or it joined pasting only the short
+  /// code). Any prefix works - an invite or the household's own ID - since
+  /// only the key half matters here. Returns a Spanish error message, or
+  /// null on success.
   Future<String?> importMissingKey({
     required String householdId,
     required String pastedCode,
   }) async {
-    final parts = pastedCode.trim().split('.');
-    if (parts.length < 2 || parts[1].isEmpty) {
-      return 'Ese código no trae la llave (falta la parte después del punto).';
+    final key = pastedCode.trim().split('.').last;
+    if (!HouseholdCrypto.isWellFormedKey(key)) {
+      return 'Ese código no trae la llave completa. Pide a tu pareja que lo '
+          'comparta de nuevo desde la tarjeta del hogar en Ajustes.';
     }
-    if (parts.first.toUpperCase() != householdId.toUpperCase()) {
-      return 'Ese código no es de este hogar.';
+    final sample =
+        await ref.read(householdRepositoryProvider).sampleCiphertext(householdId);
+    if (sample != null && !await HouseholdCrypto.keyOpens(key, sample)) {
+      return 'Esa llave no es de este hogar. Revisa que el código sea el que '
+          'tu pareja compartió desde este mismo hogar.';
     }
-    await ref.read(householdCryptoProvider).importKey(householdId, parts[1]);
+    await ref.read(householdCryptoProvider).importKey(householdId, key);
     ref.invalidate(householdHasKeyProvider(householdId));
     return null;
   }
 
-  /// Wraps this device's key for [householdId] under a new 6-digit [pin] and
-  /// saves it to Firestore as a cross-device recovery path. Returns a
-  /// Spanish error message, or null on success. Callers should gate this
-  /// behind reauthentication (see `reauthenticate` in
-  /// `core/widgets/finan2_reauth.dart`) - anyone who can set this PIN can
-  /// later use it, from any device, to read every amount in the household.
-  Future<String?> setPin({
+  /// A fresh invite for [householdId] as the full `<invite>.<key>` string to
+  /// share, or null if this device doesn't have the key to pass along.
+  Future<String?> createInvite(String householdId) async {
+    final user = ref.read(authStateChangesProvider).value;
+    if (user == null) return null;
+    final key = await ref.read(householdCryptoProvider).exportKey(householdId);
+    if (key == null) return null;
+    final code =
+        await ref.read(householdRepositoryProvider).createInvite(householdId, user.uid);
+    return '$code.$key';
+  }
+
+  /// `<householdId>.<key>`, for a partner who's already a member but lost
+  /// the key on their device - it unlocks amounts but lets nobody join.
+  Future<String?> keyShareCode(String householdId) async {
+    final key = await ref.read(householdCryptoProvider).exportKey(householdId);
+    return key == null ? null : '$householdId.$key';
+  }
+
+  /// Generates a new recovery phrase and wraps this device's key under it,
+  /// without saving anything yet - the screen shows the phrase first and
+  /// only calls [saveRecoveryPhrase] once the user has written it down, so
+  /// the old phrase never stops working before the new one is known.
+  /// Throws [Finan2CryptoException] if this device doesn't have the key.
+  Future<(RecoveryPhrase, WrappedKey)> prepareRecoveryPhrase(String householdId) async {
+    final phrase = await RecoveryPhrase.generate();
+    final wrapped = await ref
+        .read(householdCryptoProvider)
+        .wrapKeyWithRecoveryPhrase(householdId, phrase);
+    return (phrase, wrapped);
+  }
+
+  /// Saves [wrapped] as the household's recovery copy, replacing any
+  /// previous phrase or PIN. Callers should gate the whole flow behind
+  /// reauthentication (see `reauthenticate` in
+  /// `core/widgets/finan2_reauth.dart`) - anyone holding the phrase can
+  /// read every amount in the household.
+  Future<void> saveRecoveryPhrase(String householdId, WrappedKey wrapped) async {
+    final user = ref.read(authStateChangesProvider).value;
+    if (user == null) throw StateError('Not signed in');
+    await ref
+        .read(householdRepositoryProvider)
+        .setKeyRecovery(householdId, user.uid, wrapped);
+  }
+
+  /// Tries to recover this device's missing key for [householdId] with the
+  /// typed recovery [input]. Returns a Spanish message describing what went
+  /// wrong, or null on success.
+  Future<String?> recoverKeyWithPhrase({
     required String householdId,
-    required String pin,
+    required String input,
   }) async {
-    if (!RegExp(r'^\d{6}$').hasMatch(pin)) {
-      return 'El PIN debe tener exactamente 6 dígitos.';
-    }
-    final PinWrappedKey wrapped;
+    final RecoveryPhrase phrase;
     try {
-      wrapped = await ref.read(householdCryptoProvider).wrapKeyWithPin(householdId, pin);
-    } on Finan2CryptoException catch (e) {
+      phrase = await RecoveryPhrase.parse(input);
+    } on RecoveryPhraseFormatException catch (e) {
       return e.message;
     }
-    await ref.read(householdRepositoryProvider).setPinRecovery(householdId, wrapped);
+    final recovery = await ref.read(householdRepositoryProvider).getKeyRecovery(householdId);
+    if (recovery == null) {
+      return 'Este hogar no tiene una frase de recuperación configurada.';
+    }
+    final unwrapped = await ref
+        .read(householdCryptoProvider)
+        .tryUnwrapKeyWithRecoveryPhrase(householdId, phrase, recovery.wrapped);
+    if (!unwrapped) {
+      return 'Esa frase no corresponde a este hogar. Si tu pareja generó una '
+          'nueva, la anterior dejó de servir.';
+    }
+    ref.invalidate(householdHasKeyProvider(householdId));
     return null;
   }
 
-  /// Tries to recover this device's missing key for [householdId] using the
-  /// household's backup PIN. Returns a Spanish message describing what
-  /// happened (wrong PIN, locked out, no PIN configured), or null on
-  /// success.
-  Future<String?> recoverKeyWithPin({
-    required String householdId,
-    required String pin,
-  }) async {
-    final repo = ref.read(householdRepositoryProvider);
-    var recovery = await repo.getPinRecovery(householdId);
-    if (recovery == null) {
-      return 'Tu pareja no ha configurado un PIN de respaldo para este '
-          'hogar todavía.';
-    }
-    if (recovery.isLocked) {
-      final minutes = recovery.lockedUntil!.difference(DateTime.now()).inMinutes + 1;
-      return 'Demasiados intentos fallidos. Intenta de nuevo en $minutes '
-          'minuto${minutes == 1 ? '' : 's'}.';
-    }
-    if (recovery.lockedUntil != null) {
-      // A previous lockout already expired - clear it before this attempt.
-      await repo.resetPinAttemptsIfLockExpired(householdId, recovery);
-      recovery = await repo.getPinRecovery(householdId);
-    }
+  /// Leaves [householdId] - deleting it with all its data if this is the
+  /// last member - and forgets this device's key for it.
+  Future<void> leaveHousehold(String householdId) async {
+    final uid = ref.read(authStateChangesProvider).value?.uid;
+    if (uid == null) return;
+    await ref.read(householdRepositoryProvider).leaveHousehold(householdId, uid);
+    await ref.read(householdCryptoProvider).deleteKey(householdId);
+  }
 
-    final wrapped = PinWrappedKey(
-      salt: recovery!.salt,
-      ciphertext: recovery.wrappedKey,
-    );
-    final unwrapped = await ref
-        .read(householdCryptoProvider)
-        .tryUnwrapKeyWithPin(householdId, pin, wrapped);
-    if (unwrapped) {
-      ref.invalidate(householdHasKeyProvider(householdId));
-      return null;
-    }
-
-    await repo.recordFailedPinAttempt(householdId, recovery);
-    final attemptsLeft = 3 - (recovery.attempts + 1);
-    return attemptsLeft > 0
-        ? 'PIN incorrecto. Te queda${attemptsLeft == 1 ? '' : 'n'} '
-            '$attemptsLeft intento${attemptsLeft == 1 ? '' : 's'} antes de '
-            'bloquear por 1 hora.'
-        : 'PIN incorrecto. Se bloqueó por 1 hora tras demasiados intentos '
-            'fallidos.';
+  /// Leaves the current household (see [leaveHousehold]) and deletes the
+  /// signed-in user. Must be called right after a successful
+  /// reauthentication.
+  Future<void> deleteAccount() async {
+    final householdId = ref.read(currentHouseholdProvider).value?.id;
+    if (householdId != null) await leaveHousehold(householdId);
+    await ref.read(authRepositoryProvider).deleteAccount();
   }
 
   /// Updates the signed-in member's own display name, both in Firebase Auth

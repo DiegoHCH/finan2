@@ -23,8 +23,10 @@ class HouseholdMemberInfo {
   }
 }
 
-/// A household shared by up to 2 members. The document [id] doubles as the
-/// human-shareable invite code (see HouseholdRepository).
+/// A household shared by up to 2 members. Joining goes through a separate,
+/// expiring invite code (see HouseholdRepository) - households created before
+/// invites existed still have a 6-character [id], but it no longer lets
+/// anyone in.
 class Household {
   const Household({
     required this.id,
@@ -43,8 +45,6 @@ class Household {
   final String currency;
   final int startYear;
   final String weekStartsOn;
-
-  String get inviteCode => id;
 
   factory Household.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,

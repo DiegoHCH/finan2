@@ -29,7 +29,8 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
               Text(
                 'Este dispositivo no puede ver ni registrar montos todavía. '
                 'Pide a tu pareja el código completo (con la llave después '
-                'del punto) y pégalo en Ajustes para desbloquearlos.',
+                'del punto) o usa la frase de recuperación del hogar en '
+                'Ajustes para desbloquearlos.',
                 style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
               ),
               const SizedBox(height: Finan2Space.lg),

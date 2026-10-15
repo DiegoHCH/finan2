@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode_providers.dart';
 import '../../../../core/utils/error_messages.dart';
@@ -44,13 +45,13 @@ class AccountSettingsScreen extends ConsumerWidget {
       context,
       title: 'Salir del hogar',
       message: isSolo
-          ? 'Eres el único miembro de "${household.name}". Si sales, nadie '
-              'podrá volver a acceder a esta información: se vuelve '
-              'permanentemente inaccesible.'
+          ? 'Eres el único miembro de "${household.name}". Si sales, se '
+              'borrarán para siempre todos sus datos: cuentas, movimientos, '
+              'presupuestos, deudas y metas.'
           : 'Vas a salir de "${household.name}". Tus cuentas, movimientos y '
               'demás datos seguirán disponibles para el resto del hogar. '
               'Podrás crear o unirte a otro hogar después.',
-      confirmLabel: 'Salir',
+      confirmLabel: isSolo ? 'Salir y borrar' : 'Salir',
       destructive: true,
     );
     if (!confirmed || !context.mounted) return;
@@ -58,9 +59,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     try {
       final reauthenticated = await reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
-      final uid = ref.read(authRepositoryProvider).currentUser?.uid;
-      if (uid == null) return;
-      await ref.read(householdRepositoryProvider).leaveHousehold(household.id, uid);
+      await ref.read(householdControllerProvider.notifier).leaveHousehold(household.id);
     } catch (error) {
       if (!context.mounted) return;
       await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
@@ -80,52 +79,62 @@ class AccountSettingsScreen extends ConsumerWidget {
     await ref.read(householdControllerProvider.notifier).updateMyName(name);
   }
 
-  /// Requires reauth (see [reauthenticate]) since anyone who can set this
-  /// PIN can later use it, from any device, to read every amount in the
+  /// Requires reauth (see [reauthenticate]) since anyone holding the phrase
+  /// can later use it, from any device, to read every amount in the
   /// household.
-  Future<void> _setPin(BuildContext context, WidgetRef ref) async {
+  Future<void> _createRecoveryPhrase(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Frase de recuperación',
+      message: 'Si algún día ninguno de los dos tiene la llave del hogar en su '
+          'dispositivo, estas 12 palabras permiten recuperar los montos. Vas a '
+          'verlas una sola vez: anótalas en papel y guárdalas con tu pareja. '
+          'Si ya había una frase o un PIN, dejarán de servir.',
+      confirmLabel: 'Generar frase',
+    );
+    if (!confirmed || !context.mounted) return;
+
     final reauthenticated = await reauthenticate(context, ref);
     if (!reauthenticated || !context.mounted) return;
 
-    final controller = TextEditingController();
-    final pin = await showFinan2InputSheet(
-      context,
-      title: 'PIN de respaldo',
-      message: 'Si algún día ambos pierden el acceso a este hogar, este PIN '
-          'permite recuperar los montos desde cualquier dispositivo. Elige '
-          '6 dígitos y no los compartas con nadie más que tu pareja.',
-      fieldLabel: 'PIN (6 dígitos)',
-      controller: controller,
-      obscureText: true,
-      keyboardType: TextInputType.number,
-      confirmLabel: 'Guardar',
-    );
-    if (pin == null || pin.isEmpty || !context.mounted) return;
-
-    final error = await ref
-        .read(householdControllerProvider.notifier)
-        .setPin(householdId: household.id, pin: pin);
-    if (!context.mounted) return;
-
-    if (error != null) {
-      await showFinan2ErrorSheet(context, message: error);
-    } else {
+    final controller = ref.read(householdControllerProvider.notifier);
+    try {
+      final (phrase, wrapped) = await controller.prepareRecoveryPhrase(household.id);
+      if (!context.mounted) return;
+      await _showRecoveryPhrase(context, phrase.words);
+      await controller.saveRecoveryPhrase(household.id, wrapped);
+      if (!context.mounted) return;
       await showFinan2InfoSheet(
         context,
-        title: 'PIN guardado',
-        message: 'Ya pueden usarlo para recuperar los montos de este hogar '
-            'desde cualquier dispositivo.',
+        title: 'Frase guardada',
+        message: 'Desde ahora esta frase permite recuperar los montos del '
+            'hogar en cualquier dispositivo.',
+      );
+    } on Finan2CryptoException catch (e) {
+      if (!context.mounted) return;
+      await showFinan2ErrorSheet(context, message: e.message);
+    } catch (error) {
+      if (!context.mounted) return;
+      await showFinan2ErrorSheet(
+        context,
+        message: 'No se pudo guardar la frase nueva, así que no sirve: la '
+            'anterior sigue siendo la válida. ${friendlyErrorMessage(error)}',
       );
     }
   }
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final isSolo = household.members.length <= 1;
     final confirmed = await showFinan2ConfirmSheet(
       context,
       title: 'Eliminar mi cuenta',
-      message: 'Perderás el acceso a Finan2 de forma permanente y no se puede '
-          'deshacer. También saldrás de tu hogar - sus datos seguirán '
-          'disponibles para el otro miembro.',
+      message: isSolo
+          ? 'Perderás el acceso a Finan2 de forma permanente y no se puede '
+              'deshacer. Como eres el único miembro, también se borrarán '
+              'todos los datos de "${household.name}".'
+          : 'Perderás el acceso a Finan2 de forma permanente y no se puede '
+              'deshacer. También saldrás de tu hogar - sus datos seguirán '
+              'disponibles para el otro miembro.',
       confirmLabel: 'Continuar',
       destructive: true,
     );
@@ -134,12 +143,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     try {
       final reauthenticated = await reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
-      final authRepo = ref.read(authRepositoryProvider);
-      final uid = authRepo.currentUser?.uid;
-      if (uid != null) {
-        await ref.read(householdRepositoryProvider).leaveHousehold(household.id, uid);
-      }
-      await authRepo.deleteAccount();
+      await ref.read(householdControllerProvider.notifier).deleteAccount();
     } catch (error) {
       if (!context.mounted) return;
       await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
@@ -237,9 +241,9 @@ class AccountSettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Icons.vpn_key_outlined,
-                        label: 'PIN de respaldo',
+                        label: 'Frase de recuperación',
                         value: 'Recuperar montos si pierden la llave',
-                        onTap: () => _setPin(context, ref),
+                        onTap: () => _createRecoveryPhrase(context, ref),
                       ),
                     ],
                   ),
@@ -263,4 +267,65 @@ class AccountSettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Shows the freshly generated phrase once. Deliberately no copy button -
+/// the clipboard is readable by other apps and synced histories.
+Future<void> _showRecoveryPhrase(BuildContext context, List<String> words) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isDismissible: false,
+    enableDrag: false,
+    builder: (sheetContext) {
+      final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+      final textTheme = Theme.of(sheetContext).textTheme;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(Finan2Space.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Anota estas 12 palabras', style: textTheme.titleMedium),
+              const SizedBox(height: Finan2Space.sm),
+              Text(
+                'En este orden. No se vuelven a mostrar y Finan2 no las guarda.',
+                style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
+              ),
+              const SizedBox(height: Finan2Space.md),
+              Wrap(
+                spacing: Finan2Space.sm,
+                runSpacing: Finan2Space.sm,
+                children: [
+                  for (var i = 0; i < words.length; i++)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Finan2Space.sm,
+                        vertical: Finan2Space.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.brandTint,
+                        borderRadius: BorderRadius.circular(Finan2Radius.card),
+                      ),
+                      child: Text(
+                        '${i + 1}. ${words[i]}',
+                        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: Finan2Space.lg),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  child: const Text('Ya las anoté'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
