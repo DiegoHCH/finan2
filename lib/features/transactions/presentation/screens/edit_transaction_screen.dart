@@ -49,6 +49,8 @@ _Segment _segmentFor(CategoryType type) => switch (type) {
 class EditTransactionScreen extends ConsumerStatefulWidget {
   const EditTransactionScreen({this.transaction, this.initialDate, super.key});
 
+  /// Popping with this movement as the result means "delete it" - see
+  /// TransactionsScreen._deleteWithUndo.
   final Movement? transaction;
 
   /// Date for a new movement - the month being browsed in Movimientos.
@@ -169,11 +171,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     if (mounted) Navigator.of(context).pop();
   }
 
-  Future<void> _delete() async {
+  /// Hands the movement back to Movimientos instead of deleting it here,
+  /// so the list can offer "Deshacer" before anything is written.
+  void _delete() {
     final tx = widget.transaction;
     if (tx == null) return;
-    await ref.read(transactionControllerProvider.notifier).delete(tx.id);
-    if (mounted) Navigator.of(context).pop();
+    Navigator.of(context).pop(tx);
   }
 
   @override

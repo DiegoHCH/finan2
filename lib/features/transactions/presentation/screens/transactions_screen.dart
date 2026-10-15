@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
@@ -14,6 +16,7 @@ import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
+import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
 import 'edit_transaction_screen.dart';
 
@@ -26,6 +29,50 @@ class TransactionsScreen extends ConsumerStatefulWidget {
 
 class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   YearMonth _month = currentYearMonth();
+
+  /// Deleted on screen but not yet in Firestore, while "Deshacer" is offered.
+  final _pendingDeletion = <String>{};
+
+  Future<void> _openMovement(Movement tx) async {
+    final toDelete = await Navigator.of(context).push<Movement>(
+      MaterialPageRoute(builder: (_) => EditTransactionScreen(transaction: tx)),
+    );
+    if (toDelete != null && mounted) await _deleteWithUndo(toDelete);
+  }
+
+  /// Hides [tx] and only deletes it once the "Deshacer" snackbar closes
+  /// without being tapped. Deleting later instead of recreating on undo
+  /// keeps the partner's movements restorable: the rules only let a member
+  /// create records attributed to themselves.
+  Future<void> _deleteWithUndo(Movement tx) async {
+    setState(() => _pendingDeletion.add(tx.id));
+    final messenger = ScaffoldMessenger.of(context);
+    // Outlives this screen, so the delete still happens after a tab switch.
+    final container = ProviderScope.containerOf(context);
+    messenger.hideCurrentSnackBar();
+    final reason = await messenger
+        .showSnackBar(
+          SnackBar(
+            content: const Text('Movimiento borrado'),
+            action: SnackBarAction(label: 'Deshacer', onPressed: () {}),
+            duration: const Duration(seconds: 5),
+          ),
+        )
+        .closed;
+    if (reason != SnackBarClosedReason.action) {
+      final controller = container.read(transactionControllerProvider.notifier);
+      await controller.delete(tx.id);
+      final result = container.read(transactionControllerProvider);
+      if (result.hasError && mounted) {
+        await showFinan2ErrorSheet(
+          context,
+          title: 'No se pudo borrar',
+          message: friendlyErrorMessage(result.error!),
+        );
+      }
+    }
+    if (mounted) setState(() => _pendingDeletion.remove(tx.id));
+  }
 
   /// Today's day of month, clamped to the browsed month - so a movement
   /// added while looking at another month lands in it.
@@ -55,7 +102,9 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final categoryById = {for (final c in categories) c.id: c};
     final monthLabelCap = _month.label;
 
-    final currentTransactions = transactionsAsync.value ?? const [];
+    final currentTransactions = (transactionsAsync.value ?? const <Movement>[])
+        .where((tx) => !_pendingDeletion.contains(tx.id))
+        .toList();
     final net = currentTransactions.fold<int>(
       0,
       (sum, tx) => sum + (tx.isIncome ? tx.amount : -tx.amount),
@@ -101,7 +150,8 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               child: transactionsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
-                data: (transactions) {
+                data: (_) {
+                  final transactions = currentTransactions;
                   if (transactions.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.receipt_long_outlined,
@@ -168,13 +218,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                           : '−${formatMoney(tx.amount)}',
                                       amountColor:
                                           tx.isIncome ? colors.income : colors.ink,
-                                      onTap: () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => EditTransactionScreen(
-                                            transaction: tx,
-                                          ),
-                                        ),
-                                      ),
+                                      onTap: () => _openMovement(tx),
                                     );
                                   },
                                 ),
