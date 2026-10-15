@@ -8,13 +8,29 @@ import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_challenge_model.dart';
 import '../viewmodels/savings_challenge_providers.dart';
 
 const _basePattern = [2000, 5000, 10000, 20000, 30000, 50000];
 
-const _sizeOptions = {'Chico': 3, 'Mediano': 5, 'Grande': 8};
+/// How many rows of [_basePattern] a new challenge gets.
+enum _ChallengeSize {
+  small(3),
+  medium(5),
+  large(8);
+
+  const _ChallengeSize(this.rows);
+
+  final int rows;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    small => l10n.savingsChallengeSizeSmall,
+    medium => l10n.savingsChallengeSizeMedium,
+    large => l10n.savingsChallengeSizeLarge,
+  };
+}
 
 class SavingsChallengeScreen extends ConsumerStatefulWidget {
   const SavingsChallengeScreen({super.key});
@@ -24,8 +40,19 @@ class SavingsChallengeScreen extends ConsumerStatefulWidget {
 }
 
 class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen> {
-  final _nameController = TextEditingController(text: 'Reto de ahorro');
-  var _rows = 5;
+  final _nameController = TextEditingController();
+  var _nameSeeded = false;
+  var _size = _ChallengeSize.medium;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The default name needs the locale, which initState can't read yet.
+    if (!_nameSeeded) {
+      _nameController.text = context.l10n.savingsChallengeTitle;
+      _nameSeeded = true;
+    }
+  }
 
   @override
   void dispose() {
@@ -35,23 +62,23 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
 
   Future<void> _create() async {
     final cells = List<int>.generate(
-      _basePattern.length * _rows,
+      _basePattern.length * _size.rows,
       (i) => _basePattern[i % _basePattern.length],
     );
     final name = toTitleCase(_nameController.text);
     await ref
         .read(savingsChallengeControllerProvider.notifier)
-        .create(name.isEmpty ? 'Reto de ahorro' : name, cells);
+        .create(name.isEmpty ? context.l10n.savingsChallengeTitle : name, cells);
   }
 
   Future<void> _delete(SavingsChallenge challenge) async {
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar reto de ahorro',
-      message:
-          'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
-          'no se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.savingsChallengeDeleteTitle,
+      message: context.l10n.savingsChallengeDeleteMessage(
+        challenge.name.isEmpty ? context.l10n.savingsChallengeTitle : challenge.name,
+      ),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -79,11 +106,12 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
         child: Column(
           children: [
             Finan2BackHead(
-              title: 'Reto de ahorro',
+              title: context.l10n.savingsChallengeTitle,
               trailing: challengeAsync.value == null
                   ? null
                   : IconButton(
                       icon: Icon(Icons.delete_outline, size: 20, color: colors.inkSoft),
+                      tooltip: context.l10n.savingsChallengeDeleteTitle,
                       onPressed: () => _delete(challengeAsync.value!),
                     ),
             ),
@@ -112,24 +140,26 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Crea el reto de ahorro del hogar: casillas con montos fijos que van '
-            'marcando a medida que las ahorran.',
+            context.l10n.savingsChallengeIntro,
             style: TextStyle(fontSize: 12.5, color: colors.inkSoft),
           ),
           const SizedBox(height: Finan2Space.lg),
-          Finan2Field(label: 'Nombre', controller: _nameController),
+          Finan2Field(label: context.l10n.commonName, controller: _nameController),
           const SizedBox(height: Finan2Space.lg),
-          Text('Tamaño', style: Theme.of(context).textTheme.labelMedium),
+          Text(context.l10n.savingsChallengeSize, style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: Finan2Space.sm),
           Wrap(
             spacing: 7,
             runSpacing: 7,
             children: [
-              for (final entry in _sizeOptions.entries)
+              for (final size in _ChallengeSize.values)
                 Finan2Chip(
-                  label: '${entry.key} (${entry.value * _basePattern.length} casillas)',
-                  selected: _rows == entry.value,
-                  onTap: () => setState(() => _rows = entry.value),
+                  label: context.l10n.savingsChallengeSizeOption(
+                    size.label(context.l10n),
+                    size.rows * _basePattern.length,
+                  ),
+                  selected: _size == size,
+                  onTap: () => setState(() => _size = size),
                 ),
             ],
           ),
@@ -142,7 +172,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Crear reto'),
+                : Text(context.l10n.savingsChallengeCreate),
           ),
         ],
       ),
@@ -171,9 +201,13 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '¡Tú puedes! Meta del reto',
-                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+              Text(
+                context.l10n.savingsChallengeGoal,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               Text(
                 formatMoney(challenge.target),
@@ -201,9 +235,9 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Progreso',
-                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                  Text(
+                    context.l10n.savingsChallengeProgress,
+                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(width: 8),
                   Flexible(
@@ -244,7 +278,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
         ),
         const SizedBox(height: Finan2Space.lg),
         Text(
-          'Marca cada casilla al ahorrar',
+          context.l10n.savingsChallengeMarkHint,
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w700,

@@ -23,5 +23,129 @@
   "commonAccount": "Cuenta",
   "@commonSave": {
     "description": "Shared labels (common*) are reused by every feature: buttons, field labels."
-  }
+  },
+  "budgetTitle": "Presupuesto · {month}",
+  "@budgetTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedTotal": "{amount} planeado",
+  "@budgetPlannedTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    },
+    "description": "Header title: total amount budgeted for the month, already formatted."
+  },
+  "budgetAssignedPct": "{pct}% asignado",
+  "@budgetAssignedPct": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    },
+    "description": "Badge: share of the month's income already budgeted."
+  },
+  "budgetPreviousMonth": "Mes anterior",
+  "budgetNextMonth": "Mes siguiente",
+  "budgetLeftToBudget": "Falta por presupuestar",
+  "budgetNoIncomeYet": "Registra ingresos este mes",
+  "@budgetNoIncomeYet": {
+    "description": "Shown instead of an amount when the month has no income to budget yet."
+  },
+  "budgetOverBudgeted": "Presupuestado de más",
+  "budgetVsActual": "Presupuesto vs. real",
+  "budgetEmpty": "Aún no has presupuestado ninguna categoría.",
+  "budgetAddCategory": "+ Presupuestar otra categoría",
+  "budgetForCategory": "Presupuesto para {category}",
+  "@budgetForCategory": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyTitle": "Este mes aún no tiene presupuesto",
+  "budgetCopyMessage": "{count, plural, =1{Copia la categoría que planeaste en {month}.} other{Copia las {count} categorías que planeaste en {month}.}}",
+  "@budgetCopyMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopying": "Copiando…",
+  "budgetCarryIncluded": "Incluye {amount} que sobró antes",
+  "@budgetCarryIncluded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    },
+    "description": "Budget carried over from earlier months that went underspent."
+  },
+  "budgetCarryDeducted": "Descuenta {amount} que te pasaste antes",
+  "@budgetCarryDeducted": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    },
+    "description": "Overspending from earlier months taken off this month's limit."
+  },
+  "annualSummaryTitle": "Resumen anual",
+  "annualSummaryPreviousYear": "Año anterior",
+  "annualSummaryNextYear": "Año siguiente",
+  "annualSummaryEarned": "Ganado",
+  "annualSummarySpent": "Gastado",
+  "annualSummarySaved": "Ahorrado",
+  "annualSummarySpendByMonth": "Gasto por mes",
+  "dashboardHousehold": "Hogar",
+  "dashboardNetWorth": "Patrimonio neto",
+  "dashboardNetWorthFormula": "Cuentas + ahorros + inversiones − deudas",
+  "dashboardIncome": "Ingresos",
+  "dashboardExpenses": "Gastos",
+  "dashboardWhereMoneyGoes": "A dónde va el dinero",
+  "dashboardNoCategorizedSpending": "No hay gastos categorizados este mes.",
+  "savingsChallengeTitle": "Reto de ahorro",
+  "@savingsChallengeTitle": {
+    "description": "Screen title, and the default name of a new challenge."
+  },
+  "savingsChallengeDeleteTitle": "Eliminar reto de ahorro",
+  "savingsChallengeDeleteMessage": "Se eliminará \"{name}\" y el progreso marcado. Esta acción no se puede deshacer.",
+  "@savingsChallengeDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsChallengeIntro": "Crea el reto de ahorro del hogar: casillas con montos fijos que van marcando a medida que las ahorran.",
+  "savingsChallengeSize": "Tamaño",
+  "savingsChallengeSizeSmall": "Chico",
+  "savingsChallengeSizeMedium": "Mediano",
+  "savingsChallengeSizeLarge": "Grande",
+  "savingsChallengeSizeOption": "{size} ({count, plural, =1{1 casilla} other{{count} casillas}})",
+  "@savingsChallengeSizeOption": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    },
+    "description": "Size chip: size name and how many boxes the challenge will have."
+  },
+  "savingsChallengeCreate": "Crear reto",
+  "savingsChallengeGoal": "¡Tú puedes! Meta del reto",
+  "savingsChallengeProgress": "Progreso",
+  "savingsChallengeMarkHint": "Marca cada casilla al ahorrar"
 }

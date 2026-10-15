@@ -6,6 +6,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../viewmodels/annual_summary_providers.dart';
@@ -37,6 +38,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
     final year = _year;
     // Only the current year has a month in progress to highlight.
     final currentMonthIndex = year == _currentYear ? DateTime.now().month - 1 : -1;
+    final l10n = context.l10n;
     final maxSpend = summary.gastoPorMes.fold(0, (m, v) => v > m ? v : m);
 
     return Scaffold(
@@ -44,7 +46,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Resumen anual',
+              label: l10n.annualSummaryTitle,
               title: '$year',
               household: household,
               showBackButton: true,
@@ -55,8 +57,8 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                 children: [
                   Finan2PeriodPicker(
                     label: '$year',
-                    previousTooltip: 'Año anterior',
-                    nextTooltip: 'Año siguiente',
+                    previousTooltip: l10n.annualSummaryPreviousYear,
+                    nextTooltip: l10n.annualSummaryNextYear,
                     onPrevious: () => setState(() => _year--),
                     // Future years have nothing to show yet.
                     onNext: year >= _currentYear ? null : () => setState(() => _year++),
@@ -70,7 +72,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Ganado',
+                          label: l10n.annualSummaryEarned,
                           value: formatMoney(summary.ganado),
                           valueColor: colors.income,
                         ),
@@ -79,7 +81,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Gastado',
+                          label: l10n.annualSummarySpent,
                           value: formatMoney(summary.gastado),
                           valueColor: colors.expense,
                         ),
@@ -88,7 +90,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Ahorrado',
+                          label: l10n.annualSummarySaved,
                           value: formatMoney(summary.ahorrado),
                           valueColor: Theme.of(context).colorScheme.primary,
                         ),
@@ -106,9 +108,9 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Gasto por mes',
-                          style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                        Text(
+                          l10n.annualSummarySpendByMonth,
+                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 12),
                         SizedBox(
