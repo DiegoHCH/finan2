@@ -78,7 +78,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", Roboto, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased; }
 .num { font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
 
@@ -295,7 +295,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
 .set:first-child { border-top: none; }
 .set .v { margin-left: auto; color: var(--ink-faint); font-size: 13px; font-weight: 600; }
 .set .sub2 { display: block; font-size: 11.5px; color: var(--ink-faint); font-weight: 500; margin-top: 2px; }
-.set svg.ch { width: 16px; height: 16px; color: var(--ink-faint); margin-left: 6px; flex: none; }
+.set svg.ch { width: 16px; height: 16px; color: var(--ink-faint); margin-left: auto; flex: none; }
+.set .v + svg.ch { margin-left: 6px; }
 .set .tile { width: 32px; height: 32px; border-radius: 10px; }
 .set .tile svg { width: 17px; height: 17px; }
 .grid6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -328,7 +329,43 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
 .cardvis .cn { font-size: 13px; font-weight: 700; opacity: .9; }
 .cardvis .cv { font-size: 24px; font-weight: 740; letter-spacing: -.02em; }
 .cardvis .cl { font-size: 11px; opacity: .7; }
+
+.pair2 { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+.pair2 .shot .why { text-align: left; }
+.phone.ios .cam { width: 92px; height: 26px; border-radius: 999px; top: 15px; }
+.phone .gest { position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%); width: 108px; height: 4px; border-radius: 999px; background: var(--ink); opacity: .55; z-index: 9; }
+.phone.android .gest { width: 72px; opacity: .35; }
 .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; } .toc a { font-size: 13px; font-weight: 650; color: var(--ink); text-decoration: none; background: var(--sheet); border-radius: 999px; padding: 8px 14px; } .toc a:hover { color: var(--accent); }
+
+/* ---- híbrida: la misma app en Android, iOS y web ---- */
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 200 800; font-display: swap;
+  src: url("../assets/fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype"), url("file:///Users/diego.hoyos/personal/finan2/assets/fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype"); }
+body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", system-ui, sans-serif; }
+.num, .ring::after { font-family: "Plus Jakarta Sans", Roboto, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+.phone { border-radius: 34px; padding: 8px; }
+.scr { border-radius: 27px; }
+.island { display: none; }
+.cam { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 11px; height: 11px; border-radius: 50%; background: #0d0c0b; z-index: 9; }
+.sb { padding: 11px 20px 4px; font-size: 12.5px; }
+.sbi { display: flex; gap: 5px; align-items: center; }
+.sbi svg { width: 15px; height: 15px; }
+.hd .ttl { font-size: 24px; }
+/* selector propio: segmentos con contorno, el elegido en su color */
+.seg { background: transparent; border: 1px solid var(--line); padding: 0; gap: 0; border-radius: 14px; overflow: hidden; }
+.seg span { border-radius: 0; padding: 9px 4px; }
+.seg span + span { border-left: 1px solid var(--line); }
+.seg span.on { background: var(--accent-tint); color: var(--accent); }
+.seg span.on.u1, .seg span.on.u2 { background: var(--t); color: var(--c); }
+/* interruptor propio: apagado = contorno; encendido = relleno */
+.tg { width: 46px; height: 28px; background: transparent; border: 2px solid var(--ink-faint); }
+.tg::after { top: 5px; left: 5px; width: 14px; height: 14px; background: var(--ink-faint); transition: none; }
+.tg.on { background: var(--pos); border-color: var(--pos); }
+.tg.on::after { top: 2px; left: 20px; width: 20px; height: 20px; background: var(--paper); }
+/* barra inferior: el lugar activo se marca con una píldora detrás del icono */
+.nav a svg { width: 54px; height: 30px; padding: 4px 16px; border-radius: 999px; }
+.nav a.on svg { background: var(--accent-tint); color: var(--accent); }
+.nav a.on { color: var(--ink); font-weight: 750; }
+.ftop .x svg { width: 22px; height: 22px; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -363,7 +400,7 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
   <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
-  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.8a3 3 0 0 1 0 5.4"/><path d="M17 13.5a5.5 5.5 0 0 1 3.5 5.5"/></symbol>
 
@@ -380,19 +417,25 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.9 1.5-2-.3-1.2.4-2 1.6-2H18a3 3 0 0 0 3-3c0-6-4-11-9-11z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-sig" viewBox="0 0 24 24"><path d="M4 20h2v-3H4zM9 20h2v-7H9zM14 20h2V9h-2zM19 20h2V4h-2z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a5 5 0 0 1 6.4 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-bat" viewBox="0 0 24 24"><rect x="3" y="7" width="16" height="10" rx="2"/><rect x="5" y="9" width="10" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M21 10.5v3"/></symbol>
 </defs></svg>
 
 <div class="doc">
   <h1>Finan2, <em>rediseñada</em>.</h1>
   <p class="lede">La app completa en el estilo nuevo: 41 pantallas, de entrar a exportar. Papel y tinta cálidos, un color por categoría y por persona, terracota solo para la acción. El botón ◐ las pasa todas a oscuro.</p>
+  <p class="lede" style="font-size:15px;margin-top:10px"><b>Es híbrida</b>: la misma app en Android e iOS. Por eso no usa controles de ninguna plataforma. La letra es Plus Jakarta Sans, que ya va empaquetada en la app; el marco del teléfono es neutro, los interruptores, selectores y la barra inferior son propios de Finan2, y lo único que cambia entre Android e iOS es lo que pone el sistema (ver «Android e iOS», al final).</p>
   <p class="lede" style="font-size:14px;margin-top:10px">Sustituye a <code>diseno-app.html</code> como referencia de diseño. Los motivos de cada decisión, la paleta y el léxico están en la propuesta (<code>finan2-rediseno-mockups-2026-10.html</code>) y resumidos al final.</p>
-  <nav class="toc"><a href="#s0">Lo de todos los días</a><a href="#s1">El plan</a><a href="#s2">Dónde está la plata</a><a href="#s3">Entrar y armar la casa</a><a href="#s4">Ajustes, avisos y extras</a><a href="#s5">Cuando algo no es lo normal</a><a href="#sistema">Color y palabras</a></nav>
+  <nav class="toc"><a href="#s0">Lo de todos los días</a><a href="#s1">El plan</a><a href="#s2">Dónde está la plata</a><a href="#s3">Entrar y armar la casa</a><a href="#s4">Ajustes, avisos y extras</a><a href="#s5">Cuando algo no es lo normal</a><a href="#s6">Android e iOS</a><a href="#sistema">Color y palabras</a></nav>
 
   <h2 id="s0">Lo de todos los días</h2>
   <p class="h2s">las pantallas que se abren a diario: casa, libreta y anotar</p>
   <div class="gallery">    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">Casa Hoyos · octubre</div><div class="ttl">Hola, Diego</div></div><div class="act"><svg class="i" width="20" height="20"><use href="#i-bell"/></svg></div></div>
           <div class="figure">
@@ -418,8 +461,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>La barra apilada usa el color de cada categoría: se lee <b>en qué se fue</b> sin leer las palabras.</p>
         <p>«Quién pagó» son dos bloques con el color de cada persona. Es información, no una cuenta por saldar.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Movimientos</div></div><div class="act"><svg class="i" width="20" height="20"><use href="#i-tune"/></svg></div></div>
           <div class="field" style="display:flex;align-items:center;gap:9px;padding:11px 14px;"><svg class="i" width="18" height="18" style="color:var(--ink-faint)"><use href="#i-search"/></svg><span class="fv ph" style="margin:0">Buscar descripción, categoría, monto o #etiqueta</span></div>
@@ -441,10 +484,10 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>Quién pagó es <b>un punto y un nombre en su color</b>, no un avatar: cabe en la línea y se lee igual.</p>
         <p>El mes vive en la cabecera (‹ ›) y la búsqueda está siempre a la vista, no detrás de una lupa.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body" style="gap:14px">
-          <div class="ftop"><span class="x">Cancelar</span><span class="t">Anotar</span><span class="ok">Guardar</span></div>
+          <div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Anotar</span><span class="ok">Guardar</span></div>
           <div class="seg"><span>Ingreso</span><span class="on">Gasto</span><span>Ahorro</span><span>Pasar</span></div>
           <div class="amount"><div class="n num"><small>$</small>318.000</div><div class="h">Hoy, martes 14 · Bancolombia</div></div>
           <div class="lbl">Categoría</div>
@@ -469,24 +512,24 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>«Pasar» (transferir entre cuentas) entra aquí como un tipo más, en vez de esconderse en otra pantalla.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Movimientos</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-tune"/></svg></div></div><div class="field" style="display:flex;align-items:center;gap:9px;padding:11px 14px;"><svg class="i " style="width:18px;height:18px"><use href="#i-search"/></svg><span class="fv" style="margin:0">mercado</span></div><div class="chips"><span class="chip on mercado"><svg class="i "><use href="#i-cart"/></svg>Mercado ✕</span><span class="chip on u2">Pagó Vale ✕</span><span class="chip ghost"><svg class="i "><use href="#i-calendar"/></svg>Todo 2026</span></div><div class="sheet"><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Mercado Éxito</div><div class="s"><span class="who u2">Vale</span>· 14 oct <span class="tag">#casa</span></div></div><span class="a num ">−318.000</span></div><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Mercado D1</div><div class="s"><span class="who u2">Vale</span>· 5 oct</div></div><span class="a num ">−97.000</span></div><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Plaza de mercado</div><div class="s"><span class="who u2">Vale</span>· 2 oct <span class="tag">#finca</span></div></div><span class="a num ">−88.000</span></div></div><div class="link num">3 movimientos · −$503.000</div></div>
         <div class="nav" data-on="movs"></div>
       </div></div>
       <div class="why"><div class="k">Movimientos · buscar</div><h3>Los filtros, a la vista</h3><p>Cada filtro activo es <b>un chip con su color</b> (el de la categoría, el de la persona) y se quita con la ✕. «Todo 2026» amplía la búsqueda al año.</p><p>El total de lo encontrado va al final, donde se termina de leer.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div style="opacity:.4"><div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Movimientos</div></div></div></div></div><div class="modal-bg"></div><div class="modal"><div class="grab"></div><div class="mt">Filtrar</div><div class="lbl">Tipo</div><div class="chips"><span class="chip">Ingreso</span><span class="chip on">Gasto</span><span class="chip">Fijo</span><span class="chip">Ahorro</span></div><div class="lbl">Categoría</div><div class="chips"><span class="chip on mercado"><svg class="i "><use href="#i-cart"/></svg>Mercado</span><span class="chip"><svg class="i "><use href="#i-house"/></svg>Casa</span><span class="chip"><svg class="i "><use href="#i-car"/></svg>Transporte</span></div><div class="lbl">Cuenta</div><div class="chips"><span class="chip"><svg class="i "><use href="#i-bank"/></svg>Bancolombia</span><span class="chip"><svg class="i "><use href="#i-card"/></svg>Visa</span><span class="chip"><svg class="i "><use href="#i-cash"/></svg>Efectivo</span></div><div class="lbl">Etiqueta</div><div class="chips"><span class="chip">#casa</span><span class="chip">#viaje</span><span class="chip">#finca</span></div><div class="lbl">Pagó</div><div class="seg"><span>Los dos</span><span class="u1"><i class="dot"></i>Diego</span><span class="on u2"><i class="dot"></i>Vale</span></div><div class="duo" style="margin-top:4px"><div class="btn quiet">Limpiar</div><div class="btn">Ver 3</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Movimientos · filtros</div><h3>Una hoja, cinco preguntas</h3><p>Tipo, categoría, cuenta, etiqueta y quién pagó. Las opciones elegidas toman su color; las demás quedan en contorno.</p><p>«Limpiar» es secundario: la acción esperada es «Ver 3».</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Movimiento</div><div class="ttl">Mercado Éxito</div></div></div><div class="figure"><div class="big num" style="font-size:44px"><small>$</small>318.000</div><div class="sub">Gasto · martes 14 de octubre</div></div><div class="sheet"><div class="set"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span>Categoría<span class="v">Mercado</span></div><div class="set"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span>Cuenta<span class="v">Bancolombia</span></div><div class="set"><span class="tile u2"><svg class="i "><use href="#i-user"/></svg></span>Pagó<span class="v" style="color:var(--u2)">Vale</span></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-tag"/></svg></span>Etiquetas<span class="v">#casa</span></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-pen"/></svg></span>Lo anotó<span class="v">Diego · 14 oct, 7:12 p. m.</span></div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn quiet">Editar</div><div class="link" style="color:var(--over)">Borrar movimiento</div></div></div>
         
       </div></div>
@@ -497,8 +540,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <h2 id="s1">El plan</h2>
   <p class="h2s">presupuesto, metas, deudas y el año: todo dentro de la pestaña Plan</p>
   <div class="gallery">    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Plan</div></div></div>
           <div class="seg"><span class="on">Presupuesto</span><span>Metas</span><span>Deudas</span></div>
@@ -518,8 +561,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>Lo que se arrastra del mes anterior (P5) se ve como etiqueta junto al nombre: «+60k».</p>
         <p>Presupuesto, metas y deudas comparten pestaña: son el mismo plan visto desde tres lados.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">Plan</div><div class="ttl">Metas</div></div></div>
           <div class="seg"><span>Presupuesto</span><span class="on">Metas</span><span>Deudas</span></div>
@@ -539,48 +582,48 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>Las deudas se resumen en una frase, <b>«libres en marzo de 2027»</b>, que es lo que importa del cálculo Avalancha; el detalle está un toque más allá.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Deudas</div></div></div><div class="seg"><span>Presupuesto</span><span>Metas</span><span class="on">Deudas</span></div><div class="figure"><div class="lab">Libres de deudas en</div><div class="big" style="font-size:38px">marzo 2027</div><div class="sub">quedan <b class="num">$4.850.000</b> · orden Avalancha (primero la tasa más alta)</div></div><div class="sheet"><div class="row"><span class="ring" style="--p:62;--c:var(--c-transporte)" data-l="62%"></span><div class="mid"><div class="d">Tarjeta Visa <span class="pill-badge" style="--t:var(--accent-tint);--c:var(--accent)">1.º</span></div><div class="s num">28% · mín. $180.000 · día 18</div></div><span class="a num">1.140.000</span></div><div class="row"><span class="ring" style="--p:35;--c:var(--c-casa)" data-l="35%"></span><div class="mid"><div class="d">Crédito carro</div><div class="s num">16% · mín. $420.000 · día 2</div></div><span class="a num">3.710.000</span></div></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-calendar"/></svg></span><div class="tx"><b>Próximo pago: Visa, sábado 18</b>$180.000 mínimo · sugerido $400.000</div></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
       <div class="why"><div class="k">Plan · deudas</div><h3>Una fecha, no un porcentaje</h3><p>Arriba va <b>cuándo terminan</b>, que es lo que motiva. El saldo pendiente queda en la línea de abajo.</p><p>Cada deuda lleva el anillo de lo pagado en su color. La primera del orden Avalancha lleva su número.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="ftop"><span class="x"><svg class="i " style="width:20px;height:20px"><use href="#i-back"/></svg></span><span class="t">Tarjeta Visa</span><span class="ok">Editar</span></div><div class="figure" style="text-align:center"><div class="lab">Saldo pendiente</div><div class="big num"><small>$</small>1.140.000</div><div class="sub">de $3.000.000 · 62% pagado · libre en enero 2027</div></div><div class="sec-t">Calendario de pagos</div><div class="sheet"><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-check"/></svg></span><div class="mid"><div class="d" style="color:var(--ink-faint)">18 de septiembre</div><div class="s">Pagado por <span class="who u1">Diego</span></div></div><span class="a num" style="color:var(--ink-faint)">400.000</span></div><div class="row"><span class="tile" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i "><use href="#i-clock"/></svg></span><div class="mid"><div class="d">18 de octubre</div><div class="s">en 4 días</div></div><span class="a num">400.000</span></div><div class="row"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-faint)"><svg class="i "><use href="#i-calendar"/></svg></span><div class="mid"><div class="d">18 de noviembre</div><div class="s">Previsto</div></div><span class="a num">400.000</span></div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn">Registrar pago</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Deudas · detalle</div><h3>Lo pagado se apaga</h3><p>Los pagos hechos se atenúan con un check; el próximo es el único con color de acción, y dice <b>en cuántos días</b> toca.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="ftop"><span class="x"><svg class="i " style="width:20px;height:20px"><use href="#i-back"/></svg></span><span class="t">Viaje a Europa</span><span class="ok">Editar</span></div><div style="display:flex;align-items:center;gap:16px"><span class="ring ahorro" style="--p:58;width:76px;height:76px" data-l="58%"></span><div><div class="num" style="font-size:30px;font-weight:740;letter-spacing:-.03em">$7.000.000</div><div style="font-size:12.5px;color:var(--ink-soft)">de $12.000.000 · para diciembre</div><div style="font-size:12px;color:var(--pos);font-weight:650;margin-top:3px">Van a tiempo: $500.000 al mes</div></div></div><div class="split"><div class="u1"><div class="n">Diego</div><div class="v num">$4.200.000</div></div><div class="u2"><div class="n">Vale</div><div class="v num">$2.800.000</div></div></div><div class="sec-t">Aportes</div><div class="sheet"><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="mid"><div class="d">Aporte de octubre</div><div class="s"><span class="who u1">Diego</span>· 15 oct</div></div><span class="a num ">+500.000</span></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="mid"><div class="d">Prima</div><div class="s"><span class="who u2">Vale</span>· 30 sept</div></div><span class="a num ">+1.200.000</span></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="mid"><div class="d">Aporte de septiembre</div><div class="s"><span class="who u1">Diego</span>· 15 sept</div></div><span class="a num ">+500.000</span></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Metas · aportes</div><h3>Lo que puso cada uno</h3><p>El anillo grande da el avance. Debajo, en verde, si <b>van a tiempo</b> y a qué ritmo mensual.</p><p>Los dos bloques de color muestran cuánto ha puesto cada uno: es información, no una competencia.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Nueva meta</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Viaje a Europa</div></div><div class="amount"><div class="n num" style="font-size:44px"><small>$</small>12.000.000</div><div class="h">Cuánto necesitan</div></div><div class="duo"><div class="field"><div class="fl">Para cuándo</div><div class="fv">Diciembre 2026</div></div><div class="field"><div class="fl">Ya tienen</div><div class="fv">$0</div></div></div><div class="lbl">Color</div><div class="colors"><i class="on" style="--c:var(--c-ahorro)"></i><i style="--c:var(--c-casa)"></i><i style="--c:var(--c-servicios)"></i><i style="--c:var(--c-ocio)"></i><i style="--c:var(--c-transporte)"></i><i style="--c:var(--c-mercado)"></i></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-calendar"/></svg></span><div class="tx"><b class="num">$857.000 al mes</b>Es lo que hace falta para llegar en diciembre.</div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Nueva meta</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Viaje a Europa</div></div><div class="amount"><div class="n num" style="font-size:44px"><small>$</small>12.000.000</div><div class="h">Cuánto necesitan</div></div><div class="duo"><div class="field"><div class="fl">Para cuándo</div><div class="fv">Diciembre 2026</div></div><div class="field"><div class="fl">Ya tienen</div><div class="fv">$0</div></div></div><div class="lbl">Color</div><div class="colors"><i class="on" style="--c:var(--c-ahorro)"></i><i style="--c:var(--c-casa)"></i><i style="--c:var(--c-servicios)"></i><i style="--c:var(--c-ocio)"></i><i style="--c:var(--c-transporte)"></i><i style="--c:var(--c-mercado)"></i></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-calendar"/></svg></span><div class="tx"><b class="num">$857.000 al mes</b>Es lo que hace falta para llegar en diciembre.</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Metas · crear</div><h3>La cuenta se hace sola</h3><p>Con monto y fecha, la app dice <b>cuánto toca al mes</b> antes de crear la meta. Es la información que decide si la meta es realista.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Reto 52 semanas</div></div></div><div class="figure"><div class="lab">Ahorrado en el reto</div><div class="big num" style="font-size:36px"><small>$</small>1.890.000</div><div class="sub">semana 27 de 52 · van 2 semanas adelantados</div></div><div class="grid6"><i class="d">1</i><i class="d">2</i><i class="d">3</i><i class="d">4</i><i class="d">5</i><i class="d">6</i><i class="d">7</i><i class="d">8</i><i class="d">9</i><i class="d">10</i><i class="d">11</i><i class="d">12</i><i class="d">13</i><i class="d">14</i><i class="d">15</i><i class="d">16</i><i class="d">17</i><i class="d">18</i><i class="d">19</i><i class="d">20</i><i class="d">21</i><i class="d">22</i><i class="d">23</i><i class="d">24</i><i class="d">25</i><i class="d">26</i><i class="d">27</i><i class="n">28</i><i>29</i><i>30</i><i>31</i><i>32</i><i>33</i><i>34</i><i>35</i><i>36</i></div><div class="now"><span class="ic"><svg class="i "><use href="#i-pig"/></svg></span><div class="tx"><b>Semana 28: $28.000</b>Márcala cuando la aporten.</div><span class="go">Marcar</span></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
       <div class="why"><div class="k">Plan · reto de ahorro</div><h3>Una grilla para tachar</h3><p>Las semanas hechas se rellenan en pino; la que toca lleva el contorno terracota. Sin medallas ni rachas: el avance ya se ve.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Resumen 2026</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-chart"/></svg></div></div><div class="seg"><span>2024</span><span>2025</span><span class="on">2026</span></div><div class="split" style="grid-template-columns:1fr 1fr 1fr"><div class="ingreso"><div class="n">Entró</div><div class="v num" style="font-size:16px">$42,5M</div></div><div style="--t:var(--sheet);--c:var(--ink-soft)"><div class="n">Salió</div><div class="v num" style="font-size:16px">$28,1M</div></div><div class="ahorro"><div class="n">Ahorrado</div><div class="v num" style="font-size:16px">$14,4M</div></div></div><div class="sheet pad"><div class="sec-t" style="margin:0 0 12px">Gasto por mes <a>prom. $2,8M</a></div><div class="ybars"><div><b style="height:62%" class=""></b><span>E</span></div><div><b style="height:55%" class=""></b><span>F</span></div><div><b style="height:70%" class=""></b><span>M</span></div><div><b style="height:58%" class=""></b><span>A</span></div><div><b style="height:64%" class=""></b><span>M</span></div><div><b style="height:90%" class="hi"></b><span>J</span></div><div><b style="height:60%" class=""></b><span>J</span></div><div><b style="height:57%" class=""></b><span>A</span></div><div><b style="height:66%" class=""></b><span>S</span></div><div><b style="height:48%" class=""></b><span>O</span></div><div><b style="height:30%" class="fut"></b><span>N</span></div><div><b style="height:30%" class="fut"></b><span>D</span></div></div></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-chart"/></svg></span><div class="tx"><b>Junio fue el mes más alto</b>La prima de la casa: $1,2M extra en Casa.</div></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
@@ -592,47 +635,47 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <p class="h2s">cuentas, tarjetas, inversiones, fijos y pasar entre cuentas</p>
   <div class="gallery">
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Cuentas</div></div><div class="act" style="background:var(--accent);color:var(--accent-ink)"><svg class="i " style="width:20px;height:20px"><use href="#i-plus"/></svg></div></div><div class="figure"><div class="lab">Disponible entre las cuentas</div><div class="big num" style="font-size:38px"><small>$</small>6.830.000</div><div class="sub">las tarjetas y créditos no suman aquí</div></div><div class="sheet"><div class="row"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span><div class="mid"><div class="d">Bancolombia</div><div class="s">Banco · de los dos</div></div><span class="a num ">4.120.000</span></div><div class="row"><span class="tile servicios"><svg class="i "><use href="#i-wallet"/></svg></span><div class="mid"><div class="d">Nequi Vale</div><div class="s">Billetera</div></div><span class="a num ">1.480.000</span></div><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cash"/></svg></span><div class="mid"><div class="d">Efectivo</div><div class="s">En la casa</div></div><span class="a num ">230.000</span></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="mid"><div class="d">Ahorros</div><div class="s">Banco · no se toca</div></div><span class="a num ">1.000.000</span></div></div><div class="sec-t">Tarjetas</div><div class="sheet"><div class="row"><span class="tile transporte"><svg class="i "><use href="#i-card"/></svg></span><div class="mid"><div class="d">Visa</div><div class="s">Corte día 3 · paga día 18</div></div><span class="a num ">−1.140.000</span></div></div></div>
         <div class="nav" data-on="ajustes"></div>
       </div></div>
       <div class="why"><div class="k">Cuentas</div><h3>Lo disponible, aparte de lo que se debe</h3><p>Las cuentas suman; las tarjetas van en su propio bloque y restan aparte. Cada cuenta lleva un color para reconocerla en «Anotar».</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Nueva cuenta</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Nequi Vale</div></div><div class="lbl">Tipo</div><div class="chips"><span class="chip"><svg class="i "><use href="#i-bank"/></svg>Banco</span><span class="chip on servicios"><svg class="i "><use href="#i-wallet"/></svg>Billetera</span><span class="chip"><svg class="i "><use href="#i-cash"/></svg>Efectivo</span><span class="chip"><svg class="i "><use href="#i-card"/></svg>Débito</span></div><div class="amount"><div class="n num"><small>$</small>1.480.000</div><div class="h">Saldo de hoy</div></div><div class="sheet"><div class="set">Cuenta en «Disponible»<span class="sub2"></span><span class="tg on"></span></div></div><p style="font-size:12px;color:var(--ink-faint);margin:0;line-height:1.5">Apágalo para cuentas que no se tocan, como un ahorro aparte.</p></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Nueva cuenta</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Nequi Vale</div></div><div class="lbl">Tipo</div><div class="chips"><span class="chip"><svg class="i "><use href="#i-bank"/></svg>Banco</span><span class="chip on servicios"><svg class="i "><use href="#i-wallet"/></svg>Billetera</span><span class="chip"><svg class="i "><use href="#i-cash"/></svg>Efectivo</span><span class="chip"><svg class="i "><use href="#i-card"/></svg>Débito</span></div><div class="amount"><div class="n num"><small>$</small>1.480.000</div><div class="h">Saldo de hoy</div></div><div class="sheet"><div class="set">Cuenta en «Disponible»<span class="sub2"></span><span class="tg on"></span></div></div><p style="font-size:12px;color:var(--ink-faint);margin:0;line-height:1.5">Apágalo para cuentas que no se tocan, como un ahorro aparte.</p></div>
         
       </div></div>
       <div class="why"><div class="k">Cuentas · crear</div><h3>El saldo de hoy, nada más</h3><p>Cuatro tipos como chips con icono. El interruptor explica en una línea qué hace, en vez de dejarlo a la intuición.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Tarjeta de crédito</span><span class="ok">Crear</span></div><div class="cardvis"><div class="cn">Visa Bancolombia</div><div><div class="cl">Cupo</div><div class="cv num">$3.000.000</div></div><div class="cl">Corte día 3 · pago día 18</div></div><div class="field"><div class="fl">Nombre</div><div class="fv">Visa Bancolombia</div></div><div class="duo"><div class="field"><div class="fl">Cupo</div><div class="fv">$3.000.000</div></div><div class="field"><div class="fl">Tasa E.A.</div><div class="fv">28%</div></div></div><div class="duo"><div class="field"><div class="fl">Día de corte</div><div class="fv">3</div></div><div class="field"><div class="fl">Día de pago</div><div class="fv">18</div></div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Tarjeta de crédito</span><span class="ok">Crear</span></div><div class="cardvis"><div class="cn">Visa Bancolombia</div><div><div class="cl">Cupo</div><div class="cv num">$3.000.000</div></div><div class="cl">Corte día 3 · pago día 18</div></div><div class="field"><div class="fl">Nombre</div><div class="fv">Visa Bancolombia</div></div><div class="duo"><div class="field"><div class="fl">Cupo</div><div class="fv">$3.000.000</div></div><div class="field"><div class="fl">Tasa E.A.</div><div class="fv">28%</div></div></div><div class="duo"><div class="field"><div class="fl">Día de corte</div><div class="fv">3</div></div><div class="field"><div class="fl">Día de pago</div><div class="fv">18</div></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Tarjetas · configurar</div><h3>La tarjeta se ve como tarjeta</h3><p>Una vista previa oscura y neutra: es la única «tarjeta» de la app, porque aquí sí es un objeto. Se rellena mientras se escribe.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Crédito</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Crédito carro</div></div><div class="amount"><div class="n num"><small>$</small>5.710.000</div><div class="h">Cuánto deben hoy</div></div><div class="duo"><div class="field"><div class="fl">Tasa E.A.</div><div class="fv">16%</div></div><div class="field"><div class="fl">Cuota</div><div class="fv">$420.000</div></div></div><div class="duo"><div class="field"><div class="fl">Día de pago</div><div class="fv">2</div></div><div class="field"><div class="fl">Cuotas restantes</div><div class="fv">15</div></div></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-calendar"/></svg></span><div class="tx"><b>Terminan en enero de 2028</b>Si abonan $100.000 más al mes: agosto de 2027.</div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Crédito</span><span class="ok">Crear</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Crédito carro</div></div><div class="amount"><div class="n num"><small>$</small>5.710.000</div><div class="h">Cuánto deben hoy</div></div><div class="duo"><div class="field"><div class="fl">Tasa E.A.</div><div class="fv">16%</div></div><div class="field"><div class="fl">Cuota</div><div class="fv">$420.000</div></div></div><div class="duo"><div class="field"><div class="fl">Día de pago</div><div class="fv">2</div></div><div class="field"><div class="fl">Cuotas restantes</div><div class="fv">15</div></div></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-calendar"/></svg></span><div class="tx"><b>Terminan en enero de 2028</b>Si abonan $100.000 más al mes: agosto de 2027.</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Créditos · configurar</div><h3>Cuándo termina, y cómo adelantarlo</h3><p>Al llenar los campos aparece la fecha final y <b>qué pasa si abonan un poco más</b>: la pregunta que se hace todo el que tiene un crédito.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Inversiones</div></div><div class="act" style="background:var(--accent);color:var(--accent-ink)"><svg class="i " style="width:20px;height:20px"><use href="#i-plus"/></svg></div></div><div class="figure"><div class="lab">Valen hoy</div><div class="big num" style="font-size:38px"><small>$</small>8.400.000</div><div class="sub">pusieron $8.030.000 · ganan <b class="num" style="color:var(--pos)">$370.000</b></div></div><div class="sheet"><div class="row"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span><div class="mid"><div class="d">CDT Bancolombia</div><div class="s">Renta fija · 12% E.A. · vence mar.</div></div><span class="a num ">2.140.000</span></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-trend"/></svg></span><div class="mid"><div class="d">Fondo de acciones</div><div class="s">Renta variable · <span style="color:var(--pos);font-weight:650">+$320.000</span></div></div><span class="a num ">4.260.000</span></div><div class="row"><span class="tile ocio"><svg class="i "><use href="#i-coin"/></svg></span><div class="mid"><div class="d">Cripto</div><div class="s">Alto riesgo · <span style="color:var(--over);font-weight:650">−$90.000</span></div></div><span class="a num ">2.000.000</span></div></div><p style="font-size:12px;color:var(--ink-faint);margin:0;line-height:1.5">Se actualizan a mano: la app no se conecta a ningún banco.</p></div>
         <div class="nav" data-on="ajustes"></div>
       </div></div>
       <div class="why"><div class="k">Inversiones</div><h3>Ganancia en pesos, no en flechas</h3><p>Lo que ganan o pierden se dice en pesos, con color solo en esa cifra. Nada de ▲▼ ni porcentajes de bolsa.</p><p>La nota de abajo deja claro que el valor lo ponen ustedes.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Fijos</div></div><div class="act" style="background:var(--accent);color:var(--accent-ink)"><svg class="i" width="20" height="20"><use href="#i-plus"/></svg></div></div>
           <div class="figure"><div class="lab">Comprometido cada mes</div><div class="big num" style="font-size:36px"><small>$</small>2.154.000</div><div class="sub">5 fijos · los semanales cuentan por su promedio</div></div>
@@ -652,24 +695,24 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>«Fijos» en lugar de «Facturas recurrentes»: incluye sueldos, y es la palabra que se usa en casa.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Editar fijo</span><span class="ok">Guardar</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Natación</div></div><div class="amount"><div class="n num"><small>$</small>60.000</div></div><div class="lbl">Cada cuánto</div><div class="chips"><span class="chip on">Semanal</span><span class="chip">Cada 2 semanas</span><span class="chip">Quincenal</span><span class="chip">Mensual</span><span class="chip">Anual</span></div><div class="now calm" style="padding:10px 12px"><span class="ic"><svg class="i "><use href="#i-repeat"/></svg></span><div class="tx"><b>Cada lunes</b>Unos $260.000 al mes</div></div><div class="duo"><div class="field"><div class="fl">Desde</div><div class="fv">6 oct 2026</div></div><div class="field"><div class="fl">Hasta</div><div class="fv">15 dic 2026</div></div></div><div class="sheet"><div class="set"><svg class="i " style="width:18px;height:18px"><use href="#i-pause"/></svg>En pausa<span class="tg"></span></div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Editar fijo</span><span class="ok">Guardar</span></div><div class="field"><div class="fl">Nombre</div><div class="fv">Natación</div></div><div class="amount"><div class="n num"><small>$</small>60.000</div></div><div class="lbl">Cada cuánto</div><div class="chips"><span class="chip on">Semanal</span><span class="chip">Cada 2 semanas</span><span class="chip">Quincenal</span><span class="chip">Mensual</span><span class="chip">Anual</span></div><div class="now calm" style="padding:10px 12px"><span class="ic"><svg class="i "><use href="#i-repeat"/></svg></span><div class="tx"><b>Cada lunes</b>Unos $260.000 al mes</div></div><div class="duo"><div class="field"><div class="fl">Desde</div><div class="fv">6 oct 2026</div></div><div class="field"><div class="fl">Hasta</div><div class="fv">15 dic 2026</div></div></div><div class="sheet"><div class="set"><svg class="i " style="width:18px;height:18px"><use href="#i-pause"/></svg>En pausa<span class="tg"></span></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Fijos · editar</div><h3>La frecuencia se lee en voz alta</h3><p>Al elegir frecuencia y fecha, la app la dice en palabras («Cada lunes») y su <b>costo mensual</b>. Es la forma de comprobar que se entendió bien.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Pasar plata</span><span class="ok">Pasar</span></div><div class="amount"><div class="n num"><small>$</small>500.000</div></div><div class="sheet pad" style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:11px"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span><div><div style="font-size:11px;color:var(--ink-faint);font-weight:650">De</div><div style="font-size:14.5px;font-weight:650">Bancolombia</div></div><span class="num" style="margin-left:auto;font-size:12px;color:var(--ink-faint)">queda $3,6M</span></div><div style="display:grid;place-items:center;color:var(--ink-faint)"><svg class="i " style="width:20px;height:20px"><use href="#i-swap"/></svg></div><div style="display:flex;align-items:center;gap:11px"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div><div style="font-size:11px;color:var(--ink-faint);font-weight:650">A</div><div style="font-size:14.5px;font-weight:650">Ahorros</div></div><span class="num" style="margin-left:auto;font-size:12px;color:var(--ink-faint)">queda $1,5M</span></div></div><div class="field"><div class="fl">Nota</div><div class="fv">Para el viaje</div></div><div class="field"><div class="fl">Fecha</div><div class="fv">Hoy, martes 14</div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Pasar plata</span><span class="ok">Pasar</span></div><div class="amount"><div class="n num"><small>$</small>500.000</div></div><div class="sheet pad" style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:11px"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span><div><div style="font-size:11px;color:var(--ink-faint);font-weight:650">De</div><div style="font-size:14.5px;font-weight:650">Bancolombia</div></div><span class="num" style="margin-left:auto;font-size:12px;color:var(--ink-faint)">queda $3,6M</span></div><div style="display:grid;place-items:center;color:var(--ink-faint)"><svg class="i " style="width:20px;height:20px"><use href="#i-swap"/></svg></div><div style="display:flex;align-items:center;gap:11px"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div><div style="font-size:11px;color:var(--ink-faint);font-weight:650">A</div><div style="font-size:14.5px;font-weight:650">Ahorros</div></div><span class="num" style="margin-left:auto;font-size:12px;color:var(--ink-faint)">queda $1,5M</span></div></div><div class="field"><div class="fl">Nota</div><div class="fv">Para el viaje</div></div><div class="field"><div class="fl">Fecha</div><div class="fv">Hoy, martes 14</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Pasar entre cuentas</div><h3>Cómo quedan las dos</h3><p>Muestra el saldo que <b>quedará</b> en cada cuenta antes de confirmar. No es un gasto: no toca el presupuesto.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Cuentas</div><div class="ttl">Pasos entre cuentas</div></div></div><div class="sheet"><div class="day"><span>Octubre</span></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-swap"/></svg></span><div class="mid"><div class="d">A Ahorros</div><div class="s"><span class="who u1">Diego</span>· de Bancolombia · 14 oct</div></div><span class="a num ">500.000</span></div><div class="row"><span class="tile servicios"><svg class="i "><use href="#i-swap"/></svg></span><div class="mid"><div class="d">A Nequi Vale</div><div class="s"><span class="who u2">Vale</span>· de Bancolombia · 3 oct</div></div><span class="a num ">300.000</span></div><div class="day"><span>Septiembre</span></div><div class="row"><span class="tile transporte"><svg class="i "><use href="#i-swap"/></svg></span><div class="mid"><div class="d">A la Visa</div><div class="s"><span class="who u1">Diego</span>· de Bancolombia · 18 sept</div></div><span class="a num ">400.000</span></div><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-swap"/></svg></span><div class="mid"><div class="d">A Efectivo</div><div class="s"><span class="who u2">Vale</span>· de Nequi Vale · 9 sept</div></div><span class="a num ">150.000</span></div></div></div>
         <div class="nav" data-on="ajustes"></div>
       </div></div>
@@ -681,31 +724,31 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <p class="h2s">acceso, crear o unirse, invitar y primer uso</p>
   <div class="gallery">
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="state" style="gap:14px"><div style="width:52px;height:52px;border-radius:17px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center"><svg class="i" style="width:28px;height:28px;stroke-width:2.2"><path d="M5 18V9m4.7 9V5m4.6 13v-7M19 18v-6"/></svg></div><h4>La libreta de la casa,<br>para los dos.</h4><p>Cada quien entra con su cuenta; lo que anotan es de los dos.</p><div class="field"><div class="fl">Correo</div><div class="fv">diego.hoyos@gmail.com</div></div><div class="field"><div class="fl">Contraseña</div><div class="fv ph">••••••••••</div></div><div class="btn">Entrar</div><div class="btn quiet">Seguir con Google</div><div class="link">¿No tienes cuenta? <b style="color:var(--accent)">Créala</b></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Acceso</div><h3>Entrar</h3><p>El logo es terracota y reutiliza las barras del original. El titular dice qué es la app, no «Bienvenido».</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="state" style="gap:12px"><h4>Tu cuenta</h4><p>Es solo tuya. La casa la armas o te unes en el paso siguiente.</p><div class="field"><div class="fl">Nombre</div><div class="fv">Diego Hoyos</div></div><div class="field"><div class="fl">Correo</div><div class="fv">diego.hoyos@gmail.com</div></div><div class="field"><div class="fl">Contraseña</div><div class="fv ph">••••••••</div></div><p style="font-size:12px;color:var(--ink-faint)">Mínimo 8 caracteres.</p><div class="btn">Crear cuenta</div><div class="link">Ya tengo cuenta</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Acceso</div><h3>Registro</h3><p>Se dice desde el principio que la cuenta es personal y la casa compartida: es la idea que más cuesta entender del modelo.</p><p>La regla de la contraseña está escrita antes de equivocarse, no después.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div><div style="font-size:28px;font-weight:760;letter-spacing:-.035em;line-height:1.08">¿Arman la casa o ya existe?</div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--ink-soft)">Uno de los dos la crea; el otro entra con un código.</p></div><div class="opt"><span class="tile" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i "><use href="#i-house"/></svg></span><div><div class="ok">Crear la casa</div><div class="os">Empiezo yo e invito a mi pareja.</div></div></div><div class="opt on"><span class="tile" style="--t:var(--sheet);--c:var(--accent)"><svg class="i "><use href="#i-key"/></svg></span><div><div class="ok">Tengo un código</div><div class="os">Mi pareja ya la creó.</div></div></div><div class="field"><div class="fl">Código</div><div class="fv" style="font-family:ui-monospace,monospace;letter-spacing:.12em">H8-4KP2.••••••</div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn">Entrar a la casa</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Hogar</div><h3>Crear o unirse</h3><p>Dos opciones grandes, la elegida con borde terracota. El código se escribe en monoespaciada: hay que copiarlo exacto, y así se distingue la O del 0.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body" style="gap:18px">
           <div class="steps" style="margin-top:10px"><i class="on"></i><i class="on"></i><i></i></div>
           <div><div class="over" style="font-size:12px;font-weight:650;color:var(--ink-faint)">Paso 2 de 3</div><div style="font-size:30px;font-weight:760;letter-spacing:-.035em;line-height:1.08;margin-top:4px">¿Dónde está la plata hoy?</div>
@@ -724,17 +767,17 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>«Ahora no» en lugar de «Omitir»: no suena a saltarse algo obligatorio.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="steps" style="margin-top:10px"><i class="on"></i><i class="on"></i><i class="on"></i></div><div><div style="font-size:28px;font-weight:760;letter-spacing:-.035em;line-height:1.08">Ahora tu pareja.</div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--ink-soft)">Mándale este código. Lleva la llave de la casa: compártelo solo con ella.</p></div><div style="display:flex;justify-content:center;margin:6px 0"><span class="tile u1" style="width:58px;height:58px;border-radius:50%;font-weight:750;font-size:20px">D</span><span class="tile u2" style="width:58px;height:58px;border-radius:50%;margin-left:-12px;font-weight:750;font-size:20px;border:3px dashed var(--u2)">?</span></div><div class="code">H8-4KP2</div><p style="font-size:12px;color:var(--ink-faint);margin:-4px 0 0;text-align:center">Vence en 7 días · se puede generar otro en Ajustes</p><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn"><svg class="i " style="width:18px;height:18px"><use href="#i-share"/></svg> Compartir</div><div class="link">Más tarde</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Hogar · invitar</div><h3>El lugar vacío espera</h3><p>El círculo de la pareja está punteado: <b>falta alguien</b>. Se dice que el código lleva la llave, para que no se publique en cualquier sitio.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
-          <div class="ftop"><span class="x"><svg class="i" width="20" height="20" style="vertical-align:-5px"><use href="#i-back"/></svg> Ajustes</span><span></span><span></span></div>
+          <div class="ftop"><span class="x"><svg class="i" width="20" height="20" style="vertical-align:-5px"><use href="#i-back"/></svg></span><span></span><span></span></div>
           <div><div style="font-size:28px;font-weight:760;letter-spacing:-.035em;line-height:1.08">Copia de seguridad</div>
             <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--ink-soft)">Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.</p></div>
           <div class="sheet pad" style="display:flex;gap:12px;align-items:center">
@@ -760,56 +803,56 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <p class="h2s">configuración de la casa, categorías, notificaciones, exportar y notas</p>
   <div class="gallery">
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Casa Hoyos</div></div></div><div class="split"><div class="u1"><div class="n">Diego</div><div class="p">tú · desde jul. 2026</div></div><div class="u2"><div class="n">Vale</div><div class="p">desde jul. 2026</div></div></div><div class="sheet"><div class="set"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span>Cuentas y tarjetas<span class="v">5</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile mercado"><svg class="i "><use href="#i-tag"/></svg></span>Categorías<span class="v">14</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile servicios"><svg class="i "><use href="#i-repeat"/></svg></span>Fijos<span class="v">5</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile ahorro"><svg class="i "><use href="#i-trend"/></svg></span>Inversiones<svg class="i ch"><use href="#i-chev"/></svg></div></div><div class="sheet"><div class="set"><span class="tile ocio"><svg class="i "><use href="#i-bell"/></svg></span>Avisos<svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile transporte"><svg class="i "><use href="#i-download"/></svg></span>Exportar<svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i "><use href="#i-shield"/></svg></span>Copia y llave<span class="v">hace 6 días</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-coin"/></svg></span>Moneda<span class="v">COP</span><svg class="i ch"><use href="#i-chev"/></svg></div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Casa Hoyos</div></div></div><div class="split"><div class="u1"><div class="n">Diego</div><div class="p">tú · desde jul. 2026</div></div><div class="u2"><div class="n">Vale</div><div class="p">desde jul. 2026</div></div></div><div class="sheet"><div class="set"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span>Cuentas y tarjetas<span class="v">5</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile mercado"><svg class="i "><use href="#i-tag"/></svg></span>Categorías<span class="v">14</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile servicios"><svg class="i "><use href="#i-repeat"/></svg></span>Fijos<span class="v">5</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile ahorro"><svg class="i "><use href="#i-trend"/></svg></span>Inversiones<svg class="i ch"><use href="#i-chev"/></svg></div></div><div class="sheet"><div class="set"><span class="tile ocio"><svg class="i "><use href="#i-bell"/></svg></span>Avisos<svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile transporte"><svg class="i "><use href="#i-download"/></svg></span>Exportar<svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i "><use href="#i-shield"/></svg></span>Copia y llave<span class="v">6 días</span><svg class="i ch"><use href="#i-chev"/></svg></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-coin"/></svg></span>Moneda<span class="v">COP</span><svg class="i ch"><use href="#i-chev"/></svg></div></div></div>
         <div class="nav" data-on="ajustes"></div>
       </div></div>
       <div class="why"><div class="k">Ajustes</div><h3>Agrupado por lo que es</h3><p>Primero lo que es plata (cuentas, categorías, fijos, inversiones); después lo que es de la app. Cada fila lleva un icono en un color distinto para encontrarla sin leer.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Categorías</div></div><div class="act" style="background:var(--accent);color:var(--accent-ink)"><svg class="i " style="width:20px;height:20px"><use href="#i-plus"/></svg></div></div><div class="seg"><span class="on">Gastos</span><span>Ingresos</span></div><div class="sheet"><div class="row"><span class="tile casa"><svg class="i "><use href="#i-house"/></svg></span><div class="mid"><div class="d">Casa</div><div class="s">Arriendo, administración · 32 mov.</div></div></div><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Mercado</div><div class="s">Acumula de un mes a otro · 41 mov.</div></div></div><div class="row"><span class="tile transporte"><svg class="i "><use href="#i-car"/></svg></span><div class="mid"><div class="d">Transporte</div><div class="s">18 mov.</div></div></div><div class="row"><span class="tile ocio"><svg class="i "><use href="#i-play"/></svg></span><div class="mid"><div class="d">Ocio</div><div class="s">12 mov.</div></div></div><div class="row"><span class="tile servicios"><svg class="i "><use href="#i-bolt"/></svg></span><div class="mid"><div class="d">Servicios</div><div class="s">Luz, agua, internet · 9 mov.</div></div></div><div class="row"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="mid"><div class="d">Ahorro</div><div class="s">6 mov.</div></div></div></div></div>
         <div class="nav" data-on="ajustes"></div>
       </div></div>
       <div class="why"><div class="k">Categorías</div><h3>Cada una con su color</h3><p>El color de la categoría se elige aquí y la sigue a todas partes: lista, presupuesto, barra de Casa. Debajo, cuánto se usa.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
-        <div class="body"><div class="ftop"><span class="x">Cancelar</span><span class="t">Editar categoría</span><span class="ok">Guardar</span></div><div style="display:flex;align-items:center;gap:12px"><span class="tile mercado" style="width:52px;height:52px;border-radius:16px"><svg class="i " style="width:26px;height:26px"><use href="#i-cart"/></svg></span><div><div style="font-size:20px;font-weight:740">Mercado</div><div style="font-size:12px;color:var(--ink-faint)">Gasto</div></div></div><div class="field"><div class="fl">Nombre</div><div class="fv">Mercado</div></div><div class="lbl">Color</div><div class="colors"><i class="on" style="--c:var(--c-mercado)"></i><i style="--c:var(--c-casa)"></i><i style="--c:var(--c-transporte)"></i><i style="--c:var(--c-ocio)"></i><i style="--c:var(--c-servicios)"></i><i style="--c:var(--c-ahorro)"></i></div><div class="lbl">Icono</div><div class="chips"><span class="chip on mercado" style="padding:8px"><svg class="i "><use href="#i-cart"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-house"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-car"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-play"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-bolt"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-pig"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-plane"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-coin"/></svg></span></div><div class="sheet"><div class="set"><div>Acumular de un mes a otro<span class="sub2">Lo que sobra o se pasa cuenta para el mes siguiente.</span></div><span class="tg on"></span></div></div></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="ftop"><span class="x"><svg class="i"><use href="#i-close"/></svg></span><span class="t">Editar categoría</span><span class="ok">Guardar</span></div><div style="display:flex;align-items:center;gap:12px"><span class="tile mercado" style="width:52px;height:52px;border-radius:16px"><svg class="i " style="width:26px;height:26px"><use href="#i-cart"/></svg></span><div><div style="font-size:20px;font-weight:740">Mercado</div><div style="font-size:12px;color:var(--ink-faint)">Gasto</div></div></div><div class="field"><div class="fl">Nombre</div><div class="fv">Mercado</div></div><div class="lbl">Color</div><div class="colors"><i class="on" style="--c:var(--c-mercado)"></i><i style="--c:var(--c-casa)"></i><i style="--c:var(--c-transporte)"></i><i style="--c:var(--c-ocio)"></i><i style="--c:var(--c-servicios)"></i><i style="--c:var(--c-ahorro)"></i></div><div class="lbl">Icono</div><div class="chips"><span class="chip on mercado" style="padding:8px"><svg class="i "><use href="#i-cart"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-house"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-car"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-play"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-bolt"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-pig"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-plane"/></svg></span><span class="chip" style="padding:8px"><svg class="i "><use href="#i-coin"/></svg></span></div><div class="sheet"><div class="set"><div>Acumular de un mes a otro<span class="sub2">Lo que sobra o se pasa cuenta para el mes siguiente.</span></div><span class="tg on"></span></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Categorías · editar</div><h3>Se ve como quedará</h3><p>La vista previa arriba cambia mientras se elige color e icono. «Acumular» lleva su explicación debajo, en una línea.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Casa</div><div class="ttl">Avisos</div></div></div><div class="sheet"><div class="ntf unread"><span class="tile transporte"><svg class="i "><use href="#i-card"/></svg></span><div class="tx"><b>La Visa se paga el sábado</b>Mínimo $180.000. Sugerido $400.000.<div class="tm">hace 2 h</div></div></div><div class="ntf unread"><span class="tile u2"><svg class="i "><use href="#i-pen"/></svg></span><div class="tx"><b>Vale anotó Mercado Éxito</b>$318.000 · Mercado<div class="tm">hace 3 h</div></div></div><div class="ntf"><span class="tile over" style="--t:var(--over-tint);--c:var(--over)"><svg class="i "><use href="#i-car"/></svg></span><div class="tx"><b>Transporte se pasó</b>Van $540.000 de $500.000.<div class="tm">ayer</div></div></div><div class="ntf"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="tx"><b>Viaje a Europa llegó al 58%</b>Van a tiempo para diciembre.<div class="tm">15 oct</div></div></div></div><div class="link">Marcar todo como leído</div></div>
         
       </div></div>
       <div class="why"><div class="k">Avisos</div><h3>Cada aviso, en su color</h3><p>El icono toma el color de lo que avisa: la persona, la categoría o el granate si algo se pasó. Lo no leído lleva un punto terracota tras el título.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Qué avisar</div></div></div><p style="margin:-6px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.45">Solo para ti: Vale elige los suyos.</p><div class="sheet"><div class="set"><div>Pagos que se acercan<span class="sub2">3 días antes y el mismo día</span></div><span class="tg on"></span></div><div class="set"><div>Categoría que se pasa<span class="sub2">Una vez por categoría y mes</span></div><span class="tg on"></span></div><div class="set"><div>Lo que anota Vale<span class="sub2">Cada movimiento nuevo</span></div><span class="tg"></span></div><div class="set"><div>Avance de metas<span class="sub2">Al pasar 25, 50, 75 y 100%</span></div><span class="tg on"></span></div><div class="set"><div>Recordatorio para anotar<span class="sub2">Todos los días</span></div><span class="v num">9:00 p. m.</span><span class="tg on" style="margin-left:10px"></span></div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Avisos · ajustes</div><h3>Cuándo, dicho en cada fila</h3><p>Debajo de cada interruptor se lee <b>cuándo</b> llega el aviso, que es lo que decide si molesta. El encendido es pino, no terracota: no es una acción.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Exportar</div></div></div><div class="seg"><span>Mes</span><span class="on">Año</span><span>Rango</span></div><div class="field"><div class="fl">Periodo</div><div class="fv">2026 completo</div></div><div class="lbl">Qué incluir</div><div class="chips"><span class="chip on">Movimientos</span><span class="chip on">Presupuesto</span><span class="chip on">Deudas</span><span class="chip">Metas</span></div><div class="opt on"><span class="tile" style="--t:var(--sheet);--c:var(--accent)"><svg class="i "><use href="#i-doc"/></svg></span><div><div class="ok">PDF</div><div class="os">Para leer o imprimir, con montos con formato.</div></div></div><div class="opt"><span class="tile casa"><svg class="i "><use href="#i-chart"/></svg></span><div><div class="ok">CSV para hoja de cálculo</div><div class="os">Un archivo por sección, números limpios.</div></div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn">Exportar</div></div></div>
         
       </div></div>
       <div class="why"><div class="k">Exportar</div><h3>Para qué es cada formato</h3><p>No se pregunta «PDF o CSV» a secas: cada opción dice <b>para qué sirve</b>. El archivo sale de los datos ya descifrados en el teléfono.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Notas del mes</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-pen"/></svg></div></div><div class="sheet pad" style="font-size:14px;line-height:1.6"><p style="margin:0 0 10px">Este mes llega la prima de Vale: la mitad va al viaje.</p><p style="margin:0 0 10px">Revisar el plan de celular, subió $12.000.</p><p style="margin:0">Cumpleaños de mamá el 24: <span class="tag">#regalos</span> hasta $150.000.</p></div><div class="s" style="font-size:11.5px;color:var(--ink-faint);display:flex;gap:6px;align-items:center"><span class="who u2">Vale</span> editó hace 2 días</div></div>
         <div class="nav" data-on="casa"></div>
       </div></div>
@@ -820,8 +863,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
   <h2 id="s5">Cuando algo no es lo normal</h2>
   <p class="h2s">vacío, cargando, sin llave y sin conexión: cada uno dice qué pasó y qué hacer</p>
   <div class="gallery">    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Movimientos</div></div></div>
           <div class="state">
@@ -838,15 +881,15 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
         <p>Dice <b>qué va a pasar</b> aquí y ofrece la acción. La segunda opción lleva al mes anterior, que es lo que suele buscar quien llega a un mes vacío.</p></div>
     </div>
     <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Deudas</div></div></div><div class="seg"><span>Presupuesto</span><span>Metas</span><span class="on">Deudas</span></div><div class="state"><div class="glyph ahorro"><svg class="i "><use href="#i-check"/></svg></div><h4>No deben nada.</h4><p>Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.</p><div class="btn quiet">Agregar una deuda</div></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
       <div class="why"><div class="k">Vacío que celebra</div><h3>Sin deudas también es un estado</h3><p>El mismo patrón que el vacío de Movimientos, en otro tono: aquí el vacío es bueno, y el botón es secundario porque no hay prisa.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">Casa Hoyos · octubre</div><div class="ttl">Hola, Diego</div></div></div>
           <div class="figure"><div class="lab">Les queda del plan de octubre</div><div class="skel" style="height:44px;width:70%;margin-top:6px;border-radius:12px"></div><div class="sub">Descifrando los montos en este teléfono…</div></div>
@@ -862,8 +905,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
       <div class="why"><div class="k">Cargando</div><h3>La forma antes que el dato</h3>
         <p>La pantalla se dibuja con su forma y los textos fijos ya puestos; solo las cifras esperan. Y dice <b>por qué</b> esperan: los montos se descifran en el teléfono.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="state">
             <div class="glyph" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i"><use href="#i-key"/></svg></div>
@@ -877,8 +920,8 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
       <div class="why"><div class="k">Sin permiso</div><h3>Qué falta y dos caminos</h3>
         <p>No es «Error de cifrado»: dice <b>qué falta</b> (la llave), qué se ve sin ella y las dos formas reales de recuperarla, nombrando a la pareja.</p></div>
     </div>    <div class="shot">
-      <div class="phone"><div class="island"></div><div class="scr">
-        <div class="sb"><span>9:41</span><i>●●● ▮</i></div>
+      <div class="phone"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
         <div class="body">
           <div class="hd"><div><div class="over">‹ Octubre 2026 ›</div><div class="ttl">Movimientos</div></div></div>
           <div class="offline"><svg class="i"><use href="#i-cloud-off"/></svg><span>Sin conexión. Lo que anotes se guarda aquí y le llega a Vale al volver.</span></div>
@@ -893,6 +936,27 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
       <div class="why"><div class="k">Sin conexión</div><h3>Se puede seguir anotando</h3>
         <p>Un aviso tranquilo, en tono de hoja y no de alarma, que dice <b>qué sigue funcionando</b>. Lo que no ha salido lleva la marca «por enviar» con borde punteado: aún no es definitivo.</p></div>
     </div>
+  </div>
+
+  <h2 id="s6">Android e iOS</h2>
+  <p class="h2s">es híbrida: una sola app, con el mismo diseño en los dos sistemas</p>
+  <div class=""><div class="pair2">
+    <div class="shot">
+      <div class="phone android"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="hd"><div><div class="over">Casa Hoyos · octubre</div><div class="ttl">Hola, Vale</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-bell"/></svg></div></div><div class="figure"><div class="lab">Les queda del plan de octubre</div><div class="big num"><small>$</small>450.000</div><div class="sub">faltan 17 días · unos <b class="num">$26.000</b> al día</div></div><div class="stack"><i style="width:36%;background:var(--c-casa)"></i><i style="width:26%;background:var(--c-mercado)"></i><i style="width:15%;background:var(--c-transporte)"></i><i style="width:11%;background:var(--c-ocio)"></i></div><div class="sheet"><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Mercado Éxito</div><div class="s"><span class="who u2">Vale</span>· Mercado</div></div><span class="a num ">−318.000</span></div><div class="row"><span class="tile ingreso"><svg class="i "><use href="#i-coin"/></svg></span><div class="mid"><div class="d">Salario</div><div class="s"><span class="who u1">Diego</span>· Ingreso</div></div><span class="a num in">+3.400.000</span></div><div class="row"><span class="tile transporte"><svg class="i "><use href="#i-car"/></svg></span><div class="mid"><div class="d">Gasolina</div><div class="s"><span class="who u1">Diego</span>· Transporte</div></div><span class="a num ">−210.000</span></div></div></div><div class="gest"></div>
+        <div class="nav" data-on="casa"></div>
+      </div></div>
+      <div class="why"><div class="k">Android</div><h3>Cámara perforada, gesto abajo</h3><p>Lo único que cambia es <b>lo del sistema</b>: la barra de estado, la cámara y la línea de gestos. Todo lo que está dentro es de Finan2.</p></div>
+    </div>
+    <div class="shot">
+      <div class="phone ios"><div class="cam"></div><div class="scr">
+        <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
+        <div class="body"><div class="hd"><div><div class="over">Casa Hoyos · octubre</div><div class="ttl">Hola, Vale</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-bell"/></svg></div></div><div class="figure"><div class="lab">Les queda del plan de octubre</div><div class="big num"><small>$</small>450.000</div><div class="sub">faltan 17 días · unos <b class="num">$26.000</b> al día</div></div><div class="stack"><i style="width:36%;background:var(--c-casa)"></i><i style="width:26%;background:var(--c-mercado)"></i><i style="width:15%;background:var(--c-transporte)"></i><i style="width:11%;background:var(--c-ocio)"></i></div><div class="sheet"><div class="row"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span><div class="mid"><div class="d">Mercado Éxito</div><div class="s"><span class="who u2">Vale</span>· Mercado</div></div><span class="a num ">−318.000</span></div><div class="row"><span class="tile ingreso"><svg class="i "><use href="#i-coin"/></svg></span><div class="mid"><div class="d">Salario</div><div class="s"><span class="who u1">Diego</span>· Ingreso</div></div><span class="a num in">+3.400.000</span></div><div class="row"><span class="tile transporte"><svg class="i "><use href="#i-car"/></svg></span><div class="mid"><div class="d">Gasolina</div><div class="s"><span class="who u1">Diego</span>· Transporte</div></div><span class="a num ">−210.000</span></div></div></div><div class="gest"></div>
+        <div class="nav" data-on="casa"></div>
+      </div></div>
+      <div class="why"><div class="k">iOS</div><h3>Isla arriba, misma app dentro</h3><p>Mismos colores, misma letra, mismos controles. Nada imita a ninguna de las dos: así no se ve «extraña» en ninguna.</p></div>
+    </div></div>
   </div>
 
   <h2 id="sistema">Color, letra y palabras</h2>
@@ -921,11 +985,11 @@ svg.i { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: rou
     <div class="card">
       <h4>Letra</h4>
       <div class="num" style="font-size:40px;font-weight:740;letter-spacing:-.04em;line-height:1">$450.000</div>
-      <p style="font-size:12px;color:var(--ink-faint);margin:4px 0 12px">Cifras · sistema redondeado, tabular, 740</p>
+      <p style="font-size:12px;color:var(--ink-faint);margin:4px 0 12px">Cifras · Plus Jakarta Sans, tabular, 740</p>
       <div style="font-size:24px;font-weight:760;letter-spacing:-.03em">Movimientos</div>
-      <p style="font-size:12px;color:var(--ink-faint);margin:2px 0 12px">Títulos · sistema, 760, tracking cerrado</p>
+      <p style="font-size:12px;color:var(--ink-faint);margin:2px 0 12px">Títulos · Plus Jakarta Sans, 760, tracking cerrado</p>
       <div style="font-size:14px;line-height:1.5;color:var(--ink-soft)">El texto corrido va en el gris de tinta, a 14px.</div>
-      <p style="font-size:12px;color:var(--ink-faint);margin:2px 0 0">Sin fuentes descargadas: funciona sin conexión.</p>
+      <p style="font-size:12px;color:var(--ink-faint);margin:2px 0 0">Va empaquetada en la app: la misma en Android e iOS, y sin conexión.</p>
     </div>
     <div class="card">
       <h4>Léxico</h4>
