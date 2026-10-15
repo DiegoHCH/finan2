@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 
-/// The current year's totals, computed client-side from every transaction
-/// in the year - no separate Firestore aggregate needed.
+/// A year's totals, computed client-side from every transaction in the
+/// year - no separate Firestore aggregate needed.
 class AnnualSummary {
   const AnnualSummary({
     required this.ganado,
@@ -19,8 +19,8 @@ class AnnualSummary {
   final List<int> gastoPorMes;
 }
 
-final annualSummaryProvider = Provider<AnnualSummary>((ref) {
-  final transactions = ref.watch(transactionsForYearProvider).value ?? const [];
+final annualSummaryProvider = Provider.autoDispose.family<AnnualSummary, int>((ref, year) {
+  final transactions = ref.watch(transactionsForYearProvider(year)).value ?? const [];
   var ganado = 0;
   var gastado = 0;
   final perMonth = List<int>.filled(12, 0);
