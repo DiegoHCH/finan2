@@ -81,6 +81,9 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
       (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
   late DateTime _date = widget.transaction?.date ?? widget.initialDate ?? DateTime.now();
 
+  /// null until the user picks - then whoever is logging it.
+  late String? _paidBy = widget.transaction?.payer;
+
   @override
   void dispose() {
     _amountController.dispose();
@@ -166,6 +169,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             description: toTitleCase(_descriptionController.text),
             date: _date,
             createdBy: widget.transaction?.createdBy ?? user.uid,
+            paidBy: _paidBy ?? user.uid,
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -219,6 +223,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         : (household?.memberInfo[creatorUid]?.name ?? user?.displayName ?? '');
     final creatorIndex =
         creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
+    final members = household?.members ?? const <String>[];
+    final payer = _paidBy ?? user?.uid;
 
     return Scaffold(
       appBar: Finan2FormTop(
@@ -299,7 +305,28 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               value: DateFormat('dd MMM yyyy', 'es').format(_date),
               onTap: _pickDate,
             ),
-            if (creatorName.isNotEmpty) ...[
+            // Only worth asking once there's a partner to tell apart.
+            if (members.length > 1) ...[
+              const SizedBox(height: Finan2Space.lg),
+              Text(
+                _segment == _Segment.ingreso ? 'Lo recibió' : 'Pagó',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: Finan2Space.sm),
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final uid in members)
+                    Finan2Chip(
+                      label: household?.memberInfo[uid]?.name ?? '?',
+                      selected: payer == uid,
+                      onTap: () => setState(() => _paidBy = uid),
+                    ),
+                ],
+              ),
+            ],
+            if (isEditing && creatorName.isNotEmpty) ...[
               const SizedBox(height: Finan2Space.md),
               Finan2TapField(
                 label: 'Registrado por',

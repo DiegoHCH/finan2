@@ -191,11 +191,12 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                   builder: (context) {
                                     final tx = transactions[i];
                                     final category = categoryById[tx.categoryId];
+                                    // Who paid, not who logged it.
                                     final memberIndex = household?.members
-                                            .indexOf(tx.createdBy) ??
+                                            .indexOf(tx.payer) ??
                                         0;
                                     final memberName = household
-                                            ?.memberInfo[tx.createdBy]?.name ??
+                                            ?.memberInfo[tx.payer]?.name ??
                                         '?';
                                     return Finan2TransactionRow(
                                       icon: category != null

@@ -14,6 +14,7 @@ class Movement {
     required this.date,
     required this.createdBy,
     this.cardDebtId = '',
+    this.paidBy = '',
   });
 
   final String id;
@@ -32,6 +33,12 @@ class Movement {
   final String description;
   final DateTime date;
   final String createdBy;
+
+  /// Which member paid (or received) it - not necessarily who logged it.
+  /// Empty means the same as [createdBy]; read [payer] instead.
+  final String paidBy;
+
+  String get payer => paidBy.isEmpty ? createdBy : paidBy;
 
   bool get isIncome => type == CategoryType.ingreso;
 
@@ -62,6 +69,7 @@ class Movement {
       description: data['description'] as String? ?? '',
       date: date,
       createdBy: data['createdBy'] as String? ?? '',
+      paidBy: data['paidBy'] as String? ?? '',
     );
   }
 
@@ -80,6 +88,7 @@ class Movement {
       'year': date.year,
       'month': date.month,
       'createdBy': createdBy,
+      'paidBy': payer,
     };
   }
 }
