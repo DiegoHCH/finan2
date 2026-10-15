@@ -1,3 +1,4 @@
+import '../../../l10n/l10n.dart';
 import '../../accounts/data/account_model.dart';
 import '../../categories/data/category_model.dart';
 import '../../debts/data/debt_model.dart';
@@ -26,7 +27,9 @@ class ScannedNotification {
 }
 
 /// Detects the household's alert-worthy conditions and writes any missing
-/// notification (deterministic IDs keep re-scans idempotent). Runs entirely
+/// notification (deterministic IDs keep re-scans idempotent). Titles and
+/// bodies are stored text, written in the language of the device whose scan
+/// creates them - whoever reads them later sees that language. Runs entirely
 /// on the client - there's no backend to trigger this on a schedule, so it
 /// re-checks whenever the relevant data changes while the app is open.
 class NotificationScanner {
@@ -101,6 +104,7 @@ class NotificationScanner {
     DateTime now,
     String currentUid,
   ) async {
+    final l10n = currentL10n;
     for (final debt in debts) {
       if (debt.balance <= 0) continue;
       final daysUntil = _daysUntilDayOfMonth(debt.paymentDay, now);
@@ -116,11 +120,12 @@ class NotificationScanner {
         HouseholdNotification(
           id: id,
           type: NotificationType.debtDue,
-          title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
+          title: isToday
+              ? l10n.notificationsDebtDueTodayTitle(debt.name)
+              : l10n.notificationsDebtDueSoonTitle(debt.name),
           body: isToday
-              ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
-              : 'La cuota de ${debt.name} vence en $daysUntil '
-                    '${daysUntil == 1 ? 'día' : 'días'}.',
+              ? l10n.notificationsDebtDueTodayBody(debt.name)
+              : l10n.notificationsDebtDueSoonBody(debt.name, daysUntil),
           createdAt: now,
           read: false,
         ),
@@ -138,6 +143,7 @@ class NotificationScanner {
     DateTime now,
     String currentUid,
   ) async {
+    final l10n = currentL10n;
     for (final goal in goals) {
       final fraction = goal.progressFractionAsOf(now);
       if (fraction < 0.9 || fraction >= 1.0) continue;
@@ -148,8 +154,8 @@ class NotificationScanner {
         HouseholdNotification(
           id: id,
           type: NotificationType.goalNear,
-          title: '¡Casi logras tu meta!',
-          body: '${goal.name} va en ${(fraction * 100).round()}%.',
+          title: l10n.notificationsGoalNearTitle,
+          body: l10n.notificationsGoalNearBody(goal.name, (fraction * 100).round()),
           createdAt: now,
           read: false,
         ),
@@ -175,6 +181,7 @@ class NotificationScanner {
       spendByCategory[tx.categoryId] = (spendByCategory[tx.categoryId] ?? 0) + tx.amount;
     }
     final categoryById = {for (final c in categories) c.id: c};
+    final l10n = currentL10n;
 
     for (final entry in budget.entries) {
       final planned = entry.value;
@@ -182,15 +189,15 @@ class NotificationScanner {
       final real = spendByCategory[entry.key] ?? 0;
       if (real <= planned) continue;
       final id = 'budget_exceeded_${entry.key}_${now.year}_${now.month}';
-      final categoryName = categoryById[entry.key]?.name ?? 'una categoría';
+      final categoryName = categoryById[entry.key]?.name ?? l10n.notificationsUnknownCategory;
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
           id: id,
           type: NotificationType.budgetExceeded,
-          title: 'Te pasaste del presupuesto',
-          body: '$categoryName superó lo planeado este mes.',
+          title: l10n.notificationsBudgetExceededTitle,
+          body: l10n.notificationsBudgetExceededBody(categoryName),
           createdAt: now,
           read: false,
         ),
@@ -207,6 +214,7 @@ class NotificationScanner {
     List<SavingsGoal> goals,
     String currentUid,
   ) async {
+    final l10n = currentL10n;
     for (final goal in goals) {
       for (final contribution in goal.contributions) {
         if (contribution.createdBy.isEmpty || contribution.createdBy == currentUid) {
@@ -219,8 +227,8 @@ class NotificationScanner {
           HouseholdNotification(
             id: id,
             type: NotificationType.contribution,
-            title: 'Aporte registrado',
-            body: 'Tu pareja agregó un aporte a ${goal.name}.',
+            title: l10n.notificationsContributionTitle,
+            body: l10n.notificationsContributionBody(goal.name),
             createdAt: contribution.date,
             read: false,
           ),
@@ -252,6 +260,7 @@ class NotificationScanner {
     required SavingsChallenge? savingsChallenge,
     required List<SavingsGoal> goals,
   }) async {
+    final l10n = currentL10n;
     Future<void> notify(
       String idSuffix,
       String createdBy,
@@ -282,8 +291,8 @@ class NotificationScanner {
       await notify(
         'tx_${tx.id}',
         tx.createdBy,
-        'Nuevo movimiento',
-        tx.description.isEmpty ? 'Tu pareja registró un movimiento.' : tx.description,
+        l10n.notificationsPartnerMovementTitle,
+        tx.description.isEmpty ? l10n.notificationsPartnerMovementBody : tx.description,
         tx.date,
       );
     }
@@ -291,34 +300,52 @@ class NotificationScanner {
       await notify(
         'transfer_${transfer.id}',
         transfer.createdBy,
-        'Nueva transferencia',
-        'Tu pareja registró una transferencia entre cuentas.',
+        l10n.notificationsPartnerTransferTitle,
+        l10n.notificationsPartnerTransferBody,
         transfer.date,
       );
     }
     for (final debt in debts) {
-      await notify('debt_${debt.id}', debt.createdBy, 'Nueva deuda', debt.name, now);
+      await notify(
+        'debt_${debt.id}',
+        debt.createdBy,
+        l10n.notificationsPartnerDebtTitle,
+        debt.name,
+        now,
+      );
     }
     for (final account in accounts) {
-      await notify('account_${account.id}', account.createdBy, 'Nueva cuenta', account.name, now);
+      await notify(
+        'account_${account.id}',
+        account.createdBy,
+        l10n.notificationsPartnerAccountTitle,
+        account.name,
+        now,
+      );
     }
     for (final investment in investments) {
       await notify(
         'investment_${investment.id}',
         investment.createdBy,
-        'Nueva inversión',
+        l10n.notificationsPartnerInvestmentTitle,
         investment.name,
         now,
       );
     }
     for (final bill in recurringBills) {
-      await notify('bill_${bill.id}', bill.createdBy, 'Nueva factura recurrente', bill.name, now);
+      await notify(
+        'bill_${bill.id}',
+        bill.createdBy,
+        l10n.notificationsPartnerBillTitle,
+        bill.name,
+        now,
+      );
     }
     for (final category in categories) {
       await notify(
         'category_${category.id}',
         category.createdBy,
-        'Nueva categoría',
+        l10n.notificationsPartnerCategoryTitle,
         category.name,
         now,
       );
@@ -328,13 +355,19 @@ class NotificationScanner {
       await notify(
         'challenge_${challenge.id}',
         challenge.createdBy,
-        'Nuevo reto de ahorro',
+        l10n.notificationsPartnerChallengeTitle,
         challenge.name,
         now,
       );
     }
     for (final goal in goals) {
-      await notify('goal_${goal.id}', goal.createdBy, 'Nueva meta de ahorro', goal.name, now);
+      await notify(
+        'goal_${goal.id}',
+        goal.createdBy,
+        l10n.notificationsPartnerGoalTitle,
+        goal.name,
+        now,
+      );
     }
   }
 }

@@ -12,6 +12,7 @@ import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -25,7 +26,8 @@ import '../viewmodels/recurring_bill_providers.dart';
 enum _Segment { ingreso, factura }
 
 extension on _Segment {
-  String get label => this == _Segment.ingreso ? 'Ingreso' : 'Factura';
+  String label(AppLocalizations l10n) =>
+      this == _Segment.ingreso ? l10n.recurringBillsTypeIncome : l10n.recurringBillsTypeBill;
   CategoryType get categoryType =>
       this == _Segment.ingreso ? CategoryType.ingreso : CategoryType.factura;
 }
@@ -117,19 +119,16 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
     final categoryId = _categoryId;
     final accountId = _accountId;
     if (name.isEmpty || amount <= 0 || categoryId == null || accountId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Completa el nombre, monto, categoría y cuenta.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.recurringBillsMissingFields)));
       return;
     }
     if (_frequency == RecurringFrequency.semimonthly && _startDate.day > 15) {
       await showFinan2InfoSheet(
         context,
-        title: 'Elige un día hasta el 15',
-        message:
-            'Una quincenal se repite 15 días después de la primera fecha. '
-            'Elige el primer pago entre el 1 y el 15 del mes - por ejemplo el 15 '
-            'para cobrar el 15 y el 30.',
+        title: context.l10n.recurringBillsSemimonthlyDayTitle,
+        message: context.l10n.recurringBillsSemimonthlyDayMessage,
       );
       return;
     }
@@ -163,10 +162,9 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
     if (bill == null) return;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar factura recurrente',
-      message:
-          'Se eliminará "${bill.name}" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.recurringBillsDelete,
+      message: context.l10n.recurringBillsDeleteMessage(bill.name),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -181,6 +179,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.bill != null;
+    final l10n = context.l10n;
 
     final categoriesOfSegment = categories.where((c) => c.type == _segment.categoryType).toList();
     if (_categoryId != null && !categoriesOfSegment.any((c) => c.id == _categoryId)) {
@@ -199,7 +198,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar factura recurrente' : 'Nueva factura recurrente',
+        title: isEditing ? l10n.recurringBillsEditTitle : l10n.recurringBillsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -208,7 +207,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Finan2SegmentedControl<_Segment>(
-              options: {for (final s in _Segment.values) s: s.label},
+              options: {for (final s in _Segment.values) s: s.label(l10n)},
               selected: _segment,
               onChanged: (s) => setState(() {
                 _segment = s;
@@ -216,20 +215,20 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               }),
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Text(
-              'Monto',
+              l10n.commonAmount,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
             Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
-            Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.commonCategory, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             if (categoriesOfSegment.isEmpty)
               Text(
-                'No hay categorías de este tipo todavía. Créalas en Ajustes.',
+                l10n.recurringBillsNoCategories,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
@@ -249,13 +248,13 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
             const SizedBox(height: Finan2Space.lg),
             if (accounts.isEmpty)
               Text(
-                'No hay cuentas todavía. Créalas en Ajustes.',
+                l10n.recurringBillsNoAccounts,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
               Finan2TapField(
-                label: 'Cuenta',
-                value: selectedAccount?.name ?? 'Selecciona una cuenta',
+                label: l10n.commonAccount,
+                value: selectedAccount?.name ?? l10n.recurringBillsSelectAccount,
                 leading: Icon(
                   Finan2Icons.cuenta(selectedAccount?.type.name ?? 'banco'),
                   size: 18,
@@ -265,7 +264,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               ),
             const SizedBox(height: Finan2Space.md),
             const SizedBox(height: Finan2Space.sm),
-            Text('Se repite', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.recurringBillsRepeats, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -273,7 +272,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               children: [
                 for (final f in RecurringFrequency.values)
                   Finan2Chip(
-                    label: f.label,
+                    label: frequencyLabel(f, l10n: l10n),
                     selected: _frequency == f,
                     onTap: () => setState(() => _frequency = f),
                   ),
@@ -281,13 +280,15 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
             ),
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
-              label: isEditing ? 'Desde' : 'Primera vez',
+              label: isEditing ? l10n.recurringBillsFrom : l10n.recurringBillsFirstTime,
               value: DateFormat('dd MMM yyyy').format(_startDate),
               onTap: _pickStart,
             ),
             const SizedBox(height: Finan2Space.xs),
             Text(
-              'Se registra ${describeSchedule(frequency: _frequency, start: _startDate)}.',
+              l10n.recurringBillsLoggedOn(
+                describeSchedule(frequency: _frequency, start: _startDate, l10n: l10n),
+              ),
               style: TextStyle(fontSize: 12, color: colors.inkSoft),
             ),
             const SizedBox(height: Finan2Space.md),
@@ -295,16 +296,16 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               children: [
                 Expanded(
                   child: Finan2TapField(
-                    label: 'Hasta',
+                    label: l10n.recurringBillsUntil,
                     value: _endDate == null
-                        ? 'Sin fecha de fin'
+                        ? l10n.recurringBillsNoEndDate
                         : DateFormat('dd MMM yyyy').format(_endDate!),
                     onTap: _pickEnd,
                   ),
                 ),
                 if (_endDate != null)
                   IconButton(
-                    tooltip: 'Quitar fecha de fin',
+                    tooltip: l10n.recurringBillsRemoveEndDate,
                     onPressed: () => setState(() => _endDate = null),
                     icon: Icon(Icons.close, color: colors.inkSoft),
                   ),
@@ -314,11 +315,8 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               const SizedBox(height: Finan2Space.md),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('En pausa'),
-                subtitle: const Text(
-                  'No se registra mientras esté en pausa. Al reanudarla, las '
-                  'fechas que pasaron no se registran.',
-                ),
+                title: Text(l10n.recurringBillsPaused),
+                subtitle: Text(l10n.recurringBillsPausedHint),
                 value: _paused,
                 onChanged: (value) => setState(() => _paused = value),
               ),
@@ -328,7 +326,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar factura recurrente'),
+                child: Text(l10n.recurringBillsDelete),
               ),
             ],
           ],

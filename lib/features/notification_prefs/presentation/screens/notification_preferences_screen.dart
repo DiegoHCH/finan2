@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../viewmodels/notification_prefs_providers.dart';
 
 class NotificationPreferencesScreen extends ConsumerWidget {
@@ -20,9 +21,9 @@ class NotificationPreferencesScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(
-              label: 'Notificaciones',
-              title: 'Preferencias',
+            Finan2AppTop(
+              label: context.l10n.notificationsTitle,
+              title: context.l10n.notificationPrefsTitle,
               showBackButton: true,
             ),
             Expanded(
@@ -35,7 +36,7 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'RECORDATORIOS',
+                        context.l10n.notificationPrefsRemindersHeader,
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -48,7 +49,7 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                       children: [
                         _ToggleRow(
                           icon: Icons.notifications_outlined,
-                          label: 'Recordatorio diario',
+                          label: context.l10n.notificationPrefsDailyReminder,
                           value: prefs.dailyReminder,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(dailyReminder: v)),
@@ -76,14 +77,14 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                         ),
                         _ToggleRow(
                           icon: Icons.credit_card_outlined,
-                          label: 'Pagos de deudas',
+                          label: context.l10n.notificationPrefsDebtPayments,
                           value: prefs.debtPayments,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(debtPayments: v)),
                         ),
                         _ToggleRow(
                           icon: Icons.track_changes_outlined,
-                          label: 'Avance de metas',
+                          label: context.l10n.notificationPrefsGoalProgress,
                           value: prefs.goalProgress,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(goalProgress: v)),
@@ -94,7 +95,7 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
-                        'ALERTAS',
+                        context.l10n.notificationPrefsAlertsHeader,
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -107,21 +108,21 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                       children: [
                         _ToggleRow(
                           icon: Icons.warning_amber_outlined,
-                          label: 'Exceso de presupuesto',
+                          label: context.l10n.notificationPrefsBudgetExceeded,
                           value: prefs.budgetExceeded,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(budgetExceeded: v)),
                         ),
                         _ToggleRow(
                           icon: Icons.people_outline,
-                          label: 'Actividad de mi pareja',
+                          label: context.l10n.notificationPrefsPartnerActivity,
                           value: prefs.partnerActivity,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(partnerActivity: v)),
                         ),
                         _ToggleRow(
                           icon: Icons.bar_chart_outlined,
-                          label: 'Resumen semanal',
+                          label: context.l10n.notificationPrefsWeeklySummary,
                           value: prefs.weeklySummary,
                           onChanged: (v) =>
                               notifier.updatePrefs((c) => c.copyWith(weeklySummary: v)),

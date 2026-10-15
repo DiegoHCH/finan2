@@ -6,6 +6,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -47,8 +48,8 @@ class RecurringBillsScreen extends ConsumerWidget {
                     .where((b) => b.type != CategoryType.ingreso && b.isActiveOn(now))
                     .fold(0, (sum, b) => sum + b.monthlyAmount);
                 return Finan2AppTop(
-                  label: 'Facturas recurrentes',
-                  title: '${formatMoney(totalFactura)} al mes',
+                  label: context.l10n.recurringBillsTitle,
+                  title: context.l10n.recurringBillsMonthlyTotal(formatMoney(totalFactura)),
                   trailing: bills.isEmpty ? null : const _AutoBadge(),
                   showBackButton: true,
                 );
@@ -62,11 +63,9 @@ class RecurringBillsScreen extends ConsumerWidget {
                   if (bills.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.autorenew,
-                      title: 'Aún no hay facturas recurrentes',
-                      description:
-                          'Programa el arriendo, servicios o el sueldo para que '
-                          'se registren solos cada mes.',
-                      actionLabel: '+ Nueva factura recurrente',
+                      title: context.l10n.recurringBillsEmptyTitle,
+                      description: context.l10n.recurringBillsEmptyDescription,
+                      actionLabel: context.l10n.recurringBillsEmptyAction,
                       onAction: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen()),
                       ),
@@ -89,9 +88,9 @@ class RecurringBillsScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Se registran solas',
-                              style: TextStyle(
+                            Text(
+                              context.l10n.recurringBillsAutoLogged,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -103,7 +102,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                                     .where((b) => b.isActiveOn(DateTime.now()))
                                     .length;
                                 return Text(
-                                  '$active activa${active == 1 ? '' : 's'}',
+                                  context.l10n.recurringBillsActiveCount(active),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 21,
@@ -165,7 +164,7 @@ class _AutoBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
       child: Text(
-        'Auto',
+        context.l10n.recurringBillsAutoBadge,
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w700,
@@ -194,11 +193,15 @@ class _BillRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isIncome = bill.type == CategoryType.ingreso;
-    final schedule = describeSchedule(frequency: bill.frequency, start: scheduleAnchor(bill));
+    final schedule = describeSchedule(
+      frequency: bill.frequency,
+      start: scheduleAnchor(bill),
+      l10n: context.l10n,
+    );
     final status = bill.paused
-        ? 'en pausa'
+        ? context.l10n.recurringBillsStatusPaused
         : bill.hasEndedBy(DateTime.now())
-        ? 'terminada'
+        ? context.l10n.recurringBillsStatusEnded
         : schedule;
 
     return Finan2TransactionRow(

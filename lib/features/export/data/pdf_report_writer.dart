@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../../l10n/l10n.dart';
 import 'report_builder.dart';
 
 class PdfReportWriter {
@@ -27,7 +28,7 @@ class PdfReportWriter {
             pw.SizedBox(height: 6),
             if (section.rows.isEmpty)
               pw.Text(
-                'Sin datos para este período.',
+                currentL10n.exportNoData,
                 style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
               )
             else

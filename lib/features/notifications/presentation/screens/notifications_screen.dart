@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
+import '../../../../l10n/l10n.dart';
 import '../../data/notification_model.dart';
 import '../viewmodels/notification_providers.dart';
 
@@ -21,8 +22,10 @@ class NotificationsScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Notificaciones',
-              title: unreadCount > 0 ? '$unreadCount nuevas' : 'Al día',
+              label: context.l10n.notificationsTitle,
+              title: unreadCount > 0
+                  ? context.l10n.notificationsNewCount(unreadCount)
+                  : context.l10n.notificationsUpToDate,
               trailing: unreadCount > 0
                   ? GestureDetector(
                       onTap: () => ref.read(notificationControllerProvider.notifier).markAllRead(),
@@ -33,7 +36,7 @@ class NotificationsScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          'Marcar leídas',
+                          context.l10n.notificationsMarkAllRead,
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -56,8 +59,7 @@ class NotificationsScreen extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(Finan2Space.xl),
                         child: Text(
-                          'Aún no hay notificaciones. Aquí verás avisos de pagos, '
-                          'metas y presupuesto.',
+                          context.l10n.notificationsEmpty,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 13, color: colors.inkSoft),
                         ),
@@ -149,7 +151,7 @@ class _NotificationRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _relativeTime(notification.createdAt).toUpperCase(),
+                  _relativeTime(context.l10n, notification.createdAt).toUpperCase(),
                   style: TextStyle(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w600,
@@ -166,14 +168,16 @@ class _NotificationRow extends StatelessWidget {
   }
 }
 
-String _relativeTime(DateTime date) {
+String _relativeTime(AppLocalizations l10n, DateTime date) {
   final now = DateTime.now();
   final diff = now.difference(date);
-  if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes.clamp(1, 59)} min';
+  if (diff.inMinutes < 60) return l10n.notificationsMinutesAgo(diff.inMinutes.clamp(1, 59));
   final today = DateTime(now.year, now.month, now.day);
   final thatDay = DateTime(date.year, date.month, date.day);
   final days = today.difference(thatDay).inDays;
-  if (days <= 0) return diff.inHours < 24 ? 'Hace ${diff.inHours} h' : 'Hoy';
-  if (days == 1) return 'Ayer';
-  return 'Hace $days d';
+  if (days <= 0) {
+    return diff.inHours < 24 ? l10n.notificationsHoursAgo(diff.inHours) : l10n.notificationsToday;
+  }
+  if (days == 1) return l10n.notificationsYesterday;
+  return l10n.notificationsDaysAgo(days);
 }

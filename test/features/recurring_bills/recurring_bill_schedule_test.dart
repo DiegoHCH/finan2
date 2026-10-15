@@ -1,6 +1,8 @@
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
 import 'package:finan2/features/recurring_bills/presentation/recurring_schedule_label.dart';
+import 'package:finan2/l10n/l10n.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -129,5 +131,19 @@ void main() {
       describeSchedule(frequency: RecurringFrequency.yearly, start: DateTime(2026, 3, 3)),
       'cada año, 3 de marzo',
     );
+  });
+
+  test('describeSchedule and frequencyLabel follow the language', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    expect(
+      describeSchedule(
+        frequency: RecurringFrequency.semimonthly,
+        start: DateTime(2026, 10, 15),
+        l10n: en,
+      ),
+      'on days 15 and 30',
+    );
+    expect(frequencyLabel(RecurringFrequency.semimonthly, l10n: en), 'Twice a month');
+    expect(frequencyLabel(RecurringFrequency.semimonthly), 'Quincenal');
   });
 }
