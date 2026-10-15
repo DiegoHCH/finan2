@@ -149,10 +149,16 @@ service cloud.firestore {
 
       // year/month aren't checked against date: they're the device's local
       // calendar, the timestamp is UTC.
+      // Mirrors maxTagsPerMovement in lib/features/transactions/data/tags.dart.
+      function maxTags() {
+        return 10;
+      }
+
       function validTransaction() {
         let d = request.resource.data;
         return hasExactly(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
-                           'description', 'date', 'year', 'month', 'paidBy', 'createdBy'])
+                           'description', 'date', 'year', 'month', 'paidBy', 'tags',
+                           'createdBy'])
           && encryptedAmount(d.amount)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.categoryId, 100)
@@ -160,6 +166,7 @@ service cloud.firestore {
           && text(d.cardDebtId, 100)
           && text(d.description, 1000)
           && text(d.paidBy, 128)
+          && d.tags is list && d.tags.size() <= maxTags()
           && d.date is timestamp
           && d.year is int
           && d.month is int && d.month >= 1 && d.month <= 12;

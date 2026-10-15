@@ -10,10 +10,11 @@ class MovementFilter {
     this.categoryId,
     this.sourceId,
     this.payer,
+    this.tag,
   });
 
-  /// Matched against the description, the category's name and - when it's
-  /// all digits - the amount.
+  /// Matched against the description, the category's name, the tags and -
+  /// when it's all digits - the amount.
   final String query;
 
   /// Empty means every type.
@@ -23,6 +24,7 @@ class MovementFilter {
   /// An account or a credit card - a movement targets exactly one.
   final String? sourceId;
   final String? payer;
+  final String? tag;
 
   bool get hasQuery => query.trim().isNotEmpty;
 
@@ -31,7 +33,8 @@ class MovementFilter {
       (types.isEmpty ? 0 : 1) +
       (categoryId == null ? 0 : 1) +
       (sourceId == null ? 0 : 1) +
-      (payer == null ? 0 : 1);
+      (payer == null ? 0 : 1) +
+      (tag == null ? 0 : 1);
 
   bool get isEmpty => !hasQuery && activeFilterCount == 0;
 
@@ -41,6 +44,7 @@ class MovementFilter {
     String? Function()? categoryId,
     String? Function()? sourceId,
     String? Function()? payer,
+    String? Function()? tag,
   }) =>
       MovementFilter(
         query: query ?? this.query,
@@ -48,6 +52,7 @@ class MovementFilter {
         categoryId: categoryId != null ? categoryId() : this.categoryId,
         sourceId: sourceId != null ? sourceId() : this.sourceId,
         payer: payer != null ? payer() : this.payer,
+        tag: tag != null ? tag() : this.tag,
       );
 
   /// Keeps only the text query - what "Limpiar filtros" leaves behind.
@@ -60,11 +65,16 @@ class MovementFilter {
       return false;
     }
     if (payer != null && tx.payer != payer) return false;
+    if (tag != null && !tx.tags.contains(tag)) return false;
     if (!hasQuery) return true;
 
     final needle = foldForSearch(query.trim());
     if (foldForSearch(tx.description).contains(needle)) return true;
     if (foldForSearch(categoryName).contains(needle)) return true;
+    final bareNeedle = needle.startsWith('#') ? needle.substring(1) : needle;
+    if (bareNeedle.isNotEmpty && tx.tags.any((t) => foldForSearch(t).contains(bareNeedle))) {
+      return true;
+    }
     // "50.000" and "50000" both find a 50000 movement.
     final digits = needle.replaceAll(RegExp(r'[.,\s$]'), '');
     return RegExp(r'^\d+$').hasMatch(digits) && tx.amount.toString().contains(digits);

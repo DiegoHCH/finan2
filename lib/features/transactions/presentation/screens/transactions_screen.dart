@@ -20,6 +20,7 @@ import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
 import '../../data/movement_filter.dart';
+import '../../data/tags.dart';
 import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
 import '../widgets/movement_search_bar.dart';
@@ -191,6 +192,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   for (final d in ref.watch(debtsProvider).value ?? const [])
                     if (d.type.isCard) d,
                 ],
+                tags: tagsByUse(allTransactions),
                 household: household,
                 onQueryChanged: (q) => setState(() => _filter = _filter.copyWith(query: q)),
                 onFilterChanged: (f) => setState(() => _filter = f),
@@ -288,8 +290,11 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                       description: tx.description.isEmpty
                                           ? (category?.name ?? '')
                                           : tx.description,
-                                      subLabel:
-                                          '${category?.name ?? ''} · ${DateFormat('dd MMM', 'es').format(tx.date)}',
+                                      subLabel: [
+                                        category?.name ?? '',
+                                        DateFormat('dd MMM', 'es').format(tx.date),
+                                        ...tx.tags.map((t) => '#$t'),
+                                      ].join(' · '),
                                       avatarLabel: memberName.isEmpty
                                           ? '?'
                                           : memberName.substring(0, 1).toUpperCase(),

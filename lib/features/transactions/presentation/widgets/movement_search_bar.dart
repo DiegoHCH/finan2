@@ -18,6 +18,7 @@ class MovementSearchBar extends StatelessWidget {
     required this.categories,
     required this.accounts,
     required this.cards,
+    required this.tags,
     required this.household,
     super.key,
   });
@@ -29,6 +30,9 @@ class MovementSearchBar extends StatelessWidget {
   final List<Category> categories;
   final List<Account> accounts;
   final List<Debt> cards;
+
+  /// Tags in the movements being browsed, most used first.
+  final List<String> tags;
   final Household? household;
 
   Future<void> _openFilters(BuildContext context) async {
@@ -40,6 +44,7 @@ class MovementSearchBar extends StatelessWidget {
         categories: categories,
         accounts: accounts,
         cards: cards,
+        tags: [...tags, if (filter.tag != null && !tags.contains(filter.tag)) filter.tag!],
         household: household,
       ),
     );
@@ -138,6 +143,7 @@ class _FilterSheet extends StatefulWidget {
     required this.categories,
     required this.accounts,
     required this.cards,
+    required this.tags,
     required this.household,
   });
 
@@ -145,6 +151,7 @@ class _FilterSheet extends StatefulWidget {
   final List<Category> categories;
   final List<Account> accounts;
   final List<Debt> cards;
+  final List<String> tags;
   final Household? household;
 
   @override
@@ -254,6 +261,27 @@ class _FilterSheetState extends State<_FilterSheet> {
                         onTap: () => setState(() {
                           _filter = _filter.copyWith(
                             sourceId: () => _filter.sourceId == id ? null : id,
+                          );
+                        }),
+                      ),
+                  ],
+                ),
+              ],
+              if (widget.tags.isNotEmpty) ...[
+                const SizedBox(height: Finan2Space.lg),
+                Text('Etiqueta', style: labelStyle),
+                const SizedBox(height: Finan2Space.sm),
+                Wrap(
+                  spacing: 7,
+                  runSpacing: 7,
+                  children: [
+                    for (final tag in widget.tags)
+                      Finan2Chip(
+                        label: '#$tag',
+                        selected: _filter.tag == tag,
+                        onTap: () => setState(() {
+                          _filter = _filter.copyWith(
+                            tag: () => _filter.tag == tag ? null : tag,
                           );
                         }),
                       ),
