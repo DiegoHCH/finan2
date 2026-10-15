@@ -72,6 +72,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return;
     state = const AsyncLoading();
+    final setup = ref.read(householdSetupProvider.notifier)..expect();
     state = await AsyncValue.guard(() async {
       final (household, inviteCode) =
           await ref.read(householdRepositoryProvider).createHousehold(
@@ -84,6 +85,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
       final key =
           await ref.read(householdCryptoProvider).generateKey(household.id);
       lastShareCode = '$inviteCode.$key';
+      setup.ready(lastShareCode!);
       // Separate write: the category rules check membership against the
       // household as stored, so it has to exist first. Not worth failing
       // the household over - categories can always be added by hand.
@@ -94,6 +96,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
       }
       return household;
     });
+    if (state.hasError) setup.finish();
   }
 
   Future<void> joinHousehold({required String code}) async {
@@ -267,3 +270,25 @@ final householdControllerProvider =
     AsyncNotifierProvider<HouseholdController, Household?>(
   HouseholdController.new,
 );
+
+/// The setup after creating a household (HouseholdSetupScreen). The home
+/// screen opens it - the create/join screen is gone by then, replaced as
+/// soon as the household exists - and holds its own first-run sheets (the
+/// notification primer) while [active].
+typedef HouseholdSetupState = ({bool active, String? shareCode});
+
+final householdSetupProvider =
+    NotifierProvider<HouseholdSetup, HouseholdSetupState>(HouseholdSetup.new);
+
+class HouseholdSetup extends Notifier<HouseholdSetupState> {
+  @override
+  HouseholdSetupState build() => (active: false, shareCode: null);
+
+  /// Before the household exists, so the home screen knows it's coming.
+  void expect() => state = (active: true, shareCode: null);
+
+  /// [shareCode] is what the setup ends up inviting the partner with.
+  void ready(String shareCode) => state = (active: true, shareCode: shareCode);
+
+  void finish() => state = (active: false, shareCode: null);
+}

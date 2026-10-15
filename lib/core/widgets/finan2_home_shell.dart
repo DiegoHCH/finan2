@@ -11,6 +11,7 @@ import '../../features/categories/presentation/viewmodels/category_providers.dar
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/debts/presentation/screens/debts_screen.dart';
 import '../../features/debts/presentation/viewmodels/debt_providers.dart';
+import '../../features/household/presentation/screens/household_setup_screen.dart';
 import '../../features/household/data/household_model.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
 import '../../features/investments/presentation/viewmodels/investment_providers.dart';
@@ -56,6 +57,8 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   /// data encryption key yet - awaited before the notification primer sheet
   /// below so the two never fight over showing a bottom sheet at once.
   Future<void> _maybeShowMissingKeySheet() async {
+    // Creating it right now: the key may not be stored yet, but it will be.
+    if (ref.read(householdSetupProvider).active) return;
     final hasKey =
         await ref.read(householdCryptoProvider).hasKey(widget.household.id);
     if (hasKey || !mounted) return;
@@ -130,7 +133,26 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   /// permission prompt automatically on first launch - shows our own
   /// explainer bottom sheet once, right before that happens, instead of
   /// hitting the user with a bare system dialog with no context.
+  var _setupOpen = false;
+
+  /// Right after creating the household - see householdSetupProvider.
+  void _openSetup() {
+    final shareCode = ref.read(householdSetupProvider).shareCode;
+    if (shareCode == null || _setupOpen || !mounted) return;
+    _setupOpen = true;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)),
+    );
+  }
+
+  /// The primer waited for HouseholdSetupScreen to finish.
+  var _primerDeferred = false;
+
   Future<void> _maybeRegisterPushToken() async {
+    if (ref.read(householdSetupProvider).active) {
+      _primerDeferred = true;
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(_notifPrimerShownKey) == true) {
       await _registerPushToken();
@@ -161,6 +183,8 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   void initState() {
     super.initState();
     Future.microtask(() async {
+      // Created a moment ago and the share code is already there.
+      _openSetup();
       await _maybeShowMissingKeySheet();
       _runScan();
       _rescheduleDebtReminders();
@@ -193,6 +217,13 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     ref.listen(recurringBillsProvider, (previous, next) {
       _runScan();
       _runRecurringBillScan();
+    });
+    ref.listen(householdSetupProvider, (previous, next) {
+      if (next.shareCode != null && previous?.shareCode == null) _openSetup();
+      if (!next.active && _primerDeferred) {
+        _primerDeferred = false;
+        _maybeRegisterPushToken();
+      }
     });
     ref.listen(pendingBillsProvider, (previous, next) {
       if (next.value?.isNotEmpty ?? false) _runRecurringBillScan();
