@@ -71,7 +71,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       title: 'Restaurar la copia',
       message:
           'El hogar volverá a como estaba el '
-          '${DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es').format(info.createdAt)}. '
+          '${DateFormat.yMMMMd().add_jm().format(info.createdAt)}. '
           'Lo que se haya creado después se borra y lo que cambió vuelve a '
           'como estaba, también para tu pareja.',
       confirmLabel: 'Restaurar',

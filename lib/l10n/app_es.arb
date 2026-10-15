@@ -1,0 +1,5 @@
+{
+  "@@locale": "es",
+  "appTitle": "Finan2",
+  "@appTitle": {"description": "App name, shown by the OS in the task switcher."}
+}

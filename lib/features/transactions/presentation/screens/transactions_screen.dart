@@ -276,7 +276,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                           : tx.description,
                                       subLabel: [
                                         category?.name ?? '',
-                                        DateFormat('dd MMM', 'es').format(tx.date),
+                                        DateFormat('dd MMM').format(tx.date),
                                         ...tx.tags.map((t) => '#$t'),
                                       ].join(' · '),
                                       avatarLabel: memberName.isEmpty

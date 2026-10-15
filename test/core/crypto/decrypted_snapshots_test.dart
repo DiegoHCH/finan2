@@ -11,10 +11,14 @@ void main() {
 
     final decoded = <String>[];
     final lists = <List<int>>[];
-    final sub = col.orderBy('v').snapshots().decryptEach((doc) async {
-      decoded.add(doc.id);
-      return doc.data()!['v'] as int;
-    }).listen(lists.add);
+    final sub = col
+        .orderBy('v')
+        .snapshots()
+        .decryptEach((doc) async {
+          decoded.add(doc.id);
+          return doc.data()!['v'] as int;
+        })
+        .listen(lists.add);
 
     await pumpEventQueue();
     expect(lists.last, [1, 2]);

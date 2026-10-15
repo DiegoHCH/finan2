@@ -36,7 +36,7 @@ class DashboardScreen extends ConsumerWidget {
         totalInvestments -
         ref.watch(totalDebtProvider);
 
-    final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
+    final monthLabel = DateFormat.MMMM().format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
     return Scaffold(

@@ -180,7 +180,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                     label: 'Fecha meta',
                     value: _targetDate == null
                         ? 'Sin fecha'
-                        : DateFormat('MMM yyyy', 'es').format(_targetDate!),
+                        : DateFormat('MMM yyyy').format(_targetDate!),
                     onTap: _pickTargetDate,
                   ),
                 ),

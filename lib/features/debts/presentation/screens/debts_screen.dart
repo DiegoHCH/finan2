@@ -143,7 +143,7 @@ class _FreeDateBanner extends StatelessWidget {
     final String label;
     final String value;
     if (freeDate != null) {
-      final formatted = DateFormat.yMMMM('es').format(freeDate!);
+      final formatted = DateFormat.yMMMM().format(freeDate!);
       label = '¡Libre de deudas en!';
       value = '${formatted[0].toUpperCase()}${formatted.substring(1)}';
     } else {

@@ -177,6 +177,6 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
 }
 
 String _monthInitial(int month) {
-  final name = DateFormat.MMMM('es').format(DateTime(2000, month));
+  final name = DateFormat.MMMM().format(DateTime(2000, month));
   return name[0].toUpperCase();
 }

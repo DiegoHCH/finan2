@@ -92,7 +92,7 @@ class TransferHistoryScreen extends ConsumerWidget {
                           description:
                               '${accountName(transfer.fromAccountId)} → '
                               '${accountName(transfer.toAccountId)}',
-                          subLabel: DateFormat('dd MMM yyyy', 'es').format(transfer.date),
+                          subLabel: DateFormat('dd MMM yyyy').format(transfer.date),
                           amountText: formatMoney(transfer.amount),
                           amountColor: colors.ink,
                           onTap: () => _delete(context, ref, transfer),

@@ -311,7 +311,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
               label: 'Fecha',
-              value: DateFormat('dd MMM yyyy', 'es').format(_date),
+              value: DateFormat('dd MMM yyyy').format(_date),
               onTap: _pickDate,
             ),
             const SizedBox(height: Finan2Space.lg),

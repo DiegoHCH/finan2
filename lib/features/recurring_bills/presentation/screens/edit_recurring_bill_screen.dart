@@ -282,7 +282,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
               label: isEditing ? 'Desde' : 'Primera vez',
-              value: DateFormat('dd MMM yyyy', 'es').format(_startDate),
+              value: DateFormat('dd MMM yyyy').format(_startDate),
               onTap: _pickStart,
             ),
             const SizedBox(height: Finan2Space.xs),
@@ -298,7 +298,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                     label: 'Hasta',
                     value: _endDate == null
                         ? 'Sin fecha de fin'
-                        : DateFormat('dd MMM yyyy', 'es').format(_endDate!),
+                        : DateFormat('dd MMM yyyy').format(_endDate!),
                     onTap: _pickEnd,
                   ),
                 ),

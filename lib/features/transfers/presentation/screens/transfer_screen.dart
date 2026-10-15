@@ -165,7 +165,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
               label: 'Fecha',
-              value: DateFormat('dd MMM yyyy', 'es').format(_date),
+              value: DateFormat('dd MMM yyyy').format(_date),
               onTap: _pickDate,
             ),
           ],

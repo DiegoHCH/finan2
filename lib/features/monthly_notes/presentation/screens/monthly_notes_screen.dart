@@ -17,7 +17,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
     final notesAsync = ref.watch(currentMonthNotesProvider);
     final household = ref.watch(currentHouseholdProvider).value;
     final now = DateTime.now();
-    final monthLabel = DateFormat.yMMMM('es').format(now);
+    final monthLabel = DateFormat.yMMMM().format(now);
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
     return Scaffold(

@@ -43,7 +43,7 @@ class DebtDetailScreen extends ConsumerWidget {
     if (current.balance <= 0) {
       statusText = 'deuda pagada';
     } else if (schedule.isNotEmpty && schedule.last.endingBalance <= 0) {
-      final formatted = DateFormat.yMMMM('es').format(schedule.last.month);
+      final formatted = DateFormat.yMMMM().format(schedule.last.month);
       statusText = 'libre en ${formatted[0].toUpperCase()}${formatted.substring(1)}';
     } else {
       statusText = 'no alcanza a pagar con los abonos actuales';
@@ -404,7 +404,7 @@ class _CardPaymentRow extends ConsumerWidget {
                   style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  DateFormat('dd MMM yyyy', 'es').format(payment.date),
+                  DateFormat('dd MMM yyyy').format(payment.date),
                   style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
                 ),
               ],
@@ -498,6 +498,6 @@ class _ScheduleRow extends ConsumerWidget {
 }
 
 String _monthAbbrev(DateTime date) {
-  final raw = DateFormat('MMM', 'es').format(date).replaceAll('.', '');
+  final raw = DateFormat('MMM').format(date).replaceAll('.', '');
   return raw.isEmpty ? raw : '${raw[0].toUpperCase()}${raw.substring(1)}';
 }

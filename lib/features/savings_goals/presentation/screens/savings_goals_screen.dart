@@ -209,6 +209,6 @@ class _GoalCard extends StatelessWidget {
 }
 
 String _monthYearLabel(DateTime date) {
-  final month = DateFormat('MMM', 'es').format(date).replaceAll('.', '');
+  final month = DateFormat('MMM').format(date).replaceAll('.', '');
   return '$month ${date.year}';
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 
 /// The auto-created "Web client" OAuth ID for the finan2 Firebase project
 /// (from android/app/google-services.json's oauth_client, client_type 3 -
@@ -22,7 +23,7 @@ class AuthRepository {
     // Controls the language of every email/SMS Firebase Auth sends on our
     // behalf (password reset, email verification...) - without this it
     // defaults to English regardless of the device's locale.
-    _auth.setLanguageCode('es');
+    _auth.setLanguageCode(Intl.defaultLocale ?? 'es');
   }
 
   final FirebaseAuth _auth;
