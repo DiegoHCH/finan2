@@ -1,4 +1,5 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
@@ -202,13 +203,21 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     // FCM doesn't surface a system-tray alert for messages that arrive while
     // the app is foregrounded - show it ourselves the same way local
     // reminders already are.
-    FirebaseMessaging.onMessage.listen((message) {
+    _foregroundPushes = ref.read(foregroundPushesProvider).listen((message) {
       final notification = message.notification;
       if (notification == null) return;
       ref
           .read(notificationServiceProvider)
           .showNow(title: notification.title ?? '', body: notification.body ?? '');
     });
+  }
+
+  StreamSubscription<Object?>? _foregroundPushes;
+
+  @override
+  void dispose() {
+    _foregroundPushes?.cancel();
+    super.dispose();
   }
 
   @override

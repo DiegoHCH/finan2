@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'notification_service.dart';
@@ -9,4 +10,10 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 
 final pushServiceProvider = Provider<PushService>((ref) {
   return PushService();
+});
+
+/// Pushes that arrive while the app is in the foreground - a provider so
+/// tests without Firebase can replace it.
+final foregroundPushesProvider = Provider<Stream<RemoteMessage>>((ref) {
+  return FirebaseMessaging.onMessage;
 });
