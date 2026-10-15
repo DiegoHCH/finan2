@@ -4,8 +4,9 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_code_box.dart';
 
-/// Shown right after creating a household: the code the creator shares with
-/// their partner so they can join the same household.
+/// Shown after creating a household (or from its card in Ajustes): the invite
+/// a member shares with their partner so they can join. Invites expire after
+/// 7 days and only work once.
 ///
 /// [shareCode] is `<code>.<key>` - the short human-readable invite code the
 /// UI displays, plus the household's data encryption key riding along after
@@ -42,7 +43,7 @@ class InviteHouseholdScreen extends StatelessWidget {
               const SizedBox(height: Finan2Space.xs),
               Text(
                 'Comparte este código para que entre con su propia cuenta '
-                'al mismo hogar.',
+                'al mismo hogar. Sirve una sola vez y vence en 7 días.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -53,7 +54,7 @@ class InviteHouseholdScreen extends StatelessWidget {
               Finan2CodeBox(code: _displayCode),
               const SizedBox(height: Finan2Space.sm),
               Text(
-                'Usa el botón de copiar y envíalo por WhatsApp o mensaje - '
+                'Usa el botón de compartir y envíalo por WhatsApp o mensaje - '
                 'no lo dictes de viva voz, lleva pegada una llave más larga '
                 'que no se ve aquí. Sin el código completo, tu pareja no '
                 'podrá ver los montos.',

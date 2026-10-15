@@ -51,7 +51,7 @@ class _CreateJoinHouseholdScreenState
       if (!mounted) return;
       final state = ref.read(householdControllerProvider);
       final household = state.value;
-      final shareCode = controller.lastShareCode ?? household?.inviteCode;
+      final shareCode = controller.lastShareCode;
       if (household != null && shareCode != null) {
         await Navigator.of(context).push(
           MaterialPageRoute(
@@ -66,7 +66,8 @@ class _CreateJoinHouseholdScreenState
           context,
           title: 'Te uniste al hogar',
           message: 'Este código no traía la llave para ver montos. Pide a tu '
-              'pareja el código completo que copió al crear el hogar.',
+              'pareja que te comparta el código completo desde la tarjeta del '
+              'hogar en Ajustes.',
         );
       }
     }

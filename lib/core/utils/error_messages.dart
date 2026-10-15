@@ -25,10 +25,12 @@ String friendlyErrorMessage(Object? error) {
     }
   }
   if (error is HouseholdNotFoundException) {
-    return 'No encontramos un hogar con ese código.';
+    return 'Esa invitación no existe o ya venció. Pide a tu pareja una nueva '
+        'desde Ajustes.';
   }
   if (error is HouseholdFullException) {
-    return 'Ese hogar ya tiene 2 miembros.';
+    return 'No pudimos unirte: el hogar ya tiene 2 miembros o la invitación '
+        'dejó de ser válida.';
   }
   return 'Algo salió mal, intenta de nuevo.';
 }

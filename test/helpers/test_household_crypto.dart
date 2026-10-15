@@ -10,6 +10,9 @@ class InMemoryKeyStore implements Finan2KeyStore {
 
   @override
   Future<void> write(String key, String value) async => _values[key] = value;
+
+  @override
+  Future<void> delete(String key) async => _values.remove(key);
 }
 
 /// A [HouseholdCrypto] backed by [InMemoryKeyStore], with a key already

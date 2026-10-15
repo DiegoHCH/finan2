@@ -1,195 +1,333 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{db}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function householdPath(hid) {
+      return /databases/$(db)/documents/households/$(hid);
+    }
+
+    // Only the keys in [keys] differ between the stored and the written doc.
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // Single-use, expiring codes a member creates to bring their partner in
+    // (see HouseholdRepository.createInvite). Gettable by exact code only -
+    // 10 characters (50 bits) and a 7-day life put guessing out of reach.
+    match /invites/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['householdId', 'createdBy', 'expiresAt'])
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.expiresAt is timestamp
+        // 7 days from the client's clock, with room for a clock running fast.
+        && request.resource.data.expiresAt <= request.time + duration.value(14, 'd')
+        // getAfter: the household may be created in the same batch.
+        && request.auth.uid in getAfter(householdPath(request.resource.data.householdId)).data.members
+        && getAfter(householdPath(request.resource.data.householdId)).data.activeInvite == code;
+
+      allow update: if false;
+
+      // A member replacing or cleaning up the invite, or the partner
+      // consuming it in the same transaction that adds them.
+      allow delete: if signedIn()
+        && request.auth.uid in getAfter(householdPath(resource.data.householdId)).data.members;
+    }
+
     match /households/{hid} {
-      // Members can list/read their own household.
-      allow read: if request.auth != null
-        && request.auth.uid in resource.data.members;
+      function isMemberOfStored() {
+        return signedIn() && request.auth.uid in resource.data.members;
+      }
 
-      // Any signed-in user can fetch a household by its exact ID (the invite
-      // code) to join it. This does NOT allow listing/browsing households -
-      // Firestore only grants this for a direct get(), not a query.
-      allow get: if request.auth != null;
+      // Members only - a household is no longer readable by its ID alone.
+      allow read: if isMemberOfStored();
 
-      allow create: if request.auth != null
-        && request.resource.data.members == [request.auth.uid];
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(
+             ['name', 'members', 'memberInfo', 'settings', 'createdBy', 'activeInvite'])
+        && request.resource.data.members == [request.auth.uid]
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.memberInfo.keys().hasOnly([request.auth.uid]);
 
-      // A member can update freely. A non-member may only update to add
-      // themselves (and only themselves), and only while the household has
-      // room (max 2 members).
-      allow update: if request.auth != null && (
-        request.auth.uid in resource.data.members
+      allow update: if signedIn() && (
+        // A member editing the household: name, settings, the invite and
+        // their own entry in memberInfo. Membership and createdBy are fixed.
+        (
+          isMemberOfStored()
+          && onlyChanges(['name', 'settings', 'memberInfo', 'activeInvite'])
+          && request.resource.data.memberInfo.diff(resource.data.memberInfo)
+               .affectedKeys().hasOnly([request.auth.uid])
+        )
+        // A member leaving: removes only themselves.
         || (
-          resource.data.members.size() < 2
-          && request.auth.uid in request.resource.data.members
-          && request.resource.data.members.size() == resource.data.members.size() + 1
-          && request.resource.data.members.hasAll(resource.data.members)
+          isMemberOfStored()
+          && onlyChanges(['members', 'memberInfo'])
+          && request.resource.data.members == resource.data.members.removeAll([request.auth.uid])
+          && request.resource.data.members.size() == resource.data.members.size() - 1
+          && request.resource.data.memberInfo.diff(resource.data.memberInfo)
+               .affectedKeys().hasOnly([request.auth.uid])
+        )
+        // The partner joining with a valid, unexpired invite for this
+        // household while there's room (max 2 members).
+        || (
+          !isMemberOfStored()
+          && resource.data.members.size() < 2
+          && onlyChanges(['members', 'memberInfo', 'joinedVia', 'activeInvite'])
+          && request.resource.data.members == resource.data.members.concat([request.auth.uid])
+          && request.resource.data.memberInfo.diff(resource.data.memberInfo)
+               .affectedKeys().hasOnly([request.auth.uid])
+          && get(/databases/$(db)/documents/invites/$(request.resource.data.joinedVia)).data.householdId == hid
+          && get(/databases/$(db)/documents/invites/$(request.resource.data.joinedVia)).data.expiresAt > request.time
         )
       );
 
-      allow delete: if false;
-
-      // Read/update/delete: any household member, for every subcollection
-      // except `security` (the PIN-recovery doc below has its own, much
-      // stricter update rule - a member being allowed to freely rewrite it
-      // here would OR-bypass the attempt-count/lockout enforcement entirely,
-      // since Firestore grants access if *any* matching rule allows it).
-      // Create is defined per-subcollection below so we can enforce
-      // per-document integrity (e.g. transactions.createdBy) - a broader
-      // "allow write" here would OR-bypass those checks too.
-      match /{subcol}/{docId} {
-        allow read, update, delete: if request.auth != null
-          && subcol != 'security'
-          && request.auth.uid in
-             get(/databases/$(db)/documents/households/$(hid)).data.members;
-      }
+      // Only the last member, once every subcollection is emptied (see
+      // HouseholdRepository._wipeHousehold).
+      allow delete: if isMemberOfStored() && resource.data.members.size() == 1;
 
       function isMember() {
-        return request.auth != null
-          && request.auth.uid in
-             get(/databases/$(db)/documents/households/$(hid)).data.members;
+        return signedIn() && request.auth.uid in get(householdPath(hid)).data.members;
       }
 
-      match /categories/{catId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
+      function isSoleMember() {
+        return isMember() && get(householdPath(hid)).data.members.size() == 1;
       }
 
-      match /accounts/{accId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
+      // Records attributed to whoever created them: createdBy is set to the
+      // writer on create and never changes after.
+      function attributedCreate() {
+        return isMember() && request.resource.data.createdBy == request.auth.uid;
       }
 
-      match /transactions/{txId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
+      function attributedUpdate() {
+        return isMember()
+          && request.resource.data.get('createdBy', null) == resource.data.get('createdBy', null);
       }
 
-      match /debts/{debtId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
+      // Shape checks run on the document as it ends up after the write, so a
+      // partial update (an account's balance alone) passes as long as the
+      // result is still well-formed. Each model's toFirestore() writes every
+      // field, so all of them are required.
+      function hasExactly(keys) {
+        return request.resource.data.keys().hasOnly(keys)
+          && request.resource.data.keys().hasAll(keys);
       }
 
-      match /budgets/{budgetId} {
-        allow create: if isMember();
+      function text(v, max) {
+        return v is string && v.size() <= max;
+      }
+
+      // HouseholdCrypto.encryptAmount: base64url of a 12-byte nonce, the
+      // amount's digits and a 16-byte MAC.
+      function encryptedAmount(v) {
+        return v is string && v.size() >= 40 && v.size() <= 100;
+      }
+
+      function validCategory() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'icon', 'color', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
+          && text(d.icon, 50)
+          && d.color is int;
+      }
+
+      function validAccount() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'balance', 'includeInAvailable', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['efectivo', 'banco', 'billetera', 'debito']
+          && encryptedAmount(d.balance)
+          && d.includeInAvailable is bool;
+      }
+
+      // year/month aren't checked against date: they're the device's local
+      // calendar, the timestamp is UTC.
+      function validTransaction() {
+        let d = request.resource.data;
+        return hasExactly(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
+                           'description', 'date', 'year', 'month', 'createdBy'])
+          && encryptedAmount(d.amount)
+          && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
+          && text(d.categoryId, 100)
+          && text(d.accountId, 100)
+          && text(d.cardDebtId, 100)
+          && text(d.description, 1000)
+          && d.date is timestamp
+          && d.year is int
+          && d.month is int && d.month >= 1 && d.month <= 12;
+      }
+
+      // Days and installments aren't range-checked: the edit screen doesn't
+      // bound them either, and a rejected save would just look broken.
+      function validDebt() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'balance', 'hasBalance', 'rate', 'paymentDay',
+                           'creditLimit', 'minPayment', 'extraPayment', 'cutoffDay',
+                           'originalAmount', 'monthlyPayment', 'termMonths',
+                           'paidInstallments', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['tarjeta', 'credito', 'hipoteca', 'vehiculo']
+          && encryptedAmount(d.balance)
+          && d.hasBalance is bool
+          && d.rate is number
+          && d.paymentDay is int
+          && encryptedAmount(d.creditLimit)
+          && encryptedAmount(d.minPayment)
+          && encryptedAmount(d.extraPayment)
+          && d.cutoffDay is int
+          && encryptedAmount(d.originalAmount)
+          && encryptedAmount(d.monthlyPayment)
+          && d.termMonths is int
+          && d.paidInstallments is int;
+      }
+
+      // Rules can't loop over the contributions, so only the list itself is
+      // checked.
+      function validSavingsGoal() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'iconSlug', 'targetAmount', 'targetDate',
+                           'monthlyContribution', 'interestRate', 'contributions',
+                           'createdBy'])
+          && text(d.name, 200)
+          && text(d.iconSlug, 50)
+          && encryptedAmount(d.targetAmount)
+          && (d.targetDate == null || d.targetDate is timestamp)
+          && encryptedAmount(d.monthlyContribution)
+          && d.interestRate is number
+          && d.contributions is list;
+      }
+
+      match /categories/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate() && validCategory();
+        allow update: if attributedUpdate() && validCategory();
+      }
+
+      match /accounts/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate() && validAccount();
+        allow update: if attributedUpdate() && validAccount();
+      }
+
+      match /transactions/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate() && validTransaction();
+        allow update: if attributedUpdate() && validTransaction();
+      }
+
+      match /debts/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate() && validDebt();
+        allow update: if attributedUpdate() && validDebt();
+      }
+
+      match /savingsGoals/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate() && validSavingsGoal();
+        allow update: if attributedUpdate() && validSavingsGoal();
+      }
+
+      match /savingsChallenges/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate();
+        allow update: if attributedUpdate();
+      }
+
+      match /transfers/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate();
+        allow update: if attributedUpdate();
+      }
+
+      match /cardPayments/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate();
+        allow update: if attributedUpdate();
+      }
+
+      match /recurringBills/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate();
+        allow update: if attributedUpdate();
+      }
+
+      match /investments/{docId} {
+        allow read, delete: if isMember();
+        allow create: if attributedCreate();
+        allow update: if attributedUpdate();
+      }
+
+      // Shared, not attributed to anyone.
+      match /budgets/{docId} {
+        allow read, write: if isMember();
+      }
+
+      match /monthlyNotes/{docId} {
+        allow read, write: if isMember();
+      }
+
+      match /notifications/{docId} {
+        allow read, write: if isMember();
       }
 
       // Plaintext "is X over budget / near its goal" flags a client
       // recomputes and writes at transaction/contribution time (see
       // TransactionRepository._refreshBudgetAlert and
       // SavingsGoalRepository._refreshGoalNearAlert) so the Worker's cron
-      // can push about them without ever seeing the encrypted amounts -
-      // not user-attributed, so no createdBy check.
-      match /budgetAlerts/{alertId} {
-        allow create: if isMember();
+      // can push about them without ever seeing the encrypted amounts.
+      match /budgetAlerts/{docId} {
+        allow read, write: if isMember();
       }
 
-      match /goalAlerts/{goalId} {
-        allow create: if isMember();
+      match /goalAlerts/{docId} {
+        allow read, write: if isMember();
       }
 
-      match /savingsGoals/{goalId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /savingsChallenges/{challengeId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /notifications/{notificationId} {
-        allow create: if isMember();
-      }
-
-      match /transfers/{transferId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /cardPayments/{paymentId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /recurringBills/{billId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /investments/{investmentId} {
-        allow create: if isMember()
-          && request.resource.data.createdBy == request.auth.uid;
-      }
-
-      match /monthlyNotes/{noteId} {
-        allow create: if isMember();
-      }
-
+      // Doc ID is the push token. Each member only sees and manages their
+      // own devices; the last member may clear everything when deleting the
+      // household. The Worker reads these as a service account.
       match /fcmTokens/{token} {
-        allow create: if isMember()
+        allow read, delete: if isMember()
+          && (resource.data.uid == request.auth.uid || isSoleMember());
+        allow create, update: if isMember()
           && request.resource.data.uid == request.auth.uid;
       }
 
-      // Doc ID is the member's own uid - only they can create/overwrite
-      // their own scheduling prefs, mirrored here so the reminder Cron
-      // Trigger in cloudflare/finan2-notifications/worker.js can read them
-      // (it authenticates as a service account, which isn't subject to
-      // these rules at all - this only gates the client SDK writes).
+      // Doc ID is the member's own uid - their scheduling prefs, mirrored
+      // here for the reminder cron in cloudflare/finan2-notifications.
       match /memberPrefs/{uid} {
-        allow create: if isMember() && uid == request.auth.uid;
+        allow read, delete: if isMember()
+          && (uid == request.auth.uid || isSoleMember());
+        allow create, update: if isMember() && uid == request.auth.uid;
       }
 
-      // The household key wrapped under a 6-digit PIN (see
-      // HouseholdCrypto.wrapKeyWithPin), for cross-device recovery when a
-      // device loses its local copy. `attempts`/`lockedUntil` enforce a
-      // 3-tries/1h lockout server-side, so a client with only normal member
-      // access (e.g. a stolen session) can't bypass it by just resetting the
-      // counter itself the way the blanket `{subcol}/{docId}` rule above
-      // would otherwise allow.
-      match /security/pinRecovery {
-        allow read: if isMember();
+      // Dedup markers only the Worker writes (as a service account).
+      match /sentReminders/{docId} {
+        allow read, delete: if isMember();
+        allow create, update: if false;
+      }
 
-        allow create: if isMember()
-          && request.resource.data.attempts == 0
-          && request.resource.data.lockedUntil == null;
-
-        allow update: if isMember() && (
-          // Setting a brand-new PIN (fresh wrap) always resets the counter.
-          // This can't be used to brute-force the *old* wrap - only a device
-          // that already holds the plaintext key can produce a wrap worth
-          // anything, so this replaces/destroys the old one rather than
-          // revealing it.
-          (
-            request.resource.data.salt != resource.data.salt
-            && request.resource.data.attempts == 0
-            && request.resource.data.lockedUntil == null
-          )
-          // Recording one more failed guess against the *current* wrap -
-          // rejected outright while locked out.
-          || (
-            request.resource.data.salt == resource.data.salt
-            && request.resource.data.wrappedKey == resource.data.wrappedKey
-            && resource.data.lockedUntil == null
-            && request.resource.data.attempts == resource.data.attempts + 1
-            && request.resource.data.lockedUntil == (
-              request.resource.data.attempts >= 3
-                ? request.time + duration.value(1, 'h')
-                : null
-            )
-          )
-          // The lockout has genuinely expired (server clock, not the
-          // client's) - allowed to reset back to a clean slate against the
-          // *same* wrap, nothing else changing in the same write.
-          || (
-            request.resource.data.salt == resource.data.salt
-            && request.resource.data.wrappedKey == resource.data.wrappedKey
-            && resource.data.lockedUntil != null
-            && request.time > resource.data.lockedUntil
-            && request.resource.data.attempts == 0
-            && request.resource.data.lockedUntil == null
-          )
-        );
+      // The household key wrapped under its recovery phrase (see
+      // HouseholdCrypto.wrapKeyWithRecoveryPhrase). 128 bits of phrase make
+      // an offline sweep hopeless, so members can read it freely. Only a
+      // device that already holds the key can produce a wrap worth anything,
+      // so replacing it can't be used to read the old one.
+      match /security/recovery {
+        allow read, delete: if isMember();
+        allow create, update: if isMember()
+          && request.resource.data.keys().hasOnly(['salt', 'wrappedKey', 'createdBy', 'updatedAt'])
+          // 16-byte salt and 12+32+16-byte AES-GCM box, base64url.
+          && request.resource.data.salt is string
+          && request.resource.data.salt.size() == 24
+          && request.resource.data.wrappedKey is string
+          && request.resource.data.wrappedKey.size() == 80
+          && request.resource.data.createdBy == request.auth.uid;
       }
     }
   }

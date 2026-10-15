@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/pwa/pwa_providers.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -14,6 +14,7 @@ import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../budget/presentation/screens/budget_screen.dart';
 import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../household/data/household_model.dart';
+import '../../../household/presentation/screens/invite_household_screen.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../export/presentation/screens/export_screen.dart';
 import '../../../investments/presentation/screens/investments_screen.dart';
@@ -71,8 +72,9 @@ class SettingsScreen extends ConsumerWidget {
                                 Expanded(
                                   child: Text(
                                     'Este dispositivo no tiene la llave para ver los '
-                                    'montos de este hogar. Pega el código completo '
-                                    'que tu pareja copió al crear o invitar al hogar.',
+                                    'montos de este hogar. Pega el código que tu '
+                                    'pareja compartió desde su tarjeta del hogar, o '
+                                    'escribe la frase de recuperación.',
                                     style: TextStyle(color: colors.ink, fontSize: 13),
                                   ),
                                 ),
@@ -94,8 +96,8 @@ class SettingsScreen extends ConsumerWidget {
                               width: double.infinity,
                               child: OutlinedButton(
                                 onPressed: () =>
-                                    _recoverWithPin(context, ref, household.id),
-                                child: const Text('Ingresar PIN del hogar'),
+                                    _recoverWithPhrase(context, ref, household.id),
+                                child: const Text('Usar frase de recuperación'),
                               ),
                             ),
                           ],
@@ -122,9 +124,8 @@ class SettingsScreen extends ConsumerWidget {
                                 'Tu navegador no garantizó que los datos de Finan2 '
                                 'se conserven. Si no abres la app por varios días, '
                                 'podrías perder el acceso a los montos cifrados de '
-                                'este dispositivo. Toca la tarjeta del hogar abajo '
-                                'para copiar el código completo y guárdalo en un '
-                                'lugar seguro.',
+                                'este dispositivo. Asegúrate de tener una frase de '
+                                'recuperación en Ajustes de la cuenta.',
                                 style: TextStyle(color: colors.ink, fontSize: 13),
                               ),
                             ),
@@ -134,27 +135,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   InkWell(
                     borderRadius: BorderRadius.circular(Finan2Radius.card),
-                    onTap: () async {
-                      final key = await ref
-                          .read(householdCryptoProvider)
-                          .exportKey(household.id);
-                      final shareCode = key == null
-                          ? household.inviteCode
-                          : '${household.inviteCode}.$key';
-                      await Clipboard.setData(ClipboardData(text: shareCode));
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              key == null
-                                  ? 'Código copiado (sin llave: este '
-                                      'dispositivo no puede ver montos)'
-                                  : 'Código copiado',
-                            ),
-                          ),
-                        );
-                      }
-                    },
+                    onTap: () => _shareHousehold(context, ref, household),
                     child: Container(
                       padding: const EdgeInsets.all(Finan2Space.md),
                       decoration: BoxDecoration(
@@ -203,7 +184,7 @@ class SettingsScreen extends ConsumerWidget {
                                 Text(
                                   '${members.length} miembro'
                                   '${members.length == 1 ? '' : 's'} · '
-                                  'código ${household.inviteCode}',
+                                  '${members.length < 2 ? 'toca para invitar' : 'toca para compartir la llave'}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 11,
@@ -337,27 +318,27 @@ Future<void> _importMissingKey(
   }
 }
 
-Future<void> _recoverWithPin(
+Future<void> _recoverWithPhrase(
   BuildContext context,
   WidgetRef ref,
   String householdId,
 ) async {
   final controller = TextEditingController();
-  final pin = await showFinan2InputSheet(
+  final input = await showFinan2InputSheet(
     context,
-    title: 'Ingresa el PIN de este hogar',
-    message: 'El PIN de 6 dígitos que tu pareja configuró en Ajustes.',
-    fieldLabel: 'PIN (6 dígitos)',
+    title: 'Frase de recuperación',
+    message: 'Escribe las 12 palabras en orden, separadas por espacios. Las '
+        'tildes y las mayúsculas no importan.',
+    fieldLabel: 'Frase (12 palabras)',
     controller: controller,
-    obscureText: true,
-    keyboardType: TextInputType.number,
+    keyboardType: TextInputType.text,
     confirmLabel: 'Desbloquear',
   );
-  if (pin == null || pin.isEmpty || !context.mounted) return;
+  if (input == null || input.trim().isEmpty || !context.mounted) return;
 
   final error = await ref
       .read(householdControllerProvider.notifier)
-      .recoverKeyWithPin(householdId: householdId, pin: pin);
+      .recoverKeyWithPhrase(householdId: householdId, input: input);
   if (!context.mounted) return;
 
   if (error != null) {
@@ -369,6 +350,51 @@ Future<void> _recoverWithPin(
       message: 'Ya puedes ver los montos de este hogar.',
     );
   }
+}
+
+/// With room in the household, creates a fresh invite and shows it; once
+/// both members are in, shares the key alone so a partner who lost it on a
+/// device can unlock amounts again. Goes through the share sheet rather than
+/// the clipboard, where other apps and clipboard history can read it.
+Future<void> _shareHousehold(
+  BuildContext context,
+  WidgetRef ref,
+  Household household,
+) async {
+  final controller = ref.read(householdControllerProvider.notifier);
+  if (household.members.length < 2) {
+    final shareCode = await controller.createInvite(household.id);
+    if (!context.mounted) return;
+    if (shareCode == null) {
+      await showFinan2ErrorSheet(
+        context,
+        message: 'Este dispositivo no tiene la llave del hogar, así que no '
+            'puede invitar a nadie que vea los montos.',
+      );
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)),
+    );
+    return;
+  }
+
+  final shareCode = await controller.keyShareCode(household.id);
+  if (!context.mounted) return;
+  if (shareCode == null) {
+    await showFinan2ErrorSheet(
+      context,
+      message: 'Este dispositivo tampoco tiene la llave del hogar.',
+    );
+    return;
+  }
+  await SharePlus.instance.share(
+    ShareParams(
+      text: shareCode,
+      title: 'Llave de nuestro hogar en Finan2',
+      subject: 'Llave de nuestro hogar en Finan2',
+    ),
+  );
 }
 
 String _initial(String? name) {

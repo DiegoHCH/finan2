@@ -30,10 +30,11 @@ registras son texto que tú escribes, no una integración con tu banco.
 
 Los campos de dinero (monto de cada transacción, saldos de cuenta, deudas, metas de ahorro,
 inversiones, presupuesto) se cifran en tu dispositivo con AES-256 antes de subirse a la base
-de datos. La llave de cifrado se genera al crear el hogar y **nunca se envía a nuestros
-servidores** - vive solo en los dispositivos de los 2 miembros del hogar. Ni el equipo detrás
-de Finan2, con acceso administrativo completo a la base de datos, puede leer los montos
-reales de un hogar.
+de datos. La llave de cifrado se genera al crear el hogar y vive en los dispositivos de los 2
+miembros del hogar. Si configuran una frase de recuperación, se guarda una copia de respaldo
+de la llave **cifrada con esa frase**, que la app no guarda. Ni el equipo detrás de Finan2,
+con acceso administrativo completo a la base de datos, puede leer los montos reales de un
+hogar sin la llave o la frase.
 
 Nombres de categorías, cuentas, deudas, metas, descripciones de transacciones y notas de
 texto **no** están cifrados en esta versión - se almacenan de forma segura (acceso
@@ -58,10 +59,11 @@ rastreo de terceros.
 ## Cuánto tiempo guardamos tus datos
 
 Mientras tu cuenta y tu hogar existan. Si dejas el hogar (`Ajustes > Salir del hogar`), se
-elimina tu membresía pero los datos del hogar permanecen para el otro miembro (son datos
-compartidos, no exclusivamente tuyos). Si eliminas tu cuenta (`Ajustes > Eliminar cuenta`),
-se borra tu usuario de autenticación; los datos del hogar compartido permanecen mientras el
-otro miembro siga usándolo.
+eliminan tu membresía, tus preferencias de notificación y los registros de tus dispositivos
+para push; los datos del hogar permanecen para el otro miembro (son datos compartidos, no
+exclusivamente tuyos). Si eres el último miembro, al salir se borran de inmediato y por
+completo todos los datos del hogar. Si eliminas tu cuenta (`Ajustes > Eliminar cuenta`),
+además de lo anterior se borra tu usuario de autenticación.
 
 ## Tus derechos
 
