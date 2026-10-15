@@ -23,5 +23,342 @@
   "commonAccount": "Cuenta",
   "@commonSave": {
     "description": "Shared labels (common*) are reused by every feature: buttons, field labels."
+  },
+  "debtsTitle": "Deudas",
+  "debtsAvalancheStrategy": "Estrategia Avalancha",
+  "@debtsAvalancheStrategy": {
+    "description": "Badge naming the payoff strategy: highest interest rate first."
+  },
+  "debtsEmptyTitle": "¡Libres de deudas!",
+  "debtsEmptyDescription": "No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.",
+  "debtsEmptyAction": "+ Agregar una deuda",
+  "debtsFreeDateLabel": "¡Libre de deudas en!",
+  "@debtsFreeDateLabel": {
+    "description": "Banner caption; the projected month is shown below it."
+  },
+  "debtsCurrentPaymentsLabel": "Con los pagos actuales",
+  "@debtsCurrentPaymentsLabel": {
+    "description": "Banner caption when the projection never reaches zero."
+  },
+  "debtsCannotPayOff": "No alcanza a pagar",
+  "debtsCardSubtitle": "Tasa {rate}% · mín. {minPayment}/mes",
+  "@debtsCardSubtitle": {
+    "description": "Debt list row. rate is a pre-formatted number, minPayment a formatted amount.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "minPayment": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsPaidAmount": "Pagado {amount}",
+  "@debtsPaidAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsBalanceAmount": "Saldo {amount}",
+  "@debtsBalanceAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsTypeCard": "Tarjeta",
+  "@debtsTypeCard": {
+    "description": "Debt type: credit card."
+  },
+  "debtsTypeLoan": "Crédito",
+  "@debtsTypeLoan": {
+    "description": "Debt type: consumer loan."
+  },
+  "debtsTypeMortgage": "Hipoteca",
+  "@debtsTypeMortgage": {
+    "description": "Debt type."
+  },
+  "debtsTypeVehicle": "Vehículo",
+  "@debtsTypeVehicle": {
+    "description": "Debt type: vehicle loan."
+  },
+  "debtsStatusPaidOff": "deuda pagada",
+  "@debtsStatusPaidOff": {
+    "description": "Lower-case: follows \"Tasa X% E.A. · \"."
+  },
+  "debtsStatusFreeBy": "libre en {date}",
+  "@debtsStatusFreeBy": {
+    "description": "Lower-case: follows \"Tasa X% E.A. · \". date is a formatted month and year.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsStatusCannotPayOff": "no alcanza a pagar con los abonos actuales",
+  "@debtsStatusCannotPayOff": {
+    "description": "Lower-case: follows \"Tasa X% E.A. · \"."
+  },
+  "debtsRateWithStatus": "Tasa {rate}% E.A. · {status}",
+  "@debtsRateWithStatus": {
+    "description": "E.A. = effective annual rate. status is one of the debtsStatus* texts.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsCurrentBalance": "Saldo actual",
+  "debtsMinPaymentShort": "Pago mín.",
+  "debtsExtraPayment": "Abono extra",
+  "@debtsExtraPayment": {
+    "description": "Amount paid on top of the minimum or the installment each month."
+  },
+  "debtsPaid": "Pagado",
+  "debtsMonthlyInstallment": "Cuota mensual",
+  "debtsInstallmentsLeft": "Cuotas restantes",
+  "debtsPaymentSchedule": "Calendario de pagos",
+  "debtsAlreadyPaidOff": "Esta deuda ya está pagada.",
+  "debtsNoProjection": "No hay una proyección disponible.",
+  "debtsNextPayment": "Próximo pago",
+  "debtsScheduledPayment": "Programado",
+  "debtsScheduleBalance": "Saldo → {amount}",
+  "@debtsScheduleBalance": {
+    "description": "Balance left after this scheduled payment.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNeedAccountFirst": "Crea una cuenta primero para poder registrar el pago.",
+  "debtsRecordPayment": "Registrar pago",
+  "debtsPaymentFrom": "Desde",
+  "@debtsPaymentFrom": {
+    "description": "Label above the account the card payment comes from."
+  },
+  "debtsRecordedPayments": "Pagos registrados",
+  "debtsNoCardPayments": "Aún no registras pagos a esta tarjeta.",
+  "debtsDeletedAccount": "Cuenta eliminada",
+  "debtsDeletePayment": "Eliminar pago",
+  "debtsNewTitle": "Nueva deuda",
+  "debtsEditTitle": "Editar deuda",
+  "debtsDelete": "Eliminar deuda",
+  "debtsDeleteMessage": "Se eliminará \"{name}\". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.",
+  "@debtsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsTypeField": "Tipo de deuda",
+  "debtsCreditLimit": "Cupo total",
+  "debtsRatePercent": "Tasa E.A. %",
+  "@debtsRatePercent": {
+    "description": "Effective annual interest rate, in percent."
+  },
+  "debtsMinPayment": "Pago mínimo",
+  "debtsCutoffDay": "Día de corte",
+  "@debtsCutoffDay": {
+    "description": "Day of the month the card statement closes."
+  },
+  "debtsPaymentDay": "Día de pago",
+  "@debtsPaymentDay": {
+    "description": "Day of the month the payment is due."
+  },
+  "debtsOriginalAmount": "Monto original",
+  "debtsTermInstallments": "Plazo (cuotas)",
+  "@debtsTermInstallments": {
+    "description": "Loan term, as a number of monthly installments."
+  },
+  "debtsPaidInstallments": "Cuotas pagadas",
+  "savingsGoalsTitle": "Metas de ahorro",
+  "savingsGoalsTotalSaved": "Total ahorrado",
+  "savingsGoalsTotalSavedRemaining": "Total ahorrado · falta {amount}",
+  "@savingsGoalsTotalSavedRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsEmptyTitle": "Aún no tienes metas",
+  "savingsGoalsEmptyDescription": "Crea una meta de ahorro para llevarle el pulso con tu pareja.",
+  "savingsGoalsEmptyAction": "+ Nueva meta",
+  "savingsGoalsChallengeLink": "Reto de ahorro",
+  "@savingsGoalsChallengeLink": {
+    "description": "Link to the savings challenge screen."
+  },
+  "savingsGoalsNoDate": "sin fecha",
+  "@savingsGoalsNoDate": {
+    "description": "Lower-case: shown inline when a goal has no target date."
+  },
+  "savingsGoalsCardSubtitle": "Meta {amount} · {date}",
+  "@savingsGoalsCardSubtitle": {
+    "description": "date is a formatted month and year, or savingsGoalsNoDate.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsPerMonth": "{amount}/mes",
+  "@savingsGoalsPerMonth": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsSavedAmount": "Ahorrado {amount}",
+  "@savingsGoalsSavedAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsSavedRemaining": "Ahorrado · falta {amount}",
+  "@savingsGoalsSavedRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsSavedReached": "Ahorrado · meta cumplida",
+  "savingsGoalsContribution": "Aporte",
+  "@savingsGoalsContribution": {
+    "description": "One deposit toward a savings goal."
+  },
+  "savingsGoalsInterestEarned": "Interés ganado",
+  "savingsGoalsRemaining": "Falta",
+  "@savingsGoalsRemaining": {
+    "description": "Amount still missing to reach the goal."
+  },
+  "savingsGoalsProgressOf": "{percent}% de {amount}",
+  "@savingsGoalsProgressOf": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsTargetBy": "meta {date}",
+  "@savingsGoalsTargetBy": {
+    "description": "Lower-case. date is a formatted month and year.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsOnTrack": "a tiempo ✓",
+  "savingsGoalsBehind": "atrasado",
+  "savingsGoalsContributions": "Aportes",
+  "savingsGoalsNoContributions": "Aún no registras aportes.",
+  "savingsGoalsNewContribution": "Nuevo aporte",
+  "savingsGoalsRunningTotal": "Total → {amount}",
+  "@savingsGoalsRunningTotal": {
+    "description": "Goal total after this contribution.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsIconTrip": "Viaje",
+  "savingsGoalsIconEmergency": "Emergencia",
+  "savingsGoalsIconHome": "Casa",
+  "savingsGoalsIconStudy": "Estudio",
+  "savingsGoalsIconOther": "Otro",
+  "savingsGoalsNewTitle": "Nueva meta",
+  "savingsGoalsEditTitle": "Editar meta",
+  "savingsGoalsDelete": "Eliminar meta",
+  "savingsGoalsDeleteMessage": "Se eliminará \"{name}\" con todos sus aportes. Esta acción no se puede deshacer.",
+  "@savingsGoalsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalsIconField": "Ícono",
+  "savingsGoalsTarget": "Meta",
+  "@savingsGoalsTarget": {
+    "description": "Label above the goal amount."
+  },
+  "savingsGoalsMonthlyContribution": "Aporte mensual",
+  "savingsGoalsTargetDate": "Fecha meta",
+  "savingsGoalsNoDateValue": "Sin fecha",
+  "savingsGoalsClearDate": "Quitar fecha",
+  "savingsGoalsAlreadySaved": "Ya tengo ahorrado",
+  "@savingsGoalsAlreadySaved": {
+    "description": "Amount saved before creating the goal."
+  },
+  "savingsGoalsInterestOptional": "Interés E.A. (opcional)",
+  "@savingsGoalsInterestOptional": {
+    "description": "Effective annual interest rate."
+  },
+  "investmentsTitle": "Inversiones",
+  "investmentsEmptyTitle": "Aún no hay inversiones",
+  "investmentsEmptyDescription": "Agrega tu CDT, fondo o cripto para llevarle el pulso a tu portafolio.",
+  "@investmentsEmptyDescription": {
+    "description": "CDT = certificado de depósito a término (a CD)."
+  },
+  "investmentsEmptyAction": "+ Nueva inversión",
+  "investmentsPortfolioValue": "Valor del portafolio",
+  "investmentsTotalReturnSuffix": " de rendimiento total",
+  "@investmentsTotalReturnSuffix": {
+    "description": "Follows the bold total return amount; keep the leading space."
+  },
+  "investmentsKindFixedIncome": "Renta fija",
+  "investmentsKindVariableIncome": "Renta variable",
+  "investmentsKindHighRisk": "Alto riesgo",
+  "@investmentsKindHighRisk": {
+    "description": "Investment kind stored as cripto."
+  },
+  "investmentsKindWithRate": "{kind} · {rate}% E.A.",
+  "@investmentsKindWithRate": {
+    "description": "E.A. = effective annual rate.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "investmentsCurrentValue": "Valor actual",
+  "investmentsNewTitle": "Nueva inversión",
+  "investmentsEditTitle": "Editar inversión",
+  "investmentsDelete": "Eliminar inversión",
+  "investmentsDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
+  "@investmentsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "investmentsKindField": "Tipo",
+  "investmentsInvested": "Invertido",
+  "investmentsRate": "Tasa E.A.",
+  "@investmentsRate": {
+    "description": "Effective annual interest rate."
   }
 }

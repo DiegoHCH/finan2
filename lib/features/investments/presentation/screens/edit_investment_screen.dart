@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/investment_model.dart';
 import '../viewmodels/investment_providers.dart';
@@ -77,9 +78,9 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
     if (investment == null) return;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar inversión',
-      message: 'Se eliminará "${investment.name}". Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.investmentsDelete,
+      message: context.l10n.investmentsDeleteMessage(investment.name),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -91,10 +92,11 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.investment != null;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar inversión' : 'Nueva inversión',
+        title: isEditing ? l10n.investmentsEditTitle : l10n.investmentsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -102,7 +104,7 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tipo', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.investmentsKindField, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -118,13 +120,13 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Row(
               children: [
                 Expanded(
                   child: Finan2Field(
-                    label: 'Invertido',
+                    label: l10n.investmentsInvested,
                     controller: _investedController,
                     keyboardType: TextInputType.number,
                   ),
@@ -132,7 +134,7 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
                 const SizedBox(width: 9),
                 Expanded(
                   child: Finan2Field(
-                    label: 'Valor actual',
+                    label: l10n.investmentsCurrentValue,
                     controller: _currentValueController,
                     keyboardType: TextInputType.number,
                   ),
@@ -142,7 +144,7 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
             if (_kind == InvestmentKind.rentaFija) ...[
               const SizedBox(height: Finan2Space.md),
               Finan2Field(
-                label: 'Tasa E.A.',
+                label: l10n.investmentsRate,
                 controller: _rateController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
@@ -152,7 +154,7 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar inversión'),
+                child: Text(l10n.investmentsDelete),
               ),
             ],
           ],

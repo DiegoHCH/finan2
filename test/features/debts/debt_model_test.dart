@@ -1,5 +1,6 @@
 import 'package:finan2/features/debts/data/debt_model.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 
 Debt _cardWithPaid(int paid, {int creditLimit = 1000}) {
   return Debt(
@@ -32,5 +33,13 @@ void main() {
 
   test('a debt with no reference amount (0 credit limit) reads as critical', () {
     expect(_cardWithPaid(0, creditLimit: 0).status, DebtStatus.critical);
+  });
+
+  test('type labels follow the app language; the stored name does not', () {
+    addTearDown(() => Intl.defaultLocale = 'es');
+    expect(DebtType.vehiculo.label, 'Vehículo');
+    Intl.defaultLocale = 'en';
+    expect(DebtType.vehiculo.label, 'Car loan');
+    expect(DebtType.vehiculo.name, 'vehiculo');
   });
 }

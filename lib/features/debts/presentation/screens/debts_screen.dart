@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_progress_card.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/debt_model.dart';
 import '../debt_status_color.dart';
@@ -45,7 +46,7 @@ class DebtsScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Deudas',
+              label: context.l10n.debtsTitle,
               title: formatMoney(total),
               trailing: debtsAsync.value?.isNotEmpty == true
                   ? _AvalancheBadge(colors: colors)
@@ -59,12 +60,9 @@ class DebtsScreen extends ConsumerWidget {
                   if (debts.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.celebration_outlined,
-                      title: '¡Libres de deudas!',
-                      description:
-                          'No tienes deudas registradas. Si adquieres una, '
-                          'agrégala para seguir su pago con la estrategia '
-                          'Avalancha.',
-                      actionLabel: '+ Agregar una deuda',
+                      title: context.l10n.debtsEmptyTitle,
+                      description: context.l10n.debtsEmptyDescription,
+                      actionLabel: context.l10n.debtsEmptyAction,
                       gold: true,
                       onAction: () => Navigator.of(
                         context,
@@ -118,7 +116,7 @@ class _AvalancheBadge extends StatelessWidget {
           Icon(Icons.bolt, size: 12, color: colors.brandDeep),
           const SizedBox(width: 4),
           Text(
-            'Estrategia Avalancha',
+            context.l10n.debtsAvalancheStrategy,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
@@ -140,15 +138,16 @@ class _FreeDateBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
     final String label;
     final String value;
     if (freeDate != null) {
       final formatted = DateFormat.yMMMM().format(freeDate!);
-      label = '¡Libre de deudas en!';
+      label = l10n.debtsFreeDateLabel;
       value = '${formatted[0].toUpperCase()}${formatted.substring(1)}';
     } else {
-      label = 'Con los pagos actuales';
-      value = 'No alcanza a pagar';
+      label = l10n.debtsCurrentPaymentsLabel;
+      value = l10n.debtsCannotPayOff;
     }
 
     return Container(
@@ -193,6 +192,7 @@ class _DebtCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
     final accent = debt.status.of(colors);
     final displayMinPayment = debt.type.isCard ? debt.minPayment : debt.monthlyPayment;
     final ratePct = debt.rate == debt.rate.roundToDouble()
@@ -204,13 +204,13 @@ class _DebtCard extends StatelessWidget {
       iconBackground: accent.withValues(alpha: 0.14),
       iconColor: accent,
       title: debt.name,
-      subtitle: 'Tasa $ratePct% · mín. ${formatMoney(displayMinPayment)}/mes',
+      subtitle: l10n.debtsCardSubtitle(ratePct, formatMoney(displayMinPayment)),
       percentText: '${(debt.paidFraction * 100).round()}%',
       percentColor: accent,
       progressFraction: debt.paidFraction,
       progressColor: accent,
-      footLeft: 'Pagado ${formatMoney(debt.paidAmount)}',
-      footRight: 'Saldo ${formatMoney(debt.balance)}',
+      footLeft: l10n.debtsPaidAmount(formatMoney(debt.paidAmount)),
+      footRight: l10n.debtsBalanceAmount(formatMoney(debt.balance)),
       onTap: onTap,
     );
   }

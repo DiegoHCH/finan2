@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_goal_model.dart';
 import '../viewmodels/savings_goal_providers.dart';
@@ -27,6 +28,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
     final goals = ref.watch(savingsGoalsProvider).value ?? const <SavingsGoal>[];
     final current = goals.firstWhere((g) => g.id == goal.id, orElse: () => goal);
     final now = DateTime.now();
+    final l10n = context.l10n;
 
     final currentAmount = current.currentAmountAsOf(now);
     final interestEarned = current.interestEarnedAsOf(now);
@@ -81,8 +83,8 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       children: [
                         Text(
                           falta > 0
-                              ? 'Ahorrado · falta ${formatMoney(falta)}'
-                              : 'Ahorrado · meta cumplida',
+                              ? l10n.savingsGoalsSavedRemaining(formatMoney(falta))
+                              : l10n.savingsGoalsSavedReached,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -107,15 +109,17 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Aporte',
-                          value: '${formatMoney(current.monthlyContribution)}/mes',
+                          label: l10n.savingsGoalsContribution,
+                          value: l10n.savingsGoalsPerMonth(
+                            formatMoney(current.monthlyContribution),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Interés ganado',
+                          label: l10n.savingsGoalsInterestEarned,
                           value: current.interestRate > 0
                               ? '+${formatMoney(interestEarned.round())}'
                               : '—',
@@ -126,7 +130,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Falta',
+                          label: l10n.savingsGoalsRemaining,
                           value: formatMoney(falta),
                         ),
                       ),
@@ -151,7 +155,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '${(fraction * 100).round()}% de ${formatMoney(current.targetAmount)}',
+                                  l10n.savingsGoalsProgressOf(
+                                    (fraction * 100).round(),
+                                    formatMoney(current.targetAmount),
+                                  ),
                                   style: const TextStyle(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
@@ -166,8 +173,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   current.targetDate == null
-                                      ? 'sin fecha'
-                                      : 'meta ${_monthYearLabel(current.targetDate!)}',
+                                      ? l10n.savingsGoalsNoDate
+                                      : l10n.savingsGoalsTargetBy(
+                                          _monthYearLabel(current.targetDate!),
+                                        ),
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
@@ -197,7 +206,9 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '${formatMoney(current.monthlyContribution)}/mes',
+                                  l10n.savingsGoalsPerMonth(
+                                    formatMoney(current.monthlyContribution),
+                                  ),
                                   style: TextStyle(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w600,
@@ -213,7 +224,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    onTrack ? 'a tiempo ✓' : 'atrasado',
+                                    onTrack ? l10n.savingsGoalsOnTrack : l10n.savingsGoalsBehind,
                                     style: TextStyle(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.w600,
@@ -242,7 +253,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 9),
                           child: Text(
-                            'Aportes',
+                            l10n.savingsGoalsContributions,
                             style: TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
@@ -254,7 +265,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
-                              'Aún no registras aportes.',
+                              l10n.savingsGoalsNoContributions,
                               style: TextStyle(fontSize: 12, color: colors.inkSoft),
                             ),
                           )
@@ -301,7 +312,10 @@ Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Nuevo aporte', style: Theme.of(sheetContext).textTheme.titleMedium),
+          Text(
+            sheetContext.l10n.savingsGoalsNewContribution,
+            style: Theme.of(sheetContext).textTheme.titleMedium,
+          ),
           const SizedBox(height: Finan2Space.md),
           Finan2AmountInput(
             controller: controller,
@@ -330,7 +344,7 @@ Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Guardar'),
+                    : Text(sheetContext.l10n.commonSave),
               );
             },
           ),
@@ -382,9 +396,12 @@ class _ContributionRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Aporte', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
                 Text(
-                  'Total → ${formatMoney(runningTotal)}',
+                  context.l10n.savingsGoalsContribution,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  context.l10n.savingsGoalsRunningTotal(formatMoney(runningTotal)),
                   style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
                 ),
               ],
