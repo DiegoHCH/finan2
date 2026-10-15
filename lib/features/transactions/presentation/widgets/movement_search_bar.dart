@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_chip.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../debts/data/debt_model.dart';
@@ -85,7 +86,7 @@ class MovementSearchBar extends StatelessWidget {
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      hintText: 'Buscar descripción, categoría o monto',
+                      hintText: context.l10n.transactionsSearchHint,
                       hintStyle: TextStyle(fontSize: 13, color: colors.inkFaint),
                     ),
                   ),
@@ -104,7 +105,7 @@ class MovementSearchBar extends StatelessWidget {
         ),
         const SizedBox(width: Finan2Space.sm),
         IconButton(
-          tooltip: 'Filtros',
+          tooltip: context.l10n.transactionsFilters,
           onPressed: () => _openFilters(context),
           icon: Badge(
             isLabelVisible: count > 0,
@@ -123,10 +124,10 @@ class MovementSearchBar extends StatelessWidget {
 enum _Kind { ingreso, gasto, ahorro }
 
 extension on _Kind {
-  String get label => switch (this) {
-    _Kind.ingreso => 'Ingresos',
-    _Kind.gasto => 'Gastos',
-    _Kind.ahorro => 'Ahorros',
+  String label(AppLocalizations l10n) => switch (this) {
+    _Kind.ingreso => l10n.categoriesTypeIncomePlural,
+    _Kind.gasto => l10n.categoriesTypeExpensePlural,
+    _Kind.ahorro => l10n.categoriesTypeSavingsPlural,
   };
 
   /// Gastos covers facturas too, like the movement form's segments.
@@ -180,6 +181,7 @@ class _FilterSheetState extends State<_FilterSheet> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final labelStyle = Theme.of(context).textTheme.labelMedium;
+    final l10n = context.l10n;
     final members = widget.household?.members ?? const <String>[];
     final visibleCategories = widget.categories
         .where((c) => _filter.types.isEmpty || _filter.types.contains(c.type))
@@ -194,9 +196,9 @@ class _FilterSheetState extends State<_FilterSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Filtrar movimientos', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.transactionsFilterTitle, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: Finan2Space.lg),
-              Text('Tipo', style: labelStyle),
+              Text(l10n.transactionsFilterType, style: labelStyle),
               const SizedBox(height: Finan2Space.sm),
               Wrap(
                 spacing: 7,
@@ -204,18 +206,18 @@ class _FilterSheetState extends State<_FilterSheet> {
                 children: [
                   for (final kind in _Kind.values)
                     Finan2Chip(
-                      label: kind.label,
+                      label: kind.label(l10n),
                       selected: _filter.types.containsAll(kind.types),
                       onTap: () => _toggleKind(kind),
                     ),
                 ],
               ),
               const SizedBox(height: Finan2Space.lg),
-              Text('Categoría', style: labelStyle),
+              Text(l10n.commonCategory, style: labelStyle),
               const SizedBox(height: Finan2Space.sm),
               if (visibleCategories.isEmpty)
                 Text(
-                  'No hay categorías de este tipo.',
+                  l10n.transactionsFilterNoCategories,
                   style: TextStyle(fontSize: 12, color: colors.inkSoft),
                 )
               else
@@ -239,7 +241,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                 ),
               if (widget.accounts.length + widget.cards.length > 1) ...[
                 const SizedBox(height: Finan2Space.lg),
-                Text('Cuenta', style: labelStyle),
+                Text(l10n.commonAccount, style: labelStyle),
                 const SizedBox(height: Finan2Space.sm),
                 Wrap(
                   spacing: 7,
@@ -265,7 +267,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               ],
               if (widget.tags.isNotEmpty) ...[
                 const SizedBox(height: Finan2Space.lg),
-                Text('Etiqueta', style: labelStyle),
+                Text(l10n.transactionsFilterTag, style: labelStyle),
                 const SizedBox(height: Finan2Space.sm),
                 Wrap(
                   spacing: 7,
@@ -285,7 +287,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               // Only worth asking once there's a partner to tell apart.
               if (members.length > 1) ...[
                 const SizedBox(height: Finan2Space.lg),
-                Text('Pagó', style: labelStyle),
+                Text(l10n.transactionsPaidBy, style: labelStyle),
                 const SizedBox(height: Finan2Space.sm),
                 Wrap(
                   spacing: 7,
@@ -310,14 +312,14 @@ class _FilterSheetState extends State<_FilterSheet> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(_filter.withoutFilters()),
-                      child: const Text('Limpiar'),
+                      child: Text(l10n.transactionsFilterClear),
                     ),
                   ),
                   const SizedBox(width: Finan2Space.sm),
                   Expanded(
                     child: FilledButton(
                       onPressed: () => Navigator.of(context).pop(_filter),
-                      child: const Text('Aplicar'),
+                      child: Text(l10n.transactionsFilterApply),
                     ),
                   ),
                 ],

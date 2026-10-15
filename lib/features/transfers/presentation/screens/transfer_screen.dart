@@ -7,6 +7,7 @@ import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -78,7 +79,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     if (amount <= 0 || from == null || to == null || from == to || user == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Elige un monto y dos cuentas distintas.')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.transfersInvalid)));
       return;
     }
     await ref
@@ -112,25 +113,26 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
 
     final fromAccount = findAccount(_fromAccountId);
     final toAccount = findAccount(_toAccountId);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: Finan2FormTop(title: 'Transferir', onSave: _save),
+      appBar: Finan2FormTop(title: l10n.transfersTitle, onSave: _save),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Monto a transferir',
+              l10n.transfersAmountLabel,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
             Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Finan2TapField(
-              label: 'Desde',
+              label: l10n.transfersFrom,
               value: fromAccount == null
-                  ? 'Selecciona una cuenta'
+                  ? l10n.transfersSelectAccount
                   : '${fromAccount.name} · ${formatMoney(fromAccount.balance)}',
               leading: fromAccount == null
                   ? null
@@ -149,9 +151,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             Center(child: Icon(Icons.arrow_downward, color: colors.inkFaint, size: 20)),
             const SizedBox(height: Finan2Space.sm),
             Finan2TapField(
-              label: 'Hacia',
+              label: l10n.transfersTo,
               value: toAccount == null
-                  ? 'Selecciona una cuenta'
+                  ? l10n.transfersSelectAccount
                   : '${toAccount.name} · ${formatMoney(toAccount.balance)}',
               leading: toAccount == null
                   ? null
@@ -164,7 +166,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             ),
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
-              label: 'Fecha',
+              label: l10n.commonDate,
               value: DateFormat('dd MMM yyyy').format(_date),
               onTap: _pickDate,
             ),

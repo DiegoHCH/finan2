@@ -6,6 +6,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transfers/presentation/screens/transfer_history_screen.dart';
 import '../../../transfers/presentation/screens/transfer_screen.dart';
@@ -30,6 +31,7 @@ class AccountsScreen extends ConsumerWidget {
     final household = ref.watch(currentHouseholdProvider).value;
     final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
       floatingActionButton: accountsAsync.value?.isEmpty ?? true
@@ -45,8 +47,8 @@ class AccountsScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Cuentas',
-              title: 'Dinero disponible',
+              label: l10n.accountsTitle,
+              title: l10n.accountsAvailableMoney,
               household: household,
               showBackButton: true,
             ),
@@ -58,11 +60,9 @@ class AccountsScreen extends ConsumerWidget {
                   if (accounts.isEmpty) {
                     return Finan2EmptyState(
                       icon: Finan2Icons.cuentas,
-                      title: 'Aún no hay cuentas',
-                      description:
-                          'Agrega tu primera cuenta (efectivo, banco, '
-                          'billetera) para empezar a registrar movimientos.',
-                      actionLabel: '+ Nueva cuenta',
+                      title: l10n.accountsEmptyTitle,
+                      description: l10n.accountsEmptyDescription,
+                      actionLabel: l10n.accountsEmptyAction,
                       onAction: () => Navigator.of(
                         context,
                       ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
@@ -84,9 +84,9 @@ class AccountsScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Total disponible',
-                              style: TextStyle(color: Colors.white, fontSize: 11.5),
+                            Text(
+                              l10n.accountsTotalAvailable,
+                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
@@ -99,8 +99,7 @@ class AccountsScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'en ${accounts.length} cuenta'
-                              '${accounts.length == 1 ? '' : 's'} del hogar',
+                              l10n.accountsCountInHousehold(accounts.length),
                               style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                           ],
@@ -147,7 +146,7 @@ class AccountsScreen extends ConsumerWidget {
                                   MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
                                 ),
                                 icon: const Icon(Icons.swap_horiz),
-                                label: const Text('Transferir entre cuentas'),
+                                label: Text(l10n.accountsTransferBetween),
                               ),
                             TextButton.icon(
                               onPressed: () => Navigator.of(context).push(
@@ -156,7 +155,7 @@ class AccountsScreen extends ConsumerWidget {
                                 ),
                               ),
                               icon: const Icon(Icons.history),
-                              label: const Text('Historial'),
+                              label: Text(l10n.accountsHistory),
                             ),
                           ],
                         ),

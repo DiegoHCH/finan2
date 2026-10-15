@@ -5,6 +5,7 @@ import 'package:finan2/features/categories/data/category_repository.dart';
 import 'package:finan2/features/categories/data/default_categories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   test('a new household gets the default categories, attributed to its creator', () async {
@@ -31,6 +32,15 @@ void main() {
         reason: category.name,
       );
     }
+    final names = defaultCategories.map((c) => c.name).toList();
+    expect(names.toSet(), hasLength(names.length));
+  });
+
+  test('default category names follow the language of the phone creating the household', () {
+    expect(defaultCategories.first.name, 'Salario');
+    Intl.defaultLocale = 'en';
+    addTearDown(() => Intl.defaultLocale = 'es');
+    expect(defaultCategories.first.name, 'Salary');
     final names = defaultCategories.map((c) => c.name).toList();
     expect(names.toSet(), hasLength(names.length));
   });

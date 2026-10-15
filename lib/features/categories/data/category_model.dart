@@ -1,21 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../l10n/l10n.dart';
+
 /// Matches the Firestore schema's `type` field for categories/transactions.
 enum CategoryType { ingreso, factura, gasto, ahorro }
 
 extension CategoryTypeLabel on CategoryType {
+  /// In the app's language - see currentL10n.
   String get label => switch (this) {
-    CategoryType.ingreso => 'Ingreso',
-    CategoryType.factura => 'Factura',
-    CategoryType.gasto => 'Gasto',
-    CategoryType.ahorro => 'Ahorro',
+    CategoryType.ingreso => currentL10n.categoriesTypeIncome,
+    CategoryType.factura => currentL10n.categoriesTypeBill,
+    CategoryType.gasto => currentL10n.categoriesTypeExpense,
+    CategoryType.ahorro => currentL10n.categoriesTypeSavings,
   };
 
   String get plural => switch (this) {
-    CategoryType.ingreso => 'Ingresos',
-    CategoryType.factura => 'Facturas',
-    CategoryType.gasto => 'Gastos',
-    CategoryType.ahorro => 'Ahorros',
+    CategoryType.ingreso => currentL10n.categoriesTypeIncomePlural,
+    CategoryType.factura => currentL10n.categoriesTypeBillPlural,
+    CategoryType.gasto => currentL10n.categoriesTypeExpensePlural,
+    CategoryType.ahorro => currentL10n.categoriesTypeSavingsPlural,
   };
 
   static CategoryType fromName(String name) =>
