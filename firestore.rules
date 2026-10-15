@@ -109,34 +109,128 @@ service cloud.firestore {
           && request.resource.data.get('createdBy', null) == resource.data.get('createdBy', null);
       }
 
+      // Shape checks run on the document as it ends up after the write, so a
+      // partial update (an account's balance alone) passes as long as the
+      // result is still well-formed. Each model's toFirestore() writes every
+      // field, so all of them are required.
+      function hasExactly(keys) {
+        return request.resource.data.keys().hasOnly(keys)
+          && request.resource.data.keys().hasAll(keys);
+      }
+
+      function text(v, max) {
+        return v is string && v.size() <= max;
+      }
+
+      // HouseholdCrypto.encryptAmount: base64url of a 12-byte nonce, the
+      // amount's digits and a 16-byte MAC.
+      function encryptedAmount(v) {
+        return v is string && v.size() >= 40 && v.size() <= 100;
+      }
+
+      function validCategory() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'icon', 'color', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
+          && text(d.icon, 50)
+          && d.color is int;
+      }
+
+      function validAccount() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'balance', 'includeInAvailable', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['efectivo', 'banco', 'billetera', 'debito']
+          && encryptedAmount(d.balance)
+          && d.includeInAvailable is bool;
+      }
+
+      // year/month aren't checked against date: they're the device's local
+      // calendar, the timestamp is UTC.
+      function validTransaction() {
+        let d = request.resource.data;
+        return hasExactly(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
+                           'description', 'date', 'year', 'month', 'createdBy'])
+          && encryptedAmount(d.amount)
+          && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
+          && text(d.categoryId, 100)
+          && text(d.accountId, 100)
+          && text(d.cardDebtId, 100)
+          && text(d.description, 1000)
+          && d.date is timestamp
+          && d.year is int
+          && d.month is int && d.month >= 1 && d.month <= 12;
+      }
+
+      // Days and installments aren't range-checked: the edit screen doesn't
+      // bound them either, and a rejected save would just look broken.
+      function validDebt() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'type', 'balance', 'hasBalance', 'rate', 'paymentDay',
+                           'creditLimit', 'minPayment', 'extraPayment', 'cutoffDay',
+                           'originalAmount', 'monthlyPayment', 'termMonths',
+                           'paidInstallments', 'createdBy'])
+          && text(d.name, 200)
+          && d.type in ['tarjeta', 'credito', 'hipoteca', 'vehiculo']
+          && encryptedAmount(d.balance)
+          && d.hasBalance is bool
+          && d.rate is number
+          && d.paymentDay is int
+          && encryptedAmount(d.creditLimit)
+          && encryptedAmount(d.minPayment)
+          && encryptedAmount(d.extraPayment)
+          && d.cutoffDay is int
+          && encryptedAmount(d.originalAmount)
+          && encryptedAmount(d.monthlyPayment)
+          && d.termMonths is int
+          && d.paidInstallments is int;
+      }
+
+      // Rules can't loop over the contributions, so only the list itself is
+      // checked.
+      function validSavingsGoal() {
+        let d = request.resource.data;
+        return hasExactly(['name', 'iconSlug', 'targetAmount', 'targetDate',
+                           'monthlyContribution', 'interestRate', 'contributions',
+                           'createdBy'])
+          && text(d.name, 200)
+          && text(d.iconSlug, 50)
+          && encryptedAmount(d.targetAmount)
+          && (d.targetDate == null || d.targetDate is timestamp)
+          && encryptedAmount(d.monthlyContribution)
+          && d.interestRate is number
+          && d.contributions is list;
+      }
+
       match /categories/{docId} {
         allow read, delete: if isMember();
-        allow create: if attributedCreate();
-        allow update: if attributedUpdate();
+        allow create: if attributedCreate() && validCategory();
+        allow update: if attributedUpdate() && validCategory();
       }
 
       match /accounts/{docId} {
         allow read, delete: if isMember();
-        allow create: if attributedCreate();
-        allow update: if attributedUpdate();
+        allow create: if attributedCreate() && validAccount();
+        allow update: if attributedUpdate() && validAccount();
       }
 
       match /transactions/{docId} {
         allow read, delete: if isMember();
-        allow create: if attributedCreate();
-        allow update: if attributedUpdate();
+        allow create: if attributedCreate() && validTransaction();
+        allow update: if attributedUpdate() && validTransaction();
       }
 
       match /debts/{docId} {
         allow read, delete: if isMember();
-        allow create: if attributedCreate();
-        allow update: if attributedUpdate();
+        allow create: if attributedCreate() && validDebt();
+        allow update: if attributedUpdate() && validDebt();
       }
 
       match /savingsGoals/{docId} {
         allow read, delete: if isMember();
-        allow create: if attributedCreate();
-        allow update: if attributedUpdate();
+        allow create: if attributedCreate() && validSavingsGoal();
+        allow update: if attributedUpdate() && validSavingsGoal();
       }
 
       match /savingsChallenges/{docId} {
