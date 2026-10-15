@@ -7,6 +7,7 @@ import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../categories/data/category_model.dart';
@@ -30,9 +31,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
     await ref.read(budgetControllerProvider.notifier).copyPreviousMonth(_month);
     final result = ref.read(budgetControllerProvider);
     if (result.hasError && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(friendlyErrorMessage(result.error!))),
-      );
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(result.error!));
     }
   }
 
