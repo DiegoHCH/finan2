@@ -46,7 +46,7 @@ void main() {
     await col(
       'recurringDone',
     ).doc('recurring_b_2026_10').set({'doneAt': Timestamp.fromDate(DateTime(2026, 10, 1))});
-    await col('fcmTokens').doc('tok').set({'uid': 'u1'});
+    await col('fcmTokens').doc('push-token-of-u1').set({'uid': 'u1'});
   });
 
   test('the file names its household but hides the data', () async {
@@ -56,7 +56,7 @@ void main() {
     expect(info.createdAt.toUtc(), DateTime.utc(2026, 10, 15, 12));
     final text = utf8.decode(file);
     expect(text, isNot(contains('Mercado')));
-    expect(text, isNot(contains('tok')));
+    expect(text, isNot(contains('push-token-of-u1')));
   });
 
   test('restoring puts back changed and deleted documents and drops new ones', () async {
