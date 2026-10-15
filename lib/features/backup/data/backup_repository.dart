@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
+import '../../../l10n/l10n.dart';
 
 /// What a backup holds: the household's own data. Push tokens, member
 /// preferences, the in-app inbox, alert flags and Worker markers are left
@@ -42,6 +43,7 @@ const _format = 'finan2-backup';
 const _version = 1;
 const _sealContext = 'finan2-backup-v1';
 
+/// [message] is shown to the user as is, in the app's language.
 class BackupException implements Exception {
   const BackupException(this.message);
 
@@ -128,9 +130,7 @@ class BackupRepository {
   }) async {
     final outer = _outer(file);
     if (outer['householdId'] != householdId) {
-      throw const BackupException(
-        'Esta copia es de otro hogar. Solo se puede restaurar en el hogar donde se hizo.',
-      );
+      throw BackupException(currentL10n.backupErrorOtherHousehold);
     }
     final List<int> clear;
     try {
@@ -142,7 +142,7 @@ class BackupRepository {
     } on Finan2CryptoException {
       rethrow;
     } catch (_) {
-      throw const BackupException('La copia está dañada o se modificó. No se puede abrir.');
+      throw BackupException(currentL10n.backupErrorDamaged);
     }
     final collections =
         (jsonDecode(utf8.decode(clear)) as Map<String, dynamic>)['collections']
@@ -206,9 +206,7 @@ class BackupRepository {
           outer['createdAt'] is String &&
           outer['data'] is String) {
         if ((outer['version'] as num? ?? 0) > _version) {
-          throw const BackupException(
-            'Esta copia se hizo con una versión más nueva de Finan2. Actualiza la app.',
-          );
+          throw BackupException(currentL10n.backupErrorNewerVersion);
         }
         return outer;
       }
@@ -217,7 +215,7 @@ class BackupRepository {
     } catch (_) {
       // Falls through to the generic message.
     }
-    throw const BackupException('Este archivo no es una copia de seguridad de Finan2.');
+    throw BackupException(currentL10n.backupErrorNotABackup);
   }
 }
 
@@ -228,7 +226,7 @@ Object? _encode(Object? value) => switch (value) {
   Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _encode(e.value)},
   List<Object?> l => [for (final v in l) _encode(v)],
   String() || num() || bool() || null => value,
-  _ => throw BackupException('Tipo de dato no soportado en la copia: ${value.runtimeType}'),
+  _ => throw BackupException(currentL10n.backupErrorUnsupportedType('${value.runtimeType}')),
 };
 
 Object? _decode(Object? value) => switch (value) {

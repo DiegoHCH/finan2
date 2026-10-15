@@ -11,6 +11,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/csv_report_writer.dart';
 import '../../data/pdf_report_writer.dart';
@@ -37,6 +38,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
   Future<void> _generate() async {
     final household = ref.read(currentHouseholdProvider).value;
     if (household == null) return;
+    final pdfFileName = context.l10n.exportPdfFileName;
     setState(() => _generating = true);
     try {
       final report = await ref
@@ -56,7 +58,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
           );
       if (_format == _ExportFormat.pdf) {
         final bytes = await const PdfReportWriter().write(report);
-        await Printing.sharePdf(bytes: bytes, filename: 'finan2_reporte.pdf');
+        await Printing.sharePdf(bytes: bytes, filename: pdfFileName);
       } else {
         final files = const CsvReportWriter().write(
           report,
@@ -82,7 +84,11 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(label: 'Exportar reporte', title: 'PDF o CSV', showBackButton: true),
+            Finan2AppTop(
+              label: context.l10n.exportTitle,
+              title: context.l10n.exportSubtitle,
+              showBackButton: true,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(Finan2Space.xl),
@@ -97,8 +103,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                     if (_format == _ExportFormat.csv) ...[
                       const SizedBox(height: Finan2Space.sm),
                       Text(
-                        'Un archivo por sección, con montos sin formato y fechas '
-                        'AAAA-MM-DD, listo para una hoja de cálculo.',
+                        context.l10n.exportCsvHint,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).extension<Finan2Colors>()!.inkSoft,
@@ -106,7 +111,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                       ),
                     ],
                     const SizedBox(height: Finan2Space.lg),
-                    Text('Periodo', style: Theme.of(context).textTheme.labelMedium),
+                    Text(context.l10n.exportPeriod, style: Theme.of(context).textTheme.labelMedium),
                     const SizedBox(height: Finan2Space.sm),
                     Wrap(
                       spacing: 7,
@@ -121,25 +126,28 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                       ],
                     ),
                     const SizedBox(height: Finan2Space.lg),
-                    Text('Incluir en el reporte', style: Theme.of(context).textTheme.labelMedium),
+                    Text(
+                      context.l10n.exportInclude,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                     const SizedBox(height: Finan2Space.sm),
                     Finan2ListCard(
                       children: [
                         _ToggleRow(
                           icon: Icons.receipt_long_outlined,
-                          label: 'Movimientos',
+                          label: context.l10n.exportTransactions,
                           value: _includeTransactions,
                           onChanged: (v) => setState(() => _includeTransactions = v),
                         ),
                         _ToggleRow(
                           icon: Icons.donut_large_outlined,
-                          label: 'Presupuesto',
+                          label: context.l10n.exportBudget,
                           value: _includeBudget,
                           onChanged: (v) => setState(() => _includeBudget = v),
                         ),
                         _ToggleRow(
                           icon: Icons.credit_card_outlined,
-                          label: 'Deudas y ahorros',
+                          label: context.l10n.exportDebtsAndSavings,
                           value: _includeDebtsAndSavings,
                           onChanged: (v) => setState(() => _includeDebtsAndSavings = v),
                         ),
@@ -154,7 +162,11 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : Text(_format == _ExportFormat.pdf ? 'Generar PDF' : 'Generar CSV'),
+                          : Text(
+                              _format == _ExportFormat.pdf
+                                  ? context.l10n.exportGeneratePdf
+                                  : context.l10n.exportGenerateCsv,
+                            ),
                     ),
                   ],
                 ),

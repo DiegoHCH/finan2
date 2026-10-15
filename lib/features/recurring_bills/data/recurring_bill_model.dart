@@ -5,15 +5,8 @@ import '../../categories/data/category_model.dart';
 
 enum RecurringFrequency { weekly, biweekly, semimonthly, monthly, yearly }
 
+/// Its UI label is frequencyLabel, in recurring_schedule_label.dart.
 extension RecurringFrequencyLabel on RecurringFrequency {
-  String get label => switch (this) {
-    RecurringFrequency.weekly => 'Semanal',
-    RecurringFrequency.biweekly => 'Cada 2 semanas',
-    RecurringFrequency.semimonthly => 'Quincenal',
-    RecurringFrequency.monthly => 'Mensual',
-    RecurringFrequency.yearly => 'Anual',
-  };
-
   /// How many times it happens in an average month.
   double get perMonth => switch (this) {
     RecurringFrequency.weekly => 52 / 12,

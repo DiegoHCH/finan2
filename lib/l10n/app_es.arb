@@ -1151,5 +1151,394 @@
   "categoriesDefaultHealth": "Salud",
   "categoriesDefaultHomeCleaning": "Hogar y aseo",
   "categoriesDefaultEmergencyFund": "Fondo de emergencia",
-  "categoriesDefaultTravel": "Viaje"
+  "categoriesDefaultTravel": "Viaje",
+  "recurringBillsTitle": "Facturas recurrentes",
+  "recurringBillsMonthlyTotal": "{amount} al mes",
+  "@recurringBillsMonthlyTotal": {
+    "description": "Header: the monthly total of active recurring bills, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsAutoBadge": "Auto",
+  "@recurringBillsAutoBadge": {
+    "description": "Badge meaning the bills are logged automatically."
+  },
+  "recurringBillsEmptyTitle": "Aún no hay facturas recurrentes",
+  "recurringBillsEmptyDescription": "Programa el arriendo, servicios o el sueldo para que se registren solos cada mes.",
+  "recurringBillsEmptyAction": "+ Nueva factura recurrente",
+  "recurringBillsAutoLogged": "Se registran solas",
+  "recurringBillsActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
+  "@recurringBillsActiveCount": {
+    "description": "How many recurring bills are active (feminine: 'facturas').",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recurringBillsStatusPaused": "en pausa",
+  "@recurringBillsStatusPaused": {
+    "description": "Row status, lowercase, after the type: 'Factura · en pausa'."
+  },
+  "recurringBillsStatusEnded": "terminada",
+  "@recurringBillsStatusEnded": {
+    "description": "Row status, lowercase, after the type: 'Factura · terminada'."
+  },
+  "recurringBillsTypeIncome": "Ingreso",
+  "recurringBillsTypeBill": "Factura",
+  "recurringBillsNewTitle": "Nueva factura recurrente",
+  "recurringBillsEditTitle": "Editar factura recurrente",
+  "recurringBillsMissingFields": "Completa el nombre, monto, categoría y cuenta.",
+  "recurringBillsSemimonthlyDayTitle": "Elige un día hasta el 15",
+  "recurringBillsSemimonthlyDayMessage": "Una quincenal se repite 15 días después de la primera fecha. Elige el primer pago entre el 1 y el 15 del mes - por ejemplo el 15 para cobrar el 15 y el 30.",
+  "recurringBillsDelete": "Eliminar factura recurrente",
+  "recurringBillsDeleteMessage": "Se eliminará \"{name}\" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.",
+  "@recurringBillsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsNoCategories": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
+  "recurringBillsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
+  "recurringBillsSelectAccount": "Selecciona una cuenta",
+  "recurringBillsRepeats": "Se repite",
+  "recurringBillsFrom": "Desde",
+  "@recurringBillsFrom": {
+    "description": "Start date field label when editing an existing bill."
+  },
+  "recurringBillsFirstTime": "Primera vez",
+  "@recurringBillsFirstTime": {
+    "description": "Start date field label when creating a bill: its first occurrence."
+  },
+  "recurringBillsLoggedOn": "Se registra {schedule}.",
+  "@recurringBillsLoggedOn": {
+    "description": "Hint under the start date; {schedule} is a recurringBillsSchedule* text, e.g. 'cada lunes'.",
+    "placeholders": {
+      "schedule": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsUntil": "Hasta",
+  "@recurringBillsUntil": {
+    "description": "End date field label."
+  },
+  "recurringBillsNoEndDate": "Sin fecha de fin",
+  "recurringBillsRemoveEndDate": "Quitar fecha de fin",
+  "recurringBillsPaused": "En pausa",
+  "recurringBillsPausedHint": "No se registra mientras esté en pausa. Al reanudarla, las fechas que pasaron no se registran.",
+  "recurringBillsFrequencyWeekly": "Semanal",
+  "recurringBillsFrequencyBiweekly": "Cada 2 semanas",
+  "recurringBillsFrequencySemimonthly": "Quincenal",
+  "@recurringBillsFrequencySemimonthly": {
+    "description": "Twice a month: on a day and 15 days later."
+  },
+  "recurringBillsFrequencyMonthly": "Mensual",
+  "recurringBillsFrequencyYearly": "Anual",
+  "recurringBillsScheduleWeekly": "cada {weekday}",
+  "@recurringBillsScheduleWeekly": {
+    "description": "Lowercase schedule fragment; {weekday} is the localized day name.",
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsScheduleBiweekly": "cada 2 semanas, los {weekday}",
+  "@recurringBillsScheduleBiweekly": {
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsScheduleSemimonthly": "días {day} y {secondDay}",
+  "@recurringBillsScheduleSemimonthly": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "secondDay": {
+        "type": "int"
+      }
+    }
+  },
+  "recurringBillsScheduleMonthly": "cada mes, día {day}",
+  "@recurringBillsScheduleMonthly": {
+    "description": "{day} is the day of the month, two digits.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsScheduleYearly": "cada año, {date}",
+  "@recurringBillsScheduleYearly": {
+    "description": "{date} is the localized month and day, e.g. '3 de marzo'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyNotesTitle": "Notas",
+  "monthlyNotesThisMonth": "Notas de este mes",
+  "monthlyNotesNextMonth": "Para el siguiente mes",
+  "monthlyNotesEmpty": "Toca para agregar notas.",
+  "notificationsTitle": "Notificaciones",
+  "notificationsNewCount": "{count, plural, =1{1 nueva} other{{count} nuevas}}",
+  "@notificationsNewCount": {
+    "description": "Unread notifications count (feminine: 'notificaciones').",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsUpToDate": "Al día",
+  "@notificationsUpToDate": {
+    "description": "Shown when there are no unread notifications."
+  },
+  "notificationsMarkAllRead": "Marcar leídas",
+  "notificationsEmpty": "Aún no hay notificaciones. Aquí verás avisos de pagos, metas y presupuesto.",
+  "notificationsMinutesAgo": "Hace {minutes} min",
+  "@notificationsMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsHoursAgo": "Hace {hours} h",
+  "@notificationsHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsToday": "Hoy",
+  "notificationsYesterday": "Ayer",
+  "notificationsDaysAgo": "Hace {days} d",
+  "@notificationsDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsDebtDueTodayTitle": "Hoy pagas {name}",
+  "@notificationsDebtDueTodayTitle": {
+    "description": "Stored in-app notification, written in the language of the device that detects it; {name} is the debt's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsDebtDueTodayBody": "Hoy es el día de pago de tu deuda {name}.",
+  "@notificationsDebtDueTodayBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsDebtDueSoonTitle": "Pago de {name} pronto",
+  "@notificationsDebtDueSoonTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsDebtDueSoonBody": "La cuota de {name} vence en {days, plural, =1{1 día} other{{days} días}}.",
+  "@notificationsDebtDueSoonBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsGoalNearTitle": "¡Casi logras tu meta!",
+  "notificationsGoalNearBody": "{name} va en {percent}%.",
+  "@notificationsGoalNearBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationsBudgetExceededTitle": "Te pasaste del presupuesto",
+  "notificationsBudgetExceededBody": "{category} superó lo planeado este mes.",
+  "@notificationsBudgetExceededBody": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsUnknownCategory": "una categoría",
+  "@notificationsUnknownCategory": {
+    "description": "Stands in for {category} in notificationsBudgetExceededBody when the category is gone."
+  },
+  "notificationsContributionTitle": "Aporte registrado",
+  "notificationsContributionBody": "Tu pareja agregó un aporte a {goal}.",
+  "@notificationsContributionBody": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsPartnerMovementTitle": "Nuevo movimiento",
+  "notificationsPartnerMovementBody": "Tu pareja registró un movimiento.",
+  "notificationsPartnerTransferTitle": "Nueva transferencia",
+  "notificationsPartnerTransferBody": "Tu pareja registró una transferencia entre cuentas.",
+  "notificationsPartnerDebtTitle": "Nueva deuda",
+  "notificationsPartnerAccountTitle": "Nueva cuenta",
+  "notificationsPartnerInvestmentTitle": "Nueva inversión",
+  "notificationsPartnerBillTitle": "Nueva factura recurrente",
+  "notificationsPartnerCategoryTitle": "Nueva categoría",
+  "notificationsPartnerChallengeTitle": "Nuevo reto de ahorro",
+  "notificationsPartnerGoalTitle": "Nueva meta de ahorro",
+  "notificationPrefsTitle": "Preferencias",
+  "notificationPrefsRemindersHeader": "RECORDATORIOS",
+  "notificationPrefsDailyReminder": "Recordatorio diario",
+  "notificationPrefsDebtPayments": "Pagos de deudas",
+  "notificationPrefsGoalProgress": "Avance de metas",
+  "notificationPrefsAlertsHeader": "ALERTAS",
+  "notificationPrefsBudgetExceeded": "Exceso de presupuesto",
+  "notificationPrefsPartnerActivity": "Actividad de mi pareja",
+  "notificationPrefsWeeklySummary": "Resumen semanal",
+  "exportTitle": "Exportar reporte",
+  "exportSubtitle": "PDF o CSV",
+  "exportCsvHint": "Un archivo por sección, con montos sin formato y fechas AAAA-MM-DD, listo para una hoja de cálculo.",
+  "exportPeriod": "Periodo",
+  "exportPeriodThisMonth": "Este mes",
+  "exportPeriodQuarter": "Trimestre",
+  "exportPeriodYear": "Año",
+  "exportInclude": "Incluir en el reporte",
+  "exportTransactions": "Movimientos",
+  "@exportTransactions": {
+    "description": "Toggle and report section; also names its CSV file."
+  },
+  "exportBudget": "Presupuesto",
+  "@exportBudget": {
+    "description": "Toggle and report section; also names its CSV file."
+  },
+  "exportDebtsAndSavings": "Deudas y ahorros",
+  "exportDebts": "Deudas",
+  "@exportDebts": {
+    "description": "Report section; also names its CSV file."
+  },
+  "exportSavingsGoals": "Metas de ahorro",
+  "@exportSavingsGoals": {
+    "description": "Report section; also names its CSV file."
+  },
+  "exportGeneratePdf": "Generar PDF",
+  "exportGenerateCsv": "Generar CSV",
+  "exportPdfFileName": "finan2_reporte.pdf",
+  "@exportPdfFileName": {
+    "description": "File name of the shared PDF; keep it ASCII, no spaces."
+  },
+  "exportNoData": "Sin datos para este período.",
+  "exportColumnType": "Tipo",
+  "exportColumnPaidBy": "Pagó",
+  "@exportColumnPaidBy": {
+    "description": "CSV column: the member who paid."
+  },
+  "exportColumnTags": "Etiquetas",
+  "exportColumnPlanned": "Planeado",
+  "exportColumnActual": "Real",
+  "@exportColumnActual": {
+    "description": "Budget column: what was actually spent."
+  },
+  "exportColumnBalance": "Saldo",
+  "exportColumnRate": "Tasa E.A.",
+  "@exportColumnRate": {
+    "description": "Effective annual interest rate (E.A.)."
+  },
+  "exportColumnRatePercent": "Tasa E.A. (%)",
+  "exportColumnSaved": "Ahorrado",
+  "exportColumnTarget": "Meta",
+  "exportColumnCompleted": "% Completado",
+  "exportColumnCompletedPercent": "Completado (%)",
+  "backupTitle": "Copia de seguridad",
+  "backupSubtitle": "Todo el hogar, cifrado",
+  "backupDescription": "La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.",
+  "backupSameHouseholdOnly": "Solo se puede restaurar en este mismo hogar.",
+  "backupCreate": "Crear copia",
+  "backupRestoreAction": "Restaurar una copia",
+  "backupErrorTitle": "No se pudo completar",
+  "backupFileName": "finan2-copia-{date}.finan2",
+  "@backupFileName": {
+    "description": "File name of the shared backup; {date} is YYYY-MM-DD. Keep it ASCII and the .finan2 extension.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreTitle": "Restaurar la copia",
+  "backupRestoreMessage": "El hogar volverá a como estaba el {date}. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para tu pareja.",
+  "@backupRestoreMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirm": "Restaurar",
+  "backupRestoredTitle": "Copia restaurada",
+  "backupRestoredSummary": "{restored, plural, =1{1 registro restaurado} other{{restored} registros restaurados}}.",
+  "@backupRestoredSummary": {
+    "placeholders": {
+      "restored": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestoredSummaryWithRemoved": "{restored, plural, =1{1 registro restaurado} other{{restored} registros restaurados}} y {removed, plural, =1{1 posterior borrado} other{{removed} posteriores borrados}}.",
+  "@backupRestoredSummaryWithRemoved": {
+    "placeholders": {
+      "restored": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
+    }
+  },
+  "backupReattributed": "{count, plural, =1{1 registro de tu pareja que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.} other{{count} registros de tu pareja que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.}}",
+  "@backupReattributed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupErrorOtherHousehold": "Esta copia es de otro hogar. Solo se puede restaurar en el hogar donde se hizo.",
+  "backupErrorDamaged": "La copia está dañada o se modificó. No se puede abrir.",
+  "backupErrorNewerVersion": "Esta copia se hizo con una versión más nueva de Finan2. Actualiza la app.",
+  "backupErrorNotABackup": "Este archivo no es una copia de seguridad de Finan2.",
+  "backupErrorUnsupportedType": "Tipo de dato no soportado en la copia: {type}",
+  "@backupErrorUnsupportedType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  }
 }

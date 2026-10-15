@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../accounts/data/account_repository.dart';
 import '../../budget/data/budget_repository.dart';
 import '../../categories/data/category_model.dart';
@@ -13,9 +14,9 @@ enum ExportPeriod { thisMonth, quarter, year }
 
 extension ExportPeriodLabel on ExportPeriod {
   String get label => switch (this) {
-    ExportPeriod.thisMonth => 'Este mes',
-    ExportPeriod.quarter => 'Trimestre',
-    ExportPeriod.year => 'Año',
+    ExportPeriod.thisMonth => currentL10n.exportPeriodThisMonth,
+    ExportPeriod.quarter => currentL10n.exportPeriodQuarter,
+    ExportPeriod.year => currentL10n.exportPeriodYear,
   };
 }
 
@@ -81,8 +82,11 @@ class ReportBuilder {
     /// summed in a spreadsheet and read back in.
     bool plainValues = false,
   }) async {
+    // Titles and headers in the app's language: the CSV file names come from
+    // the section titles too.
+    final l10n = currentL10n;
     final money = plainValues ? (num v) => v.round().toString() : formatMoney;
-    final dateFormat = DateFormat(plainValues ? 'yyyy-MM-dd' : 'dd/MM/yyyy');
+    final dateFormat = plainValues ? DateFormat('yyyy-MM-dd') : DateFormat.yMd();
     final now = DateTime.now();
     final months = _monthsFor(period, now);
     final sections = <ReportSection>[];
@@ -106,15 +110,15 @@ class ReportBuilder {
 
       sections.add(
         ReportSection(
-          title: 'Movimientos',
+          title: l10n.exportTransactions,
           headers: [
-            'Fecha',
-            'Tipo',
-            'Categoría',
-            'Cuenta',
-            'Descripción',
-            'Monto',
-            if (plainValues) ...['Pagó', 'Etiquetas'],
+            l10n.commonDate,
+            l10n.exportColumnType,
+            l10n.commonCategory,
+            l10n.commonAccount,
+            l10n.commonDescription,
+            l10n.commonAmount,
+            if (plainValues) ...[l10n.exportColumnPaidBy, l10n.exportColumnTags],
           ],
           rows: [
             for (final tx in transactions)
@@ -157,8 +161,8 @@ class ReportBuilder {
 
       sections.add(
         ReportSection(
-          title: 'Presupuesto',
-          headers: const ['Categoría', 'Planeado', 'Real'],
+          title: l10n.exportBudget,
+          headers: [l10n.commonCategory, l10n.exportColumnPlanned, l10n.exportColumnActual],
           rows: [
             for (final id in categoryIds)
               [
@@ -175,8 +179,13 @@ class ReportBuilder {
       final debts = await debtRepository.watchDebts(householdId).first;
       sections.add(
         ReportSection(
-          title: 'Deudas',
-          headers: ['Nombre', 'Tipo', 'Saldo', plainValues ? 'Tasa E.A. (%)' : 'Tasa E.A.'],
+          title: l10n.exportDebts,
+          headers: [
+            l10n.commonName,
+            l10n.exportColumnType,
+            l10n.exportColumnBalance,
+            plainValues ? l10n.exportColumnRatePercent : l10n.exportColumnRate,
+          ],
           rows: [
             for (final debt in debts)
               [
@@ -192,8 +201,13 @@ class ReportBuilder {
       final goals = await savingsGoalRepository.watchGoals(householdId).first;
       sections.add(
         ReportSection(
-          title: 'Metas de ahorro',
-          headers: ['Nombre', 'Ahorrado', 'Meta', plainValues ? 'Completado (%)' : '% Completado'],
+          title: l10n.exportSavingsGoals,
+          headers: [
+            l10n.commonName,
+            l10n.exportColumnSaved,
+            l10n.exportColumnTarget,
+            plainValues ? l10n.exportColumnCompletedPercent : l10n.exportColumnCompleted,
+          ],
           rows: [
             for (final goal in goals)
               [
@@ -209,7 +223,7 @@ class ReportBuilder {
 
     return Report(
       title: 'Finan2 · $householdName',
-      subtitle: '${period.label} · ${DateFormat('dd/MM/yyyy').format(now)}',
+      subtitle: '${period.label} · ${DateFormat.yMd().format(now)}',
       sections: sections,
     );
   }
