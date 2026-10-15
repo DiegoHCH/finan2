@@ -12,11 +12,16 @@ import 'package:finan2/features/debts/data/debt_repository.dart';
 import 'package:finan2/features/debts/presentation/viewmodels/card_payment_providers.dart';
 import 'package:finan2/features/debts/presentation/viewmodels/debt_providers.dart';
 import 'package:finan2/features/household/data/household_model.dart';
+import 'package:finan2/features/household/data/household_repository.dart';
 import 'package:finan2/features/household/presentation/viewmodels/household_providers.dart';
 import 'package:finan2/features/investments/data/investment_repository.dart';
 import 'package:finan2/features/investments/presentation/viewmodels/investment_providers.dart';
 import 'package:finan2/features/monthly_notes/data/monthly_notes_repository.dart';
 import 'package:finan2/features/monthly_notes/presentation/viewmodels/monthly_notes_providers.dart';
+import 'package:finan2/features/notification_prefs/data/notification_prefs_repository.dart';
+import 'package:finan2/features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
+import 'package:finan2/features/notifications/data/notification_repository.dart';
+import 'package:finan2/features/notifications/presentation/viewmodels/notification_providers.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_repository.dart';
 import 'package:finan2/features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
 import 'package:finan2/features/savings_challenge/data/savings_challenge_repository.dart';
@@ -74,6 +79,13 @@ class TestApp {
           ),
         ),
         householdCryptoProvider.overrideWithValue(crypto),
+        householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
+        notificationRepositoryProvider.overrideWithValue(
+          NotificationRepository(firestore: firestore),
+        ),
+        notificationPrefsRepositoryProvider.overrideWithValue(
+          NotificationPrefsRepository(firestore: firestore),
+        ),
         accountRepositoryProvider.overrideWithValue(
           AccountRepository(firestore: firestore, crypto: crypto),
         ),
