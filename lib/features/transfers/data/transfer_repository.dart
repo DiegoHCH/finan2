@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'transfer_model.dart';
 
 class TransferRepository {
   TransferRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -19,11 +20,7 @@ class TransferRepository {
         .collection('transfers')
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap((snap) => Future.wait(
-              snap.docs.map(
-                (doc) => Transfer.fromFirestore(doc, _crypto, householdId),
-              ),
-            ));
+        .decryptEach((doc) => Transfer.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Decrypts an already-fetched account snapshot's `balance` field. Takes
@@ -54,16 +51,10 @@ class TransferRepository {
       final toBalance = await _decryptBalance(toSnap, householdId);
 
       tx.update(fromRef, {
-        'balance': await _crypto.encryptAmount(
-          householdId,
-          fromBalance - transfer.amount,
-        ),
+        'balance': await _crypto.encryptAmount(householdId, fromBalance - transfer.amount),
       });
       tx.update(toRef, {
-        'balance': await _crypto.encryptAmount(
-          householdId,
-          toBalance + transfer.amount,
-        ),
+        'balance': await _crypto.encryptAmount(householdId, toBalance + transfer.amount),
       });
       tx.set(transferRef, await transfer.toFirestore(_crypto, householdId));
     });
@@ -85,19 +76,13 @@ class TransferRepository {
       if (fromSnap.exists) {
         final fromBalance = await _decryptBalance(fromSnap, householdId);
         tx.update(fromRef, {
-          'balance': await _crypto.encryptAmount(
-            householdId,
-            fromBalance + transfer.amount,
-          ),
+          'balance': await _crypto.encryptAmount(householdId, fromBalance + transfer.amount),
         });
       }
       if (toSnap.exists) {
         final toBalance = await _decryptBalance(toSnap, householdId);
         tx.update(toRef, {
-          'balance': await _crypto.encryptAmount(
-            householdId,
-            toBalance - transfer.amount,
-          ),
+          'balance': await _crypto.encryptAmount(householdId, toBalance - transfer.amount),
         });
       }
       tx.delete(transferRef);

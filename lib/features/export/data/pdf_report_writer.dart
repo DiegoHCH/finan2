@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../../l10n/l10n.dart';
 import 'report_builder.dart';
 
 class PdfReportWriter {
@@ -13,10 +14,7 @@ class PdfReportWriter {
     doc.addPage(
       pw.MultiPage(
         build: (context) => [
-          pw.Text(
-            report.title,
-            style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
-          ),
+          pw.Text(report.title, style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
           pw.Text(
             report.subtitle,
             style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),
@@ -30,7 +28,7 @@ class PdfReportWriter {
             pw.SizedBox(height: 6),
             if (section.rows.isEmpty)
               pw.Text(
-                'Sin datos para este período.',
+                currentL10n.exportNoData,
                 style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
               )
             else

@@ -3,8 +3,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../features/debts/data/debt_model.dart';
+import '../../features/debts/domain/entities/debt.dart';
+import '../../l10n/l10n.dart';
 import '../utils/local_timezone.dart';
+import '../observability/error_reporter.dart';
 
 /// Thin wrapper around flutter_local_notifications for the reminders that
 /// must fire even when the app isn't open: daily reminder, weekly summary,
@@ -27,8 +29,9 @@ class NotificationService {
     final timezoneId = await getLocalTimezone();
     try {
       tz.setLocalLocation(tz.getLocation(timezoneId));
-    } catch (_) {
+    } catch (e, st) {
       // Unknown/unsupported timezone name - fall back to UTC rather than crash.
+      ErrorReporter.recoverable(e, st, reason: 'timezone $timezoneId not found, using UTC');
     }
 
     const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_finan2');
@@ -41,8 +44,8 @@ class NotificationService {
   /// Requests OS notification permission (and, on Android, exact-alarm
   /// permission needed for reminders to fire at the exact chosen time).
   Future<bool> requestPermission() async {
-    final androidImpl = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     final iosImpl = _plugin
         .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
 
@@ -52,24 +55,20 @@ class NotificationService {
       await androidImpl.requestExactAlarmsPermission();
     }
     if (iosImpl != null) {
-      granted = await iosImpl.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          ) ??
-          granted;
+      granted = await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? granted;
     }
     return granted;
   }
 
   Future<void> scheduleDailyReminder(TimeOfDay time) {
+    final l10n = currentL10n;
     return _plugin.zonedSchedule(
       id: _dailyReminderId,
-      title: 'Registra tus gastos de hoy',
-      body: 'No olvides anotar lo que ingresó o gastó el hogar hoy.',
+      title: l10n.reminderDailyTitle,
+      body: l10n.reminderDailyBody,
       scheduledDate: _nextInstanceOfTime(time),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('daily_reminder', 'Recordatorio diario'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('daily_reminder', l10n.reminderDailyChannel),
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -80,13 +79,14 @@ class NotificationService {
   Future<void> cancelDailyReminder() => _plugin.cancel(id: _dailyReminderId);
 
   Future<void> scheduleWeeklySummary() {
+    final l10n = currentL10n;
     return _plugin.zonedSchedule(
       id: _weeklySummaryId,
-      title: 'Resumen semanal listo',
-      body: 'Revisa cómo le fue al hogar esta semana en Finan2.',
+      title: l10n.reminderWeeklyTitle,
+      body: l10n.reminderWeeklyBody,
       scheduledDate: _nextInstanceOfWeekdayTime(_weeklySummaryWeekday, _weeklySummaryTime),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('weekly_summary', 'Resumen semanal'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('weekly_summary', l10n.reminderWeeklyChannel),
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -96,13 +96,14 @@ class NotificationService {
 
   Future<void> cancelWeeklySummary() => _plugin.cancel(id: _weeklySummaryId);
 
-  /// The reminder countdown: one local notification per day, starting 3 días
-  /// antes of `paymentDay` through the day itself (día 0).
+  /// The reminder countdown: one local notification per day, starting 3 days
+  /// before `paymentDay` through the day itself (day 0).
   static const _debtReminderDaysBefore = [3, 2, 1, 0];
 
   /// (Re)schedules the 4-day reminder countdown for every active debt,
   /// repeating monthly. Paid-off debts get all 4 cancelled.
   Future<void> scheduleDebtPaymentReminders(List<Debt> debts) async {
+    final l10n = currentL10n;
     for (final debt in debts) {
       for (final daysBefore in _debtReminderDaysBefore) {
         final id = _debtNotificationId(debt.id, daysBefore);
@@ -111,18 +112,18 @@ class NotificationService {
           continue;
         }
         final isToday = daysBefore == 0;
-        final reminderDay =
-            debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
+        final reminderDay = debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
         await _plugin.zonedSchedule(
           id: id,
-          title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
+          title: isToday
+              ? l10n.reminderDebtTodayTitle(debt.name)
+              : l10n.reminderDebtSoonTitle(debt.name),
           body: isToday
-              ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
-              : 'La cuota de ${debt.name} vence en $daysBefore '
-                  '${daysBefore == 1 ? 'día' : 'días'}.',
+              ? l10n.reminderDebtTodayBody(debt.name)
+              : l10n.reminderDebtSoonBody(debt.name, daysBefore),
           scheduledDate: _nextInstanceOfMonthDayTime(reminderDay, _debtReminderTime),
-          notificationDetails: const NotificationDetails(
-            android: AndroidNotificationDetails('debt_reminders', 'Pagos de deudas'),
+          notificationDetails: NotificationDetails(
+            android: AndroidNotificationDetails('debt_reminders', l10n.reminderDebtChannel),
             iOS: DarwinNotificationDetails(),
           ),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -146,8 +147,8 @@ class NotificationService {
       id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
       title: title,
       body: body,
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('finan2_activity', 'Actividad del hogar'),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails('finan2_activity', currentL10n.reminderActivityChannel),
         iOS: DarwinNotificationDetails(),
       ),
     );
@@ -159,8 +160,7 @@ class NotificationService {
 
 tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
   final now = tz.TZDateTime.now(tz.local);
-  var scheduled =
-      tz.TZDateTime(tz.local, now.year, now.month, now.day, time.hour, time.minute);
+  var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, time.hour, time.minute);
   if (scheduled.isBefore(now)) scheduled = scheduled.add(const Duration(days: 1));
   return scheduled;
 }
@@ -175,8 +175,7 @@ tz.TZDateTime _nextInstanceOfWeekdayTime(int weekday, TimeOfDay time) {
 
 tz.TZDateTime _nextInstanceOfMonthDayTime(int day, TimeOfDay time) {
   final now = tz.TZDateTime.now(tz.local);
-  var scheduled =
-      tz.TZDateTime(tz.local, now.year, now.month, day, time.hour, time.minute);
+  var scheduled = tz.TZDateTime(tz.local, now.year, now.month, day, time.hour, time.minute);
   if (scheduled.isBefore(now)) {
     scheduled = tz.TZDateTime(tz.local, now.year, now.month + 1, day, time.hour, time.minute);
   }

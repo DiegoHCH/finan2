@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/avalanche_calculator.dart';
-import '../../data/debt_model.dart';
+import '../../domain/avalanche_calculator.dart';
+import '../../domain/entities/debt.dart';
 import '../../data/debt_repository.dart';
 
 final debtRepositoryProvider = Provider<DebtRepository>((ref) {
@@ -39,9 +39,8 @@ class DebtController extends AsyncNotifier<void> {
     final repo = ref.read(debtRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => debt.id.isEmpty
-          ? repo.createDebt(householdId, debt)
-          : repo.updateDebt(householdId, debt),
+      () =>
+          debt.id.isEmpty ? repo.createDebt(householdId, debt) : repo.updateDebt(householdId, debt),
     );
   }
 
@@ -55,5 +54,4 @@ class DebtController extends AsyncNotifier<void> {
   }
 }
 
-final debtControllerProvider =
-    AsyncNotifierProvider<DebtController, void>(DebtController.new);
+final debtControllerProvider = AsyncNotifierProvider<DebtController, void>(DebtController.new);

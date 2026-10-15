@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../viewmodels/monthly_notes_providers.dart';
 import 'edit_monthly_note_screen.dart';
@@ -17,7 +18,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
     final notesAsync = ref.watch(currentMonthNotesProvider);
     final household = ref.watch(currentHouseholdProvider).value;
     final now = DateTime.now();
-    final monthLabel = DateFormat.yMMMM('es').format(now);
+    final monthLabel = DateFormat.yMMMM().format(now);
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
     return Scaffold(
@@ -25,7 +26,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Notas',
+              label: context.l10n.monthlyNotesTitle,
               title: monthLabelCap,
               household: household,
               showBackButton: true,
@@ -38,12 +39,12 @@ class MonthlyNotesScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(Finan2Space.xl),
                   children: [
                     _NoteCard(
-                      title: 'Notas de este mes',
+                      title: context.l10n.monthlyNotesThisMonth,
                       text: notes.thisMonth,
                       onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => EditMonthlyNoteScreen(
-                            title: 'Notas de este mes',
+                            title: context.l10n.monthlyNotesThisMonth,
                             initialText: notes.thisMonth,
                             onSave: (text) => ref
                                 .read(monthlyNotesControllerProvider.notifier)
@@ -54,12 +55,12 @@ class MonthlyNotesScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: Finan2Space.lg),
                     _NoteCard(
-                      title: 'Para el siguiente mes',
+                      title: context.l10n.monthlyNotesNextMonth,
                       text: notes.nextMonth,
                       onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => EditMonthlyNoteScreen(
-                            title: 'Para el siguiente mes',
+                            title: context.l10n.monthlyNotesNextMonth,
                             initialText: notes.nextMonth,
                             onSave: (text) => ref
                                 .read(monthlyNotesControllerProvider.notifier)
@@ -105,14 +106,11 @@ class _NoteCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-            ),
+            Text(title, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
             if (lines.isEmpty)
               Text(
-                'Toca para agregar notas.',
+                context.l10n.monthlyNotesEmpty,
                 style: TextStyle(fontSize: 12.5, color: colors.inkFaint),
               )
             else
@@ -140,11 +138,7 @@ class _NoteCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               line,
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                height: 1.4,
-                                color: colors.inkSoft,
-                              ),
+                              style: TextStyle(fontSize: 12.5, height: 1.4, color: colors.inkSoft),
                             ),
                           ),
                         ],

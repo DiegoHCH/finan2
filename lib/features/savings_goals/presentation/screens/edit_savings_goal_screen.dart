@@ -11,6 +11,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_goal_model.dart';
@@ -24,12 +25,13 @@ const _iconOptions = <String, IconData>{
   'otro': Icons.card_giftcard_outlined,
 };
 
-const _iconLabels = <String, String>{
-  'viaje': 'Viaje',
-  'emergencia': 'Emergencia',
-  'casa': 'Casa',
-  'estudio': 'Estudio',
-  'otro': 'Otro',
+/// Display name for each icon slug (the slug itself is what's stored).
+String _iconLabel(AppLocalizations l10n, String slug) => switch (slug) {
+  'viaje' => l10n.savingsGoalsIconTrip,
+  'emergencia' => l10n.savingsGoalsIconEmergency,
+  'casa' => l10n.savingsGoalsIconHome,
+  'estudio' => l10n.savingsGoalsIconStudy,
+  _ => l10n.savingsGoalsIconOther,
 };
 
 class EditSavingsGoalScreen extends ConsumerStatefulWidget {
@@ -38,8 +40,7 @@ class EditSavingsGoalScreen extends ConsumerStatefulWidget {
   final SavingsGoal? goal;
 
   @override
-  ConsumerState<EditSavingsGoalScreen> createState() =>
-      _EditSavingsGoalScreenState();
+  ConsumerState<EditSavingsGoalScreen> createState() => _EditSavingsGoalScreenState();
 }
 
 class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
@@ -87,9 +88,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final isEditing = widget.goal != null;
-    final contributions = <Contribution>[
-      ...widget.goal?.contributions ?? const <Contribution>[],
-    ];
+    final contributions = <Contribution>[...widget.goal?.contributions ?? const <Contribution>[]];
     if (!isEditing) {
       final seed = int.tryParse(_seedController.text) ?? 0;
       if (seed > 0) {
@@ -108,9 +107,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
       monthlyContribution: int.tryParse(_monthlyController.text) ?? 0,
       interestRate: double.tryParse(_rateController.text.replaceAll(',', '.')) ?? 0,
       contributions: contributions,
-      createdBy: widget.goal?.createdBy ??
-          ref.read(authStateChangesProvider).value?.uid ??
-          '',
+      createdBy: widget.goal?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
     );
     await ref.read(savingsGoalControllerProvider.notifier).save(goal);
     if (mounted) Navigator.of(context).pop();
@@ -121,9 +118,9 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     if (goal == null) return;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar meta',
-      message: 'Se eliminará "${goal.name}" con todos sus aportes. Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.savingsGoalsDelete,
+      message: context.l10n.savingsGoalsDeleteMessage(goal.name),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -136,10 +133,11 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final isEditing = widget.goal != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar meta' : 'Nueva meta',
+        title: isEditing ? l10n.savingsGoalsEditTitle : l10n.savingsGoalsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -147,7 +145,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Ícono', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.savingsGoalsIconField, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -156,30 +154,27 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                 for (final slug in _iconOptions.keys)
                   Finan2Chip(
                     icon: _iconOptions[slug],
-                    label: _iconLabels[slug],
+                    label: _iconLabel(l10n, slug),
                     selected: _iconSlug == slug,
                     onTap: () => setState(() => _iconSlug = slug),
                   ),
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Text(
-              'Meta',
+              l10n.savingsGoalsTarget,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _targetController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _targetController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Row(
               children: [
                 Expanded(
                   child: Finan2Field(
-                    label: 'Aporte mensual',
+                    label: l10n.savingsGoalsMonthlyContribution,
                     controller: _monthlyController,
                     keyboardType: TextInputType.number,
                   ),
@@ -187,10 +182,10 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                 const SizedBox(width: 9),
                 Expanded(
                   child: Finan2TapField(
-                    label: 'Fecha meta',
+                    label: l10n.savingsGoalsTargetDate,
                     value: _targetDate == null
-                        ? 'Sin fecha'
-                        : DateFormat('MMM yyyy', 'es').format(_targetDate!),
+                        ? l10n.savingsGoalsNoDateValue
+                        : DateFormat('MMM yyyy').format(_targetDate!),
                     onTap: _pickTargetDate,
                   ),
                 ),
@@ -201,7 +196,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => setState(() => _targetDate = null),
-                  child: const Text('Quitar fecha'),
+                  child: Text(l10n.savingsGoalsClearDate),
                 ),
               ),
             const SizedBox(height: Finan2Space.md),
@@ -210,7 +205,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                 if (!isEditing)
                   Expanded(
                     child: Finan2Field(
-                      label: 'Ya tengo ahorrado',
+                      label: l10n.savingsGoalsAlreadySaved,
                       controller: _seedController,
                       keyboardType: TextInputType.number,
                     ),
@@ -218,7 +213,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
                 if (!isEditing) const SizedBox(width: 9),
                 Expanded(
                   child: Finan2Field(
-                    label: 'Interés E.A. (opcional)',
+                    label: l10n.savingsGoalsInterestOptional,
                     controller: _rateController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   ),
@@ -230,7 +225,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar meta'),
+                child: Text(l10n.savingsGoalsDelete),
               ),
             ],
           ],

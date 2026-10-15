@@ -66,11 +66,7 @@ class _Finan2FieldState extends State<Finan2Field> {
             validator: widget.validator,
             autofillHints: widget.autofillHints,
             maxLines: widget.obscureText ? 1 : widget.maxLines,
-            style: TextStyle(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w600,
-              color: colors.ink,
-            ),
+            style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: colors.ink),
             decoration: InputDecoration(
               isDense: true,
               isCollapsed: true,
@@ -87,9 +83,7 @@ class _Finan2FieldState extends State<Finan2Field> {
                       child: GestureDetector(
                         onTap: () => setState(() => _obscured = !_obscured),
                         child: Icon(
-                          _obscured
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                          _obscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                           size: 18,
                           color: colors.inkFaint,
                         ),

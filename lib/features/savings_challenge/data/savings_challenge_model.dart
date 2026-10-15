@@ -42,7 +42,8 @@ class SavingsChallenge {
     final rawDone = (data['done'] as List?) ?? const [];
     return SavingsChallenge(
       id: doc.id,
-      name: data['name'] as String? ?? 'Reto de ahorro',
+      // Empty when missing; the screen shows its default name instead.
+      name: data['name'] as String? ?? '',
       cellAmounts: await Future.wait(
         rawAmounts.map((a) => crypto.decryptAmount(householdId, a as String)),
       ),
@@ -51,10 +52,7 @@ class SavingsChallenge {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'cellAmounts': await Future.wait(

@@ -6,10 +6,11 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/recurring_bill_model.dart';
+import '../../domain/entities/recurring_bill.dart';
 import '../recurring_schedule_label.dart';
 import '../viewmodels/recurring_bill_providers.dart';
 import 'edit_recurring_bill_screen.dart';
@@ -30,11 +31,9 @@ class RecurringBillsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'recurringBillsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const EditRecurringBillScreen(),
-                ),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -46,14 +45,11 @@ class RecurringBillsScreen extends ConsumerWidget {
                 final now = DateTime.now();
                 // Weekly and yearly ones counted as their monthly average.
                 final totalFactura = bills
-                    .where(
-                      (b) =>
-                          b.type != CategoryType.ingreso && b.isActiveOn(now),
-                    )
+                    .where((b) => b.type != CategoryType.ingreso && b.isActiveOn(now))
                     .fold(0, (sum, b) => sum + b.monthlyAmount);
                 return Finan2AppTop(
-                  label: 'Facturas recurrentes',
-                  title: '${formatMoney(totalFactura)} al mes',
+                  label: context.l10n.recurringBillsTitle,
+                  title: context.l10n.recurringBillsMonthlyTotal(formatMoney(totalFactura)),
                   trailing: bills.isEmpty ? null : const _AutoBadge(),
                   showBackButton: true,
                 );
@@ -67,15 +63,11 @@ class RecurringBillsScreen extends ConsumerWidget {
                   if (bills.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.autorenew,
-                      title: 'Aún no hay facturas recurrentes',
-                      description:
-                          'Programa el arriendo, servicios o el sueldo para que '
-                          'se registren solos cada mes.',
-                      actionLabel: '+ Nueva factura recurrente',
+                      title: context.l10n.recurringBillsEmptyTitle,
+                      description: context.l10n.recurringBillsEmptyDescription,
+                      actionLabel: context.l10n.recurringBillsEmptyAction,
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditRecurringBillScreen(),
-                        ),
+                        MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen()),
                       ),
                     );
                   }
@@ -84,27 +76,21 @@ class RecurringBillsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(Finan2Space.xl),
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 15,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Se registran solas',
-                              style: TextStyle(
+                            Text(
+                              context.l10n.recurringBillsAutoLogged,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -116,7 +102,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                                     .where((b) => b.isActiveOn(DateTime.now()))
                                     .length;
                                 return Text(
-                                  '$active activa${active == 1 ? '' : 's'}',
+                                  context.l10n.recurringBillsActiveCount(active),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 21,
@@ -135,9 +121,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           border: Border.all(color: colors.line),
-                          borderRadius: BorderRadius.circular(
-                            Finan2Radius.card,
-                          ),
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: Column(
@@ -149,9 +133,8 @@ class RecurringBillsScreen extends ConsumerWidget {
                                 category: categoryById[bills[i].categoryId],
                                 formatMoney: formatMoney,
                                 onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        EditRecurringBillScreen(bill: bills[i]),
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => EditRecurringBillScreen(bill: bills[i]),
                                   ),
                                 ),
                               ),
@@ -179,12 +162,9 @@ class _AutoBadge extends StatelessWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: colors.brandTint,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
       child: Text(
-        'Auto',
+        context.l10n.recurringBillsAutoBadge,
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w700,
@@ -216,23 +196,20 @@ class _BillRow extends StatelessWidget {
     final schedule = describeSchedule(
       frequency: bill.frequency,
       start: scheduleAnchor(bill),
+      l10n: context.l10n,
     );
     final status = bill.paused
-        ? 'en pausa'
+        ? context.l10n.recurringBillsStatusPaused
         : bill.hasEndedBy(DateTime.now())
-        ? 'terminada'
+        ? context.l10n.recurringBillsStatusEnded
         : schedule;
 
     return Finan2TransactionRow(
-      icon: category != null
-          ? Finan2Icons.categoria(category!.iconSlug)
-          : Icons.autorenew,
+      icon: category != null ? Finan2Icons.categoria(category!.iconSlug) : Icons.autorenew,
       iconColor: category != null ? Color(category!.color) : colors.inkSoft,
       description: bill.name,
       subLabel: '${bill.type.label} · $status',
-      amountText: isIncome
-          ? '+${formatMoney(bill.amount)}'
-          : '−${formatMoney(bill.amount)}',
+      amountText: isIncome ? '+${formatMoney(bill.amount)}' : '−${formatMoney(bill.amount)}',
       amountColor: !bill.isActiveOn(DateTime.now())
           ? colors.inkFaint
           : isIncome

@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -24,10 +25,9 @@ class TransferHistoryScreen extends ConsumerWidget {
   Future<void> _delete(BuildContext context, WidgetRef ref, Transfer transfer) async {
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar transferencia',
-      message: 'Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no '
-          'se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.transfersDeleteTitle,
+      message: context.l10n.transfersDeleteMessage,
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -40,19 +40,20 @@ class TransferHistoryScreen extends ConsumerWidget {
     final transfersAsync = ref.watch(transfersProvider);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final formatMoney = ref.watch(moneyFormatterProvider);
+    final l10n = context.l10n;
 
     String accountName(String id) {
       for (final account in accounts) {
         if (account.id == id) return account.name;
       }
-      return 'Cuenta eliminada';
+      return l10n.transfersDeletedAccount;
     }
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2BackHead(title: 'Transferencias'),
+            Finan2BackHead(title: l10n.transfersHistoryTitle),
             Expanded(
               child: transfersAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -61,14 +62,12 @@ class TransferHistoryScreen extends ConsumerWidget {
                   if (transfers.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.swap_horiz,
-                      title: 'Aún no hay transferencias',
-                      description:
-                          'Los movimientos de dinero entre tus propias '
-                          'cuentas aparecerán aquí.',
-                      actionLabel: '+ Transferir',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const TransferScreen()),
-                      ),
+                      title: l10n.transfersEmptyTitle,
+                      description: l10n.transfersEmptyDescription,
+                      actionLabel: l10n.transfersEmptyAction,
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const TransferScreen())),
                     );
                   }
                   return Container(
@@ -91,7 +90,7 @@ class TransferHistoryScreen extends ConsumerWidget {
                           description:
                               '${accountName(transfer.fromAccountId)} → '
                               '${accountName(transfer.toAccountId)}',
-                          subLabel: DateFormat('dd MMM yyyy', 'es').format(transfer.date),
+                          subLabel: DateFormat('dd MMM yyyy').format(transfer.date),
                           amountText: formatMoney(transfer.amount),
                           amountColor: colors.ink,
                           onTap: () => _delete(context, ref, transfer),

@@ -1,41 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'savings_goal_model.dart';
+import '../../../core/observability/error_reporter.dart';
 
 class SavingsGoalRepository {
   SavingsGoalRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
 
-  CollectionReference<Map<String, dynamic>> _goals(String householdId) => _db
-      .collection('households')
-      .doc(householdId)
-      .collection('savingsGoals');
+  CollectionReference<Map<String, dynamic>> _goals(String householdId) =>
+      _db.collection('households').doc(householdId).collection('savingsGoals');
 
-  CollectionReference<Map<String, dynamic>> _goalAlerts(String householdId) => _db
-      .collection('households')
-      .doc(householdId)
-      .collection('goalAlerts');
+  CollectionReference<Map<String, dynamic>> _goalAlerts(String householdId) =>
+      _db.collection('households').doc(householdId).collection('goalAlerts');
 
   Stream<List<SavingsGoal>> watchGoals(String householdId) {
-    return _goals(householdId).orderBy('name').snapshots().asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map(
-              (doc) => SavingsGoal.fromFirestore(doc, _crypto, householdId),
-            ),
-          ),
-        );
+    return _goals(householdId)
+        .orderBy('name')
+        .snapshots()
+        .decryptEach((doc) => SavingsGoal.fromFirestore(doc, _crypto, householdId));
   }
 
   /// Returns the new goal's generated ID.
   Future<String> createGoal(String householdId, SavingsGoal goal) async {
-    final doc = await _goals(householdId).add(
-      await goal.toFirestore(_crypto, householdId),
-    );
+    final doc = await _goals(householdId).add(await goal.toFirestore(_crypto, householdId));
     return doc.id;
   }
 
@@ -46,24 +39,15 @@ class SavingsGoalRepository {
       'name': goal.name,
       'iconSlug': goal.iconSlug,
       'targetAmount': await _crypto.encryptAmount(householdId, goal.targetAmount),
-      'targetDate': goal.targetDate == null
-          ? null
-          : Timestamp.fromDate(goal.targetDate!),
-      'monthlyContribution':
-          await _crypto.encryptAmount(householdId, goal.monthlyContribution),
+      'targetDate': goal.targetDate == null ? null : Timestamp.fromDate(goal.targetDate!),
+      'monthlyContribution': await _crypto.encryptAmount(householdId, goal.monthlyContribution),
       'interestRate': goal.interestRate,
     });
   }
 
-  Future<void> addContribution(
-    String householdId,
-    String goalId,
-    Contribution contribution,
-  ) async {
+  Future<void> addContribution(String householdId, String goalId, Contribution contribution) async {
     await _goals(householdId).doc(goalId).update({
-      'contributions': FieldValue.arrayUnion([
-        await contribution.toMap(_crypto, householdId),
-      ]),
+      'contributions': FieldValue.arrayUnion([await contribution.toMap(_crypto, householdId)]),
     });
     await _refreshGoalNearAlert(householdId, goalId);
   }
@@ -83,11 +67,10 @@ class SavingsGoalRepository {
       if (!doc.exists) return;
       final goal = await SavingsGoal.fromFirestore(doc, _crypto, householdId);
       final fraction = goal.progressFractionAsOf(DateTime.now());
-      await _goalAlerts(householdId).doc(goalId).set({
-        'near': fraction >= 0.9 && fraction < 1.0,
-      });
-    } catch (_) {
+      await _goalAlerts(householdId).doc(goalId).set({'near': fraction >= 0.9 && fraction < 1.0});
+    } catch (e, st) {
       // Best-effort - the contribution itself already succeeded.
+      ErrorReporter.recoverable(e, st, reason: 'goal near-alert flag not refreshed');
     }
   }
 

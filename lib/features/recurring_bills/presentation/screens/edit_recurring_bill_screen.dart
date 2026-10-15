@@ -12,20 +12,22 @@ import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/recurring_bill_model.dart';
+import '../../domain/entities/recurring_bill.dart';
 import '../recurring_schedule_label.dart';
 import '../viewmodels/recurring_bill_providers.dart';
 
 enum _Segment { ingreso, factura }
 
 extension on _Segment {
-  String get label => this == _Segment.ingreso ? 'Ingreso' : 'Factura';
+  String label(AppLocalizations l10n) =>
+      this == _Segment.ingreso ? l10n.recurringBillsTypeIncome : l10n.recurringBillsTypeBill;
   CategoryType get categoryType =>
       this == _Segment.ingreso ? CategoryType.ingreso : CategoryType.factura;
 }
@@ -39,27 +41,19 @@ class EditRecurringBillScreen extends ConsumerStatefulWidget {
   final RecurringBill? bill;
 
   @override
-  ConsumerState<EditRecurringBillScreen> createState() =>
-      _EditRecurringBillScreenState();
+  ConsumerState<EditRecurringBillScreen> createState() => _EditRecurringBillScreenState();
 }
 
-class _EditRecurringBillScreenState
-    extends ConsumerState<EditRecurringBillScreen> {
-  late final _nameController = TextEditingController(
-    text: widget.bill?.name ?? '',
-  );
+class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScreen> {
+  late final _nameController = TextEditingController(text: widget.bill?.name ?? '');
   late final _amountController = TextEditingController(
     text: widget.bill != null ? widget.bill!.amount.toString() : '',
   );
   late var _frequency = widget.bill?.frequency ?? RecurringFrequency.monthly;
-  late var _startDate = widget.bill == null
-      ? _today()
-      : scheduleAnchor(widget.bill!);
+  late var _startDate = widget.bill == null ? _today() : scheduleAnchor(widget.bill!);
   late DateTime? _endDate = widget.bill?.endDate;
   late var _paused = widget.bill?.paused ?? false;
-  late _Segment _segment = _segmentFor(
-    widget.bill?.type ?? CategoryType.factura,
-  );
+  late _Segment _segment = _segmentFor(widget.bill?.type ?? CategoryType.factura);
   late String? _categoryId = widget.bill?.categoryId;
   late String? _accountId = widget.bill?.accountId;
 
@@ -124,25 +118,17 @@ class _EditRecurringBillScreenState
     final amount = int.tryParse(_amountController.text) ?? 0;
     final categoryId = _categoryId;
     final accountId = _accountId;
-    if (name.isEmpty ||
-        amount <= 0 ||
-        categoryId == null ||
-        accountId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Completa el nombre, monto, categoría y cuenta.'),
-        ),
-      );
+    if (name.isEmpty || amount <= 0 || categoryId == null || accountId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.recurringBillsMissingFields)));
       return;
     }
     if (_frequency == RecurringFrequency.semimonthly && _startDate.day > 15) {
       await showFinan2InfoSheet(
         context,
-        title: 'Elige un día hasta el 15',
-        message:
-            'Una quincenal se repite 15 días después de la primera fecha. '
-            'Elige el primer pago entre el 1 y el 15 del mes - por ejemplo el 15 '
-            'para cobrar el 15 y el 30.',
+        title: context.l10n.recurringBillsSemimonthlyDayTitle,
+        message: context.l10n.recurringBillsSemimonthlyDayMessage,
       );
       return;
     }
@@ -165,9 +151,7 @@ class _EditRecurringBillScreenState
                 ? _today()
                 : widget.bill?.resumedOn,
             createdBy:
-                widget.bill?.createdBy ??
-                ref.read(authStateChangesProvider).value?.uid ??
-                '',
+                widget.bill?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -178,10 +162,9 @@ class _EditRecurringBillScreenState
     if (bill == null) return;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar factura recurrente',
-      message:
-          'Se eliminará "${bill.name}" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.',
-      confirmLabel: 'Eliminar',
+      title: context.l10n.recurringBillsDelete,
+      message: context.l10n.recurringBillsDeleteMessage(bill.name),
+      confirmLabel: context.l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -193,22 +176,16 @@ class _EditRecurringBillScreenState
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final accounts = ref.watch(accountsProvider).value ?? const [];
-    final currencySymbol = currencySymbolFor(
-      ref.watch(currentCurrencyProvider),
-    );
+    final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.bill != null;
+    final l10n = context.l10n;
 
-    final categoriesOfSegment = categories
-        .where((c) => c.type == _segment.categoryType)
-        .toList();
-    if (_categoryId != null &&
-        !categoriesOfSegment.any((c) => c.id == _categoryId)) {
+    final categoriesOfSegment = categories.where((c) => c.type == _segment.categoryType).toList();
+    if (_categoryId != null && !categoriesOfSegment.any((c) => c.id == _categoryId)) {
       _categoryId = null;
     }
-    _categoryId ??= categoriesOfSegment.isNotEmpty
-        ? categoriesOfSegment.first.id
-        : null;
+    _categoryId ??= categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
 
     Account? selectedAccount;
     for (final a in accounts) {
@@ -221,9 +198,7 @@ class _EditRecurringBillScreenState
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing
-            ? 'Editar factura recurrente'
-            : 'Nueva factura recurrente',
+        title: isEditing ? l10n.recurringBillsEditTitle : l10n.recurringBillsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -232,7 +207,7 @@ class _EditRecurringBillScreenState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Finan2SegmentedControl<_Segment>(
-              options: {for (final s in _Segment.values) s: s.label},
+              options: {for (final s in _Segment.values) s: s.label(l10n)},
               selected: _segment,
               onChanged: (s) => setState(() {
                 _segment = s;
@@ -240,23 +215,20 @@ class _EditRecurringBillScreenState
               }),
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Text(
-              'Monto',
+              l10n.commonAmount,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _amountController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
-            Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.commonCategory, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             if (categoriesOfSegment.isEmpty)
               Text(
-                'No hay categorías de este tipo todavía. Créalas en Ajustes.',
+                l10n.recurringBillsNoCategories,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
@@ -276,13 +248,13 @@ class _EditRecurringBillScreenState
             const SizedBox(height: Finan2Space.lg),
             if (accounts.isEmpty)
               Text(
-                'No hay cuentas todavía. Créalas en Ajustes.',
+                l10n.recurringBillsNoAccounts,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
               Finan2TapField(
-                label: 'Cuenta',
-                value: selectedAccount?.name ?? 'Selecciona una cuenta',
+                label: l10n.commonAccount,
+                value: selectedAccount?.name ?? l10n.recurringBillsSelectAccount,
                 leading: Icon(
                   Finan2Icons.cuenta(selectedAccount?.type.name ?? 'banco'),
                   size: 18,
@@ -292,7 +264,7 @@ class _EditRecurringBillScreenState
               ),
             const SizedBox(height: Finan2Space.md),
             const SizedBox(height: Finan2Space.sm),
-            Text('Se repite', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.recurringBillsRepeats, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -300,7 +272,7 @@ class _EditRecurringBillScreenState
               children: [
                 for (final f in RecurringFrequency.values)
                   Finan2Chip(
-                    label: f.label,
+                    label: frequencyLabel(f, l10n: l10n),
                     selected: _frequency == f,
                     onTap: () => setState(() => _frequency = f),
                   ),
@@ -308,13 +280,15 @@ class _EditRecurringBillScreenState
             ),
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
-              label: isEditing ? 'Desde' : 'Primera vez',
-              value: DateFormat('dd MMM yyyy', 'es').format(_startDate),
+              label: isEditing ? l10n.recurringBillsFrom : l10n.recurringBillsFirstTime,
+              value: DateFormat('dd MMM yyyy').format(_startDate),
               onTap: _pickStart,
             ),
             const SizedBox(height: Finan2Space.xs),
             Text(
-              'Se registra ${describeSchedule(frequency: _frequency, start: _startDate)}.',
+              l10n.recurringBillsLoggedOn(
+                describeSchedule(frequency: _frequency, start: _startDate, l10n: l10n),
+              ),
               style: TextStyle(fontSize: 12, color: colors.inkSoft),
             ),
             const SizedBox(height: Finan2Space.md),
@@ -322,16 +296,16 @@ class _EditRecurringBillScreenState
               children: [
                 Expanded(
                   child: Finan2TapField(
-                    label: 'Hasta',
+                    label: l10n.recurringBillsUntil,
                     value: _endDate == null
-                        ? 'Sin fecha de fin'
-                        : DateFormat('dd MMM yyyy', 'es').format(_endDate!),
+                        ? l10n.recurringBillsNoEndDate
+                        : DateFormat('dd MMM yyyy').format(_endDate!),
                     onTap: _pickEnd,
                   ),
                 ),
                 if (_endDate != null)
                   IconButton(
-                    tooltip: 'Quitar fecha de fin',
+                    tooltip: l10n.recurringBillsRemoveEndDate,
                     onPressed: () => setState(() => _endDate = null),
                     icon: Icon(Icons.close, color: colors.inkSoft),
                   ),
@@ -341,11 +315,8 @@ class _EditRecurringBillScreenState
               const SizedBox(height: Finan2Space.md),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('En pausa'),
-                subtitle: const Text(
-                  'No se registra mientras esté en pausa. Al reanudarla, las '
-                  'fechas que pasaron no se registran.',
-                ),
+                title: Text(l10n.recurringBillsPaused),
+                subtitle: Text(l10n.recurringBillsPausedHint),
                 value: _paused,
                 onChanged: (value) => setState(() => _paused = value),
               ),
@@ -355,7 +326,7 @@ class _EditRecurringBillScreenState
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar factura recurrente'),
+                child: Text(l10n.recurringBillsDelete),
               ),
             ],
           ],

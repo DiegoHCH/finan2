@@ -44,19 +44,12 @@ class Finan2EmptyState extends StatelessWidget {
               child: Icon(icon, size: 34, color: accent),
             ),
             const SizedBox(height: Finan2Space.md),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: Finan2Space.xs),
             Text(
               description,
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: colors.inkSoft),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
             ),
             const SizedBox(height: Finan2Space.lg),
             FilledButton(onPressed: onAction, child: Text(actionLabel)),

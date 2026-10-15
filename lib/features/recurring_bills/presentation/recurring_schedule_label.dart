@@ -1,23 +1,40 @@
 import 'package:intl/intl.dart';
 
-import '../data/recurring_bill_model.dart';
+import '../../../l10n/l10n.dart';
+import '../domain/entities/recurring_bill.dart';
+
+/// "Semanal", "Quincenal"... for the frequency chips.
+String frequencyLabel(RecurringFrequency frequency, {AppLocalizations? l10n}) {
+  l10n ??= currentL10n;
+  return switch (frequency) {
+    RecurringFrequency.weekly => l10n.recurringBillsFrequencyWeekly,
+    RecurringFrequency.biweekly => l10n.recurringBillsFrequencyBiweekly,
+    RecurringFrequency.semimonthly => l10n.recurringBillsFrequencySemimonthly,
+    RecurringFrequency.monthly => l10n.recurringBillsFrequencyMonthly,
+    RecurringFrequency.yearly => l10n.recurringBillsFrequencyYearly,
+  };
+}
 
 /// "cada lunes", "días 15 y 30", "cada año, 3 de marzo"... for the list and
 /// the edit form.
 String describeSchedule({
   required RecurringFrequency frequency,
   required DateTime start,
+  AppLocalizations? l10n,
 }) {
-  final weekday = DateFormat.EEEE('es').format(start);
+  l10n ??= currentL10n;
+  final weekday = DateFormat.EEEE().format(start);
   final day = start.day;
   return switch (frequency) {
-    RecurringFrequency.weekly => 'cada $weekday',
-    RecurringFrequency.biweekly => 'cada 2 semanas, los $weekday',
-    RecurringFrequency.semimonthly => 'días $day y ${day + 15}',
-    RecurringFrequency.monthly =>
-      'cada mes, día ${day.toString().padLeft(2, '0')}',
-    RecurringFrequency.yearly =>
-      'cada año, ${DateFormat("d 'de' MMMM", 'es').format(start)}',
+    RecurringFrequency.weekly => l10n.recurringBillsScheduleWeekly(weekday),
+    RecurringFrequency.biweekly => l10n.recurringBillsScheduleBiweekly(weekday),
+    RecurringFrequency.semimonthly => l10n.recurringBillsScheduleSemimonthly(day, day + 15),
+    RecurringFrequency.monthly => l10n.recurringBillsScheduleMonthly(
+      day.toString().padLeft(2, '0'),
+    ),
+    RecurringFrequency.yearly => l10n.recurringBillsScheduleYearly(
+      DateFormat.MMMMd().format(start),
+    ),
   };
 }
 

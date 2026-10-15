@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
+import '../../../l10n/l10n.dart';
 
 enum AccountType { efectivo, banco, billetera, debito }
 
 extension AccountTypeLabel on AccountType {
+  /// In the app's language - see currentL10n.
   String get label => switch (this) {
-        AccountType.efectivo => 'Efectivo',
-        AccountType.banco => 'Banco',
-        AccountType.billetera => 'Billetera',
-        AccountType.debito => 'Débito',
-      };
+    AccountType.efectivo => currentL10n.accountsTypeCash,
+    AccountType.banco => currentL10n.accountsTypeBank,
+    AccountType.billetera => currentL10n.accountsTypeWallet,
+    AccountType.debito => currentL10n.accountsTypeDebit,
+  };
 
-  static AccountType fromName(String name) => AccountType.values.firstWhere(
-        (t) => t.name == name,
-        orElse: () => AccountType.banco,
-      );
+  static AccountType fromName(String name) =>
+      AccountType.values.firstWhere((t) => t.name == name, orElse: () => AccountType.banco);
 }
 
 class Account {
@@ -41,10 +41,7 @@ class Account {
     String householdId,
   ) async {
     final data = doc.data()!;
-    final balance = await crypto.decryptAmount(
-      householdId,
-      data['balance'] as String,
-    );
+    final balance = await crypto.decryptAmount(householdId, data['balance'] as String);
     return Account(
       id: doc.id,
       name: data['name'] as String? ?? '',
@@ -55,10 +52,7 @@ class Account {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'type': type.name,

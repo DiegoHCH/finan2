@@ -6,6 +6,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../data/category_model.dart';
 import '../viewmodels/category_providers.dart';
 import 'edit_category_screen.dart';
@@ -18,23 +19,24 @@ class CategoriesScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesProvider);
     final categories = categoriesAsync.value ?? const [];
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
       floatingActionButton: categories.isEmpty
           ? null
           : FloatingActionButton(
               heroTag: 'categoriesFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditCategoryScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Categorías',
-              title: '${categories.length} activa${categories.length == 1 ? '' : 's'}',
+              label: l10n.categoriesTitle,
+              title: l10n.categoriesActiveCount(categories.length),
               showBackButton: true,
             ),
             Expanded(
@@ -45,16 +47,12 @@ class CategoriesScreen extends ConsumerWidget {
                   if (categories.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.sell_outlined,
-                      title: 'Aún no hay categorías',
-                      description:
-                          'Crea tu primera categoría para poder registrar '
-                          'movimientos.',
-                      actionLabel: '+ Nueva categoría',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditCategoryScreen(),
-                        ),
-                      ),
+                      title: l10n.categoriesEmptyTitle,
+                      description: l10n.categoriesEmptyDescription,
+                      actionLabel: l10n.categoriesEmptyAction,
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditCategoryScreen())),
                     );
                   }
                   final byType = <CategoryType, List<Category>>{};
@@ -84,15 +82,11 @@ class CategoriesScreen extends ConsumerWidget {
                                 Finan2ListRow(
                                   icon: Finan2Icons.categoria(category.iconSlug),
                                   label: category.name,
-                                  iconBackground: Color(
-                                    category.color,
-                                  ).withValues(alpha: 0.14),
+                                  iconBackground: Color(category.color).withValues(alpha: 0.14),
                                   iconColor: Color(category.color),
                                   onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => EditCategoryScreen(
-                                        category: category,
-                                      ),
+                                    MaterialPageRoute<void>(
+                                      builder: (_) => EditCategoryScreen(category: category),
                                     ),
                                   ),
                                 ),

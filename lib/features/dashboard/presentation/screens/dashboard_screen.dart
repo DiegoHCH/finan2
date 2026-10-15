@@ -6,6 +6,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
@@ -30,12 +31,14 @@ class DashboardScreen extends ConsumerWidget {
     final formatMoney = ref.watch(moneyFormatterProvider);
     final categoryById = {for (final c in categories) c.id: c};
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
-    final netWorth = ref.watch(availableBalanceProvider) +
+    final netWorth =
+        ref.watch(availableBalanceProvider) +
         ref.watch(totalSavedProvider) +
         totalInvestments -
         ref.watch(totalDebtProvider);
 
-    final monthLabel = DateFormat.MMMM('es').format(DateTime.now());
+    final l10n = context.l10n;
+    final monthLabel = DateFormat.MMMM().format(DateTime.now());
     final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
 
     return Scaffold(
@@ -43,7 +46,7 @@ class DashboardScreen extends ConsumerWidget {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Hogar',
+              label: l10n.dashboardHousehold,
               title: household.name,
               household: household,
             ),
@@ -70,9 +73,9 @@ class DashboardScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Patrimonio neto',
-                        style: TextStyle(color: Colors.white, fontSize: 11.5),
+                      Text(
+                        l10n.dashboardNetWorth,
+                        style: const TextStyle(color: Colors.white, fontSize: 11.5),
                       ),
                       const SizedBox(height: 3),
                       Text(
@@ -84,9 +87,9 @@ class DashboardScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      const Text(
-                        'Cuentas + ahorros + inversiones − deudas',
-                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      Text(
+                        l10n.dashboardNetWorthFormula,
+                        style: const TextStyle(color: Colors.white, fontSize: 11),
                       ),
                     ],
                   ),
@@ -111,15 +114,13 @@ class DashboardScreen extends ConsumerWidget {
                       income += tx.amount;
                     } else {
                       expense += tx.amount;
-                      byCategory[tx.categoryId] =
-                          (byCategory[tx.categoryId] ?? 0) + tx.amount;
+                      byCategory[tx.categoryId] = (byCategory[tx.categoryId] ?? 0) + tx.amount;
                     }
                   }
                   final topCategories = byCategory.entries.toList()
                     ..sort((a, b) => b.value.compareTo(a.value));
                   final shown = topCategories.take(4).toList();
-                  final maxAmount =
-                      shown.isEmpty ? 1 : shown.first.value;
+                  final maxAmount = shown.isEmpty ? 1 : shown.first.value;
 
                   return ListView(
                     padding: const EdgeInsets.all(Finan2Space.xl),
@@ -129,7 +130,7 @@ class DashboardScreen extends ConsumerWidget {
                           Expanded(
                             child: Finan2StatBox(
                               dotColor: colors.income,
-                              label: 'Ingresos',
+                              label: l10n.dashboardIncome,
                               value: formatMoney(income),
                               valueColor: colors.income,
                             ),
@@ -138,7 +139,7 @@ class DashboardScreen extends ConsumerWidget {
                           Expanded(
                             child: Finan2StatBox(
                               dotColor: colors.expense,
-                              label: 'Gastos',
+                              label: l10n.dashboardExpenses,
                               value: formatMoney(expense),
                               valueColor: colors.expense,
                             ),
@@ -151,19 +152,17 @@ class DashboardScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           border: Border.all(color: colors.line),
-                          borderRadius:
-                              BorderRadius.circular(Finan2Radius.card),
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'A dónde va el dinero',
-                                  style: TextStyle(
+                                Text(
+                                  l10n.dashboardWhereMoneyGoes,
+                                  style: const TextStyle(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -182,11 +181,8 @@ class DashboardScreen extends ConsumerWidget {
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: Text(
-                                  'No hay gastos categorizados este mes.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colors.inkSoft,
-                                  ),
+                                  l10n.dashboardNoCategorizedSpending,
+                                  style: TextStyle(fontSize: 12, color: colors.inkSoft),
                                 ),
                               )
                             else
@@ -196,20 +192,13 @@ class DashboardScreen extends ConsumerWidget {
                                   children: [
                                     for (final entry in shown)
                                       Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 9),
+                                        padding: const EdgeInsets.only(bottom: 9),
                                         child: _CategoryBar(
-                                          name: categoryById[entry.key]
-                                                  ?.name ??
-                                              '?',
+                                          name: categoryById[entry.key]?.name ?? '?',
                                           amountText: formatMoney(entry.value),
                                           fraction: entry.value / maxAmount,
-                                          color: categoryById[entry.key] !=
-                                                  null
-                                              ? Color(
-                                                  categoryById[entry.key]!
-                                                      .color,
-                                                )
+                                          color: categoryById[entry.key] != null
+                                              ? Color(categoryById[entry.key]!.color)
                                               : colors.inkSoft,
                                           trackColor: colors.surfaceAlt,
                                         ),

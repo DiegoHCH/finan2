@@ -72,10 +72,7 @@ class Finan2TransactionRow extends StatelessWidget {
                         Container(
                           width: 14,
                           height: 14,
-                          decoration: BoxDecoration(
-                            color: avatarColor,
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(color: avatarColor, shape: BoxShape.circle),
                           alignment: Alignment.center,
                           child: Text(
                             avatarLabel,
@@ -88,10 +85,7 @@ class Finan2TransactionRow extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                       ],
-                      Text(
-                        subLabel,
-                        style: TextStyle(fontSize: 11, color: colors.inkFaint),
-                      ),
+                      Text(subLabel, style: TextStyle(fontSize: 11, color: colors.inkFaint)),
                     ],
                   ),
                 ],
@@ -99,11 +93,7 @@ class Finan2TransactionRow extends StatelessWidget {
             ),
             Text(
               amountText,
-              style: TextStyle(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w700,
-                color: amountColor,
-              ),
+              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: amountColor),
             ),
           ],
         ),

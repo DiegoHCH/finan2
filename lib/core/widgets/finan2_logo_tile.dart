@@ -6,12 +6,7 @@ import 'finan2_bars_icon.dart';
 /// The gradient logo tile with the Finan2 bars mark, matching the mockup's
 /// `.lg-logo`/`.logo` (used at the top of login/signup and the header).
 class Finan2LogoTile extends StatelessWidget {
-  const Finan2LogoTile({
-    this.tileSize = 52,
-    this.iconSize = 28,
-    this.alignLeft = true,
-    super.key,
-  });
+  const Finan2LogoTile({this.tileSize = 52, this.iconSize = 28, this.alignLeft = true, super.key});
 
   final double tileSize;
   final double iconSize;

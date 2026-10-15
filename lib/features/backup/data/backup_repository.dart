@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
+import '../../../l10n/l10n.dart';
 
 /// What a backup holds: the household's own data. Push tokens, member
 /// preferences, the in-app inbox, alert flags and Worker markers are left
@@ -42,6 +43,7 @@ const _format = 'finan2-backup';
 const _version = 1;
 const _sealContext = 'finan2-backup-v1';
 
+/// [message] is shown to the user as is, in the app's language.
 class BackupException implements Exception {
   const BackupException(this.message);
 
@@ -80,8 +82,8 @@ class RestoreResult {
 /// with that same key - and balances match the movements at that moment.
 class BackupRepository {
   BackupRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -97,13 +99,15 @@ class BackupRepository {
     }
     final clear = utf8.encode(jsonEncode({'collections': collections}));
     final sealed = await _crypto.seal(householdId, _sealContext, clear);
-    return utf8.encode(jsonEncode({
-      'format': _format,
-      'version': _version,
-      'householdId': householdId,
-      'createdAt': (now ?? DateTime.now()).toUtc().toIso8601String(),
-      'data': base64Url.encode(sealed),
-    }));
+    return utf8.encode(
+      jsonEncode({
+        'format': _format,
+        'version': _version,
+        'householdId': householdId,
+        'createdAt': (now ?? DateTime.now()).toUtc().toIso8601String(),
+        'data': base64Url.encode(sealed),
+      }),
+    );
   }
 
   /// Reads the file's outside without the key - to say whose it is.
@@ -126,9 +130,7 @@ class BackupRepository {
   }) async {
     final outer = _outer(file);
     if (outer['householdId'] != householdId) {
-      throw const BackupException(
-        'Esta copia es de otro hogar. Solo se puede restaurar en el hogar donde se hizo.',
-      );
+      throw BackupException(currentL10n.backupErrorOtherHousehold);
     }
     final List<int> clear;
     try {
@@ -140,10 +142,11 @@ class BackupRepository {
     } on Finan2CryptoException {
       rethrow;
     } catch (_) {
-      throw const BackupException('La copia está dañada o se modificó. No se puede abrir.');
+      throw BackupException(currentL10n.backupErrorDamaged);
     }
     final collections =
-        (jsonDecode(utf8.decode(clear)) as Map<String, dynamic>)['collections'] as Map<String, dynamic>;
+        (jsonDecode(utf8.decode(clear)) as Map<String, dynamic>)['collections']
+            as Map<String, dynamic>;
 
     var restored = 0;
     var removed = 0;
@@ -151,8 +154,9 @@ class BackupRepository {
     final writes = _BatchedWrites(_db);
 
     for (final name in backupCollections) {
-      final saved = (collections[name] as Map<String, dynamic>? ?? const {})
-          .map((id, data) => MapEntry(id, _decode(data) as Map<String, dynamic>));
+      final saved = (collections[name] as Map<String, dynamic>? ?? const {}).map(
+        (id, data) => MapEntry(id, _decode(data) as Map<String, dynamic>),
+      );
       final col = _household(householdId).collection(name);
       final current = {for (final doc in (await col.get()).docs) doc.id: doc.data()};
 
@@ -180,7 +184,9 @@ class BackupRepository {
             ...data,
             'createdBy': currentUid,
             if (name == 'transactions')
-              'paidBy': (data['paidBy'] as String?)?.isNotEmpty ?? false ? data['paidBy'] : createdBy,
+              'paidBy': (data['paidBy'] as String?)?.isNotEmpty ?? false
+                  ? data['paidBy']
+                  : createdBy,
           };
           reattributed++;
         }
@@ -200,9 +206,7 @@ class BackupRepository {
           outer['createdAt'] is String &&
           outer['data'] is String) {
         if ((outer['version'] as num? ?? 0) > _version) {
-          throw const BackupException(
-            'Esta copia se hizo con una versión más nueva de Finan2. Actualiza la app.',
-          );
+          throw BackupException(currentL10n.backupErrorNewerVersion);
         }
         return outer;
       }
@@ -211,27 +215,27 @@ class BackupRepository {
     } catch (_) {
       // Falls through to the generic message.
     }
-    throw const BackupException('Este archivo no es una copia de seguridad de Finan2.');
+    throw BackupException(currentL10n.backupErrorNotABackup);
   }
 }
 
 /// Firestore values to JSON: timestamps are the only non-JSON type the app
 /// stores.
 Object? _encode(Object? value) => switch (value) {
-      Timestamp t => {r'$ts': t.microsecondsSinceEpoch},
-      Map m => {for (final e in m.entries) e.key as String: _encode(e.value)},
-      List l => [for (final v in l) _encode(v)],
-      String() || num() || bool() || null => value,
-      _ => throw BackupException('Tipo de dato no soportado en la copia: ${value.runtimeType}'),
-    };
+  Timestamp t => {r'$ts': t.microsecondsSinceEpoch},
+  Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _encode(e.value)},
+  List<Object?> l => [for (final v in l) _encode(v)],
+  String() || num() || bool() || null => value,
+  _ => throw BackupException(currentL10n.backupErrorUnsupportedType('${value.runtimeType}')),
+};
 
 Object? _decode(Object? value) => switch (value) {
-      {r'$ts': final int micros} when (value as Map).length == 1 =>
-        Timestamp.fromMicrosecondsSinceEpoch(micros),
-      Map m => {for (final e in m.entries) e.key as String: _decode(e.value)},
-      List l => [for (final v in l) _decode(v)],
-      _ => value,
-    };
+  {r'$ts': final int micros} when (value as Map).length == 1 =>
+    Timestamp.fromMicrosecondsSinceEpoch(micros),
+  Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _decode(e.value)},
+  List<Object?> l => [for (final v in l) _decode(v)],
+  _ => value,
+};
 
 /// Commits every 400 writes - Firestore's batch limit is 500.
 class _BatchedWrites {

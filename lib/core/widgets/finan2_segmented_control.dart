@@ -38,9 +38,7 @@ class Finan2SegmentedControl<T> extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: BoxDecoration(
-                    color: entry.key == selected
-                        ? Theme.of(context).colorScheme.surface
-                        : null,
+                    color: entry.key == selected ? Theme.of(context).colorScheme.surface : null,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: entry.key == selected
                         ? [

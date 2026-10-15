@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/year_month.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/transaction_model.dart';
+import '../../domain/entities/movement.dart';
 import '../../data/transaction_repository.dart';
 
 final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {
@@ -18,34 +18,32 @@ final transactionsForMonthProvider = StreamProvider<List<Movement>>((ref) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
   final now = currentYearMonth();
-  return ref.watch(transactionRepositoryProvider).watchTransactions(
-        householdId,
-        year: now.year,
-        month: now.month,
-      );
+  return ref
+      .watch(transactionRepositoryProvider)
+      .watchTransactions(householdId, year: now.year, month: now.month);
 });
 
 /// Any month's transactions, for Movimientos and Presupuesto while browsing.
-final transactionsOfMonthProvider =
-    StreamProvider.autoDispose.family<List<Movement>, YearMonth>((ref, month) {
-  final householdId = ref.watch(currentHouseholdProvider).value?.id;
-  if (householdId == null) return Stream.value(const []);
-  return ref.watch(transactionRepositoryProvider).watchTransactions(
-        householdId,
-        year: month.year,
-        month: month.month,
-      );
-});
-
-/// All of a year's transactions - used by Resumen anual to compute yearly
-/// totals and the month-by-month spend chart.
-final transactionsForYearProvider =
-    StreamProvider.autoDispose.family<List<Movement>, int>((ref, year) {
+final transactionsOfMonthProvider = StreamProvider.autoDispose.family<List<Movement>, YearMonth>((
+  ref,
+  month,
+) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
   return ref
       .watch(transactionRepositoryProvider)
-      .watchTransactionsForYear(householdId, year: year);
+      .watchTransactions(householdId, year: month.year, month: month.month);
+});
+
+/// All of a year's transactions - used by Resumen anual to compute yearly
+/// totals and the month-by-month spend chart.
+final transactionsForYearProvider = StreamProvider.autoDispose.family<List<Movement>, int>((
+  ref,
+  year,
+) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const []);
+  return ref.watch(transactionRepositoryProvider).watchTransactionsForYear(householdId, year: year);
 });
 
 class TransactionController extends AsyncNotifier<void> {
@@ -69,15 +67,11 @@ class TransactionController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(transactionRepositoryProvider).deleteTransaction(
-            householdId,
-            txId,
-          ),
+      () => ref.read(transactionRepositoryProvider).deleteTransaction(householdId, txId),
     );
   }
 }
 
-final transactionControllerProvider =
-    AsyncNotifierProvider<TransactionController, void>(
+final transactionControllerProvider = AsyncNotifierProvider<TransactionController, void>(
   TransactionController.new,
 );

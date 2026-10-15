@@ -20,6 +20,7 @@
 // movements - the first phone to open it registers them (the amounts are
 // encrypted with a key only the phones hold). See markPendingBills().
 
+import { isRecent, recentContributions } from './activity.js';
 import { coDayOf, day, isoDay, movementIdFor, occurrencesBetween } from './recurring.js';
 
 const ICON_URL = 'https://finan2.web.app/icons/Icon-192.png';
@@ -235,6 +236,7 @@ async function handleScheduled(env) {
   const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
   const projectId = env.FIREBASE_PROJECT_ID;
   const co = coNow();
+  const nowMs = Date.now();
   // DRY_RUN='true' (set via `wrangler dev --test-scheduled` + .dev.vars, or
   // temporarily as a real secret) reads real data and logs what it would
   // do, but never calls FCM or writes a sentReminders marker - lets this
@@ -387,6 +389,7 @@ async function handleScheduled(env) {
           household.id,
           co.year,
           co.month,
+          nowMs,
         );
         for (const item of partnerCreatedSources) {
           if (!item.createdBy || item.createdBy === uid) continue;
@@ -405,13 +408,7 @@ async function handleScheduled(env) {
         goalsById ??= await getRawDocsById(accessToken, projectId, household.id, 'savingsGoals');
         for (const [goalId, doc] of Object.entries(goalsById)) {
           const goalName = fieldStr(doc, 'name', 'una meta');
-          const contributions = (doc.fields?.contributions?.arrayValue?.values ?? [])
-            .map((v) => v.mapValue?.fields)
-            .filter(Boolean);
-          for (const c of contributions) {
-            const createdBy = c.createdBy?.stringValue;
-            const date = c.date?.timestampValue;
-            if (!createdBy || createdBy === uid || !date) continue;
+          for (const { date } of recentContributions(doc, uid, nowMs)) {
             await sendOnce({
               accessToken,
               dryRun,
@@ -538,13 +535,11 @@ async function sendOnce({
 }
 
 async function listHouseholds(accessToken, projectId) {
-  const res = await fetch(
-    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households?pageSize=1000`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
+  const documents = await listAllDocuments(
+    accessToken,
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households`,
   );
-  const data = await res.json();
-  if (!data.documents) return [];
-  return data.documents.map((doc) => ({
+  return documents.map((doc) => ({
     id: doc.name.split('/').pop(),
     members: (doc.fields?.members?.arrayValue?.values ?? [])
       .map((v) => v.stringValue)
@@ -623,11 +618,13 @@ async function getGoalNearAlerts(accessToken, projectId, householdId) {
 /// the generic "tu pareja creó X" push - mirrors
 /// NotificationScanner._scanPartnerCreated (lib/features/notifications/data/
 /// notification_scanner.dart). No decryption needed: names/descriptions/
-/// createdBy are all plaintext, only amounts are encrypted.
-async function getPartnerCreatedSources(accessToken, projectId, householdId, year, month) {
+/// createdBy are all plaintext, only amounts are encrypted. Only records
+/// created inside the activity window (see activity.js) - older ones were
+/// either announced already or predate the member turning this on.
+async function getPartnerCreatedSources(accessToken, projectId, householdId, year, month, nowMs) {
   const [transactions, transfers, debts, accounts, investments, recurringBills, categories, savingsChallenges] =
     await Promise.all([
-      getRawDocs(accessToken, projectId, householdId, 'transactions'),
+      getMonthTransactions(accessToken, projectId, householdId, year, month),
       getRawDocs(accessToken, projectId, householdId, 'transfers'),
       getRawDocs(accessToken, projectId, householdId, 'debts'),
       getRawDocs(accessToken, projectId, householdId, 'accounts'),
@@ -639,11 +636,11 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
 
   const items = [];
   for (const doc of transactions) {
-    if (fieldInt(doc, 'year') !== year || fieldInt(doc, 'month') !== month) continue;
     const description = fieldStr(doc, 'description');
     items.push({
       kind: 'tx',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nuevo movimiento',
       body: description || 'Tu pareja registró un movimiento.',
@@ -653,6 +650,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'transfer',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva transferencia',
       body: 'Tu pareja registró una transferencia entre cuentas.',
@@ -662,6 +660,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'debt',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva deuda',
       body: fieldStr(doc, 'name'),
@@ -671,6 +670,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'account',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva cuenta',
       body: fieldStr(doc, 'name'),
@@ -680,6 +680,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'investment',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva inversión',
       body: fieldStr(doc, 'name'),
@@ -689,6 +690,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'bill',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva factura recurrente',
       body: fieldStr(doc, 'name'),
@@ -698,6 +700,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'category',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva categoría',
       body: fieldStr(doc, 'name'),
@@ -707,6 +710,7 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'challenge',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nuevo reto de ahorro',
       body: fieldStr(doc, 'name'),
@@ -719,21 +723,57 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
     items.push({
       kind: 'goal',
       id: docId(doc),
+      createTime: doc.createTime,
       createdBy: fieldStr(doc, 'createdBy'),
       title: 'Nueva meta de ahorro',
       body: fieldStr(doc, 'name'),
     });
   }
-  return items;
+  return items.filter((item) => isRecent(item.createTime, nowMs));
 }
 
 async function getRawDocs(accessToken, projectId, householdId, collectionName) {
-  const res = await fetch(
-    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/${collectionName}?pageSize=1000`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
+  return listAllDocuments(
+    accessToken,
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/${collectionName}`,
   );
-  const data = await res.json();
-  return data.documents ?? [];
+}
+
+/// Every page of a collection - a single list call stops at 1000 documents.
+async function listAllDocuments(accessToken, collectionUrl) {
+  const documents = [];
+  let pageToken = '';
+  do {
+    const url = `${collectionUrl}?pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const data = await res.json();
+    documents.push(...(data.documents ?? []));
+    pageToken = data.nextPageToken ?? '';
+  } while (pageToken);
+  return documents;
+}
+
+/// Only [year]/[month]'s movements, queried server-side instead of listing
+/// every movement the household ever had.
+async function getMonthTransactions(accessToken, projectId, householdId, year, month) {
+  const intEquals = (field, value) => ({
+    fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { integerValue: String(value) } },
+  });
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}:runQuery`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'transactions' }],
+          where: { compositeFilter: { op: 'AND', filters: [intEquals('year', year), intEquals('month', month)] } },
+        },
+      }),
+    },
+  );
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows.map((r) => r.document).filter(Boolean) : [];
 }
 
 /// Same as [getRawDocs] but keyed by document ID, for lookups (category/goal
@@ -795,13 +835,8 @@ async function markSent(accessToken, projectId, householdId, markerId) {
 }
 
 async function getHouseholdTokens(accessToken, projectId, householdId) {
-  const res = await fetch(
-    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/fcmTokens`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
-  const data = await res.json();
-  if (!data.documents) return [];
-  return data.documents
+  const documents = await getRawDocs(accessToken, projectId, householdId, 'fcmTokens');
+  return documents
     .map((doc) => ({
       token: doc.fields?.token?.stringValue,
       uid: doc.fields?.uid?.stringValue,

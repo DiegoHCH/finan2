@@ -11,13 +11,9 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
-import '../../../auth/presentation/viewmodels/auth_providers.dart';
-import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../../l10n/l10n.dart';
 import '../../data/backup_repository.dart';
-
-final backupRepositoryProvider = Provider<BackupRepository>((ref) {
-  return BackupRepository(crypto: ref.watch(householdCryptoProvider));
-});
+import '../viewmodels/backup_providers.dart';
 
 class BackupScreen extends ConsumerStatefulWidget {
   const BackupScreen({super.key});
@@ -37,7 +33,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       if (!mounted) return;
       await showFinan2ErrorSheet(
         context,
-        title: 'No se pudo completar',
+        title: context.l10n.backupErrorTitle,
         message: error is BackupException || error is Finan2CryptoException
             ? error.toString()
             : friendlyErrorMessage(error),
@@ -48,59 +44,47 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _create() => _run(() async {
-        final householdId = ref.read(currentHouseholdProvider).value?.id;
-        if (householdId == null) return;
-        final bytes = await ref.read(backupRepositoryProvider).create(householdId);
-        final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [
-              XFile.fromData(
-                Uint8List.fromList(bytes),
-                mimeType: 'application/json',
-                name: 'finan2-copia-$stamp.finan2',
-              ),
-            ],
-          ),
-        );
-      });
+    final fileName = context.l10n.backupFileName(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    final bytes = await ref.read(backupControllerProvider.notifier).create();
+    if (bytes == null) return;
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [
+          XFile.fromData(Uint8List.fromList(bytes), mimeType: 'application/json', name: fileName),
+        ],
+      ),
+    );
+  });
 
   Future<void> _restore() => _run(() async {
-        final householdId = ref.read(currentHouseholdProvider).value?.id;
-        final uid = ref.read(authStateChangesProvider).value?.uid;
-        if (householdId == null || uid == null) return;
-        final file = await FilePicker.pickFile();
-        if (file == null) return;
-        final bytes = await file.readAsBytes();
-        final repo = ref.read(backupRepositoryProvider);
-        final info = repo.inspect(bytes);
-        if (!mounted) return;
-        final confirmed = await showFinan2ConfirmSheet(
-          context,
-          title: 'Restaurar la copia',
-          message: 'El hogar volverá a como estaba el '
-              '${DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es').format(info.createdAt)}. '
-              'Lo que se haya creado después se borra y lo que cambió vuelve a '
-              'como estaba, también para tu pareja.',
-          confirmLabel: 'Restaurar',
-          destructive: true,
-        );
-        if (!confirmed) return;
-        final result = await repo.restore(householdId, bytes, currentUid: uid);
-        if (!mounted) return;
-        await showFinan2InfoSheet(
-          context,
-          title: 'Copia restaurada',
-          message: [
-            '${result.restored} registros restaurados'
-                '${result.removed > 0 ? ' y ${result.removed} posteriores borrados' : ''}.',
-            if (result.reattributed > 0)
-              '${result.reattributed} registros de tu pareja que se habían borrado '
-                  'quedan a tu nombre: solo puedes crear registros como tuyos. En los '
-                  'movimientos se conserva quién pagó.',
-          ].join(' '),
-        );
-      });
+    final file = await FilePicker.pickFile();
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
+    final backup = ref.read(backupControllerProvider.notifier);
+    final info = backup.inspect(bytes);
+    if (!mounted) return;
+    final l10n = context.l10n;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: l10n.backupRestoreTitle,
+      message: l10n.backupRestoreMessage(DateFormat.yMMMMd().add_jm().format(info.createdAt)),
+      confirmLabel: l10n.backupRestoreConfirm,
+      destructive: true,
+    );
+    if (!confirmed) return;
+    final result = await backup.restore(bytes);
+    if (result == null || !mounted) return;
+    await showFinan2InfoSheet(
+      context,
+      title: l10n.backupRestoredTitle,
+      message: [
+        result.removed > 0
+            ? l10n.backupRestoredSummaryWithRemoved(result.restored, result.removed)
+            : l10n.backupRestoredSummary(result.restored),
+        if (result.reattributed > 0) l10n.backupReattributed(result.reattributed),
+      ].join(' '),
+    );
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,38 +94,29 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(
-              label: 'Copia de seguridad',
-              title: 'Todo el hogar, cifrado',
+            Finan2AppTop(
+              label: context.l10n.backupTitle,
+              title: context.l10n.backupSubtitle,
               showBackButton: true,
             ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(Finan2Space.xl),
                 children: [
-                  Text(
-                    'La copia guarda cuentas, movimientos, presupuestos, deudas, metas, '
-                    'facturas recurrentes y notas en un archivo cifrado con la llave del '
-                    'hogar. Sin esa llave no se puede leer, así que puedes guardarlo en '
-                    'tu correo o en la nube.',
-                    style: textStyle,
-                  ),
+                  Text(context.l10n.backupDescription, style: textStyle),
                   const SizedBox(height: Finan2Space.sm),
-                  Text(
-                    'Solo se puede restaurar en este mismo hogar.',
-                    style: textStyle,
-                  ),
+                  Text(context.l10n.backupSameHouseholdOnly, style: textStyle),
                   const SizedBox(height: Finan2Space.xl),
                   FilledButton.icon(
                     onPressed: _busy ? null : _create,
                     icon: const Icon(Icons.save_alt),
-                    label: const Text('Crear copia'),
+                    label: Text(context.l10n.backupCreate),
                   ),
                   const SizedBox(height: Finan2Space.sm),
                   OutlinedButton.icon(
                     onPressed: _busy ? null : _restore,
                     icon: const Icon(Icons.restore),
-                    label: const Text('Restaurar una copia'),
+                    label: Text(context.l10n.backupRestoreAction),
                   ),
                   if (_busy) ...[
                     const SizedBox(height: Finan2Space.lg),

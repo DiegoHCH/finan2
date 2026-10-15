@@ -33,7 +33,7 @@ void main() {
     );
 
     navigatorKey.currentState!.push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => const Scaffold(body: Finan2BackHead(title: 'Detalle')),
       ),
     );

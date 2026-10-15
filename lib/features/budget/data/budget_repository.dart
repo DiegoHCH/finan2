@@ -4,8 +4,8 @@ import '../../../core/crypto/household_crypto.dart';
 
 class BudgetRepository {
   BudgetRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -24,18 +24,12 @@ class BudgetRepository {
     required int year,
     required int month,
   }) {
-    return _budgets(householdId)
-        .doc(_docId(year, month))
-        .snapshots()
-        .asyncMap((doc) async {
+    return _budgets(householdId).doc(_docId(year, month)).snapshots().asyncMap((doc) async {
       final data = doc.data();
       if (data == null) return const {};
       final entries = await Future.wait(
         data.entries.map((entry) async {
-          final amount = await _crypto.decryptAmount(
-            householdId,
-            entry.value as String,
-          );
+          final amount = await _crypto.decryptAmount(householdId, entry.value as String);
           return MapEntry(entry.key, amount);
         }),
       );
@@ -45,10 +39,7 @@ class BudgetRepository {
 
   /// Every month's budget for [year]: month (1-12) -> categoryId ->
   /// planned amount. Months never budgeted are absent.
-  Stream<Map<int, Map<String, int>>> watchBudgetsForYear(
-    String householdId, {
-    required int year,
-  }) {
+  Stream<Map<int, Map<String, int>>> watchBudgetsForYear(String householdId, {required int year}) {
     return _budgets(householdId).snapshots().asyncMap((snap) async {
       final result = <int, Map<String, int>>{};
       for (final doc in snap.docs) {

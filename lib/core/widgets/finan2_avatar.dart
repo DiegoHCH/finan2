@@ -31,18 +31,12 @@ class Finan2Avatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: background,
-        border: borderWidth > 0
-            ? Border.all(color: colors.surfaceAlt, width: borderWidth)
-            : null,
+        border: borderWidth > 0 ? Border.all(color: colors.surfaceAlt, width: borderWidth) : null,
       ),
       alignment: Alignment.center,
       child: Text(
         label,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: size * 0.4,
-        ),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: size * 0.4),
       ),
     );
   }

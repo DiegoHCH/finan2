@@ -7,10 +7,7 @@ import '../../helpers/pump_app.dart';
 void main() {
   testWidgets('shows the given currency symbol as a prefix', (tester) async {
     final controller = TextEditingController();
-    await pumpFinan2(
-      tester,
-      Finan2AmountInput(controller: controller, currencySymbol: 'US\$'),
-    );
+    await pumpFinan2(tester, Finan2AmountInput(controller: controller, currencySymbol: 'US\$'));
     expect(find.text('US\$ '), findsOneWidget);
   });
 
@@ -30,10 +27,7 @@ void main() {
 
   testWidgets('autofocus requests focus on the field when true', (tester) async {
     final controller = TextEditingController();
-    await pumpFinan2(
-      tester,
-      Finan2AmountInput(controller: controller, autofocus: true),
-    );
+    await pumpFinan2(tester, Finan2AmountInput(controller: controller, autofocus: true));
     await tester.pump();
     // Autofocus opens a keyboard connection as soon as the field is built.
     expect(tester.testTextInput.isVisible, isTrue);
