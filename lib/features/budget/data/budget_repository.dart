@@ -43,6 +43,26 @@ class BudgetRepository {
     });
   }
 
+  /// Copies every category's planned amount from one month into another
+  /// that has no budget yet. Returns how many categories were copied - 0 if
+  /// the source is empty or the target already has a budget.
+  Future<int> copyBudget(
+    String householdId, {
+    required ({int year, int month}) from,
+    required ({int year, int month}) to,
+  }) {
+    final source = _budgets(householdId).doc(_docId(from.year, from.month));
+    final target = _budgets(householdId).doc(_docId(to.year, to.month));
+    return _db.runTransaction((tx) async {
+      final sourceData = (await tx.get(source)).data() ?? const {};
+      final targetData = (await tx.get(target)).data() ?? const {};
+      if (sourceData.isEmpty || targetData.isNotEmpty) return 0;
+      // Same household, same key: the encrypted amounts copy as they are.
+      tx.set(target, sourceData);
+      return sourceData.length;
+    });
+  }
+
   Future<void> setCategoryAmount(
     String householdId, {
     required int year,
