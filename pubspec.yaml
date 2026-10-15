@@ -1,7 +1,7 @@
 name: finan2
 description: "Finanzas del hogar compartidas entre dos personas: transacciones, presupuesto, deudas, metas de ahorro e inversiones, con montos cifrados de extremo a extremo."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.12.2
