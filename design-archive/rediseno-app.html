@@ -17,12 +17,12 @@
   --ink: #1c1915;
   --ink-soft: #5c554a;
   --ink-faint: #8a8174;
-  --accent: #c2502a;     /* terracota: la única acción de cada pantalla */
+  --accent: #c2502a;     /* violeta: la única acción de cada pantalla */
   --accent-ink: #ffffff;
   --accent-tint: #f6ddd2;
   --pos: #2e7556;        /* pino: entra plata */
   --pos-tint: #dcefe4;
-  --over: #b8323f;       /* granate: SOLO cuando algo se pasó */
+  --over: #b8323f;       /* rojo: SOLO cuando algo se pasó */
   --over-tint: #f6dcdf;
   --u1: #2f66c9;         /* Diego: azul lago */
   --u1-tint: #dde7fa;
@@ -366,6 +366,34 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
 .nav a.on svg { background: var(--accent-tint); color: var(--accent); }
 .nav a.on { color: var(--ink); font-weight: 750; }
 .ftop .x svg { width: 22px; height: 22px; vertical-align: middle; }
+
+/* ---- paleta «Violeta moderno» (paleta_fintech_violeta.html) ---- */
+:root, .t-light { --paper:#F8FAFC;--sheet:#FFFFFF;--sheet-2:#F1F5F9;--line:#E2E8F0;--ink:#111827;--ink-soft:#64748B;--ink-faint:#94A3B8;
+  --accent:#7C3AED;--accent-ink:#FFFFFF;--accent-tint:#EDE9FE;--pos:#16A34A;--pos-tint:#DCFCE7;--over:#DC2626;--over-tint:#FEE2E2;
+  --warn:#D97706;--info:#0284C7;
+  --u1:#0284C7;--u1-tint:#E0F2FE;--u2:#EA580C;--u2-tint:#FFEDD5;
+  --c-mercado:#65A30D;--c-mercado-t:#ECFCCB;--c-casa:#0F766E;--c-casa-t:#CCFBF1;--c-transporte:#B45309;--c-transporte-t:#FEF3C7;
+  --c-ocio:#DB2777;--c-ocio-t:#FCE7F3;--c-servicios:#475569;--c-servicios-t:#E2E8F0;--c-ahorro:#16A34A;--c-ahorro-t:#DCFCE7;color-scheme:light; }
+:root[data-theme="dark"], .t-dark { --paper:#0B0B12;--sheet:#151521;--sheet-2:#1E1E2D;--line:#29293B;--ink:#F8FAFC;--ink-soft:#A1A1AA;--ink-faint:#71717A;
+  --accent:#A78BFA;--accent-ink:#0B0B12;--accent-tint:#2A2145;--pos:#4ADE80;--pos-tint:#12301E;--over:#F87171;--over-tint:#3A1919;
+  --warn:#FBBF24;--info:#38BDF8;
+  --u1:#38BDF8;--u1-tint:#0C2A3A;--u2:#FB923C;--u2-tint:#33200F;
+  --c-mercado:#A3E635;--c-mercado-t:#1E2A0E;--c-casa:#2DD4BF;--c-casa-t:#0F2A27;--c-transporte:#FBBF24;--c-transporte-t:#2E2410;
+  --c-ocio:#F472B6;--c-ocio-t:#33172A;--c-servicios:#CBD5E1;--c-servicios-t:#1E2433;--c-ahorro:#4ADE80;--c-ahorro-t:#12301E;color-scheme:dark; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper:#0B0B12;--sheet:#151521;--sheet-2:#1E1E2D;--line:#29293B;--ink:#F8FAFC;--ink-soft:#A1A1AA;--ink-faint:#71717A;
+  --accent:#A78BFA;--accent-ink:#0B0B12;--accent-tint:#2A2145;--pos:#4ADE80;--pos-tint:#12301E;--over:#F87171;--over-tint:#3A1919;
+  --warn:#FBBF24;--info:#38BDF8;
+  --u1:#38BDF8;--u1-tint:#0C2A3A;--u2:#FB923C;--u2-tint:#33200F;
+  --c-mercado:#A3E635;--c-mercado-t:#1E2A0E;--c-casa:#2DD4BF;--c-casa-t:#0F2A27;--c-transporte:#FBBF24;--c-transporte-t:#2E2410;
+  --c-ocio:#F472B6;--c-ocio-t:#33172A;--c-servicios:#CBD5E1;--c-servicios-t:#1E2433;--c-ahorro:#4ADE80;--c-ahorro-t:#12301E;color-scheme:dark; } }
+.t-light { --paper:#F8FAFC;--sheet:#FFFFFF;--sheet-2:#F1F5F9;--line:#E2E8F0;--ink:#111827;--ink-soft:#64748B;--ink-faint:#94A3B8;
+  --accent:#7C3AED;--accent-ink:#FFFFFF;--accent-tint:#EDE9FE;--pos:#16A34A;--pos-tint:#DCFCE7;--over:#DC2626;--over-tint:#FEE2E2;
+  --warn:#D97706;--info:#0284C7;
+  --u1:#0284C7;--u1-tint:#E0F2FE;--u2:#EA580C;--u2-tint:#FFEDD5;
+  --c-mercado:#65A30D;--c-mercado-t:#ECFCCB;--c-casa:#0F766E;--c-casa-t:#CCFBF1;--c-transporte:#B45309;--c-transporte-t:#FEF3C7;
+  --c-ocio:#DB2777;--c-ocio-t:#FCE7F3;--c-servicios:#475569;--c-servicios-t:#E2E8F0;--c-ahorro:#16A34A;--c-ahorro-t:#DCFCE7;color-scheme:light; }
+.cardvis { background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 48%, #6D28D9 100%); }
+.t-dark .cardvis, :root[data-theme="dark"] .cardvis { background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 60%, #5B21B6 100%); }
 </style>
 </head>
 <body>
@@ -426,7 +454,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
 
 <div class="doc">
   <h1>Finan2, <em>rediseñada</em>.</h1>
-  <p class="lede">La app completa en el estilo nuevo: 41 pantallas, de entrar a exportar. Papel y tinta cálidos, un color por categoría y por persona, terracota solo para la acción. El botón ◐ las pasa todas a oscuro.</p>
+  <p class="lede">La app completa en el estilo nuevo: 41 pantallas, de entrar a exportar. Paleta «Violeta moderno»: fondos neutros, violeta solo para la acción, verde para lo que entra, rojo solo cuando algo se pasa, y un color por categoría y por persona. El botón ◐ las pasa todas a oscuro.</p>
   <p class="lede" style="font-size:15px;margin-top:10px"><b>Es híbrida</b>: la misma app en Android e iOS. Por eso no usa controles de ninguna plataforma. La letra es Plus Jakarta Sans, que ya va empaquetada en la app; el marco del teléfono es neutro, los interruptores, selectores y la barra inferior son propios de Finan2, y lo único que cambia entre Android e iOS es lo que pone el sistema (ver «Android e iOS», al final).</p>
   <p class="lede" style="font-size:14px;margin-top:10px">Sustituye a <code>diseno-app.html</code> como referencia de diseño. Los motivos de cada decisión, la paleta y el léxico están en la propuesta (<code>finan2-rediseno-mockups-2026-10.html</code>) y resumidos al final.</p>
   <nav class="toc"><a href="#s0">Lo de todos los días</a><a href="#s1">El plan</a><a href="#s2">Dónde está la plata</a><a href="#s3">Entrar y armar la casa</a><a href="#s4">Ajustes, avisos y extras</a><a href="#s5">Cuando algo no es lo normal</a><a href="#s6">Android e iOS</a><a href="#sistema">Color y palabras</a></nav>
@@ -480,7 +508,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
       </div></div>
       <div class="why"><div class="k">Movimientos</div><h3>Una libreta, por días</h3>
         <p>Filas con <b>línea de 1px</b>, agrupadas por día con el neto del día a la derecha: así se revisa una libreta.</p>
-        <p>El gasto va en <b>tinta normal</b>; solo los ingresos llevan color (pino). Nada está «mal» por haber gastado.</p>
+        <p>El gasto va en <b>tinta normal</b>; solo los ingresos llevan color (verde). Nada está «mal» por haber gastado.</p>
         <p>Quién pagó es <b>un punto y un nombre en su color</b>, no un avatar: cabe en la línea y se lee igual.</p>
         <p>El mes vive en la cabecera (‹ ›) y la búsqueda está siempre a la vista, no detrás de una lupa.</p></div>
     </div>    <div class="shot">
@@ -533,7 +561,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="hd"><div><div class="over">Movimiento</div><div class="ttl">Mercado Éxito</div></div></div><div class="figure"><div class="big num" style="font-size:44px"><small>$</small>318.000</div><div class="sub">Gasto · martes 14 de octubre</div></div><div class="sheet"><div class="set"><span class="tile mercado"><svg class="i "><use href="#i-cart"/></svg></span>Categoría<span class="v">Mercado</span></div><div class="set"><span class="tile casa"><svg class="i "><use href="#i-bank"/></svg></span>Cuenta<span class="v">Bancolombia</span></div><div class="set"><span class="tile u2"><svg class="i "><use href="#i-user"/></svg></span>Pagó<span class="v" style="color:var(--u2)">Vale</span></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-tag"/></svg></span>Etiquetas<span class="v">#casa</span></div><div class="set"><span class="tile" style="--t:var(--sheet-2);--c:var(--ink-soft)"><svg class="i "><use href="#i-pen"/></svg></span>Lo anotó<span class="v">Diego · 14 oct, 7:12 p. m.</span></div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn quiet">Editar</div><div class="link" style="color:var(--over)">Borrar movimiento</div></div></div>
         
       </div></div>
-      <div class="why"><div class="k">Movimientos · detalle</div><h3>Quién pagó y quién lo anotó</h3><p>Son dos datos distintos y los dos se ven: Vale pagó, Diego lo anotó.</p><p>Borrar es un enlace granate, lejos del pulgar, y ofrece «Deshacer» durante 5 s.</p></div>
+      <div class="why"><div class="k">Movimientos · detalle</div><h3>Quién pagó y quién lo anotó</h3><p>Son dos datos distintos y los dos se ven: Vale pagó, Diego lo anotó.</p><p>Borrar es un enlace rojo, lejos del pulgar, y ofrece «Deshacer» durante 5 s.</p></div>
     </div>
   </div>
 
@@ -557,7 +585,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
       </div></div>
       <div class="why"><div class="k">Plan · presupuesto</div><h3>Lo que queda, no lo gastado</h3>
         <p>A la derecha de cada categoría se lee <b>cuánto queda</b>, que es lo que sirve para decidir. Lo gastado pasa a la línea pequeña.</p>
-        <p>Cada barra va en <b>el color de su categoría</b> hasta que se pasa: entonces, y solo entonces, se vuelve granate y aparece arriba como aviso.</p>
+        <p>Cada barra va en <b>el color de su categoría</b> hasta que se pasa: entonces, y solo entonces, se vuelve rojo y aparece arriba como aviso.</p>
         <p>Lo que se arrastra del mes anterior (P5) se ve como etiqueta junto al nombre: «+60k».</p>
         <p>Presupuesto, metas y deudas comparten pestaña: son el mismo plan visto desde tres lados.</p></div>
     </div>    <div class="shot">
@@ -578,7 +606,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
       </div></div>
       <div class="why"><div class="k">Plan · metas</div><h3>Un anillo dice «cuánto falta»</h3>
         <p>El anillo se lee de un vistazo y no compite con la cifra. Cada meta toma un color propio, para distinguirlas en la lista sin leer.</p>
-        <p>«Va atrasada» es texto granate, sin icono de alarma: es un dato, no una emergencia.</p>
+        <p>«Va atrasada» es texto rojo, sin icono de alarma: es un dato, no una emergencia.</p>
         <p>Las deudas se resumen en una frase, <b>«libres en marzo de 2027»</b>, que es lo que importa del cálculo Avalancha; el detalle está un toque más allá.</p></div>
     </div>
     <div class="shot">
@@ -619,7 +647,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Reto 52 semanas</div></div></div><div class="figure"><div class="lab">Ahorrado en el reto</div><div class="big num" style="font-size:36px"><small>$</small>1.890.000</div><div class="sub">semana 27 de 52 · van 2 semanas adelantados</div></div><div class="grid6"><i class="d">1</i><i class="d">2</i><i class="d">3</i><i class="d">4</i><i class="d">5</i><i class="d">6</i><i class="d">7</i><i class="d">8</i><i class="d">9</i><i class="d">10</i><i class="d">11</i><i class="d">12</i><i class="d">13</i><i class="d">14</i><i class="d">15</i><i class="d">16</i><i class="d">17</i><i class="d">18</i><i class="d">19</i><i class="d">20</i><i class="d">21</i><i class="d">22</i><i class="d">23</i><i class="d">24</i><i class="d">25</i><i class="d">26</i><i class="d">27</i><i class="n">28</i><i>29</i><i>30</i><i>31</i><i>32</i><i>33</i><i>34</i><i>35</i><i>36</i></div><div class="now"><span class="ic"><svg class="i "><use href="#i-pig"/></svg></span><div class="tx"><b>Semana 28: $28.000</b>Márcala cuando la aporten.</div><span class="go">Marcar</span></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
-      <div class="why"><div class="k">Plan · reto de ahorro</div><h3>Una grilla para tachar</h3><p>Las semanas hechas se rellenan en pino; la que toca lleva el contorno terracota. Sin medallas ni rachas: el avance ya se ve.</p></div>
+      <div class="why"><div class="k">Plan · reto de ahorro</div><h3>Una grilla para tachar</h3><p>Las semanas hechas se rellenan en verde; la que toca lleva el contorno violeta. Sin medallas ni rachas: el avance ya se ve.</p></div>
     </div>
     <div class="shot">
       <div class="phone"><div class="cam"></div><div class="scr">
@@ -627,7 +655,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="hd"><div><div class="over">Plan</div><div class="ttl">Resumen 2026</div></div><div class="act"><svg class="i " style="width:20px;height:20px"><use href="#i-chart"/></svg></div></div><div class="seg"><span>2024</span><span>2025</span><span class="on">2026</span></div><div class="split" style="grid-template-columns:1fr 1fr 1fr"><div class="ingreso"><div class="n">Entró</div><div class="v num" style="font-size:16px">$42,5M</div></div><div style="--t:var(--sheet);--c:var(--ink-soft)"><div class="n">Salió</div><div class="v num" style="font-size:16px">$28,1M</div></div><div class="ahorro"><div class="n">Ahorrado</div><div class="v num" style="font-size:16px">$14,4M</div></div></div><div class="sheet pad"><div class="sec-t" style="margin:0 0 12px">Gasto por mes <a>prom. $2,8M</a></div><div class="ybars"><div><b style="height:62%" class=""></b><span>E</span></div><div><b style="height:55%" class=""></b><span>F</span></div><div><b style="height:70%" class=""></b><span>M</span></div><div><b style="height:58%" class=""></b><span>A</span></div><div><b style="height:64%" class=""></b><span>M</span></div><div><b style="height:90%" class="hi"></b><span>J</span></div><div><b style="height:60%" class=""></b><span>J</span></div><div><b style="height:57%" class=""></b><span>A</span></div><div><b style="height:66%" class=""></b><span>S</span></div><div><b style="height:48%" class=""></b><span>O</span></div><div><b style="height:30%" class="fut"></b><span>N</span></div><div><b style="height:30%" class="fut"></b><span>D</span></div></div></div><div class="now calm"><span class="ic"><svg class="i "><use href="#i-chart"/></svg></span><div class="tx"><b>Junio fue el mes más alto</b>La prima de la casa: $1,2M extra en Casa.</div></div></div>
         <div class="nav" data-on="plan"></div>
       </div></div>
-      <div class="why"><div class="k">Plan · año</div><h3>El mes raro se explica</h3><p>Una barra por mes en el color de Casa; el mes más alto en terracota y, debajo, <b>por qué</b> fue alto. Los meses que faltan quedan como hueco.</p></div>
+      <div class="why"><div class="k">Plan · año</div><h3>El mes raro se explica</h3><p>Una barra por mes en el color de Casa; el mes más alto en violeta y, debajo, <b>por qué</b> fue alto. Los meses que faltan quedan como hueco.</p></div>
     </div>
   </div>
 
@@ -729,7 +757,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="state" style="gap:14px"><div style="width:52px;height:52px;border-radius:17px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center"><svg class="i" style="width:28px;height:28px;stroke-width:2.2"><path d="M5 18V9m4.7 9V5m4.6 13v-7M19 18v-6"/></svg></div><h4>La libreta de la casa,<br>para los dos.</h4><p>Cada quien entra con su cuenta; lo que anotan es de los dos.</p><div class="field"><div class="fl">Correo</div><div class="fv">diego.hoyos@gmail.com</div></div><div class="field"><div class="fl">Contraseña</div><div class="fv ph">••••••••••</div></div><div class="btn">Entrar</div><div class="btn quiet">Seguir con Google</div><div class="link">¿No tienes cuenta? <b style="color:var(--accent)">Créala</b></div></div></div>
         
       </div></div>
-      <div class="why"><div class="k">Acceso</div><h3>Entrar</h3><p>El logo es terracota y reutiliza las barras del original. El titular dice qué es la app, no «Bienvenido».</p></div>
+      <div class="why"><div class="k">Acceso</div><h3>Entrar</h3><p>El logo es violeta y reutiliza las barras del original. El titular dice qué es la app, no «Bienvenido».</p></div>
     </div>
     <div class="shot">
       <div class="phone"><div class="cam"></div><div class="scr">
@@ -745,7 +773,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div><div style="font-size:28px;font-weight:760;letter-spacing:-.035em;line-height:1.08">¿Arman la casa o ya existe?</div><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:var(--ink-soft)">Uno de los dos la crea; el otro entra con un código.</p></div><div class="opt"><span class="tile" style="--t:var(--accent-tint);--c:var(--accent)"><svg class="i "><use href="#i-house"/></svg></span><div><div class="ok">Crear la casa</div><div class="os">Empiezo yo e invito a mi pareja.</div></div></div><div class="opt on"><span class="tile" style="--t:var(--sheet);--c:var(--accent)"><svg class="i "><use href="#i-key"/></svg></span><div><div class="ok">Tengo un código</div><div class="os">Mi pareja ya la creó.</div></div></div><div class="field"><div class="fl">Código</div><div class="fv" style="font-family:ui-monospace,monospace;letter-spacing:.12em">H8-4KP2.••••••</div></div><div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:28px"><div class="btn">Entrar a la casa</div></div></div>
         
       </div></div>
-      <div class="why"><div class="k">Hogar</div><h3>Crear o unirse</h3><p>Dos opciones grandes, la elegida con borde terracota. El código se escribe en monoespaciada: hay que copiarlo exacto, y así se distingue la O del 0.</p></div>
+      <div class="why"><div class="k">Hogar</div><h3>Crear o unirse</h3><p>Dos opciones grandes, la elegida con borde violeta. El código se escribe en monoespaciada: hay que copiarlo exacto, y así se distingue la O del 0.</p></div>
     </div>    <div class="shot">
       <div class="phone"><div class="cam"></div><div class="scr">
         <div class="sb"><span>9:41</span><span class="sbi"><svg class="i"><use href="#i-sig"/></svg><svg class="i"><use href="#i-wifi"/></svg><svg class="i"><use href="#i-bat"/></svg></span></div>
@@ -763,7 +791,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
       </div></div>
       <div class="why"><div class="k">Primer uso · P9</div><h3>Una pregunta por pantalla</h3>
         <p>El título es <b>una pregunta</b> («¿Dónde está la plata hoy?»), no el nombre de un formulario. Se contesta y se sigue.</p>
-        <p>El botón vive abajo, al alcance del pulgar, y es <b>el único terracota</b> de la pantalla.</p>
+        <p>El botón vive abajo, al alcance del pulgar, y es <b>el único violeta</b> de la pantalla.</p>
         <p>«Ahora no» en lugar de «Omitir»: no suena a saltarse algo obligatorio.</p></div>
     </div>
     <div class="shot">
@@ -795,7 +823,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
       <div class="why"><div class="k">Ajustes · P17</div><h3>Decir qué pasa antes del botón</h3>
         <p>Lo que hace restaurar —<b>afecta a los dos y borra lo posterior</b>— se dice antes de tocar nada, no solo en la confirmación.</p>
         <p>«Última copia: hace 6 días» convierte la pantalla en un recordatorio útil, no solo en dos botones.</p>
-        <p>Restaurar es <b>secundario</b> (hoja, no terracota): es la acción rara y la peligrosa.</p></div>
+        <p>Restaurar es <b>secundario</b> (hoja, no violeta): es la acción rara y la peligrosa.</p></div>
     </div>
   </div>
 
@@ -832,7 +860,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="hd"><div><div class="over">Casa</div><div class="ttl">Avisos</div></div></div><div class="sheet"><div class="ntf unread"><span class="tile transporte"><svg class="i "><use href="#i-card"/></svg></span><div class="tx"><b>La Visa se paga el sábado</b>Mínimo $180.000. Sugerido $400.000.<div class="tm">hace 2 h</div></div></div><div class="ntf unread"><span class="tile u2"><svg class="i "><use href="#i-pen"/></svg></span><div class="tx"><b>Vale anotó Mercado Éxito</b>$318.000 · Mercado<div class="tm">hace 3 h</div></div></div><div class="ntf"><span class="tile over" style="--t:var(--over-tint);--c:var(--over)"><svg class="i "><use href="#i-car"/></svg></span><div class="tx"><b>Transporte se pasó</b>Van $540.000 de $500.000.<div class="tm">ayer</div></div></div><div class="ntf"><span class="tile ahorro"><svg class="i "><use href="#i-pig"/></svg></span><div class="tx"><b>Viaje a Europa llegó al 58%</b>Van a tiempo para diciembre.<div class="tm">15 oct</div></div></div></div><div class="link">Marcar todo como leído</div></div>
         
       </div></div>
-      <div class="why"><div class="k">Avisos</div><h3>Cada aviso, en su color</h3><p>El icono toma el color de lo que avisa: la persona, la categoría o el granate si algo se pasó. Lo no leído lleva un punto terracota tras el título.</p></div>
+      <div class="why"><div class="k">Avisos</div><h3>Cada aviso, en su color</h3><p>El icono toma el color de lo que avisa: la persona, la categoría o el rojo si algo se pasó. Lo no leído lleva un punto violeta tras el título.</p></div>
     </div>
     <div class="shot">
       <div class="phone"><div class="cam"></div><div class="scr">
@@ -840,7 +868,7 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
         <div class="body"><div class="hd"><div><div class="over">Ajustes</div><div class="ttl">Qué avisar</div></div></div><p style="margin:-6px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.45">Solo para ti: Vale elige los suyos.</p><div class="sheet"><div class="set"><div>Pagos que se acercan<span class="sub2">3 días antes y el mismo día</span></div><span class="tg on"></span></div><div class="set"><div>Categoría que se pasa<span class="sub2">Una vez por categoría y mes</span></div><span class="tg on"></span></div><div class="set"><div>Lo que anota Vale<span class="sub2">Cada movimiento nuevo</span></div><span class="tg"></span></div><div class="set"><div>Avance de metas<span class="sub2">Al pasar 25, 50, 75 y 100%</span></div><span class="tg on"></span></div><div class="set"><div>Recordatorio para anotar<span class="sub2">Todos los días</span></div><span class="v num">9:00 p. m.</span><span class="tg on" style="margin-left:10px"></span></div></div></div>
         
       </div></div>
-      <div class="why"><div class="k">Avisos · ajustes</div><h3>Cuándo, dicho en cada fila</h3><p>Debajo de cada interruptor se lee <b>cuándo</b> llega el aviso, que es lo que decide si molesta. El encendido es pino, no terracota: no es una acción.</p></div>
+      <div class="why"><div class="k">Avisos · ajustes</div><h3>Cuándo, dicho en cada fila</h3><p>Debajo de cada interruptor se lee <b>cuándo</b> llega el aviso, que es lo que decide si molesta. El encendido es verde, no violeta: no es una acción.</p></div>
     </div>
     <div class="shot">
       <div class="phone"><div class="cam"></div><div class="scr">
@@ -964,11 +992,11 @@ body, .toggle-theme { font-family: "Plus Jakarta Sans", Roboto, "Segoe UI", syst
   <div class="sys">
     <div class="card">
       <h4>Color con trabajo</h4>
-      <div class="sw"><i style="--c:var(--accent)"></i><div><b>Terracota · acción</b><span>Una sola por pantalla: Anotar, Guardar, Crear.</span></div></div>
-      <div class="sw"><i style="--c:var(--pos)"></i><div><b>Pino · entra plata</b><span>Ingresos y ahorro. Nunca decoración.</span></div></div>
-      <div class="sw"><i style="--c:var(--over)"></i><div><b>Granate · te pasaste</b><span>Solo presupuesto excedido o meta atrasada.</span></div></div>
-      <div class="sw"><i style="--c:var(--u1)"></i><div><b>Lago · Diego</b><span>Quién pagó, en punto o texto.</span></div></div>
-      <div class="sw"><i style="--c:var(--u2)"></i><div><b>Ciruela · Vale</b><span>Ídem. Cada miembro elige el suyo.</span></div></div>
+      <div class="sw"><i style="--c:var(--accent)"></i><div><b>Violeta · acción</b><span>Una sola por pantalla: Anotar, Guardar, Crear.</span></div></div>
+      <div class="sw"><i style="--c:var(--pos)"></i><div><b>Verde · entra plata</b><span>Ingresos y ahorro. Nunca decoración.</span></div></div>
+      <div class="sw"><i style="--c:var(--over)"></i><div><b>Rojo · te pasaste</b><span>Solo presupuesto excedido o meta atrasada.</span></div></div>
+      <div class="sw"><i style="--c:var(--u1)"></i><div><b>Azul · Diego</b><span>Quién pagó, en punto o texto.</span></div></div>
+      <div class="sw"><i style="--c:var(--u2)"></i><div><b>Naranja · Vale</b><span>No viene en la paleta: se añade para no chocar con el violeta de la acción.</span></div></div>
     </div>
     <div class="card">
       <h4>Categorías</h4>
