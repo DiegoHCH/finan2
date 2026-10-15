@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/year_month.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
@@ -212,47 +213,48 @@ Future<void> _editCategoryBudget(
   Category category,
   int currentAmount,
 ) async {
-  final controller = TextEditingController(text: currentAmount > 0 ? currentAmount.toString() : '');
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        Finan2Space.xl,
-        Finan2Space.lg,
-        Finan2Space.xl,
-        MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            sheetContext.l10n.budgetForCategory(category.name),
-            style: Theme.of(sheetContext).textTheme.titleMedium,
-          ),
-          const SizedBox(height: Finan2Space.md),
-          Finan2AmountInput(
-            controller: controller,
-            autofocus: true,
-            currencySymbol: currencySymbol,
-          ),
-          const SizedBox(height: Finan2Space.lg),
-          FilledButton(
-            onPressed: () async {
-              final amount = int.tryParse(controller.text) ?? 0;
-              await ref
-                  .read(budgetControllerProvider.notifier)
-                  .setCategoryAmount(month, category.id, amount);
-              if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-            },
-            child: Text(sheetContext.l10n.commonSave),
-          ),
-        ],
+    builder: (sheetContext) => Finan2WithTextController(
+      initialText: currentAmount > 0 ? currentAmount.toString() : '',
+      builder: (_, controller) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          Finan2Space.xl,
+          Finan2Space.lg,
+          Finan2Space.xl,
+          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              sheetContext.l10n.budgetForCategory(category.name),
+              style: Theme.of(sheetContext).textTheme.titleMedium,
+            ),
+            const SizedBox(height: Finan2Space.md),
+            Finan2AmountInput(
+              controller: controller,
+              autofocus: true,
+              currencySymbol: currencySymbol,
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            FilledButton(
+              onPressed: () async {
+                final amount = int.tryParse(controller.text) ?? 0;
+                await ref
+                    .read(budgetControllerProvider.notifier)
+                    .setCategoryAmount(month, category.id, amount);
+                if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+              },
+              child: Text(sheetContext.l10n.commonSave),
+            ),
+          ],
+        ),
       ),
     ),
   );
-  controller.dispose();
 }
 
 Future<void> _pickCategoryToBudget(

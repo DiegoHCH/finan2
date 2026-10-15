@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_chip.dart';
@@ -243,90 +244,90 @@ Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDe
     ).showSnackBar(SnackBar(content: Text(context.l10n.debtsNeedAccountFirst)));
     return;
   }
-  final controller = TextEditingController();
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
   var selectedAccountId = accounts.first.id;
   var submitting = false;
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (sheetContext) => StatefulBuilder(
-      builder: (sheetContext, setSheetState) => Padding(
-        padding: EdgeInsets.fromLTRB(
-          Finan2Space.xl,
-          Finan2Space.lg,
-          Finan2Space.xl,
-          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              sheetContext.l10n.debtsRecordPayment,
-              style: Theme.of(sheetContext).textTheme.titleMedium,
-            ),
-            const SizedBox(height: Finan2Space.md),
-            Finan2AmountInput(
-              controller: controller,
-              autofocus: true,
-              currencySymbol: currencySymbol,
-            ),
-            const SizedBox(height: Finan2Space.md),
-            Text(
-              sheetContext.l10n.debtsPaymentFrom,
-              style: Theme.of(sheetContext).textTheme.labelMedium,
-            ),
-            const SizedBox(height: Finan2Space.sm),
-            Wrap(
-              spacing: 7,
-              runSpacing: 7,
-              children: [
-                for (final account in accounts)
-                  Finan2Chip(
-                    label: account.name,
-                    selected: selectedAccountId == account.id,
-                    onTap: () => setSheetState(() => selectedAccountId = account.id),
-                  ),
-              ],
-            ),
-            const SizedBox(height: Finan2Space.lg),
-            FilledButton(
-              onPressed: submitting
-                  ? null
-                  : () async {
-                      final amount = int.tryParse(controller.text) ?? 0;
-                      if (amount > 0) {
-                        setSheetState(() => submitting = true);
-                        await ref
-                            .read(cardPaymentControllerProvider.notifier)
-                            .createPayment(
-                              CardPayment(
-                                id: '',
-                                amount: amount,
-                                fromAccountId: selectedAccountId,
-                                cardDebtId: cardDebtId,
-                                date: DateTime.now(),
-                                createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
-                              ),
-                            );
-                      }
-                      if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-                    },
-              child: submitting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(sheetContext.l10n.debtsRecordPayment),
-            ),
-          ],
+    builder: (sheetContext) => Finan2WithTextController(
+      builder: (_, controller) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            Finan2Space.xl,
+            Finan2Space.lg,
+            Finan2Space.xl,
+            MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                sheetContext.l10n.debtsRecordPayment,
+                style: Theme.of(sheetContext).textTheme.titleMedium,
+              ),
+              const SizedBox(height: Finan2Space.md),
+              Finan2AmountInput(
+                controller: controller,
+                autofocus: true,
+                currencySymbol: currencySymbol,
+              ),
+              const SizedBox(height: Finan2Space.md),
+              Text(
+                sheetContext.l10n.debtsPaymentFrom,
+                style: Theme.of(sheetContext).textTheme.labelMedium,
+              ),
+              const SizedBox(height: Finan2Space.sm),
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final account in accounts)
+                    Finan2Chip(
+                      label: account.name,
+                      selected: selectedAccountId == account.id,
+                      onTap: () => setSheetState(() => selectedAccountId = account.id),
+                    ),
+                ],
+              ),
+              const SizedBox(height: Finan2Space.lg),
+              FilledButton(
+                onPressed: submitting
+                    ? null
+                    : () async {
+                        final amount = int.tryParse(controller.text) ?? 0;
+                        if (amount > 0) {
+                          setSheetState(() => submitting = true);
+                          await ref
+                              .read(cardPaymentControllerProvider.notifier)
+                              .createPayment(
+                                CardPayment(
+                                  id: '',
+                                  amount: amount,
+                                  fromAccountId: selectedAccountId,
+                                  cardDebtId: cardDebtId,
+                                  date: DateTime.now(),
+                                  createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
+                                ),
+                              );
+                        }
+                        if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                      },
+                child: submitting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(sheetContext.l10n.debtsRecordPayment),
+              ),
+            ],
+          ),
         ),
       ),
     ),
   );
-  controller.dispose();
 }
 
 class _CardPaymentsSection extends ConsumerWidget {

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
@@ -296,63 +297,63 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
 }
 
 Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId) async {
-  final controller = TextEditingController();
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
   var submitting = false;
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        Finan2Space.xl,
-        Finan2Space.lg,
-        Finan2Space.xl,
-        MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            sheetContext.l10n.savingsGoalsNewContribution,
-            style: Theme.of(sheetContext).textTheme.titleMedium,
-          ),
-          const SizedBox(height: Finan2Space.md),
-          Finan2AmountInput(
-            controller: controller,
-            autofocus: true,
-            currencySymbol: currencySymbol,
-          ),
-          const SizedBox(height: Finan2Space.lg),
-          StatefulBuilder(
-            builder: (sheetContext, setSheetState) {
-              return FilledButton(
-                onPressed: submitting
-                    ? null
-                    : () async {
-                        setSheetState(() => submitting = true);
-                        final amount = int.tryParse(controller.text) ?? 0;
-                        if (amount > 0) {
-                          await ref
-                              .read(savingsGoalControllerProvider.notifier)
-                              .addContribution(goalId, amount);
-                        }
-                        if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-                      },
-                child: submitting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(sheetContext.l10n.commonSave),
-              );
-            },
-          ),
-        ],
+    builder: (sheetContext) => Finan2WithTextController(
+      builder: (_, controller) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          Finan2Space.xl,
+          Finan2Space.lg,
+          Finan2Space.xl,
+          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              sheetContext.l10n.savingsGoalsNewContribution,
+              style: Theme.of(sheetContext).textTheme.titleMedium,
+            ),
+            const SizedBox(height: Finan2Space.md),
+            Finan2AmountInput(
+              controller: controller,
+              autofocus: true,
+              currencySymbol: currencySymbol,
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            StatefulBuilder(
+              builder: (sheetContext, setSheetState) {
+                return FilledButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          setSheetState(() => submitting = true);
+                          final amount = int.tryParse(controller.text) ?? 0;
+                          if (amount > 0) {
+                            await ref
+                                .read(savingsGoalControllerProvider.notifier)
+                                .addContribution(goalId, amount);
+                          }
+                          if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                        },
+                  child: submitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(sheetContext.l10n.commonSave),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     ),
   );
-  controller.dispose();
 }
 
 class _ContributionRow extends StatelessWidget {
