@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
-import '../../data/recurring_bill_model.dart';
 import '../../data/recurring_bill_repository.dart';
-import '../../data/recurring_bill_scanner.dart';
+import '../../domain/entities/pending_bill.dart';
+import '../../domain/entities/recurring_bill.dart';
+import '../../domain/recurring_bill_scanner.dart';
 
 final recurringBillRepositoryProvider = Provider<RecurringBillRepository>((ref) {
   return RecurringBillRepository();

@@ -3,10 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import '../domain/entities/movement.dart';
+import '../domain/repositories/movement_writer.dart';
 import 'movement_mapper.dart';
 import '../../../core/observability/error_reporter.dart';
 
-class TransactionRepository {
+class TransactionRepository implements MovementWriter {
   TransactionRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
     : _db = firestore ?? FirebaseFirestore.instance,
       _crypto = crypto ?? HouseholdCrypto();
@@ -159,6 +160,7 @@ class TransactionRepository {
   /// once ever - a `recurringDone` marker outlives the movement, so deleting
   /// it doesn't bring it back - and the Worker's `pendingBills` marker for
   /// it, if any, is cleared.
+  @override
   Future<void> createIfAbsent(
     String householdId,
     String id,

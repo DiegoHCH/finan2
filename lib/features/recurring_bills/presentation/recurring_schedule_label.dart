@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 import '../../../l10n/l10n.dart';
-import '../data/recurring_bill_model.dart';
+import '../domain/entities/recurring_bill.dart';
 
 /// "Semanal", "Quincenal"... for the frequency chips.
 String frequencyLabel(RecurringFrequency frequency, {AppLocalizations? l10n}) {

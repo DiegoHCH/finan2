@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../../core/crypto/household_crypto.dart';
-import '../../categories/data/category_model.dart';
+import '../../../categories/domain/category_type.dart';
 
 enum RecurringFrequency { weekly, biweekly, semimonthly, monthly, yearly }
 
@@ -127,46 +124,6 @@ class RecurringBill {
       for (final date in dates)
         if (!date.isBefore(lower) && !date.isAfter(upper)) date,
     ]..sort();
-  }
-
-  static Future<RecurringBill> fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> doc,
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
-    final data = doc.data()!;
-    return RecurringBill(
-      id: doc.id,
-      name: data['name'] as String? ?? '',
-      type: CategoryTypeLabel.fromName(data['type'] as String? ?? 'factura'),
-      categoryId: data['categoryId'] as String? ?? '',
-      accountId: data['accountId'] as String? ?? '',
-      amount: await crypto.decryptAmount(householdId, data['amount'] as String),
-      dayOfMonth: (data['dayOfMonth'] as num?)?.toInt() ?? 1,
-      frequency: RecurringFrequencyLabel.fromName(data['frequency'] as String?),
-      startDate: (data['startDate'] as Timestamp?)?.toDate(),
-      endDate: (data['endDate'] as Timestamp?)?.toDate(),
-      paused: data['paused'] as bool? ?? false,
-      resumedOn: (data['resumedOn'] as Timestamp?)?.toDate(),
-      createdBy: data['createdBy'] as String? ?? '',
-    );
-  }
-
-  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
-    return {
-      'name': name,
-      'type': type.name,
-      'categoryId': categoryId,
-      'accountId': accountId,
-      'amount': await crypto.encryptAmount(householdId, amount),
-      'dayOfMonth': dayOfMonth,
-      'frequency': frequency.name,
-      'startDate': startDate == null ? null : Timestamp.fromDate(startDate!),
-      'endDate': endDate == null ? null : Timestamp.fromDate(endDate!),
-      'paused': paused,
-      'resumedOn': resumedOn == null ? null : Timestamp.fromDate(resumedOn!),
-      'createdBy': createdBy,
-    };
   }
 }
 

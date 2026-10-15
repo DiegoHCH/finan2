@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
-import 'recurring_bill_model.dart';
+import '../domain/entities/pending_bill.dart';
+import '../domain/entities/recurring_bill.dart';
+import '../domain/repositories/pending_bill_store.dart';
+import 'recurring_bill_mapper.dart';
 
-class RecurringBillRepository {
+class RecurringBillRepository implements PendingBillStore {
   RecurringBillRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
     : _db = firestore ?? FirebaseFirestore.instance,
       _crypto = crypto ?? HouseholdCrypto();
@@ -19,7 +22,7 @@ class RecurringBillRepository {
     return _bills(householdId)
         .orderBy('dayOfMonth')
         .snapshots()
-        .decryptEach((doc) => RecurringBill.fromFirestore(doc, _crypto, householdId));
+        .decryptEach((doc) => recurringBillFromFirestore(doc, _crypto, householdId));
   }
 
   Future<String> createBill(String householdId, RecurringBill bill) async {
@@ -42,9 +45,10 @@ class RecurringBillRepository {
         .doc(householdId)
         .collection('pendingBills')
         .snapshots()
-        .map((snap) => [for (final doc in snap.docs) PendingBill.fromFirestore(doc)]);
+        .map((snap) => [for (final doc in snap.docs) pendingBillFromFirestore(doc)]);
   }
 
+  @override
   Future<void> deletePending(String householdId, String id) {
     return _db
         .collection('households')
@@ -52,29 +56,5 @@ class RecurringBillRepository {
         .collection('pendingBills')
         .doc(id)
         .delete();
-  }
-}
-
-/// A recurring bill's occurrence the Worker left for a phone to register.
-/// Its ID is the movement's - see RecurringBillScanner.movementIdFor.
-class PendingBill {
-  const PendingBill({required this.id, required this.billId, required this.date});
-
-  final String id;
-  final String billId;
-
-  /// Local calendar day, no time.
-  final DateTime date;
-
-  /// The Worker writes the date as `YYYY-MM-DD` so no time zone gets in
-  /// the way.
-  factory PendingBill.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
-    final data = doc.data() ?? const {};
-    final parsed = DateTime.tryParse(data['date'] as String? ?? '');
-    return PendingBill(
-      id: doc.id,
-      billId: data['billId'] as String? ?? '',
-      date: parsed == null ? DateTime(1970) : DateTime(parsed.year, parsed.month, parsed.day),
-    );
   }
 }

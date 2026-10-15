@@ -1,5 +1,5 @@
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
+import 'package:finan2/features/recurring_bills/domain/entities/recurring_bill.dart';
 import 'package:finan2/features/recurring_bills/presentation/recurring_schedule_label.dart';
 import 'package:finan2/l10n/l10n.dart';
 import 'package:flutter/widgets.dart';

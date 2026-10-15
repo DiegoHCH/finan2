@@ -2,15 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
+import 'package:finan2/features/recurring_bills/domain/entities/recurring_bill.dart';
+import 'package:finan2/features/recurring_bills/domain/entities/pending_bill.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_repository.dart';
-import 'package:finan2/features/recurring_bills/data/recurring_bill_scanner.dart';
+import 'package:finan2/features/recurring_bills/domain/recurring_bill_scanner.dart';
 import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/data/movement_mapper.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../helpers/test_household_crypto.dart';
+import '../../../helpers/test_household_crypto.dart';
 
 const _householdId = 'h1';
 final _now = DateTime(2026, 7, 9); // day 9

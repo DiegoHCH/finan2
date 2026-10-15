@@ -1,7 +1,8 @@
 import '../../transactions/domain/entities/movement.dart';
-import '../../transactions/data/transaction_repository.dart';
-import 'recurring_bill_model.dart';
-import 'recurring_bill_repository.dart';
+import '../../transactions/domain/repositories/movement_writer.dart';
+import 'entities/pending_bill.dart';
+import 'entities/recurring_bill.dart';
+import 'repositories/pending_bill_store.dart';
 
 /// Turns recurring bills into Movements as they come due, using a
 /// deterministic transaction ID so nothing is generated twice. Two paths:
@@ -11,8 +12,8 @@ import 'recurring_bill_repository.dart';
 class RecurringBillScanner {
   const RecurringBillScanner(this._transactionRepository, this._billRepository);
 
-  final TransactionRepository _transactionRepository;
-  final RecurringBillRepository _billRepository;
+  final MovementWriter _transactionRepository;
+  final PendingBillStore _billRepository;
 
   Future<void> scan({
     required String householdId,

@@ -4,7 +4,7 @@ import '../../categories/data/category_model.dart';
 import '../../debts/domain/entities/debt.dart';
 import '../../investments/data/investment_model.dart';
 import '../../notification_prefs/data/notification_prefs.dart';
-import '../../recurring_bills/data/recurring_bill_model.dart';
+import '../../recurring_bills/domain/entities/recurring_bill.dart';
 import '../../savings_challenge/data/savings_challenge_model.dart';
 import '../../savings_goals/data/savings_goal_model.dart';
 import '../../transactions/domain/entities/movement.dart';

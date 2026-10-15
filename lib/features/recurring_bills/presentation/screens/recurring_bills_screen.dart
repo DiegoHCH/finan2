@@ -10,7 +10,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/recurring_bill_model.dart';
+import '../../domain/entities/recurring_bill.dart';
 import '../recurring_schedule_label.dart';
 import '../viewmodels/recurring_bill_providers.dart';
 import 'edit_recurring_bill_screen.dart';
