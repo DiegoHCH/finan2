@@ -57,6 +57,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
   late String _iconSlug =
       widget.category?.iconSlug ?? _iconsByType[_type]!.first;
   late int _color = widget.category?.color ?? _colorSwatches.first;
+  late bool _rollover = widget.category?.rollover ?? false;
 
   @override
   void dispose() {
@@ -83,6 +84,8 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
             type: _type,
             iconSlug: _iconSlug,
             color: _color,
+            // Income isn't budgeted, so there's nothing to carry.
+            rollover: _type != CategoryType.ingreso && _rollover,
             createdBy: widget.category?.createdBy ??
                 ref.read(authStateChangesProvider).value?.uid ??
                 '',
@@ -313,6 +316,19 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                   ),
               ],
             ),
+            if (_type != CategoryType.ingreso) ...[
+              const SizedBox(height: Finan2Space.lg),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Acumular de un mes a otro'),
+                subtitle: const Text(
+                  'Lo que sobre del presupuesto pasa al mes siguiente, y lo que te '
+                  'pases se descuenta. Se reinicia cada enero.',
+                ),
+                value: _rollover,
+                onChanged: (value) => setState(() => _rollover = value),
+              ),
+            ],
             if (isEditing) ...[
               const SizedBox(height: Finan2Space.xxl),
               TextButton(

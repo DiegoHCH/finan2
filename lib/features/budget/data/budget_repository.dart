@@ -43,6 +43,28 @@ class BudgetRepository {
     });
   }
 
+  /// Every month's budget for [year]: month (1-12) -> categoryId ->
+  /// planned amount. Months never budgeted are absent.
+  Stream<Map<int, Map<String, int>>> watchBudgetsForYear(
+    String householdId, {
+    required int year,
+  }) {
+    return _budgets(householdId).snapshots().asyncMap((snap) async {
+      final result = <int, Map<String, int>>{};
+      for (final doc in snap.docs) {
+        final parts = doc.id.split('_');
+        if (parts.length != 2 || parts[0] != '$year') continue;
+        final month = int.tryParse(parts[1]);
+        if (month == null) continue;
+        result[month] = {
+          for (final entry in doc.data().entries)
+            entry.key: await _crypto.decryptAmount(householdId, entry.value as String),
+        };
+      }
+      return result;
+    });
+  }
+
   /// Copies every category's planned amount from one month into another
   /// that has no budget yet. Returns how many categories were copied - 0 if
   /// the source is empty or the target already has a budget.

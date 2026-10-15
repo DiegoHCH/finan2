@@ -130,11 +130,12 @@ service cloud.firestore {
 
       function validCategory() {
         let d = request.resource.data;
-        return hasExactly(['name', 'type', 'icon', 'color', 'createdBy'])
+        return hasExactly(['name', 'type', 'icon', 'color', 'rollover', 'createdBy'])
           && text(d.name, 200)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.icon, 50)
-          && d.color is int;
+          && d.color is int
+          && d.rollover is bool;
       }
 
       function validAccount() {

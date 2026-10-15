@@ -54,18 +54,22 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
 
     final summary = computeBudgetSummary(budget: budget, transactions: transactions);
     final spendByCategory = summary.spendByCategory;
+    // Carried amounts adjust each row's limit but not the banner: they
+    // aren't new money to assign.
+    final carryOver = ref.watch(carryOverProvider(_month));
+    final visibleIds = {...summary.visibleCategoryIds, ...carryOver.keys};
 
     final budgetable = categories.where((c) => c.type != CategoryType.ingreso).toList();
     final totalPlanned = summary.totalPlanned;
 
     final rows = budgetable
-        .where((c) => summary.visibleCategoryIds.contains(c.id))
+        .where((c) => visibleIds.contains(c.id))
         .toList()
       ..sort(
         (a, b) => (spendByCategory[b.id] ?? 0).compareTo(spendByCategory[a.id] ?? 0),
       );
     final unbudgeted =
-        budgetable.where((c) => !summary.visibleCategoryIds.contains(c.id)).toList();
+        budgetable.where((c) => !visibleIds.contains(c.id)).toList();
 
     final pctAsignado = summary.pctAsignado;
 
@@ -188,6 +192,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                                     category: category,
                                     real: spendByCategory[category.id] ?? 0,
                                     planned: budget[category.id] ?? 0,
+                                    carry: carryOver[category.id] ?? 0,
                                     formatMoney: formatMoney,
                                     onTap: () => _editCategoryBudget(
                                       context,
@@ -393,21 +398,30 @@ class _BudgetRow extends StatelessWidget {
     required this.category,
     required this.real,
     required this.planned,
+    required this.carry,
     required this.formatMoney,
     required this.onTap,
   });
 
   final Category category;
   final int real;
+
+  /// This month's own budget, before [carry].
   final int planned;
+
+  /// Brought in from earlier months: + left over, - overspent.
+  final int carry;
   final String Function(num) formatMoney;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final over = planned > 0 && real > planned;
-    final fraction = planned > 0 ? (real / planned).clamp(0.0, 1.0) : (real > 0 ? 1.0 : 0.0);
+    final limit = planned + carry;
+    // Spending with no budget at all isn't "over" anything, as before; a
+    // limit eaten by earlier overspending is.
+    final over = (planned > 0 || carry != 0) && real > limit;
+    final fraction = limit > 0 ? (real / limit).clamp(0.0, 1.0) : (real > 0 ? 1.0 : 0.0);
     final barColor = over ? colors.expense : Theme.of(context).colorScheme.primary;
 
     return InkWell(
@@ -459,7 +473,7 @@ class _BudgetRow extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' / ${formatMoney(planned)}',
+                            text: ' / ${formatMoney(limit)}',
                             style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
                           ),
                         ],
@@ -470,6 +484,19 @@ class _BudgetRow extends StatelessWidget {
                 ),
               ],
             ),
+            if (carry != 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  carry > 0
+                      ? 'Incluye ${formatMoney(carry)} que sobró antes'
+                      : 'Descuenta ${formatMoney(-carry)} que te pasaste antes',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: carry > 0 ? colors.income : colors.expense,
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             ClipRRect(
               borderRadius: BorderRadius.circular(999),

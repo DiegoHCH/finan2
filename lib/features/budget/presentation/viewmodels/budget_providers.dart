@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/year_month.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../categories/data/category_model.dart';
+import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../data/budget_repository.dart';
+import '../../data/carry_over.dart';
 
 final budgetRepositoryProvider = Provider<BudgetRepository>((ref) {
   return BudgetRepository();
@@ -34,6 +38,35 @@ final budgetOfMonthProvider =
     year: month.year,
     month: month.month,
   );
+});
+
+/// What each rollover category carries into [month] - see
+/// computeCarryOver. Empty until the year's budgets and movements load.
+final carryOverProvider =
+    Provider.autoDispose.family<Map<String, int>, YearMonth>((ref, month) {
+  final rolloverIds = {
+    for (final category in ref.watch(categoriesProvider).value ?? const <Category>[])
+      if (category.rollover) category.id,
+  };
+  if (rolloverIds.isEmpty) return const {};
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return const {};
+  final budgets = ref.watch(_budgetsOfYearProvider(month.year)).value;
+  final transactions = ref.watch(transactionsForYearProvider(month.year)).value;
+  if (budgets == null || transactions == null) return const {};
+  return computeCarryOver(
+    month: month.month,
+    rolloverCategoryIds: rolloverIds,
+    budgets: budgets,
+    transactions: transactions,
+  );
+});
+
+final _budgetsOfYearProvider =
+    StreamProvider.autoDispose.family<Map<int, Map<String, int>>, int>((ref, year) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const {});
+  return ref.watch(budgetRepositoryProvider).watchBudgetsForYear(householdId, year: year);
 });
 
 class BudgetController extends AsyncNotifier<void> {
