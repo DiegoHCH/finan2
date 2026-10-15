@@ -7,7 +7,7 @@ import '../../../accounts/data/account_model.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../debts/data/debt_model.dart';
 import '../../../household/data/household_model.dart';
-import '../../data/movement_filter.dart';
+import '../../domain/movement_filter.dart';
 
 /// Search field plus the filter button that opens [_FilterSheet].
 class MovementSearchBar extends StatelessWidget {

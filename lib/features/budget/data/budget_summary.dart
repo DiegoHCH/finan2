@@ -1,4 +1,4 @@
-import '../../transactions/data/transaction_model.dart';
+import '../../transactions/domain/entities/movement.dart';
 
 enum BudgetBannerKind { noIncome, overBudgeted, remaining }
 

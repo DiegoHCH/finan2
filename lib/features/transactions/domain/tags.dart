@@ -1,4 +1,4 @@
-import 'transaction_model.dart';
+import 'entities/movement.dart';
 
 /// Mirrored by maxTags() in firestore.rules.
 const maxTagsPerMovement = 10;

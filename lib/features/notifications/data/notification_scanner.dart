@@ -7,7 +7,7 @@ import '../../notification_prefs/data/notification_prefs.dart';
 import '../../recurring_bills/data/recurring_bill_model.dart';
 import '../../savings_challenge/data/savings_challenge_model.dart';
 import '../../savings_goals/data/savings_goal_model.dart';
-import '../../transactions/data/transaction_model.dart';
+import '../../transactions/domain/entities/movement.dart';
 import '../../transfers/data/transfer_model.dart';
 import 'notification_model.dart';
 import 'notification_repository.dart';

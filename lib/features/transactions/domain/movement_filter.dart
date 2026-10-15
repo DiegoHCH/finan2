@@ -1,5 +1,5 @@
-import '../../categories/data/category_model.dart';
-import 'transaction_model.dart';
+import '../../categories/domain/category_type.dart';
+import 'entities/movement.dart';
 
 /// What Movimientos is narrowed to. Amounts only exist decrypted on the
 /// device, so filtering happens here rather than in a Firestore query.

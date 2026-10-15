@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/year_month.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/transaction_model.dart';
+import '../../domain/entities/movement.dart';
 import '../../data/transaction_repository.dart';
 
 final transactionRepositoryProvider = Provider<TransactionRepository>((ref) {

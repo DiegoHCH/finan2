@@ -2,7 +2,7 @@ import 'package:finan2/core/utils/year_month.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/categories/presentation/viewmodels/category_providers.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/presentation/viewmodels/transaction_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

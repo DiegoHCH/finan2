@@ -3,7 +3,7 @@ import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/debts/data/debt_model.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 

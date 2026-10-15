@@ -1,4 +1,4 @@
-import '../../transactions/data/transaction_model.dart';
+import '../../transactions/domain/entities/movement.dart';
 import '../../transactions/data/transaction_repository.dart';
 import 'recurring_bill_model.dart';
 import 'recurring_bill_repository.dart';

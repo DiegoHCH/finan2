@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../l10n/l10n.dart';
+import '../domain/category_type.dart';
 
-/// Matches the Firestore schema's `type` field for categories/transactions.
-enum CategoryType { ingreso, factura, gasto, ahorro }
+export '../domain/category_type.dart';
 
 extension CategoryTypeLabel on CategoryType {
   /// In the app's language - see currentL10n.

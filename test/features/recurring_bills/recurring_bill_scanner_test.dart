@@ -5,7 +5,8 @@ import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_repository.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_scanner.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
+import 'package:finan2/features/transactions/data/movement_mapper.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,7 +54,7 @@ void main() {
         .doc(_householdId)
         .collection('transactions')
         .get();
-    return Future.wait(snap.docs.map((doc) => Movement.fromFirestore(doc, crypto, _householdId)));
+    return Future.wait(snap.docs.map((doc) => movementFromFirestore(doc, crypto, _householdId)));
   }
 
   test('generates the Movement once the bill day has arrived', () async {

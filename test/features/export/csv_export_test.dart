@@ -10,7 +10,8 @@ import 'package:finan2/features/debts/data/debt_repository.dart';
 import 'package:finan2/features/export/data/csv_report_writer.dart';
 import 'package:finan2/features/export/data/report_builder.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_repository.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
+import 'package:finan2/features/transactions/data/movement_mapper.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 

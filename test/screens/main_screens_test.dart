@@ -10,7 +10,7 @@ import 'package:finan2/features/debts/presentation/screens/debts_screen.dart';
 import 'package:finan2/features/household/presentation/viewmodels/household_providers.dart';
 import 'package:finan2/features/savings_goals/presentation/screens/savings_goals_screen.dart';
 import 'package:finan2/features/settings/presentation/screens/settings_screen.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/presentation/screens/transactions_screen.dart';
 import 'package:finan2/features/transactions/presentation/viewmodels/transaction_providers.dart';
 import 'package:flutter/material.dart';

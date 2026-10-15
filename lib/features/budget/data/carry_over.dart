@@ -1,4 +1,4 @@
-import '../../transactions/data/transaction_model.dart';
+import '../../transactions/domain/entities/movement.dart';
 
 /// What each rollover category brings into [month] of a year: the chain of
 /// "planned minus spent" from January up to the month before. Positive is

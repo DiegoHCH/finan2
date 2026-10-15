@@ -1,6 +1,6 @@
 import 'package:finan2/features/budget/data/carry_over.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Movement _spend(String categoryId, int month, int amount, {bool income = false}) => Movement(

@@ -1,7 +1,7 @@
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/presentation/viewmodels/transaction_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 

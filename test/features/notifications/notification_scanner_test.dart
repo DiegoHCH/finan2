@@ -10,7 +10,7 @@ import 'package:finan2/features/notifications/data/notification_scanner.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
 import 'package:finan2/features/savings_challenge/data/savings_challenge_model.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_model.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transfers/data/transfer_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 

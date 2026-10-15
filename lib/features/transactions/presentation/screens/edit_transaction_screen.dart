@@ -22,8 +22,8 @@ import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/data/debt_model.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/tags.dart';
-import '../../data/transaction_model.dart';
+import '../../domain/tags.dart';
+import '../../domain/entities/movement.dart';
 import '../viewmodels/transaction_providers.dart';
 
 enum _Segment { ingreso, gasto, ahorro }

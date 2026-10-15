@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
-import 'transaction_model.dart';
+import '../domain/entities/movement.dart';
+import 'movement_mapper.dart';
 import '../../../core/observability/error_reporter.dart';
 
 class TransactionRepository {
@@ -88,7 +89,7 @@ class TransactionRepository {
           .get();
       var real = 0;
       for (final doc in txSnap.docs) {
-        final tx = await Movement.fromFirestore(doc, _crypto, householdId);
+        final tx = await movementFromFirestore(doc, _crypto, householdId);
         if (tx.isIncome) continue;
         real += tx.amount;
       }
@@ -115,7 +116,7 @@ class TransactionRepository {
         .where('month', isEqualTo: month)
         .orderBy('date', descending: true)
         .snapshots()
-        .decryptEach((doc) => Movement.fromFirestore(doc, _crypto, householdId));
+        .decryptEach((doc) => movementFromFirestore(doc, _crypto, householdId));
   }
 
   Stream<List<Movement>> watchTransactionsForYear(String householdId, {required int year}) {
@@ -123,7 +124,7 @@ class TransactionRepository {
         .where('year', isEqualTo: year)
         .orderBy('date', descending: true)
         .snapshots()
-        .decryptEach((doc) => Movement.fromFirestore(doc, _crypto, householdId));
+        .decryptEach((doc) => movementFromFirestore(doc, _crypto, householdId));
   }
 
   /// Creates [tx] and, atomically, applies its effect on its account's or
@@ -213,7 +214,7 @@ class TransactionRepository {
     await _db.runTransaction((transaction) async {
       final oldSnap = await transaction.get(txRef);
       final oldTx = oldSnap.exists
-          ? await Movement.fromFirestore(oldSnap, _crypto, householdId)
+          ? await movementFromFirestore(oldSnap, _crypto, householdId)
           : null;
       capturedOldTx = oldTx;
       final oldRef = oldTx == null ? null : _sourceRef(householdId, oldTx);
@@ -272,7 +273,7 @@ class TransactionRepository {
         transaction.delete(txRef);
         return;
       }
-      final oldTx = await Movement.fromFirestore(snap, _crypto, householdId);
+      final oldTx = await movementFromFirestore(snap, _crypto, householdId);
       deletedTx = oldTx;
       final sourceRef = _sourceRef(householdId, oldTx);
       final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
