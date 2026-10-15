@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/budget_summary.dart';
@@ -51,18 +52,19 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
     final totalPlanned = summary.totalPlanned;
 
     final pctAsignado = summary.pctAsignado;
+    final l10n = context.l10n;
 
     final String bannerLabel;
     final String bannerValue;
     switch (summary.bannerKind) {
       case BudgetBannerKind.noIncome:
-        bannerLabel = 'Falta por presupuestar';
-        bannerValue = 'Registra ingresos este mes';
+        bannerLabel = l10n.budgetLeftToBudget;
+        bannerValue = l10n.budgetNoIncomeYet;
       case BudgetBannerKind.overBudgeted:
-        bannerLabel = 'Presupuestado de más';
+        bannerLabel = l10n.budgetOverBudgeted;
         bannerValue = formatMoney(summary.bannerAmount);
       case BudgetBannerKind.remaining:
-        bannerLabel = 'Falta por presupuestar';
+        bannerLabel = l10n.budgetLeftToBudget;
         bannerValue = formatMoney(summary.bannerAmount);
     }
 
@@ -71,9 +73,11 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Presupuesto · $monthLabelCap',
-              title: '${formatMoney(totalPlanned)} planeado',
-              trailing: pctAsignado != null ? _Badge(text: '$pctAsignado% asignado') : null,
+              label: l10n.budgetTitle(monthLabelCap),
+              title: l10n.budgetPlannedTotal(formatMoney(totalPlanned)),
+              trailing: pctAsignado != null
+                  ? _Badge(text: l10n.budgetAssignedPct(pctAsignado))
+                  : null,
               showBackButton: true,
             ),
             Expanded(
@@ -82,8 +86,8 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                 children: [
                   Finan2PeriodPicker(
                     label: _month.label,
-                    previousTooltip: 'Mes anterior',
-                    nextTooltip: 'Mes siguiente',
+                    previousTooltip: l10n.budgetPreviousMonth,
+                    nextTooltip: l10n.budgetNextMonth,
                     onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
                     onNext: () => setState(() => _month = _month.plusMonths(1)),
                     onReset: _month.isCurrent
@@ -144,15 +148,15 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Presupuesto vs. real',
-                          style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                        Text(
+                          l10n.budgetVsActual,
+                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
                         ),
                         if (rows.isEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
-                              'Aún no has presupuestado ninguna categoría.',
+                              l10n.budgetEmpty,
                               style: TextStyle(fontSize: 12, color: colors.inkSoft),
                             ),
                           )
@@ -187,7 +191,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     Center(
                       child: TextButton(
                         onPressed: () => _pickCategoryToBudget(context, ref, _month, unbudgeted),
-                        child: const Text('+ Presupuestar otra categoría'),
+                        child: Text(l10n.budgetAddCategory),
                       ),
                     ),
                   ],
@@ -224,7 +228,7 @@ Future<void> _editCategoryBudget(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Presupuesto para ${category.name}',
+            sheetContext.l10n.budgetForCategory(category.name),
             style: Theme.of(sheetContext).textTheme.titleMedium,
           ),
           const SizedBox(height: Finan2Space.md),
@@ -242,7 +246,7 @@ Future<void> _editCategoryBudget(
                   .setCategoryAmount(month, category.id, amount);
               if (sheetContext.mounted) Navigator.of(sheetContext).pop();
             },
-            child: const Text('Guardar'),
+            child: Text(sheetContext.l10n.commonSave),
           ),
         ],
       ),
@@ -312,22 +316,23 @@ class _CopyBudgetCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Este mes aún no tiene presupuesto',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                Text(
+                  context.l10n.budgetCopyTitle,
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  categories == 1
-                      ? 'Copia la categoría que planeaste en $fromLabel.'
-                      : 'Copia las $categories categorías que planeaste en $fromLabel.',
+                  context.l10n.budgetCopyMessage(categories, fromLabel),
                   style: TextStyle(fontSize: 12, color: colors.inkSoft),
                 ),
               ],
             ),
           ),
           const SizedBox(width: Finan2Space.md),
-          FilledButton(onPressed: busy ? null : onCopy, child: Text(busy ? 'Copiando…' : 'Copiar')),
+          FilledButton(
+            onPressed: busy ? null : onCopy,
+            child: Text(busy ? context.l10n.budgetCopying : context.l10n.commonCopy),
+          ),
         ],
       ),
     );
@@ -454,8 +459,8 @@ class _BudgetRow extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(
                   carry > 0
-                      ? 'Incluye ${formatMoney(carry)} que sobró antes'
-                      : 'Descuenta ${formatMoney(-carry)} que te pasaste antes',
+                      ? context.l10n.budgetCarryIncluded(formatMoney(carry))
+                      : context.l10n.budgetCarryDeducted(formatMoney(-carry)),
                   style: TextStyle(fontSize: 11, color: carry > 0 ? colors.income : colors.expense),
                 ),
               ),

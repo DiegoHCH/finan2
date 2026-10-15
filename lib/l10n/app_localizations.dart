@@ -200,6 +200,270 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cuenta'**
   String get commonAccount;
+
+  /// No description provided for @budgetTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuesto · {month}'**
+  String budgetTitle(String month);
+
+  /// Header title: total amount budgeted for the month, already formatted.
+  ///
+  /// In es, this message translates to:
+  /// **'{amount} planeado'**
+  String budgetPlannedTotal(String amount);
+
+  /// Badge: share of the month's income already budgeted.
+  ///
+  /// In es, this message translates to:
+  /// **'{pct}% asignado'**
+  String budgetAssignedPct(int pct);
+
+  /// No description provided for @budgetPreviousMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes anterior'**
+  String get budgetPreviousMonth;
+
+  /// No description provided for @budgetNextMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes siguiente'**
+  String get budgetNextMonth;
+
+  /// No description provided for @budgetLeftToBudget.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta por presupuestar'**
+  String get budgetLeftToBudget;
+
+  /// Shown instead of an amount when the month has no income to budget yet.
+  ///
+  /// In es, this message translates to:
+  /// **'Registra ingresos este mes'**
+  String get budgetNoIncomeYet;
+
+  /// No description provided for @budgetOverBudgeted.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuestado de más'**
+  String get budgetOverBudgeted;
+
+  /// No description provided for @budgetVsActual.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuesto vs. real'**
+  String get budgetVsActual;
+
+  /// No description provided for @budgetEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no has presupuestado ninguna categoría.'**
+  String get budgetEmpty;
+
+  /// No description provided for @budgetAddCategory.
+  ///
+  /// In es, this message translates to:
+  /// **'+ Presupuestar otra categoría'**
+  String get budgetAddCategory;
+
+  /// No description provided for @budgetForCategory.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuesto para {category}'**
+  String budgetForCategory(String category);
+
+  /// No description provided for @budgetCopyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Este mes aún no tiene presupuesto'**
+  String get budgetCopyTitle;
+
+  /// No description provided for @budgetCopyMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{Copia la categoría que planeaste en {month}.} other{Copia las {count} categorías que planeaste en {month}.}}'**
+  String budgetCopyMessage(int count, String month);
+
+  /// No description provided for @budgetCopying.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiando…'**
+  String get budgetCopying;
+
+  /// Budget carried over from earlier months that went underspent.
+  ///
+  /// In es, this message translates to:
+  /// **'Incluye {amount} que sobró antes'**
+  String budgetCarryIncluded(String amount);
+
+  /// Overspending from earlier months taken off this month's limit.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuenta {amount} que te pasaste antes'**
+  String budgetCarryDeducted(String amount);
+
+  /// No description provided for @annualSummaryTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen anual'**
+  String get annualSummaryTitle;
+
+  /// No description provided for @annualSummaryPreviousYear.
+  ///
+  /// In es, this message translates to:
+  /// **'Año anterior'**
+  String get annualSummaryPreviousYear;
+
+  /// No description provided for @annualSummaryNextYear.
+  ///
+  /// In es, this message translates to:
+  /// **'Año siguiente'**
+  String get annualSummaryNextYear;
+
+  /// No description provided for @annualSummaryEarned.
+  ///
+  /// In es, this message translates to:
+  /// **'Ganado'**
+  String get annualSummaryEarned;
+
+  /// No description provided for @annualSummarySpent.
+  ///
+  /// In es, this message translates to:
+  /// **'Gastado'**
+  String get annualSummarySpent;
+
+  /// No description provided for @annualSummarySaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorrado'**
+  String get annualSummarySaved;
+
+  /// No description provided for @annualSummarySpendByMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasto por mes'**
+  String get annualSummarySpendByMonth;
+
+  /// No description provided for @dashboardHousehold.
+  ///
+  /// In es, this message translates to:
+  /// **'Hogar'**
+  String get dashboardHousehold;
+
+  /// No description provided for @dashboardNetWorth.
+  ///
+  /// In es, this message translates to:
+  /// **'Patrimonio neto'**
+  String get dashboardNetWorth;
+
+  /// No description provided for @dashboardNetWorthFormula.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuentas + ahorros + inversiones − deudas'**
+  String get dashboardNetWorthFormula;
+
+  /// No description provided for @dashboardIncome.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos'**
+  String get dashboardIncome;
+
+  /// No description provided for @dashboardExpenses.
+  ///
+  /// In es, this message translates to:
+  /// **'Gastos'**
+  String get dashboardExpenses;
+
+  /// No description provided for @dashboardWhereMoneyGoes.
+  ///
+  /// In es, this message translates to:
+  /// **'A dónde va el dinero'**
+  String get dashboardWhereMoneyGoes;
+
+  /// No description provided for @dashboardNoCategorizedSpending.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay gastos categorizados este mes.'**
+  String get dashboardNoCategorizedSpending;
+
+  /// Screen title, and the default name of a new challenge.
+  ///
+  /// In es, this message translates to:
+  /// **'Reto de ahorro'**
+  String get savingsChallengeTitle;
+
+  /// No description provided for @savingsChallengeDeleteTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar reto de ahorro'**
+  String get savingsChallengeDeleteTitle;
+
+  /// No description provided for @savingsChallengeDeleteMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se eliminará \"{name}\" y el progreso marcado. Esta acción no se puede deshacer.'**
+  String savingsChallengeDeleteMessage(String name);
+
+  /// No description provided for @savingsChallengeIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea el reto de ahorro del hogar: casillas con montos fijos que van marcando a medida que las ahorran.'**
+  String get savingsChallengeIntro;
+
+  /// No description provided for @savingsChallengeSize.
+  ///
+  /// In es, this message translates to:
+  /// **'Tamaño'**
+  String get savingsChallengeSize;
+
+  /// No description provided for @savingsChallengeSizeSmall.
+  ///
+  /// In es, this message translates to:
+  /// **'Chico'**
+  String get savingsChallengeSizeSmall;
+
+  /// No description provided for @savingsChallengeSizeMedium.
+  ///
+  /// In es, this message translates to:
+  /// **'Mediano'**
+  String get savingsChallengeSizeMedium;
+
+  /// No description provided for @savingsChallengeSizeLarge.
+  ///
+  /// In es, this message translates to:
+  /// **'Grande'**
+  String get savingsChallengeSizeLarge;
+
+  /// Size chip: size name and how many boxes the challenge will have.
+  ///
+  /// In es, this message translates to:
+  /// **'{size} ({count, plural, =1{1 casilla} other{{count} casillas}})'**
+  String savingsChallengeSizeOption(String size, int count);
+
+  /// No description provided for @savingsChallengeCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear reto'**
+  String get savingsChallengeCreate;
+
+  /// No description provided for @savingsChallengeGoal.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Tú puedes! Meta del reto'**
+  String get savingsChallengeGoal;
+
+  /// No description provided for @savingsChallengeProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'Progreso'**
+  String get savingsChallengeProgress;
+
+  /// No description provided for @savingsChallengeMarkHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca cada casilla al ahorrar'**
+  String get savingsChallengeMarkHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
