@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'finan2_bars_icon.dart';
 
-/// The full app icon mark: gradient squircle, white bars, gold "2" badge in
+/// The full app icon mark: violet squircle, white bars, amber "2" badge in
 /// the corner — matches the mockup's `.appicon` (finan2-icono-splash.html).
 /// Uses the fixed light-mode brand colors regardless of theme, since app
 /// icons don't switch with in-app dark mode.
