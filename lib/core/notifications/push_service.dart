@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../observability/error_reporter.dart';
 
 /// Real push notifications (arrive even with the app closed), relayed
 /// through a Cloudflare Worker since there's no Cloud Function to trigger
@@ -95,8 +96,9 @@ class PushService {
           'body': body,
         }),
       );
-    } catch (_) {
-      // Ignored - see doc comment.
+    } catch (e, st) {
+      // Never surfaced to the user - see doc comment.
+      ErrorReporter.recoverable(e, st, reason: 'push relay request failed');
     }
   }
 }

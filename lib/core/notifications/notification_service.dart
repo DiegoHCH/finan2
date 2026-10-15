@@ -5,6 +5,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../features/debts/data/debt_model.dart';
 import '../utils/local_timezone.dart';
+import '../observability/error_reporter.dart';
 
 /// Thin wrapper around flutter_local_notifications for the reminders that
 /// must fire even when the app isn't open: daily reminder, weekly summary,
@@ -27,8 +28,9 @@ class NotificationService {
     final timezoneId = await getLocalTimezone();
     try {
       tz.setLocalLocation(tz.getLocation(timezoneId));
-    } catch (_) {
+    } catch (e, st) {
       // Unknown/unsupported timezone name - fall back to UTC rather than crash.
+      ErrorReporter.recoverable(e, st, reason: 'timezone $timezoneId not found, using UTC');
     }
 
     const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_finan2');

@@ -8,10 +8,12 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_providers.dart';
 import 'core/widgets/auth_gate.dart';
 import 'firebase_options.dart';
+import 'core/observability/error_reporter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await ErrorReporter.install();
   await initializeDateFormatting('es');
   await NotificationService().initialize();
   runApp(const ProviderScope(child: MainApp()));

@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,6 +34,7 @@ import '../pwa/pwa_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
 import 'finan2_missing_key_sheet.dart';
+import '../observability/error_reporter.dart';
 
 /// The app's root navigation once a household exists: bottom nav with the
 /// 5 destinations from the design mockup. Also the integration point for
@@ -122,8 +124,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     if (householdId == null || uid == null) return;
     try {
       await ref.read(pushServiceProvider).registerToken(householdId, uid);
-    } catch (_) {
+    } catch (e, st) {
       // Permission denied or unsupported platform - in-app alerts still work.
+      ErrorReporter.recoverable(e, st, reason: 'push token registration failed');
     }
   }
 
@@ -173,9 +176,11 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final debts = ref.read(debtsProvider).value ?? const [];
     try {
       await ref.read(notificationServiceProvider).scheduleDebtPaymentReminders(debts);
-    } catch (_) {
-      // Permission not granted yet (user hasn't opened notification prefs) -
-      // scanning/in-app alerts still work regardless.
+    } catch (e, st) {
+      // Without exact-alarm permission (user hasn't opened notification
+      // prefs) this is expected - scanning/in-app alerts still work regardless.
+      if (e is PlatformException && e.code == 'exact_alarms_not_permitted') return;
+      ErrorReporter.recoverable(e, st, reason: 'debt reminders not scheduled');
     }
   }
 

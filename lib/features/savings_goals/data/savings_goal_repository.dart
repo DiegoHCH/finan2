@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
 import 'savings_goal_model.dart';
+import '../../../core/observability/error_reporter.dart';
 
 class SavingsGoalRepository {
   SavingsGoalRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
@@ -86,8 +87,9 @@ class SavingsGoalRepository {
       await _goalAlerts(householdId).doc(goalId).set({
         'near': fraction >= 0.9 && fraction < 1.0,
       });
-    } catch (_) {
+    } catch (e, st) {
       // Best-effort - the contribution itself already succeeded.
+      ErrorReporter.recoverable(e, st, reason: 'goal near-alert flag not refreshed');
     }
   }
 

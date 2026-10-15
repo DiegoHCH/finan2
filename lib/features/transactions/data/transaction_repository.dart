@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/household_crypto.dart';
 import 'transaction_model.dart';
+import '../../../core/observability/error_reporter.dart';
 
 class TransactionRepository {
   TransactionRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
@@ -104,8 +105,9 @@ class TransactionRepository {
             ? FieldValue.arrayUnion([categoryId])
             : FieldValue.arrayRemove([categoryId]),
       }, SetOptions(merge: true));
-    } catch (_) {
+    } catch (e, st) {
       // Best-effort - the transaction itself already succeeded.
+      ErrorReporter.recoverable(e, st, reason: 'budget alert flag not refreshed');
     }
   }
 
