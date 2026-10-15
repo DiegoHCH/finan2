@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/debt_model.dart';
@@ -115,6 +116,14 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
   Future<void> _delete() async {
     final debt = widget.debt;
     if (debt == null) return;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar deuda',
+      message: 'Se eliminará "${debt.name}". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    );
+    if (!confirmed) return;
     await ref.read(debtControllerProvider.notifier).delete(debt.id);
     if (mounted) Navigator.of(context).pop();
   }

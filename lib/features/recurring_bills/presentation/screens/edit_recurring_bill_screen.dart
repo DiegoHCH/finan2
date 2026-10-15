@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -119,6 +120,14 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
   Future<void> _delete() async {
     final bill = widget.bill;
     if (bill == null) return;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Eliminar factura recurrente',
+      message: 'Se eliminará "${bill.name}" y dejará de generarse cada mes. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    );
+    if (!confirmed) return;
     await ref.read(recurringBillControllerProvider.notifier).delete(bill.id);
     if (mounted) Navigator.of(context).pop();
   }
