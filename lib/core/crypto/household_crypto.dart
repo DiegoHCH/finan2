@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../l10n/l10n.dart';
 import 'recovery_phrase.dart';
 
 /// Thrown when a household's data encryption key isn't available on this
@@ -144,10 +145,7 @@ class HouseholdCrypto {
   Future<SecretKey> _keyFor(String householdId) async {
     final encoded = await _keyStore.read(_storageKey(householdId));
     if (encoded == null) {
-      throw const Finan2CryptoException(
-        'Este dispositivo no tiene la llave para ver los montos de este '
-        'hogar. Pide a tu pareja el código de invitación completo.',
-      );
+      throw Finan2CryptoException(currentL10n.errorMissingKey);
     }
     return SecretKey(base64Url.decode(encoded));
   }

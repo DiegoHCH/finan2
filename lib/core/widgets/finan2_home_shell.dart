@@ -27,6 +27,7 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
+import '../../l10n/l10n.dart';
 import '../notifications/notification_primer_sheet.dart';
 import '../notifications/notification_providers.dart';
 import '../pwa/ios_install_detection.dart';
@@ -254,15 +255,11 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
         children: [
           if (showInstallBanner)
             MaterialBanner(
-              content: const Text(
-                'Para recibir notificaciones y que tus datos no se borren '
-                'solos, instala Finan2: toca Compartir y luego '
-                '"Agregar a inicio".',
-              ),
+              content: Text(context.l10n.coreInstallBanner),
               actions: [
                 TextButton(
                   onPressed: () => setState(() => _installBannerDismissed = true),
-                  child: const Text('Entendido'),
+                  child: Text(context.l10n.commonGotIt),
                 ),
               ],
             ),
@@ -275,11 +272,26 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
-          const NavigationDestination(icon: Icon(Finan2Icons.inicio), label: 'Inicio'),
-          const NavigationDestination(icon: Finan2ListIcon(), label: 'Movimientos'),
-          const NavigationDestination(icon: Icon(Finan2Icons.deudas), label: 'Deudas'),
-          const NavigationDestination(icon: Icon(Finan2Icons.metas), label: 'Metas'),
-          const NavigationDestination(icon: Icon(Finan2Icons.ajustes), label: 'Ajustes'),
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.inicio),
+            label: context.l10n.coreHomeTabHome,
+          ),
+          NavigationDestination(
+            icon: const Finan2ListIcon(),
+            label: context.l10n.coreHomeTabMovements,
+          ),
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.deudas),
+            label: context.l10n.coreHomeTabDebts,
+          ),
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.metas),
+            label: context.l10n.coreHomeTabGoals,
+          ),
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.ajustes),
+            label: context.l10n.coreHomeTabSettings,
+          ),
         ],
       ),
     );

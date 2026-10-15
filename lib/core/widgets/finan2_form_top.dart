@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// The form header matching the mockup's `.form-top`: "Cancelar" / title /
@@ -50,7 +51,7 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                 behavior: HitTestBehavior.opaque,
                 onTap: _saving ? null : (widget.onCancel ?? () => Navigator.of(context).pop()),
                 child: Text(
-                  'Cancelar',
+                  context.l10n.commonCancel,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -77,7 +78,7 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                           ),
                         )
                       : Text(
-                          'Guardar',
+                          context.l10n.commonSave,
                           textAlign: TextAlign.right,
                           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: brand),
                         ),

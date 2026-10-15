@@ -200,6 +200,276 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cuenta'**
   String get commonAccount;
+
+  /// No description provided for @coreSheetErrorTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal'**
+  String get coreSheetErrorTitle;
+
+  /// No description provided for @coreReauthTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirma tu contraseña'**
+  String get coreReauthTitle;
+
+  /// No description provided for @corePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get corePassword;
+
+  /// Default tooltip of the period picker's back arrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Anterior'**
+  String get corePeriodPrevious;
+
+  /// Shown under the period label when browsing another period; tapping jumps back to the current one.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a hoy'**
+  String get corePeriodBackToToday;
+
+  /// No description provided for @coreGoToSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Ir a Ajustes'**
+  String get coreGoToSettings;
+
+  /// The device lacks the household's encryption key.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta la llave de este hogar para ver estos montos.'**
+  String get coreMissingKeyInline;
+
+  /// No description provided for @coreMissingKeyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta la llave de este hogar'**
+  String get coreMissingKeyTitle;
+
+  /// No description provided for @coreMissingKeyBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.'**
+  String get coreMissingKeyBody;
+
+  /// No description provided for @coreNotificationPrimerTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa las notificaciones'**
+  String get coreNotificationPrimerTitle;
+
+  /// No description provided for @coreNotificationPrimerBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.'**
+  String get coreNotificationPrimerBody;
+
+  /// No description provided for @coreNotificationPrimerEnable.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar notificaciones'**
+  String get coreNotificationPrimerEnable;
+
+  /// iOS Safari banner; the quoted text is the Safari menu item, in the device's language.
+  ///
+  /// In es, this message translates to:
+  /// **'Para recibir notificaciones y que tus datos no se borren solos, instala Finan2: toca Compartir y luego \"Agregar a inicio\".'**
+  String get coreInstallBanner;
+
+  /// No description provided for @coreHomeTabHome.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get coreHomeTabHome;
+
+  /// Bottom nav tab with the list of income and expenses.
+  ///
+  /// In es, this message translates to:
+  /// **'Movimientos'**
+  String get coreHomeTabMovements;
+
+  /// No description provided for @coreHomeTabDebts.
+  ///
+  /// In es, this message translates to:
+  /// **'Deudas'**
+  String get coreHomeTabDebts;
+
+  /// Bottom nav tab for savings goals.
+  ///
+  /// In es, this message translates to:
+  /// **'Metas'**
+  String get coreHomeTabGoals;
+
+  /// No description provided for @coreHomeTabSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Ajustes'**
+  String get coreHomeTabSettings;
+
+  /// No description provided for @coreSplashTagline.
+  ///
+  /// In es, this message translates to:
+  /// **'Finanzas del hogar - para dos'**
+  String get coreSplashTagline;
+
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'El correo no es válido.'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorWrongCredentials.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo o contraseña incorrectos.'**
+  String get errorWrongCredentials;
+
+  /// No description provided for @errorEmailInUse.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe una cuenta con ese correo.'**
+  String get errorEmailInUse;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'La contraseña es muy débil.'**
+  String get errorWeakPassword;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In es, this message translates to:
+  /// **'Problema de conexión, intenta de nuevo.'**
+  String get errorNetwork;
+
+  /// code is a Firebase Auth error code.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal ({code}).'**
+  String errorUnknownWithCode(String code);
+
+  /// No description provided for @errorInviteNotFound.
+  ///
+  /// In es, this message translates to:
+  /// **'Esa invitación no existe o ya venció. Pide a tu pareja una nueva desde Ajustes.'**
+  String get errorInviteNotFound;
+
+  /// No description provided for @errorHouseholdFull.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos unirte: el hogar ya tiene 2 miembros o la invitación dejó de ser válida.'**
+  String get errorHouseholdFull;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal, intenta de nuevo.'**
+  String get errorGeneric;
+
+  /// No description provided for @errorMissingKey.
+  ///
+  /// In es, this message translates to:
+  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pide a tu pareja el código de invitación completo.'**
+  String get errorMissingKey;
+
+  /// No description provided for @errorRecoveryPhraseWordCount.
+  ///
+  /// In es, this message translates to:
+  /// **'La frase debe tener {expected} palabras (escribiste {typed}).'**
+  String errorRecoveryPhraseWordCount(int expected, int typed);
+
+  /// No description provided for @errorRecoveryPhraseUnknownWord.
+  ///
+  /// In es, this message translates to:
+  /// **'\"{word}\" no es una palabra de la frase. Revisa que esté bien escrita.'**
+  String errorRecoveryPhraseUnknownWord(String word);
+
+  /// No description provided for @errorRecoveryPhraseInvalid.
+  ///
+  /// In es, this message translates to:
+  /// **'La frase no es válida. Revisa que las palabras estén en el orden correcto y bien escritas.'**
+  String get errorRecoveryPhraseInvalid;
+
+  /// No description provided for @validationPasswordPolicy.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo 8 caracteres, con una mayúscula y una minúscula'**
+  String get validationPasswordPolicy;
+
+  /// Android notification channel name, shown in the OS settings.
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorio diario'**
+  String get reminderDailyChannel;
+
+  /// No description provided for @reminderDailyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Registra tus gastos de hoy'**
+  String get reminderDailyTitle;
+
+  /// No description provided for @reminderDailyBody.
+  ///
+  /// In es, this message translates to:
+  /// **'No olvides anotar lo que ingresó o gastó el hogar hoy.'**
+  String get reminderDailyBody;
+
+  /// No description provided for @reminderWeeklyChannel.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen semanal'**
+  String get reminderWeeklyChannel;
+
+  /// No description provided for @reminderWeeklyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen semanal listo'**
+  String get reminderWeeklyTitle;
+
+  /// No description provided for @reminderWeeklyBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa cómo le fue al hogar esta semana en Finan2.'**
+  String get reminderWeeklyBody;
+
+  /// No description provided for @reminderDebtChannel.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagos de deudas'**
+  String get reminderDebtChannel;
+
+  /// No description provided for @reminderDebtTodayTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy pagas {debt}'**
+  String reminderDebtTodayTitle(String debt);
+
+  /// No description provided for @reminderDebtTodayBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy es el día de pago de tu deuda {debt}.'**
+  String reminderDebtTodayBody(String debt);
+
+  /// No description provided for @reminderDebtSoonTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago de {debt} pronto'**
+  String reminderDebtSoonTitle(String debt);
+
+  /// No description provided for @reminderDebtSoonBody.
+  ///
+  /// In es, this message translates to:
+  /// **'La cuota de {debt} vence en {days, plural, =1{1 día} other{{days} días}}.'**
+  String reminderDebtSoonBody(String debt, int days);
+
+  /// No description provided for @reminderActivityChannel.
+  ///
+  /// In es, this message translates to:
+  /// **'Actividad del hogar'**
+  String get reminderActivityChannel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

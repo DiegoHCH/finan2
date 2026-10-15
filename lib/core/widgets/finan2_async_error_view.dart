@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/household/presentation/viewmodels/household_providers.dart';
+import '../../l10n/l10n.dart';
 import '../crypto/household_crypto.dart';
 import '../theme/app_theme.dart';
 import 'finan2_missing_key_sheet.dart';
@@ -33,7 +34,7 @@ class Finan2AsyncErrorView extends ConsumerWidget {
             Icon(Icons.vpn_key_outlined, size: Finan2Sizes.iconXl, color: colors.saving),
             const SizedBox(height: Finan2Space.md),
             Text(
-              'Falta la llave de este hogar para ver estos montos.',
+              context.l10n.coreMissingKeyInline,
               textAlign: TextAlign.center,
               style: TextStyle(color: colors.inkSoft, fontSize: 13, height: 1.45),
             ),
@@ -41,7 +42,7 @@ class Finan2AsyncErrorView extends ConsumerWidget {
               const SizedBox(height: Finan2Space.lg),
               FilledButton(
                 onPressed: () => showMissingKeySheet(context, household),
-                child: const Text('Ir a Ajustes'),
+                child: Text(context.l10n.coreGoToSettings),
               ),
             ],
           ],
