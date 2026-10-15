@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -15,21 +17,43 @@ import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dar
 import '../viewmodels/transaction_providers.dart';
 import 'edit_transaction_screen.dart';
 
-class TransactionsScreen extends ConsumerWidget {
+class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final transactionsAsync = ref.watch(transactionsForMonthProvider);
+  ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
+  YearMonth _month = currentYearMonth();
+
+  /// Today's day of month, clamped to the browsed month - so a movement
+  /// added while looking at another month lands in it.
+  DateTime get _newMovementDate {
+    if (_month.isCurrent) return DateTime.now();
+    final lastDay = DateTime(_month.year, _month.month + 1, 0).day;
+    final day = DateTime.now().day.clamp(1, lastDay);
+    return DateTime(_month.year, _month.month, day);
+  }
+
+  void _addMovement() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => EditTransactionScreen(initialDate: _newMovementDate),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final transactionsAsync = ref.watch(transactionsOfMonthProvider(_month));
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final household = ref.watch(currentHouseholdProvider).value;
     final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     final categoryById = {for (final c in categories) c.id: c};
-    final now = DateTime.now();
-    final monthLabel = DateFormat.yMMMM('es').format(now);
-    final monthLabelCap = '${monthLabel[0].toUpperCase()}${monthLabel.substring(1)}';
+    final monthLabelCap = _month.label;
 
     final currentTransactions = transactionsAsync.value ?? const [];
     final net = currentTransactions.fold<int>(
@@ -42,9 +66,7 @@ class TransactionsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'transactionsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditTransactionScreen()),
-              ),
+              onPressed: _addMovement,
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -57,34 +79,24 @@ class TransactionsScreen extends ConsumerWidget {
                   : '${formatMoney(net)} neto',
               household: household,
             ),
-            if (currentTransactions.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Finan2Space.xl,
-                  0,
-                  Finan2Space.xl,
-                  Finan2Space.sm,
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    border: Border.all(color: colors.line),
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.chevron_left, color: colors.inkFaint),
-                      Text(
-                        monthLabelCap,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                      Icon(Icons.chevron_right, color: colors.inkFaint),
-                    ],
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Finan2Space.xl,
+                0,
+                Finan2Space.xl,
+                Finan2Space.sm,
               ),
+              child: Finan2PeriodPicker(
+                label: monthLabelCap,
+                previousTooltip: 'Mes anterior',
+                nextTooltip: 'Mes siguiente',
+                onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
+                onNext: () => setState(() => _month = _month.plusMonths(1)),
+                onReset: _month.isCurrent
+                    ? null
+                    : () => setState(() => _month = currentYearMonth()),
+              ),
+            ),
             Expanded(
               child: transactionsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -93,16 +105,15 @@ class TransactionsScreen extends ConsumerWidget {
                   if (transactions.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.receipt_long_outlined,
-                      title: 'Aún no hay movimientos',
-                      description:
-                          'Registra tu primer ingreso o gasto del mes y aquí '
-                          'verás el resumen del hogar.',
+                      title: _month.isCurrent
+                          ? 'Aún no hay movimientos'
+                          : 'Sin movimientos en $monthLabelCap',
+                      description: _month.isCurrent
+                          ? 'Registra tu primer ingreso o gasto del mes y aquí '
+                              'verás el resumen del hogar.'
+                          : 'No se registró ningún ingreso ni gasto este mes.',
                       actionLabel: '+ Agregar el primero',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditTransactionScreen(),
-                        ),
-                      ),
+                      onAction: _addMovement,
                     );
                   }
                   return ListView(

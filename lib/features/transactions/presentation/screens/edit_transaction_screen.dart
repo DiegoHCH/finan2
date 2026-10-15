@@ -47,9 +47,12 @@ _Segment _segmentFor(CategoryType type) => switch (type) {
     };
 
 class EditTransactionScreen extends ConsumerStatefulWidget {
-  const EditTransactionScreen({this.transaction, super.key});
+  const EditTransactionScreen({this.transaction, this.initialDate, super.key});
 
   final Movement? transaction;
+
+  /// Date for a new movement - the month being browsed in Movimientos.
+  final DateTime? initialDate;
 
   @override
   ConsumerState<EditTransactionScreen> createState() =>
@@ -74,7 +77,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           : null;
   late String? _cardDebtId =
       (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
-  late DateTime _date = widget.transaction?.date ?? DateTime.now();
+  late DateTime _date = widget.transaction?.date ?? widget.initialDate ?? DateTime.now();
 
   @override
   void dispose() {
