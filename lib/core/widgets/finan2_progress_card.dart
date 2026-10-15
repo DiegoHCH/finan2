@@ -69,25 +69,15 @@ class Finan2ProgressCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
                     ),
-                    Text(
-                      subtitle,
-                      style: TextStyle(fontSize: 11, color: colors.inkFaint),
-                    ),
+                    Text(subtitle, style: TextStyle(fontSize: 11, color: colors.inkFaint)),
                   ],
                 ),
               ),
               Text(
                 percentText,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: percentColor,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: percentColor),
               ),
             ],
           ),

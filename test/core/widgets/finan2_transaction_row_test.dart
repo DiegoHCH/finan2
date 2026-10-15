@@ -5,11 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/pump_app.dart';
 
 void main() {
-  Widget buildRow({
-    String? avatarLabel,
-    int? avatarIndex,
-    VoidCallback? onTap,
-  }) {
+  Widget buildRow({String? avatarLabel, int? avatarIndex, VoidCallback? onTap}) {
     return Finan2TransactionRow(
       icon: Icons.shopping_cart_outlined,
       iconColor: Colors.green,
@@ -35,8 +31,9 @@ void main() {
     expect(find.text('D'), findsOneWidget);
   });
 
-  testWidgets('renders no avatar at all when they are omitted (recurring bills case)',
-      (tester) async {
+  testWidgets('renders no avatar at all when they are omitted (recurring bills case)', (
+    tester,
+  ) async {
     await pumpFinan2(tester, buildRow());
     // Only the description/sublabel/amount texts should exist - no stray
     // single-letter avatar text.

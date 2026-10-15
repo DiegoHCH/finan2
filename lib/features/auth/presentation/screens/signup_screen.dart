@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
+import '../../../../l10n/l10n.dart';
 import '../viewmodels/auth_providers.dart';
 import 'login_screen.dart';
 
@@ -37,7 +38,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signUpWithEmail(
+    await ref
+        .read(authControllerProvider.notifier)
+        .signUpWithEmail(
           name: toTitleCase(_nameController.text),
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -65,6 +68,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       }
     });
 
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -75,37 +79,29 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
-                Text(
-                  'Crea tu cuenta',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                Text(l10n.authSignupTitle, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: Finan2Space.xs),
-                Text(
-                  'Regístrate para empezar a organizar las finanzas del hogar.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                Text(l10n.authSignupSubtitle, style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: Finan2Space.xl),
                 Finan2Field(
-                  label: 'Nombre',
+                  label: l10n.commonName,
                   controller: _nameController,
                   autofillHints: const [AutofillHints.name],
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? 'Ingresa tu nombre'
-                      : null,
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? l10n.authNameRequired : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
-                  label: 'Correo',
+                  label: l10n.authEmailLabel,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  validator: (value) => (value == null || !value.contains('@'))
-                      ? 'Ingresa un correo válido'
-                      : null,
+                  validator: (value) =>
+                      (value == null || !value.contains('@')) ? l10n.authEmailInvalid : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
-                  label: 'Contraseña',
+                  label: l10n.authPasswordLabel,
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.newPassword],
@@ -113,12 +109,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
-                  label: 'Confirmar contraseña',
+                  label: l10n.authConfirmPasswordLabel,
                   controller: _confirmController,
                   obscureText: true,
-                  validator: (value) => value != _passwordController.text
-                      ? 'Las contraseñas no coinciden'
-                      : null,
+                  validator: (value) =>
+                      value != _passwordController.text ? l10n.authPasswordsDontMatch : null,
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 FilledButton(
@@ -129,21 +124,21 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Crear cuenta'),
+                      : Text(l10n.authCreateAccount),
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    ),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pushReplacement(MaterialPageRoute<void>(builder: (_) => const LoginScreen())),
                     child: Text.rich(
                       TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,
                         children: [
-                          const TextSpan(text: '¿Ya tienes cuenta? '),
+                          TextSpan(text: l10n.authHaveAccount),
                           TextSpan(
-                            text: 'Inicia sesión',
+                            text: l10n.authSignInLink,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,

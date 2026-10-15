@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/crypto/recovery_phrase.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../data/household_model.dart';
@@ -25,8 +26,7 @@ final householdCryptoProvider = Provider<HouseholdCrypto>((ref) {
 /// false right after a reinstall, or on a second device that joined pasting
 /// only the short code without the key half. Drives the "pegar código para
 /// desbloquear montos" prompt in Settings.
-final householdHasKeyProvider =
-    FutureProvider.family<bool, String>((ref, householdId) {
+final householdHasKeyProvider = FutureProvider.family<bool, String>((ref, householdId) {
   return ref.watch(householdCryptoProvider).hasKey(householdId);
 });
 
@@ -66,24 +66,22 @@ class HouseholdController extends AsyncNotifier<Household?> {
   /// device can't decrypt amounts yet.
   bool joinedWithoutKey = false;
 
-  Future<void> createHousehold({
-    required String householdName,
-  }) async {
+  Future<void> createHousehold({required String householdName}) async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return;
     state = const AsyncLoading();
     final setup = ref.read(householdSetupProvider.notifier)..expect();
     state = await AsyncValue.guard(() async {
-      final (household, inviteCode) =
-          await ref.read(householdRepositoryProvider).createHousehold(
-                uid: user.uid,
-                // Never falls back to the email - a person's identity in the
-                // UI should always read as a name, never an email address.
-                displayName: user.displayName ?? 'Yo',
-                householdName: householdName,
-              );
-      final key =
-          await ref.read(householdCryptoProvider).generateKey(household.id);
+      final (household, inviteCode) = await ref
+          .read(householdRepositoryProvider)
+          .createHousehold(
+            uid: user.uid,
+            // Never falls back to the email - a person's identity in the
+            // UI should always read as a name, never an email address.
+            displayName: user.displayName ?? 'Yo',
+            householdName: householdName,
+          );
+      final key = await ref.read(householdCryptoProvider).generateKey(household.id);
       lastShareCode = '$inviteCode.$key';
       setup.ready(lastShareCode!);
       // Separate write: the category rules check membership against the
@@ -107,22 +105,20 @@ class HouseholdController extends AsyncNotifier<Household?> {
     final key = parts.length > 1 ? parts[1] : null;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final household =
-          await ref.read(householdRepositoryProvider).joinHousehold(
-                code: joinCode,
-                uid: user.uid,
-                // Never falls back to the email - a person's identity in the
-                // UI should always read as a name, never an email address.
-                displayName: user.displayName ?? 'Yo',
-              );
+      final household = await ref
+          .read(householdRepositoryProvider)
+          .joinHousehold(
+            code: joinCode,
+            uid: user.uid,
+            // Never falls back to the email - a person's identity in the
+            // UI should always read as a name, never an email address.
+            displayName: user.displayName ?? 'Yo',
+          );
       if (key != null && HouseholdCrypto.isWellFormedKey(key)) {
-        await ref
-            .read(householdCryptoProvider)
-            .importKey(household.id, key);
+        await ref.read(householdCryptoProvider).importKey(household.id, key);
         joinedWithoutKey = false;
       } else {
-        joinedWithoutKey =
-            !await ref.read(householdCryptoProvider).hasKey(household.id);
+        joinedWithoutKey = !await ref.read(householdCryptoProvider).hasKey(household.id);
       }
       return household;
     });
@@ -132,22 +128,19 @@ class HouseholdController extends AsyncNotifier<Household?> {
   /// for a device that's already a member of [householdId] but never got the
   /// key locally (reinstall, new device, or it joined pasting only the short
   /// code). Any prefix works - an invite or the household's own ID - since
-  /// only the key half matters here. Returns a Spanish error message, or
-  /// null on success.
+  /// only the key half matters here. Returns a user-facing error message,
+  /// or null on success.
   Future<String?> importMissingKey({
     required String householdId,
     required String pastedCode,
   }) async {
     final key = pastedCode.trim().split('.').last;
     if (!HouseholdCrypto.isWellFormedKey(key)) {
-      return 'Ese código no trae la llave completa. Pide a tu pareja que lo '
-          'comparta de nuevo desde la tarjeta del hogar en Ajustes.';
+      return currentL10n.householdKeyIncomplete;
     }
-    final sample =
-        await ref.read(householdRepositoryProvider).sampleCiphertext(householdId);
+    final sample = await ref.read(householdRepositoryProvider).sampleCiphertext(householdId);
     if (sample != null && !await HouseholdCrypto.keyOpens(key, sample)) {
-      return 'Esa llave no es de este hogar. Revisa que el código sea el que '
-          'tu pareja compartió desde este mismo hogar.';
+      return currentL10n.householdKeyWrongHousehold;
     }
     await ref.read(householdCryptoProvider).importKey(householdId, key);
     ref.invalidate(householdHasKeyProvider(householdId));
@@ -161,8 +154,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
     if (user == null) return null;
     final key = await ref.read(householdCryptoProvider).exportKey(householdId);
     if (key == null) return null;
-    final code =
-        await ref.read(householdRepositoryProvider).createInvite(householdId, user.uid);
+    final code = await ref.read(householdRepositoryProvider).createInvite(householdId, user.uid);
     return '$code.$key';
   }
 
@@ -194,18 +186,13 @@ class HouseholdController extends AsyncNotifier<Household?> {
   Future<void> saveRecoveryPhrase(String householdId, WrappedKey wrapped) async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) throw StateError('Not signed in');
-    await ref
-        .read(householdRepositoryProvider)
-        .setKeyRecovery(householdId, user.uid, wrapped);
+    await ref.read(householdRepositoryProvider).setKeyRecovery(householdId, user.uid, wrapped);
   }
 
   /// Tries to recover this device's missing key for [householdId] with the
-  /// typed recovery [input]. Returns a Spanish message describing what went
-  /// wrong, or null on success.
-  Future<String?> recoverKeyWithPhrase({
-    required String householdId,
-    required String input,
-  }) async {
+  /// typed recovery [input]. Returns a user-facing message describing what
+  /// went wrong, or null on success.
+  Future<String?> recoverKeyWithPhrase({required String householdId, required String input}) async {
     final RecoveryPhrase phrase;
     try {
       phrase = await RecoveryPhrase.parse(input);
@@ -214,14 +201,13 @@ class HouseholdController extends AsyncNotifier<Household?> {
     }
     final recovery = await ref.read(householdRepositoryProvider).getKeyRecovery(householdId);
     if (recovery == null) {
-      return 'Este hogar no tiene una frase de recuperación configurada.';
+      return currentL10n.householdRecoveryNotSet;
     }
     final unwrapped = await ref
         .read(householdCryptoProvider)
         .tryUnwrapKeyWithRecoveryPhrase(householdId, phrase, recovery.wrapped);
     if (!unwrapped) {
-      return 'Esa frase no corresponde a este hogar. Si tu pareja generó una '
-          'nueva, la anterior dejó de servir.';
+      return currentL10n.householdRecoveryPhraseMismatch;
     }
     ref.invalidate(householdHasKeyProvider(householdId));
     return null;
@@ -245,6 +231,23 @@ class HouseholdController extends AsyncNotifier<Household?> {
     await ref.read(authRepositoryProvider).deleteAccount();
   }
 
+  /// Throws on failure - the settings screens show it in an error sheet.
+  Future<void> updateSettings(
+    String householdId, {
+    String? currency,
+    int? startYear,
+    String? weekStartsOn,
+  }) {
+    return ref
+        .read(householdRepositoryProvider)
+        .updateSettings(
+          householdId,
+          currency: currency,
+          startYear: startYear,
+          weekStartsOn: weekStartsOn,
+        );
+  }
+
   /// Updates the signed-in member's own display name, both in Firebase Auth
   /// (so it's correct the next time they create/join a household) and on
   /// the current household's memberInfo (so "Registrado por" etc. update
@@ -257,17 +260,14 @@ class HouseholdController extends AsyncNotifier<Household?> {
     state = await AsyncValue.guard(() async {
       await ref.read(authRepositoryProvider).updateDisplayName(name);
       if (householdId != null) {
-        await ref
-            .read(householdRepositoryProvider)
-            .updateMemberName(householdId, user.uid, name);
+        await ref.read(householdRepositoryProvider).updateMemberName(householdId, user.uid, name);
       }
       return ref.read(currentHouseholdProvider).value;
     });
   }
 }
 
-final householdControllerProvider =
-    AsyncNotifierProvider<HouseholdController, Household?>(
+final householdControllerProvider = AsyncNotifierProvider<HouseholdController, Household?>(
   HouseholdController.new,
 );
 
@@ -277,8 +277,9 @@ final householdControllerProvider =
 /// notification primer) while [active].
 typedef HouseholdSetupState = ({bool active, String? shareCode});
 
-final householdSetupProvider =
-    NotifierProvider<HouseholdSetup, HouseholdSetupState>(HouseholdSetup.new);
+final householdSetupProvider = NotifierProvider<HouseholdSetup, HouseholdSetupState>(
+  HouseholdSetup.new,
+);
 
 class HouseholdSetup extends Notifier<HouseholdSetupState> {
   @override

@@ -46,10 +46,7 @@ class Finan2TapField extends StatelessWidget {
                     color: colors.inkFaint,
                   ),
                 ),
-                Text(
-                  value,
-                  style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600),
-                ),
+                Text(value, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
               ],
             ),
           ),

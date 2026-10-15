@@ -26,7 +26,9 @@ class SavingsChallengeController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(savingsChallengeRepositoryProvider).createChallenge(
+      () => ref
+          .read(savingsChallengeRepositoryProvider)
+          .createChallenge(
             householdId,
             SavingsChallenge(
               id: '',
@@ -55,14 +57,11 @@ class SavingsChallengeController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref
-          .read(savingsChallengeRepositoryProvider)
-          .deleteChallenge(householdId, challengeId),
+      () => ref.read(savingsChallengeRepositoryProvider).deleteChallenge(householdId, challengeId),
     );
   }
 }
 
-final savingsChallengeControllerProvider =
-    AsyncNotifierProvider<SavingsChallengeController, void>(
+final savingsChallengeControllerProvider = AsyncNotifierProvider<SavingsChallengeController, void>(
   SavingsChallengeController.new,
 );

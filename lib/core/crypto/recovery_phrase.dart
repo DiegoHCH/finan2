@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cryptography/cryptography.dart';
 
+import '../../l10n/l10n.dart';
 import 'recovery_wordlist_es.dart';
 
 /// Thrown by [RecoveryPhrase.parse] when what the user typed isn't a valid
@@ -32,8 +33,7 @@ class RecoveryPhrase {
   final List<String> words;
 
   static final Map<String, int> _indexByWord = {
-    for (var i = 0; i < recoveryWordlistEs.length; i++)
-      _normalizeWord(recoveryWordlistEs[i]): i,
+    for (var i = 0; i < recoveryWordlistEs.length; i++) _normalizeWord(recoveryWordlistEs[i]): i,
   };
 
   static Future<RecoveryPhrase> generate() async {
@@ -54,7 +54,7 @@ class RecoveryPhrase {
         .toList();
     if (typed.length != wordCount) {
       throw RecoveryPhraseFormatException(
-        'La frase debe tener $wordCount palabras (escribiste ${typed.length}).',
+        currentL10n.errorRecoveryPhraseWordCount(wordCount, typed.length),
       );
     }
 
@@ -62,9 +62,7 @@ class RecoveryPhrase {
     for (final word in typed) {
       final index = _indexByWord[word];
       if (index == null) {
-        throw RecoveryPhraseFormatException(
-          '"$word" no es una palabra de la frase. Revisa que esté bien escrita.',
-        );
+        throw RecoveryPhraseFormatException(currentL10n.errorRecoveryPhraseUnknownWord(word));
       }
       indices.add(index);
     }
@@ -81,10 +79,7 @@ class RecoveryPhrase {
       (i) => ((bits >> (8 * (_entropyBytes - 1 - i))) & BigInt.from(0xFF)).toInt(),
     );
     if (await _checksum(entropy) != checksum) {
-      throw const RecoveryPhraseFormatException(
-        'La frase no es válida. Revisa que las palabras estén en el orden '
-        'correcto y bien escritas.',
-      );
+      throw RecoveryPhraseFormatException(currentL10n.errorRecoveryPhraseInvalid);
     }
     return RecoveryPhrase._(entropy, [for (final i in indices) recoveryWordlistEs[i]]);
   }

@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
@@ -30,8 +31,7 @@ class HouseholdSetupScreen extends ConsumerStatefulWidget {
   final String shareCode;
 
   @override
-  ConsumerState<HouseholdSetupScreen> createState() =>
-      _HouseholdSetupScreenState();
+  ConsumerState<HouseholdSetupScreen> createState() => _HouseholdSetupScreenState();
 }
 
 class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
@@ -71,9 +71,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode),
-      ),
+      MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode)),
     );
     if (!mounted) return;
     ref.read(householdSetupProvider.notifier).finish();
@@ -85,7 +83,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
     final household = ref.read(currentHouseholdProvider).value;
     if (household != null && household.currency != _currency) {
       await ref
-          .read(householdRepositoryProvider)
+          .read(householdControllerProvider.notifier)
           .updateSettings(household.id, currency: _currency);
     }
     _next();
@@ -96,9 +94,8 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
     if (name.isEmpty) {
       await showFinan2InfoSheet(
         context,
-        title: 'Ponle un nombre',
-        message:
-            'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.',
+        title: context.l10n.householdSetupAccountNameMissingTitle,
+        message: context.l10n.householdSetupAccountNameMissingMessage,
       );
       return;
     }
@@ -123,12 +120,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
   Future<void> _createPhrase() async {
     final household = ref.read(currentHouseholdProvider).value;
     if (household == null) return;
-    final saved = await createRecoveryPhrase(
-      context,
-      ref,
-      household,
-      askFirst: false,
-    );
+    final saved = await createRecoveryPhrase(context, ref, household, askFirst: false);
     if (saved && mounted) _next();
   }
 
@@ -136,15 +128,16 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final textTheme = Theme.of(context).textTheme;
+    final l10n = context.l10n;
     final (title, description, body, primaryLabel, onPrimary) = switch (_step) {
       _Step.currency => (
-        'Moneda del hogar',
-        'En la que llevan las cuentas. Se puede cambiar en Ajustes.',
+        l10n.householdSetupCurrencyTitle,
+        l10n.householdSetupCurrencyDescription,
         Column(
           children: [
             Finan2OptionCard(
               icon: Icons.payments_outlined,
-              title: 'Peso colombiano',
+              title: l10n.householdCurrencyCop,
               subtitle: 'COP · \$',
               selected: _currency == 'COP',
               onTap: () => setState(() => _currency = 'COP'),
@@ -152,24 +145,23 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
             const SizedBox(height: Finan2Space.sm),
             Finan2OptionCard(
               icon: Icons.attach_money,
-              title: 'Dólar estadounidense',
+              title: l10n.householdCurrencyUsd,
               subtitle: 'USD · US\$',
               selected: _currency == 'USD',
               onTap: () => setState(() => _currency = 'USD'),
             ),
           ],
         ),
-        'Siguiente',
+        l10n.commonNext,
         _saveCurrency,
       ),
       _Step.account => (
-        'Tu primera cuenta',
-        'De donde sale y a donde llega la plata: el banco, una billetera o el '
-            'efectivo. Pon lo que tiene hoy para empezar con el saldo real.',
+        l10n.householdSetupAccountTitle,
+        l10n.householdSetupAccountDescription,
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2Field(label: 'Nombre', controller: _accountNameController),
+            Finan2Field(label: l10n.commonName, controller: _accountNameController),
             const SizedBox(height: Finan2Space.md),
             Wrap(
               spacing: 7,
@@ -186,7 +178,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
             ),
             const SizedBox(height: Finan2Space.md),
             Text(
-              'Saldo de hoy',
+              l10n.householdSetupBalanceToday,
               textAlign: TextAlign.center,
               style: textTheme.labelMedium,
             ),
@@ -196,16 +188,14 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
             ),
           ],
         ),
-        'Crear cuenta',
+        l10n.householdSetupCreateAccount,
         _saveAccount,
       ),
       _Step.recovery => (
-        'Frase de recuperación',
-        'Los montos se cifran con una llave que vive solo en sus teléfonos. Si '
-            'los dos la pierden, estas 12 palabras la recuperan. Se muestran una '
-            'sola vez: anótalas en papel y guárdalas con tu pareja.',
+        l10n.householdRecoveryPhraseTitle,
+        l10n.householdSetupRecoveryDescription,
         const SizedBox.shrink(),
-        'Generar frase',
+        l10n.householdGeneratePhrase,
         _createPhrase,
       ),
     };
@@ -220,12 +210,8 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
             padding: const EdgeInsets.all(Finan2Space.xl),
             children: [
               Text(
-                'Paso ${_step.index + 1} de ${_Step.values.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: colors.inkFaint,
-                ),
+                l10n.householdSetupStep(_step.index + 1, _Step.values.length),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: colors.inkFaint),
               ),
               const SizedBox(height: Finan2Space.sm),
               LinearProgressIndicator(
@@ -235,10 +221,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
               const SizedBox(height: Finan2Space.xl),
               Text(title, style: textTheme.headlineSmall),
               const SizedBox(height: Finan2Space.xs),
-              Text(
-                description,
-                style: textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
-              ),
+              Text(description, style: textTheme.bodyMedium?.copyWith(color: colors.inkSoft)),
               const SizedBox(height: Finan2Space.lg),
               body,
               const SizedBox(height: Finan2Space.xl),
@@ -256,11 +239,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
                 const SizedBox(height: Finan2Space.sm),
                 TextButton(
                   onPressed: _busy ? null : _next,
-                  child: Text(
-                    _step == _Step.recovery
-                        ? 'Más tarde, desde Ajustes'
-                        : 'Omitir',
-                  ),
+                  child: Text(_step == _Step.recovery ? l10n.householdSetupLater : l10n.commonSkip),
                 ),
               ],
             ],

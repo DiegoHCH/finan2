@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_google_icon.dart';
 import '../../../../core/widgets/finan2_logo_tile.dart';
+import '../../../../l10n/l10n.dart';
 import '../viewmodels/auth_providers.dart';
 import '../widgets/google_sign_in_web_button.dart';
 import 'signup_screen.dart';
@@ -31,7 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (kIsWeb) {
       // Lets GoogleSignInWebButton's embedded GIS button actually render -
       // otherwise it has nothing to wait on.
-      ref.read(authRepositoryProvider).ensureGoogleWebButtonReady();
+      ref.read(authControllerProvider.notifier).prepareGoogleWebButton();
     }
   }
 
@@ -44,23 +45,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signInWithEmail(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+    await ref
+        .read(authControllerProvider.notifier)
+        .signInWithEmail(email: _emailController.text.trim(), password: _passwordController.text);
   }
 
   Future<void> _forgotPassword() async {
     final controller = TextEditingController(text: _emailController.text.trim());
     final email = await showFinan2InputSheet(
       context,
-      title: 'Recuperar contraseña',
-      message: 'Te enviamos un enlace a tu correo para elegir una contraseña nueva.',
-      fieldLabel: 'Correo',
+      title: context.l10n.authResetPasswordTitle,
+      message: context.l10n.authResetPasswordMessage,
+      fieldLabel: context.l10n.authEmailLabel,
       controller: controller,
       keyboardType: TextInputType.emailAddress,
       autofillHints: const [AutofillHints.email],
-      confirmLabel: 'Enviar',
+      confirmLabel: context.l10n.authResetPasswordSend,
     );
     final trimmedEmail = email?.trim();
     if (trimmedEmail == null || trimmedEmail.isEmpty || !mounted) return;
@@ -70,8 +70,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!state.hasError) {
       await showFinan2InfoSheet(
         context,
-        title: 'Correo enviado',
-        message: 'Si $trimmedEmail tiene una cuenta, te llegará un correo para recuperarla.',
+        title: context.l10n.authResetPasswordSentTitle,
+        message: context.l10n.authResetPasswordSentMessage(trimmedEmail),
       );
     }
   }
@@ -97,6 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       });
     }
 
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -111,49 +112,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextSpan(
                     style: Theme.of(context).textTheme.headlineSmall,
                     children: [
-                      const TextSpan(text: 'Bienvenido a Finan'),
+                      TextSpan(text: l10n.authLoginWelcome),
                       TextSpan(
                         text: '2',
                         style: TextStyle(
-                          color: Theme.of(context)
-                              .extension<Finan2Colors>()!
-                              .saving,
+                          color: Theme.of(context).extension<Finan2Colors>()!.saving,
                         ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: Finan2Space.xs),
-                Text(
-                  'Entra con tu cuenta. Cada quien tiene la suya; '
-                  'las finanzas del hogar son compartidas.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                Text(l10n.authLoginSubtitle, style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: Finan2Space.xl),
                 Finan2Field(
-                  label: 'Correo',
+                  label: l10n.authEmailLabel,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  validator: (value) => (value == null || !value.contains('@'))
-                      ? 'Ingresa un correo válido'
-                      : null,
+                  validator: (value) =>
+                      (value == null || !value.contains('@')) ? l10n.authEmailInvalid : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
-                  label: 'Contraseña',
+                  label: l10n.authPasswordLabel,
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.password],
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? 'Ingresa tu contraseña'
-                      : null,
+                  validator: (value) =>
+                      (value == null || value.isEmpty) ? l10n.authPasswordRequired : null,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: authState.isLoading ? null : _forgotPassword,
-                    child: const Text('¿Olvidaste tu contraseña?'),
+                    child: Text(l10n.authForgotPassword),
                   ),
                 ),
                 const SizedBox(height: Finan2Space.sm),
@@ -165,20 +158,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Iniciar sesión'),
+                      : Text(l10n.authSignIn),
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Row(
                   children: [
                     const Expanded(child: Divider()),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Finan2Space.sm,
-                      ),
-                      child: Text(
-                        'o',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: Finan2Space.sm),
+                      child: Text(l10n.authOr, style: Theme.of(context).textTheme.bodySmall),
                     ),
                     const Expanded(child: Divider()),
                   ],
@@ -194,25 +182,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   OutlinedButton.icon(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref
-                            .read(authControllerProvider.notifier)
-                            .signInWithGoogle(),
+                        : () => ref.read(authControllerProvider.notifier).signInWithGoogle(),
                     icon: const Finan2GoogleIcon(),
-                    label: const Text('Continuar con Google'),
+                    label: Text(l10n.authContinueWithGoogle),
                   ),
                 const SizedBox(height: Finan2Space.lg),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SignupScreen()),
-                    ),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute<void>(builder: (_) => const SignupScreen())),
                     child: Text.rich(
                       TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,
                         children: [
-                          const TextSpan(text: '¿No tienes cuenta? '),
+                          TextSpan(text: l10n.authNoAccount),
                           TextSpan(
-                            text: 'Créala aquí',
+                            text: l10n.authCreateAccountHere,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,

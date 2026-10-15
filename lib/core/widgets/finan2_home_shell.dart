@@ -1,6 +1,8 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +19,7 @@ import '../../features/household/presentation/viewmodels/household_providers.dar
 import '../../features/investments/presentation/viewmodels/investment_providers.dart';
 import '../../features/notification_prefs/data/notification_prefs.dart';
 import '../../features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
+import '../../features/notifications/data/notification_scan_sources.dart';
 import '../../features/notifications/presentation/viewmodels/notification_providers.dart';
 import '../../features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
 import '../../features/savings_challenge/presentation/viewmodels/savings_challenge_providers.dart';
@@ -26,6 +29,7 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
+import '../../l10n/l10n.dart';
 import '../notifications/notification_primer_sheet.dart';
 import '../notifications/notification_providers.dart';
 import '../pwa/ios_install_detection.dart';
@@ -33,6 +37,7 @@ import '../pwa/pwa_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
 import 'finan2_missing_key_sheet.dart';
+import '../observability/error_reporter.dart';
 
 /// The app's root navigation once a household exists: bottom nav with the
 /// 5 destinations from the design mockup. Also the integration point for
@@ -59,8 +64,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   Future<void> _maybeShowMissingKeySheet() async {
     // Creating it right now: the key may not be stored yet, but it will be.
     if (ref.read(householdSetupProvider).active) return;
-    final hasKey =
-        await ref.read(householdCryptoProvider).hasKey(widget.household.id);
+    final hasKey = await ref.read(householdCryptoProvider).hasKey(widget.household.id);
     if (hasKey || !mounted) return;
     await showMissingKeySheet(context, widget.household);
   }
@@ -69,9 +73,10 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId == null || uid == null) return;
-    final prefs =
-        ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
-    final created = await ref.read(notificationScannerProvider).scan(
+    final prefs = ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
+    final created = await ref
+        .read(notificationScannerProvider)
+        .scan(
           householdId: householdId,
           currentUid: uid,
           debts: ref.read(debtsProvider).value ?? const [],
@@ -87,7 +92,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           prefs: prefs,
         );
     for (final hit in created) {
-      await ref.read(pushServiceProvider).sendPush(
+      await ref
+          .read(pushServiceProvider)
+          .sendPush(
             householdId: householdId,
             excludeUid: hit.excludePushUid,
             title: hit.notification.title,
@@ -122,8 +129,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     if (householdId == null || uid == null) return;
     try {
       await ref.read(pushServiceProvider).registerToken(householdId, uid);
-    } catch (_) {
+    } catch (e, st) {
       // Permission denied or unsupported platform - in-app alerts still work.
+      ErrorReporter.recoverable(e, st, reason: 'push token registration failed');
     }
   }
 
@@ -140,9 +148,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final shareCode = ref.read(householdSetupProvider).shareCode;
     if (shareCode == null || _setupOpen || !mounted) return;
     _setupOpen = true;
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)));
   }
 
   /// The primer waited for HouseholdSetupScreen to finish.
@@ -167,15 +175,16 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   }
 
   Future<void> _rescheduleDebtReminders() async {
-    final prefs =
-        ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
+    final prefs = ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
     if (!prefs.debtPayments) return;
     final debts = ref.read(debtsProvider).value ?? const [];
     try {
       await ref.read(notificationServiceProvider).scheduleDebtPaymentReminders(debts);
-    } catch (_) {
-      // Permission not granted yet (user hasn't opened notification prefs) -
-      // scanning/in-app alerts still work regardless.
+    } catch (e, st) {
+      // Without exact-alarm permission (user hasn't opened notification
+      // prefs) this is expected - scanning/in-app alerts still work regardless.
+      if (e is PlatformException && e.code == 'exact_alarms_not_permitted') return;
+      ErrorReporter.recoverable(e, st, reason: 'debt reminders not scheduled');
     }
   }
 
@@ -195,14 +204,21 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     // FCM doesn't surface a system-tray alert for messages that arrive while
     // the app is foregrounded - show it ourselves the same way local
     // reminders already are.
-    FirebaseMessaging.onMessage.listen((message) {
+    _foregroundPushes = ref.read(foregroundPushesProvider).listen((message) {
       final notification = message.notification;
       if (notification == null) return;
-      ref.read(notificationServiceProvider).showNow(
-            title: notification.title ?? '',
-            body: notification.body ?? '',
-          );
+      ref
+          .read(notificationServiceProvider)
+          .showNow(title: notification.title ?? '', body: notification.body ?? '');
     });
+  }
+
+  StreamSubscription<Object?>? _foregroundPushes;
+
+  @override
+  void dispose() {
+    _foregroundPushes?.cancel();
+    super.dispose();
   }
 
   @override
@@ -242,54 +258,49 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       SettingsScreen(household: widget.household),
     ];
 
-    final showInstallBanner = kIsWeb &&
-        !_installBannerDismissed &&
-        isIOSSafariNotInstalled;
+    final showInstallBanner = kIsWeb && !_installBannerDismissed && isIOSSafariNotInstalled;
 
     return Scaffold(
       body: Column(
         children: [
           if (showInstallBanner)
             MaterialBanner(
-              content: const Text(
-                'Para recibir notificaciones y que tus datos no se borren '
-                'solos, instala Finan2: toca Compartir y luego '
-                '"Agregar a inicio".',
-              ),
+              content: Text(context.l10n.coreInstallBanner),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      setState(() => _installBannerDismissed = true),
-                  child: const Text('Entendido'),
+                  onPressed: () => setState(() => _installBannerDismissed = true),
+                  child: Text(context.l10n.commonGotIt),
                 ),
               ],
             ),
-          Expanded(child: IndexedStack(index: _index, children: tabs)),
+          Expanded(
+            child: IndexedStack(index: _index, children: tabs),
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.inicio),
-            label: 'Inicio',
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.inicio),
+            label: context.l10n.coreHomeTabHome,
           ),
-          const NavigationDestination(
-            icon: Finan2ListIcon(),
-            label: 'Movimientos',
+          NavigationDestination(
+            icon: const Finan2ListIcon(),
+            label: context.l10n.coreHomeTabMovements,
           ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.deudas),
-            label: 'Deudas',
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.deudas),
+            label: context.l10n.coreHomeTabDebts,
           ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.metas),
-            label: 'Metas',
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.metas),
+            label: context.l10n.coreHomeTabGoals,
           ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.ajustes),
-            label: 'Ajustes',
+          NavigationDestination(
+            icon: const Icon(Finan2Icons.ajustes),
+            label: context.l10n.coreHomeTabSettings,
           ),
         ],
       ),

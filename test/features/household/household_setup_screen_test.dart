@@ -2,6 +2,7 @@ import 'package:finan2/core/theme/app_theme.dart';
 import 'package:finan2/features/household/data/household_model.dart';
 import 'package:finan2/features/household/presentation/screens/household_setup_screen.dart';
 import 'package:finan2/features/household/presentation/viewmodels/household_providers.dart';
+import 'package:finan2/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,11 +22,14 @@ void main() {
         container: container,
         child: MaterialApp(
           theme: Finan2Theme.light,
+          locale: const Locale('es'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: Builder(
             builder: (context) => Scaffold(
               body: TextButton(
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (_) => const HouseholdSetupScreen(shareCode: 'ABC.key'),
                   ),
                 ),

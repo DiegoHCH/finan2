@@ -33,13 +33,11 @@ void main() {
 
   testWidgets('reflects progressFraction on the underlying progress indicator', (tester) async {
     await pumpFinan2(tester, buildCard());
-    final indicator =
-        tester.widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator));
+    final indicator = tester.widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator));
     expect(indicator.value, 0.58);
   });
 
-  testWidgets('calls onTap when tapped, and is not tappable when onTap is null',
-      (tester) async {
+  testWidgets('calls onTap when tapped, and is not tappable when onTap is null', (tester) async {
     var tapped = false;
     await pumpFinan2(tester, buildCard(onTap: () => tapped = true));
     await tester.tap(find.text('Viaje a Europa'));
@@ -49,8 +47,7 @@ void main() {
     expect(find.byType(InkWell), findsNothing);
   });
 
-  testWidgets('does not overflow when foot values are long, big peso amounts',
-      (tester) async {
+  testWidgets('does not overflow when foot values are long, big peso amounts', (tester) async {
     await pumpFinan2(
       tester,
       SizedBox(

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/investment_model.dart';
 import '../viewmodels/investment_providers.dart';
@@ -32,16 +33,16 @@ class InvestmentsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'investmentsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditInvestmentScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Inversiones',
+              label: context.l10n.investmentsTitle,
               title: formatMoney(total),
               household: household,
               showBackButton: true,
@@ -54,23 +55,16 @@ class InvestmentsScreen extends ConsumerWidget {
                   if (investments.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.trending_up,
-                      title: 'Aún no hay inversiones',
-                      description:
-                          'Agrega tu CDT, fondo o cripto para llevarle el pulso '
-                          'a tu portafolio.',
-                      actionLabel: '+ Nueva inversión',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditInvestmentScreen(),
-                        ),
-                      ),
+                      title: context.l10n.investmentsEmptyTitle,
+                      description: context.l10n.investmentsEmptyDescription,
+                      actionLabel: context.l10n.investmentsEmptyAction,
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen())),
                     );
                   }
 
-                  final totalReturn = investments.fold<int>(
-                    0,
-                    (sum, i) => sum + i.returnAmount,
-                  );
+                  final totalReturn = investments.fold<int>(0, (sum, i) => sum + i.returnAmount);
 
                   return ListView(
                     padding: const EdgeInsets.all(Finan2Space.xl),
@@ -81,19 +75,16 @@ class InvestmentsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Valor del portafolio',
-                              style: TextStyle(color: Colors.white, fontSize: 11.5),
+                            Text(
+                              context.l10n.investmentsPortfolioValue,
+                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
@@ -108,9 +99,7 @@ class InvestmentsScreen extends ConsumerWidget {
                             Row(
                               children: [
                                 Icon(
-                                  totalReturn >= 0
-                                      ? Icons.arrow_upward
-                                      : Icons.arrow_downward,
+                                  totalReturn >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
                                   size: 12,
                                   color: Colors.white,
                                 ),
@@ -123,7 +112,7 @@ class InvestmentsScreen extends ConsumerWidget {
                                             '${totalReturn >= 0 ? '+' : ''}${formatMoney(totalReturn)}',
                                         style: const TextStyle(fontWeight: FontWeight.w700),
                                       ),
-                                      const TextSpan(text: ' de rendimiento total'),
+                                      TextSpan(text: context.l10n.investmentsTotalReturnSuffix),
                                     ],
                                   ),
                                   style: const TextStyle(color: Colors.white, fontSize: 11.5),
@@ -141,10 +130,8 @@ class InvestmentsScreen extends ConsumerWidget {
                             investment: investment,
                             formatMoney: formatMoney,
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => EditInvestmentScreen(
-                                  investment: investment,
-                                ),
+                              MaterialPageRoute<void>(
+                                builder: (_) => EditInvestmentScreen(investment: investment),
                               ),
                             ),
                           ),
@@ -162,11 +149,7 @@ class InvestmentsScreen extends ConsumerWidget {
 }
 
 class _InvestmentCard extends StatelessWidget {
-  const _InvestmentCard({
-    required this.investment,
-    required this.formatMoney,
-    required this.onTap,
-  });
+  const _InvestmentCard({required this.investment, required this.formatMoney, required this.onTap});
 
   final Investment investment;
   final String Function(num) formatMoney;
@@ -182,7 +165,7 @@ class _InvestmentCard extends StatelessWidget {
     final gainColor = gain ? colors.income : colors.expense;
 
     final subtitle = investment.kind == InvestmentKind.rentaFija
-        ? '${investment.kind.label} · ${_formatRate(investment.rate)}% E.A.'
+        ? context.l10n.investmentsKindWithRate(investment.kind.label, _formatRate(investment.rate))
         : investment.kind.label;
 
     return InkWell(
@@ -223,20 +206,13 @@ class _InvestmentCard extends StatelessWidget {
                         investment.name,
                         style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
                       ),
-                      Text(
-                        subtitle,
-                        style: TextStyle(fontSize: 11, color: colors.inkFaint),
-                      ),
+                      Text(subtitle, style: TextStyle(fontSize: 11, color: colors.inkFaint)),
                     ],
                   ),
                 ),
                 Text(
                   '${gain ? '+' : ''}${formatMoney(investment.returnAmount)}',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: gainColor,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: gainColor),
                 ),
               ],
             ),
@@ -245,8 +221,12 @@ class _InvestmentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Valor actual',
-                  style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                  context.l10n.investmentsCurrentValue,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: colors.inkFaint,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
@@ -255,7 +235,11 @@ class _InvestmentCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       formatMoney(investment.currentValue),
-                      style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w600,
+                        color: colors.inkFaint,
+                      ),
                     ),
                   ),
                 ),

@@ -4,10 +4,12 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_goal_model.dart';
 import '../viewmodels/savings_goal_providers.dart';
@@ -27,6 +29,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
     final goals = ref.watch(savingsGoalsProvider).value ?? const <SavingsGoal>[];
     final current = goals.firstWhere((g) => g.id == goal.id, orElse: () => goal);
     final now = DateTime.now();
+    final l10n = context.l10n;
 
     final currentAmount = current.currentAmountAsOf(now);
     final interestEarned = current.interestEarnedAsOf(now);
@@ -58,9 +61,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
               trailing: IconButton(
                 icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => EditSavingsGoalScreen(goal: current),
-                  ),
+                  MaterialPageRoute<void>(builder: (_) => EditSavingsGoalScreen(goal: current)),
                 ),
               ),
             ),
@@ -83,8 +84,8 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       children: [
                         Text(
                           falta > 0
-                              ? 'Ahorrado · falta ${formatMoney(falta)}'
-                              : 'Ahorrado · meta cumplida',
+                              ? l10n.savingsGoalsSavedRemaining(formatMoney(falta))
+                              : l10n.savingsGoalsSavedReached,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -109,15 +110,17 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Aporte',
-                          value: '${formatMoney(current.monthlyContribution)}/mes',
+                          label: l10n.savingsGoalsContribution,
+                          value: l10n.savingsGoalsPerMonth(
+                            formatMoney(current.monthlyContribution),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Interés ganado',
+                          label: l10n.savingsGoalsInterestEarned,
                           value: current.interestRate > 0
                               ? '+${formatMoney(interestEarned.round())}'
                               : '—',
@@ -128,7 +131,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Finan2StatBox(
                           dense: true,
-                          label: 'Falta',
+                          label: l10n.savingsGoalsRemaining,
                           value: formatMoney(falta),
                         ),
                       ),
@@ -153,7 +156,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '${(fraction * 100).round()}% de ${formatMoney(current.targetAmount)}',
+                                  l10n.savingsGoalsProgressOf(
+                                    (fraction * 100).round(),
+                                    formatMoney(current.targetAmount),
+                                  ),
                                   style: const TextStyle(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
@@ -168,8 +174,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   current.targetDate == null
-                                      ? 'sin fecha'
-                                      : 'meta ${_monthYearLabel(current.targetDate!)}',
+                                      ? l10n.savingsGoalsNoDate
+                                      : l10n.savingsGoalsTargetBy(
+                                          _monthYearLabel(current.targetDate!),
+                                        ),
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
@@ -199,7 +207,9 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  '${formatMoney(current.monthlyContribution)}/mes',
+                                  l10n.savingsGoalsPerMonth(
+                                    formatMoney(current.monthlyContribution),
+                                  ),
                                   style: TextStyle(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w600,
@@ -215,7 +225,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    onTrack ? 'a tiempo ✓' : 'atrasado',
+                                    onTrack ? l10n.savingsGoalsOnTrack : l10n.savingsGoalsBehind,
                                     style: TextStyle(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.w600,
@@ -244,7 +254,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 9),
                           child: Text(
-                            'Aportes',
+                            l10n.savingsGoalsContributions,
                             style: TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
@@ -256,7 +266,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
-                              'Aún no registras aportes.',
+                              l10n.savingsGoalsNoContributions,
                               style: TextStyle(fontSize: 12, color: colors.inkSoft),
                             ),
                           )
@@ -266,13 +276,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                               contribution: sortedContributions[i],
                               runningTotal: runningTotals[i],
                               memberName:
-                                  household?.memberInfo[sortedContributions[i].createdBy]
-                                          ?.name ??
-                                      '?',
-                              memberIndex: household?.members.indexOf(
-                                    sortedContributions[i].createdBy,
-                                  ) ??
-                                  0,
+                                  household?.memberInfo[sortedContributions[i].createdBy]?.name ??
+                                  '?',
+                              memberIndex:
+                                  household?.members.indexOf(sortedContributions[i].createdBy) ?? 0,
                               formatMoney: formatMoney,
                               showDivider: i > 0,
                             ),
@@ -290,60 +297,63 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
 }
 
 Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId) async {
-  final controller = TextEditingController();
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
   var submitting = false;
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        Finan2Space.xl,
-        Finan2Space.lg,
-        Finan2Space.xl,
-        MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Nuevo aporte', style: Theme.of(sheetContext).textTheme.titleMedium),
-          const SizedBox(height: Finan2Space.md),
-          Finan2AmountInput(
-            controller: controller,
-            autofocus: true,
-            currencySymbol: currencySymbol,
-          ),
-          const SizedBox(height: Finan2Space.lg),
-          StatefulBuilder(
-            builder: (sheetContext, setSheetState) {
-              return FilledButton(
-                onPressed: submitting
-                    ? null
-                    : () async {
-                        setSheetState(() => submitting = true);
-                        final amount = int.tryParse(controller.text) ?? 0;
-                        if (amount > 0) {
-                          await ref
-                              .read(savingsGoalControllerProvider.notifier)
-                              .addContribution(goalId, amount);
-                        }
-                        if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-                      },
-                child: submitting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Guardar'),
-              );
-            },
-          ),
-        ],
+    builder: (sheetContext) => Finan2WithTextController(
+      builder: (_, controller) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          Finan2Space.xl,
+          Finan2Space.lg,
+          Finan2Space.xl,
+          MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              sheetContext.l10n.savingsGoalsNewContribution,
+              style: Theme.of(sheetContext).textTheme.titleMedium,
+            ),
+            const SizedBox(height: Finan2Space.md),
+            Finan2AmountInput(
+              controller: controller,
+              autofocus: true,
+              currencySymbol: currencySymbol,
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            StatefulBuilder(
+              builder: (sheetContext, setSheetState) {
+                return FilledButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          setSheetState(() => submitting = true);
+                          final amount = int.tryParse(controller.text) ?? 0;
+                          if (amount > 0) {
+                            await ref
+                                .read(savingsGoalControllerProvider.notifier)
+                                .addContribution(goalId, amount);
+                          }
+                          if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                        },
+                  child: submitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(sheetContext.l10n.commonSave),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     ),
   );
-  controller.dispose();
 }
 
 class _ContributionRow extends StatelessWidget {
@@ -370,7 +380,9 @@ class _ContributionRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
       decoration: showDivider
-          ? BoxDecoration(border: Border(bottom: BorderSide(color: colors.line)))
+          ? BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.line)),
+            )
           : null,
       child: Row(
         children: [
@@ -385,12 +397,12 @@ class _ContributionRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Aporte',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                Text(
+                  context.l10n.savingsGoalsContribution,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  'Total → ${formatMoney(runningTotal)}',
+                  context.l10n.savingsGoalsRunningTotal(formatMoney(runningTotal)),
                   style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
                 ),
               ],
@@ -407,6 +419,6 @@ class _ContributionRow extends StatelessWidget {
 }
 
 String _monthYearLabel(DateTime date) {
-  final month = DateFormat('MMM', 'es').format(date).replaceAll('.', '');
+  final month = DateFormat('MMM').format(date).replaceAll('.', '');
   return '$month ${date.year}';
 }

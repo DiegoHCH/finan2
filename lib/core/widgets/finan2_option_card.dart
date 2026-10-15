@@ -32,10 +32,7 @@ class Finan2OptionCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: selected ? brand : colors.line,
-            width: 1.5,
-          ),
+          border: Border.all(color: selected ? brand : colors.line, width: 1.5),
           color: selected ? colors.brandTint : null,
         ),
         child: Row(
@@ -55,20 +52,10 @@ class Finan2OptionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      height: 1.35,
-                      color: colors.inkSoft,
-                    ),
+                    style: TextStyle(fontSize: 11, height: 1.35, color: colors.inkSoft),
                   ),
                 ],
               ),
@@ -82,11 +69,7 @@ class Finan2OptionCard extends StatelessWidget {
 }
 
 class _RadioDot extends StatelessWidget {
-  const _RadioDot({
-    required this.selected,
-    required this.color,
-    required this.line,
-  });
+  const _RadioDot({required this.selected, required this.color, required this.line});
 
   final bool selected;
   final Color color;

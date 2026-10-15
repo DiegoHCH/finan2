@@ -27,8 +27,16 @@ void main() {
     test('with no interest rate, current amount is just the sum of contributions', () {
       final goal = _goal(
         contributions: [
-          Contribution(date: now.subtract(const Duration(days: 400)), amount: 7000000, createdBy: 'u1'),
-          Contribution(date: now.subtract(const Duration(days: 10)), amount: 500000, createdBy: 'u2'),
+          Contribution(
+            date: now.subtract(const Duration(days: 400)),
+            amount: 7000000,
+            createdBy: 'u1',
+          ),
+          Contribution(
+            date: now.subtract(const Duration(days: 10)),
+            amount: 500000,
+            createdBy: 'u2',
+          ),
         ],
       );
       expect(goal.totalContributed, 7500000);
@@ -69,9 +77,7 @@ void main() {
     test('clamps at 1.0 once the goal is met or exceeded', () {
       final goal = _goal(
         targetAmount: 1000000,
-        contributions: [
-          Contribution(date: now, amount: 2000000, createdBy: 'u1'),
-        ],
+        contributions: [Contribution(date: now, amount: 2000000, createdBy: 'u1')],
       );
       expect(goal.progressFractionAsOf(now), 1.0);
     });
@@ -84,9 +90,7 @@ void main() {
     test('is the plain ratio otherwise', () {
       final goal = _goal(
         targetAmount: 1000000,
-        contributions: [
-          Contribution(date: now, amount: 250000, createdBy: 'u1'),
-        ],
+        contributions: [Contribution(date: now, amount: 250000, createdBy: 'u1')],
       );
       expect(goal.progressFractionAsOf(now), 0.25);
     });

@@ -97,45 +97,60 @@ abstract class Finan2Type {
     return TextTheme(
       // Cifras grandes de dinero (balance, meta, saldo)
       displayMedium: TextStyle(
-        fontSize: 30, fontWeight: FontWeight.w700, letterSpacing: -0.5,
-        height: 1.05, color: ink, fontFeatures: _feat,
+        fontSize: 30,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+        height: 1.05,
+        color: ink,
+        fontFeatures: _feat,
       ),
       displaySmall: TextStyle(
-        fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.4,
-        color: ink, fontFeatures: _feat,
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
+        color: ink,
+        fontFeatures: _feat,
       ),
       // Título de pantalla / sección
       headlineSmall: TextStyle(
-        fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.4,
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
         color: ink,
       ),
       // Título de card
       titleLarge: TextStyle(
-        fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: -0.2,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
         color: ink,
       ),
       // Subtítulo / encabezado de app
-      titleMedium: TextStyle(
-        fontSize: 15, fontWeight: FontWeight.w600, color: ink,
-      ),
-      titleSmall: TextStyle(
-        fontSize: 13, fontWeight: FontWeight.w600, color: ink,
-      ),
+      titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ink),
+      titleSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ink),
       // Cuerpo
       bodyLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: ink),
       bodyMedium: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: soft, height: 1.45),
       bodySmall: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: soft),
       // Botón
       labelLarge: TextStyle(
-        fontSize: 14, fontWeight: FontWeight.w700, letterSpacing: 0.1, color: ink,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.1,
+        color: ink,
       ),
       // Chip
       labelMedium: TextStyle(
-        fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.1, color: soft,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.1,
+        color: soft,
       ),
       // Label en MAYÚSCULAS (eyebrows, encabezados de campo)
       labelSmall: TextStyle(
-        fontSize: 10.5, fontWeight: FontWeight.w700, letterSpacing: 0.8,
+        fontSize: 10.5,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.8,
         color: soft,
       ),
     );
@@ -282,8 +297,7 @@ abstract class Finan2Icons {
   };
 
   /// Devuelve el icono de una categoría por su slug (fallback: etiqueta).
-  static IconData categoria(String slug) =>
-      _categoria[slug] ?? Icons.label_outline;
+  static IconData categoria(String slug) => _categoria[slug] ?? Icons.label_outline;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -356,9 +370,19 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
 
   @override
   Finan2Colors copyWith({
-    Color? income, Color? expense, Color? saving, Color? savingTint,
-    Color? brandTint, Color? brandDeep, Color? userA, Color? userB, Color? ink,
-    Color? inkSoft, Color? inkFaint, Color? line, Color? surfaceAlt,
+    Color? income,
+    Color? expense,
+    Color? saving,
+    Color? savingTint,
+    Color? brandTint,
+    Color? brandDeep,
+    Color? userA,
+    Color? userB,
+    Color? ink,
+    Color? inkSoft,
+    Color? inkFaint,
+    Color? line,
+    Color? surfaceAlt,
   }) {
     return Finan2Colors(
       income: income ?? this.income,
@@ -404,26 +428,26 @@ class Finan2Colors extends ThemeExtension<Finan2Colors> {
 
 abstract class Finan2Theme {
   static ThemeData get light => _build(
-        brightness: Brightness.light,
-        ground: Finan2Palette.groundLight,
-        surface: Finan2Palette.surfaceLight,
-        ink: Finan2Palette.inkLight,
-        soft: Finan2Palette.inkSoftLight,
-        line: Finan2Palette.lineLight,
-        brand: Finan2Palette.brand,
-        ext: Finan2Colors.light,
-      );
+    brightness: Brightness.light,
+    ground: Finan2Palette.groundLight,
+    surface: Finan2Palette.surfaceLight,
+    ink: Finan2Palette.inkLight,
+    soft: Finan2Palette.inkSoftLight,
+    line: Finan2Palette.lineLight,
+    brand: Finan2Palette.brand,
+    ext: Finan2Colors.light,
+  );
 
   static ThemeData get dark => _build(
-        brightness: Brightness.dark,
-        ground: Finan2Palette.groundDark,
-        surface: Finan2Palette.surfaceDark,
-        ink: Finan2Palette.inkDark,
-        soft: Finan2Palette.inkSoftDark,
-        line: Finan2Palette.lineDark,
-        brand: Finan2Palette.brandDarkMode,
-        ext: Finan2Colors.dark,
-      );
+    brightness: Brightness.dark,
+    ground: Finan2Palette.groundDark,
+    surface: Finan2Palette.surfaceDark,
+    ink: Finan2Palette.inkDark,
+    soft: Finan2Palette.inkSoftDark,
+    line: Finan2Palette.lineDark,
+    brand: Finan2Palette.brandDarkMode,
+    ext: Finan2Colors.dark,
+  );
 
   static ThemeData _build({
     required Brightness brightness,
@@ -449,8 +473,10 @@ abstract class Finan2Theme {
     );
 
     // Plus Jakarta Sans (local) aplicada sobre nuestra escala de tipos.
-    final textTheme = Finan2Type.textTheme(ink: ink, soft: soft)
-        .apply(fontFamily: Finan2Type.fontFamily);
+    final textTheme = Finan2Type.textTheme(
+      ink: ink,
+      soft: soft,
+    ).apply(fontFamily: Finan2Type.fontFamily);
 
     return base.copyWith(
       extensions: [ext],
@@ -470,18 +496,14 @@ abstract class Finan2Theme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: brand,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: brand,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Finan2Radius.field),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.field)),
           textStyle: const TextStyle(
             fontFamily: Finan2Type.fontFamily,
             fontWeight: FontWeight.w700,
@@ -495,9 +517,7 @@ abstract class Finan2Theme {
           foregroundColor: ink,
           side: BorderSide(color: line),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Finan2Radius.field),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.field)),
           textStyle: const TextStyle(
             fontFamily: Finan2Type.fontFamily,
             fontWeight: FontWeight.w600,
@@ -539,10 +559,7 @@ abstract class Finan2Theme {
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            size: 21,
-            color: selected ? brand : ext.inkFaint,
-          );
+          return IconThemeData(size: 21, color: selected ? brand : ext.inkFaint);
         }),
       ),
     );

@@ -14,18 +14,19 @@ import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../household/presentation/widgets/recovery_phrase_flow.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
 
-const _themeModeLabels = <ThemeMode, String>{
-  ThemeMode.light: 'Claro',
-  ThemeMode.dark: 'Oscuro',
-  ThemeMode.system: 'Sistema',
+String _themeModeLabel(AppLocalizations l10n, ThemeMode mode) => switch (mode) {
+  ThemeMode.light => l10n.settingsThemeLight,
+  ThemeMode.dark => l10n.settingsThemeDark,
+  ThemeMode.system => l10n.settingsThemeSystem,
 };
 
-const _themeModeSubtitles = <ThemeMode, String>{
-  ThemeMode.light: 'Siempre fondo claro.',
-  ThemeMode.dark: 'Siempre fondo oscuro.',
-  ThemeMode.system: 'Sigue el ajuste de tu dispositivo.',
+String _themeModeSubtitle(AppLocalizations l10n, ThemeMode mode) => switch (mode) {
+  ThemeMode.light => l10n.settingsThemeLightSubtitle,
+  ThemeMode.dark => l10n.settingsThemeDarkSubtitle,
+  ThemeMode.system => l10n.settingsThemeSystemSubtitle,
 };
 
 const _themeModeIcons = <ThemeMode, IconData>{
@@ -41,17 +42,14 @@ class AccountSettingsScreen extends ConsumerWidget {
 
   Future<void> _leaveHousehold(BuildContext context, WidgetRef ref) async {
     final isSolo = household.members.length <= 1;
+    final l10n = context.l10n;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Salir del hogar',
+      title: l10n.settingsLeaveHousehold,
       message: isSolo
-          ? 'Eres el único miembro de "${household.name}". Si sales, se '
-              'borrarán para siempre todos sus datos: cuentas, movimientos, '
-              'presupuestos, deudas y metas.'
-          : 'Vas a salir de "${household.name}". Tus cuentas, movimientos y '
-              'demás datos seguirán disponibles para el resto del hogar. '
-              'Podrás crear o unirte a otro hogar después.',
-      confirmLabel: isSolo ? 'Salir y borrar' : 'Salir',
+          ? l10n.settingsLeaveHouseholdSoloMessage(household.name)
+          : l10n.settingsLeaveHouseholdMessage(household.name),
+      confirmLabel: isSolo ? l10n.settingsLeaveAndDelete : l10n.settingsLeave,
       destructive: true,
     );
     if (!confirmed || !context.mounted) return;
@@ -70,8 +68,8 @@ class AccountSettingsScreen extends ConsumerWidget {
     final controller = TextEditingController(text: currentName);
     final result = await showFinan2InputSheet(
       context,
-      title: 'Mi nombre',
-      fieldLabel: 'Nombre',
+      title: context.l10n.settingsMyName,
+      fieldLabel: context.l10n.commonName,
       controller: controller,
     );
     final name = toTitleCase(result ?? '');
@@ -81,17 +79,14 @@ class AccountSettingsScreen extends ConsumerWidget {
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
     final isSolo = household.members.length <= 1;
+    final l10n = context.l10n;
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar mi cuenta',
+      title: l10n.settingsDeleteAccount,
       message: isSolo
-          ? 'Perderás el acceso a Finan2 de forma permanente y no se puede '
-              'deshacer. Como eres el único miembro, también se borrarán '
-              'todos los datos de "${household.name}".'
-          : 'Perderás el acceso a Finan2 de forma permanente y no se puede '
-              'deshacer. También saldrás de tu hogar - sus datos seguirán '
-              'disponibles para el otro miembro.',
-      confirmLabel: 'Continuar',
+          ? l10n.settingsDeleteAccountSoloMessage(household.name)
+          : l10n.settingsDeleteAccountMessage,
+      confirmLabel: l10n.commonContinue,
       destructive: true,
     );
     if (!confirmed || !context.mounted) return;
@@ -106,11 +101,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _pickThemeMode(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeMode current,
-  ) async {
+  Future<void> _pickThemeMode(BuildContext context, WidgetRef ref, ThemeMode current) async {
     await showModalBottomSheet<void>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -120,13 +111,16 @@ class AccountSettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Tema', style: Theme.of(sheetContext).textTheme.titleMedium),
+              Text(
+                sheetContext.l10n.settingsTheme,
+                style: Theme.of(sheetContext).textTheme.titleMedium,
+              ),
               const SizedBox(height: Finan2Space.md),
               for (final mode in ThemeMode.values) ...[
                 Finan2OptionCard(
                   icon: _themeModeIcons[mode]!,
-                  title: _themeModeLabels[mode]!,
-                  subtitle: _themeModeSubtitles[mode]!,
+                  title: _themeModeLabel(sheetContext.l10n, mode),
+                  subtitle: _themeModeSubtitle(sheetContext.l10n, mode),
                   selected: current == mode,
                   onTap: () {
                     ref.read(themeModeControllerProvider.notifier).setThemeMode(mode);
@@ -146,20 +140,19 @@ class AccountSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final members = household.members;
-    final memberNames = members
-        .map((uid) => household.memberInfo[uid]?.name ?? '?')
-        .join(', ');
+    final memberNames = members.map((uid) => household.memberInfo[uid]?.name ?? '?').join(', ');
     final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
     final myUid = ref.watch(authStateChangesProvider).value?.uid;
     final myName = myUid == null ? '' : (household.memberInfo[myUid]?.name ?? '');
+    final l10n = context.l10n;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(
-              label: 'Ajustes de la cuenta',
-              title: 'Hogar y notificaciones',
+            Finan2AppTop(
+              label: l10n.settingsAccountSettings,
+              title: l10n.settingsAccountSettingsSubtitle,
               showBackButton: true,
             ),
             Expanded(
@@ -171,34 +164,34 @@ class AccountSettingsScreen extends ConsumerWidget {
                       if (myUid != null)
                         Finan2ListRow(
                           icon: Icons.badge_outlined,
-                          label: 'Mi nombre',
+                          label: l10n.settingsMyName,
                           value: myName,
                           onTap: () => _editMyName(context, ref, myName),
                         ),
                       Finan2ListRow(
                         icon: Finan2Icons.miembros,
-                        label: 'Miembros del hogar',
+                        label: l10n.settingsHouseholdMembers,
                         value: memberNames,
                       ),
                       Finan2ListRow(
                         icon: Icons.notifications_outlined,
-                        label: 'Notificaciones',
+                        label: l10n.settingsNotifications,
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const NotificationPreferencesScreen(),
                           ),
                         ),
                       ),
                       Finan2ListRow(
                         icon: _themeModeIcons[themeMode]!,
-                        label: 'Tema',
-                        value: _themeModeLabels[themeMode],
+                        label: l10n.settingsTheme,
+                        value: _themeModeLabel(l10n, themeMode),
                         onTap: () => _pickThemeMode(context, ref, themeMode),
                       ),
                       Finan2ListRow(
                         icon: Icons.vpn_key_outlined,
-                        label: 'Frase de recuperación',
-                        value: 'Recuperar montos si pierden la llave',
+                        label: l10n.householdRecoveryPhraseTitle,
+                        value: l10n.settingsRecoveryPhraseHint,
                         onTap: () => createRecoveryPhrase(context, ref, household),
                       ),
                     ],
@@ -207,13 +200,13 @@ class AccountSettingsScreen extends ConsumerWidget {
                   OutlinedButton(
                     onPressed: () => _leaveHousehold(context, ref),
                     style: OutlinedButton.styleFrom(foregroundColor: colors.expense),
-                    child: const Text('Salir del hogar'),
+                    child: Text(l10n.settingsLeaveHousehold),
                   ),
                   const SizedBox(height: Finan2Space.sm),
                   TextButton(
                     onPressed: () => _deleteAccount(context, ref),
                     style: TextButton.styleFrom(foregroundColor: colors.inkFaint),
-                    child: const Text('Eliminar mi cuenta'),
+                    child: Text(l10n.settingsDeleteAccount),
                   ),
                 ],
               ),

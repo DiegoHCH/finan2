@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/category_model.dart';
 import '../../data/category_usage.dart';
@@ -30,14 +31,7 @@ const _iconsByType = <CategoryType, List<String>>{
   CategoryType.ahorro: ['viaje', 'emergencia', 'meta', 'casa'],
 };
 
-const _colorSwatches = [
-  0xFF0F9D74,
-  0xFFD4453F,
-  0xFFC8892F,
-  0xFF7C5CE0,
-  0xFF2F7FC8,
-  0xFFD466A6,
-];
+const _colorSwatches = [0xFF0F9D74, 0xFFD4453F, 0xFFC8892F, 0xFF7C5CE0, 0xFF2F7FC8, 0xFFD466A6];
 
 class EditCategoryScreen extends ConsumerStatefulWidget {
   const EditCategoryScreen({this.category, super.key});
@@ -45,17 +39,13 @@ class EditCategoryScreen extends ConsumerStatefulWidget {
   final Category? category;
 
   @override
-  ConsumerState<EditCategoryScreen> createState() =>
-      _EditCategoryScreenState();
+  ConsumerState<EditCategoryScreen> createState() => _EditCategoryScreenState();
 }
 
 class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
-  late final _nameController = TextEditingController(
-    text: widget.category?.name ?? '',
-  );
+  late final _nameController = TextEditingController(text: widget.category?.name ?? '');
   late CategoryType _type = widget.category?.type ?? CategoryType.gasto;
-  late String _iconSlug =
-      widget.category?.iconSlug ?? _iconsByType[_type]!.first;
+  late String _iconSlug = widget.category?.iconSlug ?? _iconsByType[_type]!.first;
   late int _color = widget.category?.color ?? _colorSwatches.first;
   late bool _rollover = widget.category?.rollover ?? false;
 
@@ -77,7 +67,9 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
   Future<void> _save() async {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
-    await ref.read(categoryControllerProvider.notifier).save(
+    await ref
+        .read(categoryControllerProvider.notifier)
+        .save(
           Category(
             id: widget.category?.id ?? '',
             name: name,
@@ -86,9 +78,8 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
             color: _color,
             // Income isn't budgeted, so there's nothing to carry.
             rollover: _type != CategoryType.ingreso && _rollover,
-            createdBy: widget.category?.createdBy ??
-                ref.read(authStateChangesProvider).value?.uid ??
-                '',
+            createdBy:
+                widget.category?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -100,14 +91,15 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
     final controller = ref.read(categoryControllerProvider.notifier);
     final usage = await controller.usage(category.id);
     if (!mounted) return;
+    final l10n = context.l10n;
 
     String? moveTo;
     if (usage.isEmpty) {
       final confirmed = await showFinan2ConfirmSheet(
         context,
-        title: 'Eliminar categoría',
-        message: 'Se eliminará "${category.name}". Esta acción no se puede deshacer.',
-        confirmLabel: 'Eliminar',
+        title: l10n.categoriesDeleteTitle,
+        message: l10n.categoriesDeleteMessage(category.name),
+        confirmLabel: l10n.commonDelete,
         destructive: true,
       );
       if (!confirmed) return;
@@ -120,10 +112,12 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
       if (options.isEmpty) {
         await showFinan2InfoSheet(
           context,
-          title: 'No se puede eliminar todavía',
-          message: '"${category.name}" tiene ${usage.describe()}. Crea otra categoría '
-              'de ${category.type.label.toLowerCase()} para pasarlos ahí y luego '
-              'elimina esta.',
+          title: l10n.categoriesCannotDeleteYetTitle,
+          message: l10n.categoriesCannotDeleteYetMessage(
+            category.name,
+            usage.describe(),
+            category.type.label.toLowerCase(),
+          ),
         );
         return;
       }
@@ -151,6 +145,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
       context: context,
       builder: (sheetContext) {
         final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+        final l10n = sheetContext.l10n;
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(Finan2Space.xl),
@@ -159,13 +154,12 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '¿A dónde pasamos lo de ${category.name}?',
+                  l10n.categoriesReassignTitle(category.name),
                   style: Theme.of(sheetContext).textTheme.titleMedium,
                 ),
                 const SizedBox(height: Finan2Space.sm),
                 Text(
-                  'Tiene ${usage.describe()}. Elige la categoría que se quedará con '
-                  'ellos; después "${category.name}" se elimina.',
+                  l10n.categoriesReassignMessage(usage.describe(), category.name),
                   style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
                 ),
                 const SizedBox(height: Finan2Space.lg),
@@ -195,10 +189,11 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.category != null;
     final icons = _iconsByType[_type]!;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar categoría' : 'Nueva categoría',
+        title: isEditing ? l10n.categoriesEditTitle : l10n.categoriesNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -225,34 +220,21 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                         borderRadius: BorderRadius.circular(9),
                       ),
                       alignment: Alignment.center,
-                      child: Icon(
-                        Finan2Icons.categoria(_iconSlug),
-                        size: 15,
-                        color: Colors.white,
-                      ),
+                      child: Icon(Finan2Icons.categoria(_iconSlug), size: 15, color: Colors.white),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _nameController.text.isEmpty
-                          ? 'Vista previa'
-                          : _nameController.text,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      _nameController.text.isEmpty ? l10n.categoriesPreview : _nameController.text,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(
-              label: 'Nombre',
-              controller: _nameController,
-              validator: null,
-            ),
+            Finan2Field(label: l10n.commonName, controller: _nameController, validator: null),
             const SizedBox(height: Finan2Space.lg),
-            Text('Tipo', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.categoriesTypeLabel, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -267,7 +249,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Text('Ícono', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.categoriesIcon, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -282,7 +264,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Text('Color', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.categoriesColor, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 10,
@@ -298,18 +280,10 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                         shape: BoxShape.circle,
                         color: Color(swatch),
                         border: _color == swatch
-                            ? Border.all(
-                                color: Theme.of(context).colorScheme.surface,
-                                width: 2,
-                              )
+                            ? Border.all(color: Theme.of(context).colorScheme.surface, width: 2)
                             : null,
                         boxShadow: _color == swatch
-                            ? [
-                                BoxShadow(
-                                  color: colors.ink,
-                                  spreadRadius: 2,
-                                ),
-                              ]
+                            ? [BoxShadow(color: colors.ink, spreadRadius: 2)]
                             : null,
                       ),
                     ),
@@ -320,11 +294,8 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               const SizedBox(height: Finan2Space.lg),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Acumular de un mes a otro'),
-                subtitle: const Text(
-                  'Lo que sobre del presupuesto pasa al mes siguiente, y lo que te '
-                  'pases se descuenta. Se reinicia cada enero.',
-                ),
+                title: Text(l10n.categoriesRolloverTitle),
+                subtitle: Text(l10n.categoriesRolloverSubtitle),
                 value: _rollover,
                 onChanged: (value) => setState(() => _rollover = value),
               ),
@@ -334,7 +305,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar categoría'),
+                child: Text(l10n.categoriesDeleteTitle),
               ),
             ],
           ],

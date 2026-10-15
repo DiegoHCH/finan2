@@ -28,16 +28,10 @@ class AuthController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
 
-  Future<void> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> signInWithEmail({required String email, required String password}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(authRepositoryProvider).signInWithEmail(
-            email: email,
-            password: password,
-          ),
+      () => ref.read(authRepositoryProvider).signInWithEmail(email: email, password: password),
     );
   }
 
@@ -48,11 +42,9 @@ class AuthController extends AsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(authRepositoryProvider).signUpWithEmail(
-            name: name,
-            email: email,
-            password: password,
-          ),
+      () => ref
+          .read(authRepositoryProvider)
+          .signUpWithEmail(name: name, email: email, password: password),
     );
   }
 
@@ -72,18 +64,26 @@ class AuthController extends AsyncNotifier<void> {
 
   Future<void> signInWithGoogle() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(authRepositoryProvider).signInWithGoogle(),
-    );
+    state = await AsyncValue.guard(() => ref.read(authRepositoryProvider).signInWithGoogle());
   }
 
   Future<void> signOut() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(authRepositoryProvider).signOut(),
-    );
+    state = await AsyncValue.guard(() => ref.read(authRepositoryProvider).signOut());
   }
+
+  /// Web only: lets GoogleSignInWebButton's embedded GIS button render.
+  void prepareGoogleWebButton() => ref.read(authRepositoryProvider).ensureGoogleWebButtonReady();
+
+  bool get signedInWithGoogle => ref.read(authRepositoryProvider).signedInWithGoogle;
+
+  /// Unlike the sign-in actions these throw instead of landing in [state]:
+  /// they guard another action, which the caller runs only if they succeed.
+  Future<void> reauthenticateWithGoogle() =>
+      ref.read(authRepositoryProvider).reauthenticateWithGoogle();
+
+  Future<void> reauthenticateWithPassword(String password) =>
+      ref.read(authRepositoryProvider).reauthenticateWithPassword(password);
 }
 
-final authControllerProvider =
-    AsyncNotifierProvider<AuthController, void>(AuthController.new);
+final authControllerProvider = AsyncNotifierProvider<AuthController, void>(AuthController.new);

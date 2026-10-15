@@ -15,13 +15,13 @@ extension YearMonthX on YearMonth {
 
   /// "Julio 2026".
   String get label {
-    final text = DateFormat('MMMM y', 'es').format(DateTime(year, month));
+    final text = DateFormat('MMMM y').format(DateTime(year, month));
     return '${text[0].toUpperCase()}${text.substring(1)}';
   }
 
   /// "Julio".
   String get monthLabel {
-    final text = DateFormat.MMMM('es').format(DateTime(year, month));
+    final text = DateFormat.MMMM().format(DateTime(year, month));
     return '${text[0].toUpperCase()}${text.substring(1)}';
   }
 }

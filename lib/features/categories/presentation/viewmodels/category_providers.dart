@@ -54,5 +54,6 @@ class CategoryController extends AsyncNotifier<void> {
   }
 }
 
-final categoryControllerProvider =
-    AsyncNotifierProvider<CategoryController, void>(CategoryController.new);
+final categoryControllerProvider = AsyncNotifierProvider<CategoryController, void>(
+  CategoryController.new,
+);

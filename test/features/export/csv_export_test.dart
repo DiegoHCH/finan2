@@ -10,7 +10,8 @@ import 'package:finan2/features/debts/data/debt_repository.dart';
 import 'package:finan2/features/export/data/csv_report_writer.dart';
 import 'package:finan2/features/export/data/report_builder.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_repository.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
+import 'package:finan2/features/transactions/data/movement_mapper.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,7 +26,10 @@ void main() {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(_hid);
     final household = firestore.collection('households').doc(_hid);
-    await household.collection('categories').doc('luz').set(
+    await household
+        .collection('categories')
+        .doc('luz')
+        .set(
           const Category(
             id: 'luz',
             name: 'Servicios',
@@ -34,7 +38,10 @@ void main() {
             color: 0xFFC8892F,
           ).toFirestore(),
         );
-    await household.collection('accounts').doc('a1').set(
+    await household
+        .collection('accounts')
+        .doc('a1')
+        .set(
           await const Account(
             id: 'a1',
             name: 'Bancolombia',
@@ -44,7 +51,10 @@ void main() {
           ).toFirestore(crypto, _hid),
         );
     final now = DateTime.now();
-    await household.collection('transactions').doc('t1').set(
+    await household
+        .collection('transactions')
+        .doc('t1')
+        .set(
           await Movement(
             id: 't1',
             amount: 1250000,
@@ -69,16 +79,16 @@ void main() {
   });
 
   Future<Report> build({required bool plain}) => builder.build(
-        householdId: _hid,
-        householdName: 'Casa',
-        period: ExportPeriod.thisMonth,
-        includeTransactions: true,
-        includeBudget: false,
-        includeDebtsAndSavings: false,
-        formatMoney: (v) => '\$ $v',
-        memberNames: const {'u1': 'Ana', 'u2': 'Ben'},
-        plainValues: plain,
-      );
+    householdId: _hid,
+    householdName: 'Casa',
+    period: ExportPeriod.thisMonth,
+    includeTransactions: true,
+    includeBudget: false,
+    includeDebtsAndSavings: false,
+    formatMoney: (v) => '\$ $v',
+    memberNames: const {'u1': 'Ana', 'u2': 'Ben'},
+    plainValues: plain,
+  );
 
   test('CSV movements carry the real type, a bare amount, payer and tags', () async {
     final report = await build(plain: true);
@@ -110,7 +120,10 @@ void main() {
     final bytes = files.values.single;
     expect(bytes.take(3), [0xEF, 0xBB, 0xBF]);
     final text = utf8.decode(bytes.skip(3).toList());
-    expect(text.split(RegExp(r'\r?\n')).first, 'Fecha,Tipo,Categoría,Cuenta,Descripción,Monto,Pagó,Etiquetas');
+    expect(
+      text.split(RegExp(r'\r?\n')).first,
+      'Fecha,Tipo,Categoría,Cuenta,Descripción,Monto,Pagó,Etiquetas',
+    );
     expect(text, contains('"Luz, octubre"'));
   });
 }

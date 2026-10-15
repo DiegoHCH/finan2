@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
+import 'package:finan2/features/debts/data/debt_mapper.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_model.dart';
-import 'package:finan2/features/transactions/data/transaction_model.dart';
-import 'package:finan2/features/transactions/data/tags.dart';
+import 'package:finan2/features/transactions/domain/entities/movement.dart';
+import 'package:finan2/features/transactions/data/movement_mapper.dart';
+import 'package:finan2/features/transactions/domain/tags.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_household_crypto.dart';

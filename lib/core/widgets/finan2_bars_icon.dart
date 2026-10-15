@@ -47,6 +47,5 @@ class _BarsPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _BarsPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(covariant _BarsPainter oldDelegate) => oldDelegate.color != color;
 }

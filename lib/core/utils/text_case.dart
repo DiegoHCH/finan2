@@ -8,8 +8,6 @@ String toTitleCase(String input) {
   if (trimmed.isEmpty) return trimmed;
   return trimmed
       .split(RegExp(r'\s+'))
-      .map((word) => word.isEmpty
-          ? word
-          : word[0].toUpperCase() + word.substring(1).toLowerCase())
+      .map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1).toLowerCase())
       .join(' ');
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Generic full-screen text editor shared by both note sections ("Notas de
 /// este mes" / "Para el siguiente mes") - just a title, a multiline field,
@@ -44,7 +45,7 @@ class _EditMonthlyNoteScreenState extends State<EditMonthlyNoteScreen> {
       body: Padding(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Finan2Field(
-          label: 'Notas',
+          label: context.l10n.monthlyNotesTitle,
           controller: _controller,
           maxLines: 12,
           textCapitalization: TextCapitalization.sentences,

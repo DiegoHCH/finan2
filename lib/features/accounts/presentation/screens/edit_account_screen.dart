@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/account_model.dart';
@@ -25,9 +26,7 @@ class EditAccountScreen extends ConsumerStatefulWidget {
 }
 
 class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
-  late final _nameController = TextEditingController(
-    text: widget.account?.name ?? '',
-  );
+  late final _nameController = TextEditingController(text: widget.account?.name ?? '');
   late final _balanceController = TextEditingController(
     text: widget.account != null ? widget.account!.balance.toString() : '',
   );
@@ -45,16 +44,17 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final balance = int.tryParse(_balanceController.text) ?? 0;
-    await ref.read(accountControllerProvider.notifier).save(
+    await ref
+        .read(accountControllerProvider.notifier)
+        .save(
           Account(
             id: widget.account?.id ?? '',
             name: name,
             type: _type,
             balance: balance,
             includeInAvailable: _includeInAvailable,
-            createdBy: widget.account?.createdBy ??
-                ref.read(authStateChangesProvider).value?.uid ??
-                '',
+            createdBy:
+                widget.account?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -66,24 +66,22 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final controller = ref.read(accountControllerProvider.notifier);
     final usage = await controller.usage(account.id);
     if (!mounted) return;
+    final l10n = context.l10n;
     // Moving those records to another account would change both balances
     // after the fact, so the account simply stays until they're gone.
     if (usage > 0) {
       await showFinan2InfoSheet(
         context,
-        title: 'No se puede eliminar',
-        message: '"${account.name}" tiene ${usage == 1 ? '1 registro' : '$usage registros'} '
-            '(movimientos, transferencias, pagos de tarjeta o facturas recurrentes). '
-            'Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, '
-            'desactiva "Incluir en dinero disponible".',
+        title: l10n.accountsCannotDeleteTitle,
+        message: l10n.accountsCannotDeleteMessage(account.name, usage),
       );
       return;
     }
     final confirmed = await showFinan2ConfirmSheet(
       context,
-      title: 'Eliminar cuenta',
-      message: 'Se eliminará "${account.name}". Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
+      title: l10n.accountsDeleteTitle,
+      message: l10n.accountsDeleteMessage(account.name),
+      confirmLabel: l10n.commonDelete,
       destructive: true,
     );
     if (!confirmed) return;
@@ -101,10 +99,11 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.account != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar cuenta' : 'Nueva cuenta',
+        title: isEditing ? l10n.accountsEditTitle : l10n.accountsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -112,7 +111,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tipo de cuenta', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.accountsTypeLabel, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             Wrap(
               spacing: 7,
@@ -128,34 +127,29 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: 'Nombre', controller: _nameController),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
             const SizedBox(height: Finan2Space.lg),
             Text(
-              'Saldo actual',
+              l10n.accountsCurrentBalance,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _balanceController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _balanceController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Incluir en dinero disponible'),
+              title: Text(l10n.accountsIncludeInAvailable),
               value: _includeInAvailable,
-              onChanged: (value) =>
-                  setState(() => _includeInAvailable = value),
+              onChanged: (value) => setState(() => _includeInAvailable = value),
             ),
             if (isEditing) ...[
               const SizedBox(height: Finan2Space.lg),
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(
-                  foregroundColor:
-                      Theme.of(context).extension<Finan2Colors>()!.expense,
+                  foregroundColor: Theme.of(context).extension<Finan2Colors>()!.expense,
                 ),
-                child: const Text('Eliminar cuenta'),
+                child: Text(l10n.accountsDeleteTitle),
               ),
             ],
           ],

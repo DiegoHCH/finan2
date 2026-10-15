@@ -43,10 +43,10 @@ void main() {
       ],
       'createdBy': 'u1',
     });
-    await col('recurringDone').doc('recurring_b_2026_10').set({
-      'doneAt': Timestamp.fromDate(DateTime(2026, 10, 1)),
-    });
-    await col('fcmTokens').doc('tok').set({'uid': 'u1'});
+    await col(
+      'recurringDone',
+    ).doc('recurring_b_2026_10').set({'doneAt': Timestamp.fromDate(DateTime(2026, 10, 1))});
+    await col('fcmTokens').doc('push-token-of-u1').set({'uid': 'u1'});
   });
 
   test('the file names its household but hides the data', () async {
@@ -56,7 +56,7 @@ void main() {
     expect(info.createdAt.toUtc(), DateTime.utc(2026, 10, 15, 12));
     final text = utf8.decode(file);
     expect(text, isNot(contains('Mercado')));
-    expect(text, isNot(contains('tok')));
+    expect(text, isNot(contains('push-token-of-u1')));
   });
 
   test('restoring puts back changed and deleted documents and drops new ones', () async {
@@ -78,7 +78,10 @@ void main() {
     expect(txs['partner']!['paidBy'], 'u2');
     expect((await col('recurringDone').doc('recurring_b_2026_10').get()).exists, isTrue);
     final goal = (await col('savingsGoals').doc('g').get()).data()!;
-    expect((goal['contributions'] as List).single['date'], Timestamp.fromDate(DateTime(2026, 9, 1)));
+    expect(
+      (goal['contributions'] as List).single['date'],
+      Timestamp.fromDate(DateTime(2026, 9, 1)),
+    );
     expect(result.removed, 1);
     expect(result.reattributed, 1);
   });
@@ -115,7 +118,9 @@ void main() {
   test('a file that is not a backup says so', () {
     expect(
       () => repo.inspect(utf8.encode('Fecha,Monto\n')),
-      throwsA(isA<BackupException>().having((e) => e.message, 'message', contains('no es una copia'))),
+      throwsA(
+        isA<BackupException>().having((e) => e.message, 'message', contains('no es una copia')),
+      ),
     );
   });
 }

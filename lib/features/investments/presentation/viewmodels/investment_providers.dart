@@ -47,7 +47,6 @@ class InvestmentController extends AsyncNotifier<void> {
   }
 }
 
-final investmentControllerProvider =
-    AsyncNotifierProvider<InvestmentController, void>(
+final investmentControllerProvider = AsyncNotifierProvider<InvestmentController, void>(
   InvestmentController.new,
 );

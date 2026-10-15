@@ -8,8 +8,8 @@ import 'savings_challenge_model.dart';
 /// subcollection for consistency with the rest of the app's security rules.
 class SavingsChallengeRepository {
   SavingsChallengeRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -18,17 +18,18 @@ class SavingsChallengeRepository {
       _db.collection('households').doc(householdId).collection('savingsChallenges');
 
   Stream<SavingsChallenge?> watchChallenge(String householdId) {
-    return _challenges(householdId).limit(1).snapshots().asyncMap(
-      (snap) => snap.docs.isEmpty
-          ? Future.value(null)
-          : SavingsChallenge.fromFirestore(snap.docs.first, _crypto, householdId),
-    );
+    return _challenges(householdId)
+        .limit(1)
+        .snapshots()
+        .asyncMap(
+          (snap) => snap.docs.isEmpty
+              ? Future.value(null)
+              : SavingsChallenge.fromFirestore(snap.docs.first, _crypto, householdId),
+        );
   }
 
   Future<void> createChallenge(String householdId, SavingsChallenge challenge) async {
-    await _challenges(householdId).add(
-      await challenge.toFirestore(_crypto, householdId),
-    );
+    await _challenges(householdId).add(await challenge.toFirestore(_crypto, householdId));
   }
 
   Future<void> updateDone(String householdId, String challengeId, List<bool> done) {

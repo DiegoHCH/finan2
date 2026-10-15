@@ -6,6 +6,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transfers/presentation/screens/transfer_history_screen.dart';
 import '../../../transfers/presentation/screens/transfer_screen.dart';
@@ -30,23 +31,24 @@ class AccountsScreen extends ConsumerWidget {
     final household = ref.watch(currentHouseholdProvider).value;
     final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     return Scaffold(
       floatingActionButton: accountsAsync.value?.isEmpty ?? true
           ? null
           : FloatingActionButton(
               heroTag: 'accountsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditAccountScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Cuentas',
-              title: 'Dinero disponible',
+              label: l10n.accountsTitle,
+              title: l10n.accountsAvailableMoney,
               household: household,
               showBackButton: true,
             ),
@@ -58,16 +60,12 @@ class AccountsScreen extends ConsumerWidget {
                   if (accounts.isEmpty) {
                     return Finan2EmptyState(
                       icon: Finan2Icons.cuentas,
-                      title: 'Aún no hay cuentas',
-                      description:
-                          'Agrega tu primera cuenta (efectivo, banco, '
-                          'billetera) para empezar a registrar movimientos.',
-                      actionLabel: '+ Nueva cuenta',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const EditAccountScreen(),
-                        ),
-                      ),
+                      title: l10n.accountsEmptyTitle,
+                      description: l10n.accountsEmptyDescription,
+                      actionLabel: l10n.accountsEmptyAction,
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
                     );
                   }
                   return ListView(
@@ -79,19 +77,16 @@ class AccountsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Total disponible',
-                              style: TextStyle(color: Colors.white, fontSize: 11.5),
+                            Text(
+                              l10n.accountsTotalAvailable,
+                              style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                             const SizedBox(height: 3),
                             Text(
@@ -104,8 +99,7 @@ class AccountsScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'en ${accounts.length} cuenta'
-                              '${accounts.length == 1 ? '' : 's'} del hogar',
+                              l10n.accountsCountInHousehold(accounts.length),
                               style: const TextStyle(color: Colors.white, fontSize: 11.5),
                             ),
                           ],
@@ -132,9 +126,8 @@ class AccountsScreen extends ConsumerWidget {
                                 amountText: formatMoney(accounts[i].balance),
                                 amountColor: colors.ink,
                                 onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        EditAccountScreen(account: accounts[i]),
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => EditAccountScreen(account: accounts[i]),
                                   ),
                                 ),
                               ),
@@ -150,21 +143,19 @@ class AccountsScreen extends ConsumerWidget {
                             if (accounts.length >= 2)
                               TextButton.icon(
                                 onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const TransferScreen(),
-                                  ),
+                                  MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
                                 ),
                                 icon: const Icon(Icons.swap_horiz),
-                                label: const Text('Transferir entre cuentas'),
+                                label: Text(l10n.accountsTransferBetween),
                               ),
                             TextButton.icon(
                               onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (_) => const TransferHistoryScreen(),
                                 ),
                               ),
                               icon: const Icon(Icons.history),
-                              label: const Text('Historial'),
+                              label: Text(l10n.accountsHistory),
                             ),
                           ],
                         ),

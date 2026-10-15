@@ -8,11 +8,7 @@ const _daysPerMonth = 30.436875;
 
 /// A single contribution toward a goal - who added it, when, and how much.
 class Contribution {
-  const Contribution({
-    required this.date,
-    required this.amount,
-    required this.createdBy,
-  });
+  const Contribution({required this.date, required this.amount, required this.createdBy});
 
   final DateTime date;
   final int amount;
@@ -25,18 +21,12 @@ class Contribution {
   ) async {
     return Contribution(
       date: (map['date'] as Timestamp).toDate(),
-      amount: await crypto.decryptAmount(
-        householdId,
-        map['amount'] as String,
-      ),
+      amount: await crypto.decryptAmount(householdId, map['amount'] as String),
       createdBy: map['createdBy'] as String? ?? '',
     );
   }
 
-  Future<Map<String, dynamic>> toMap(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toMap(HouseholdCrypto crypto, String householdId) async {
     return {
       'date': Timestamp.fromDate(date),
       'amount': await crypto.encryptAmount(householdId, amount),
@@ -71,8 +61,7 @@ class SavingsGoal {
   final List<Contribution> contributions;
   final String createdBy;
 
-  int get totalContributed =>
-      contributions.fold(0, (total, c) => total + c.amount);
+  int get totalContributed => contributions.fold(0, (total, c) => total + c.amount);
 
   /// Compounds each contribution monthly from its date to now at the
   /// E.A.-derived monthly rate. 0 if no rate was set for this goal.
@@ -89,8 +78,7 @@ class SavingsGoal {
     return earned;
   }
 
-  int currentAmountAsOf(DateTime now) =>
-      totalContributed + interestEarnedAsOf(now).round();
+  int currentAmountAsOf(DateTime now) => totalContributed + interestEarnedAsOf(now).round();
 
   double progressFractionAsOf(DateTime now) {
     if (targetAmount <= 0) return 0;
@@ -120,10 +108,7 @@ class SavingsGoal {
       id: doc.id,
       name: data['name'] as String? ?? '',
       iconSlug: data['iconSlug'] as String? ?? 'otro',
-      targetAmount: await crypto.decryptAmount(
-        householdId,
-        data['targetAmount'] as String,
-      ),
+      targetAmount: await crypto.decryptAmount(householdId, data['targetAmount'] as String),
       targetDate: (data['targetDate'] as Timestamp?)?.toDate(),
       monthlyContribution: await crypto.decryptAmount(
         householdId,
@@ -132,32 +117,22 @@ class SavingsGoal {
       interestRate: (data['interestRate'] as num?)?.toDouble() ?? 0,
       contributions: await Future.wait(
         rawContributions.map(
-          (c) => Contribution.fromMap(
-            (c as Map).cast<String, dynamic>(),
-            crypto,
-            householdId,
-          ),
+          (c) => Contribution.fromMap((c as Map).cast<String, dynamic>(), crypto, householdId),
         ),
       ),
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'iconSlug': iconSlug,
       'targetAmount': await crypto.encryptAmount(householdId, targetAmount),
       'targetDate': targetDate == null ? null : Timestamp.fromDate(targetDate!),
-      'monthlyContribution':
-          await crypto.encryptAmount(householdId, monthlyContribution),
+      'monthlyContribution': await crypto.encryptAmount(householdId, monthlyContribution),
       'interestRate': interestRate,
-      'contributions': await Future.wait(
-        contributions.map((c) => c.toMap(crypto, householdId)),
-      ),
+      'contributions': await Future.wait(contributions.map((c) => c.toMap(crypto, householdId))),
       'createdBy': createdBy,
     };
   }

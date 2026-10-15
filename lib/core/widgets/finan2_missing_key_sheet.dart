@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/household/data/household_model.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Bottom sheet shown when this device doesn't have [household]'s data
@@ -14,6 +15,7 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
     context: context,
     builder: (sheetContext) {
       final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+      final l10n = sheetContext.l10n;
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Finan2Space.xl),
@@ -21,16 +23,10 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Falta la llave de este hogar',
-                style: Theme.of(sheetContext).textTheme.titleMedium,
-              ),
+              Text(l10n.coreMissingKeyTitle, style: Theme.of(sheetContext).textTheme.titleMedium),
               const SizedBox(height: Finan2Space.sm),
               Text(
-                'Este dispositivo no puede ver ni registrar montos todavía. '
-                'Pide a tu pareja el código completo (con la llave después '
-                'del punto) o usa la frase de recuperación del hogar en '
-                'Ajustes para desbloquearlos.',
+                l10n.coreMissingKeyBody,
                 style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
               ),
               const SizedBox(height: Finan2Space.lg),
@@ -38,7 +34,7 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => Navigator.of(sheetContext).pop(true),
-                  child: const Text('Ir a Ajustes'),
+                  child: Text(l10n.coreGoToSettings),
                 ),
               ),
             ],
@@ -48,8 +44,8 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
     },
   );
   if (goToSettings == true && context.mounted) {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => SettingsScreen(household: household)),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => SettingsScreen(household: household)));
   }
 }

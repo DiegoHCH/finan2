@@ -63,10 +63,7 @@ void main() {
     await crypto.generateKey('h2');
 
     final packed = await crypto.encryptAmount('h1', 99);
-    expect(
-      () => crypto.decryptAmount('h2', packed),
-      throwsA(anything),
-    );
+    expect(() => crypto.decryptAmount('h2', packed), throwsA(anything));
   });
 
   test('deleteKey forgets the household key on this device', () async {
@@ -123,10 +120,8 @@ void main() {
 
     test('wrapping without a local key throws Finan2CryptoException', () async {
       expect(
-        () async => crypto.wrapKeyWithRecoveryPhrase(
-          'unknown-household',
-          await RecoveryPhrase.generate(),
-        ),
+        () async =>
+            crypto.wrapKeyWithRecoveryPhrase('unknown-household', await RecoveryPhrase.generate()),
         throwsA(isA<Finan2CryptoException>()),
       );
     });

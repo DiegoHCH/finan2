@@ -6,7 +6,7 @@ import 'default_categories.dart';
 
 class CategoryRepository {
   CategoryRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+    : _db = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _db;
 
@@ -14,9 +14,9 @@ class CategoryRepository {
       _db.collection('households').doc(householdId).collection('categories');
 
   Stream<List<Category>> watchCategories(String householdId) {
-    return _categories(householdId).orderBy('name').snapshots().map(
-          (snap) => snap.docs.map(Category.fromFirestore).toList(),
-        );
+    return _categories(
+      householdId,
+    ).orderBy('name').snapshots().map((snap) => snap.docs.map(Category.fromFirestore).toList());
   }
 
   /// Returns the new category's generated ID.
@@ -29,18 +29,13 @@ class CategoryRepository {
   Future<void> addDefaults(String householdId, String uid) {
     final batch = _db.batch();
     for (final category in defaultCategories) {
-      batch.set(_categories(householdId).doc(), {
-        ...category.toFirestore(),
-        'createdBy': uid,
-      });
+      batch.set(_categories(householdId).doc(), {...category.toFirestore(), 'createdBy': uid});
     }
     return batch.commit();
   }
 
   Future<void> updateCategory(String householdId, Category category) {
-    return _categories(householdId)
-        .doc(category.id)
-        .update(category.toFirestore());
+    return _categories(householdId).doc(category.id).update(category.toFirestore());
   }
 
   DocumentReference<Map<String, dynamic>> _household(String householdId) =>
@@ -59,10 +54,7 @@ class CategoryRepository {
         .where('categoryId', isEqualTo: categoryId)
         .count()
         .get();
-    return CategoryUsage(
-      movements: movements.count ?? 0,
-      recurringBills: bills.count ?? 0,
-    );
+    return CategoryUsage(movements: movements.count ?? 0, recurringBills: bills.count ?? 0);
   }
 
   /// Files everything under [fromId] under [toId] instead. Only the

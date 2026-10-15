@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'finan2_app_icon.dart';
 
@@ -48,13 +49,16 @@ class Finan2SplashScreen extends StatelessWidget {
                       ),
                       children: [
                         const TextSpan(text: 'Finan'),
-                        TextSpan(text: '2', style: TextStyle(color: saving)),
+                        TextSpan(
+                          text: '2',
+                          style: TextStyle(color: saving),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Finanzas del hogar - para dos',
+                    context.l10n.coreSplashTagline,
                     style: TextStyle(
                       fontFamily: Finan2Type.fontFamily,
                       fontSize: 13,
@@ -100,11 +104,11 @@ class _LoadingDots extends StatefulWidget {
   State<_LoadingDots> createState() => _LoadingDotsState();
 }
 
-class _LoadingDotsState extends State<_LoadingDots>
-    with SingleTickerProviderStateMixin {
-  late final _controller =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1100))
-        ..repeat();
+class _LoadingDotsState extends State<_LoadingDots> with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat();
 
   @override
   void dispose() {

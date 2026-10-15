@@ -13,40 +13,40 @@ import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/text_case.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
-import '../../../debts/data/debt_model.dart';
+import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/tags.dart';
-import '../../data/transaction_model.dart';
+import '../../domain/tags.dart';
+import '../../domain/entities/movement.dart';
 import '../viewmodels/transaction_providers.dart';
 
 enum _Segment { ingreso, gasto, ahorro }
 
 extension on _Segment {
-  String get label => switch (this) {
-        _Segment.ingreso => 'Ingreso',
-        _Segment.gasto => 'Gasto',
-        _Segment.ahorro => 'Ahorro',
-      };
+  String label(AppLocalizations l10n) => switch (this) {
+    _Segment.ingreso => l10n.categoriesTypeIncome,
+    _Segment.gasto => l10n.categoriesTypeExpense,
+    _Segment.ahorro => l10n.categoriesTypeSavings,
+  };
 
   bool matches(CategoryType type) => switch (this) {
-        _Segment.ingreso => type == CategoryType.ingreso,
-        _Segment.gasto =>
-          type == CategoryType.gasto || type == CategoryType.factura,
-        _Segment.ahorro => type == CategoryType.ahorro,
-      };
+    _Segment.ingreso => type == CategoryType.ingreso,
+    _Segment.gasto => type == CategoryType.gasto || type == CategoryType.factura,
+    _Segment.ahorro => type == CategoryType.ahorro,
+  };
 }
 
 _Segment _segmentFor(CategoryType type) => switch (type) {
-      CategoryType.ingreso => _Segment.ingreso,
-      CategoryType.factura || CategoryType.gasto => _Segment.gasto,
-      CategoryType.ahorro => _Segment.ahorro,
-    };
+  CategoryType.ingreso => _Segment.ingreso,
+  CategoryType.factura || CategoryType.gasto => _Segment.gasto,
+  CategoryType.ahorro => _Segment.ahorro,
+};
 
 class EditTransactionScreen extends ConsumerStatefulWidget {
   const EditTransactionScreen({this.transaction, this.initialDate, super.key});
@@ -59,30 +59,26 @@ class EditTransactionScreen extends ConsumerStatefulWidget {
   final DateTime? initialDate;
 
   @override
-  ConsumerState<EditTransactionScreen> createState() =>
-      _EditTransactionScreenState();
+  ConsumerState<EditTransactionScreen> createState() => _EditTransactionScreenState();
 }
 
 class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   late final _amountController = TextEditingController(
-    text: widget.transaction != null
-        ? widget.transaction!.amount.toString()
-        : '',
+    text: widget.transaction != null ? widget.transaction!.amount.toString() : '',
   );
   late final _descriptionController = TextEditingController(
     text: widget.transaction?.description ?? '',
   );
   final _tagController = TextEditingController();
   late final _tags = [...?widget.transaction?.tags];
-  late _Segment _segment =
-      _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
+  late _Segment _segment = _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
   late String? _categoryId = widget.transaction?.categoryId;
-  late String? _accountId =
-      (widget.transaction != null && widget.transaction!.accountId.isNotEmpty)
-          ? widget.transaction!.accountId
-          : null;
-  late String? _cardDebtId =
-      (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
+  late String? _accountId = (widget.transaction != null && widget.transaction!.accountId.isNotEmpty)
+      ? widget.transaction!.accountId
+      : null;
+  late String? _cardDebtId = (widget.transaction?.cardDebtId.isNotEmpty ?? false)
+      ? widget.transaction!.cardDebtId
+      : null;
   late DateTime _date = widget.transaction?.date ?? widget.initialDate ?? DateTime.now();
 
   /// null until the user picks - then whoever is logging it.
@@ -103,8 +99,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     if (_tags.length >= maxTagsPerMovement) {
       showFinan2InfoSheet(
         context,
-        title: 'Máximo $maxTagsPerMovement etiquetas',
-        message: 'Quita una antes de añadir otra.',
+        title: context.l10n.transactionsMaxTagsTitle(maxTagsPerMovement),
+        message: context.l10n.transactionsMaxTagsMessage,
       );
       return;
     }
@@ -130,7 +126,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 ListTile(
                   leading: const Icon(Icons.credit_card_outlined),
                   title: Text(card.name),
-                  subtitle: const Text('Tarjeta de crédito'),
+                  subtitle: Text(context.l10n.transactionsCreditCard),
                   onTap: () => Navigator.of(context).pop((true, card.id)),
                 ),
             ],
@@ -171,17 +167,17 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     }
     final hasSource = _accountId != null || _cardDebtId != null;
     if (amount <= 0 || category == null || !hasSource || user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Completa el monto, la categoría y la cuenta.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.transactionsIncomplete)));
       return;
     }
     // A tag typed but not added yet still counts.
     final pending = normalizeTag(_tagController.text);
     final tags = {..._tags, if (pending.isNotEmpty) pending}.take(maxTagsPerMovement).toList();
-    await ref.read(transactionControllerProvider.notifier).save(
+    await ref
+        .read(transactionControllerProvider.notifier)
+        .save(
           Movement(
             id: widget.transaction?.id ?? '',
             amount: amount,
@@ -211,22 +207,18 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final accounts = ref.watch(accountsProvider).value ?? const [];
-    final cards =
-        (ref.watch(debtsProvider).value ?? const []).where((d) => d.type.isCard).toList();
+    final cards = (ref.watch(debtsProvider).value ?? const []).where((d) => d.type.isCard).toList();
     final household = ref.watch(currentHouseholdProvider).value;
     final user = ref.watch(authStateChangesProvider).value;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.transaction != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
 
-    final categoriesOfSegment =
-        categories.where((c) => _segment.matches(c.type)).toList();
-    if (_categoryId != null &&
-        !categoriesOfSegment.any((c) => c.id == _categoryId)) {
+    final categoriesOfSegment = categories.where((c) => _segment.matches(c.type)).toList();
+    if (_categoryId != null && !categoriesOfSegment.any((c) => c.id == _categoryId)) {
       _categoryId = null;
     }
-    _categoryId ??=
-        categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
+    _categoryId ??= categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
 
     Account? selectedAccount;
     for (final a in accounts) {
@@ -245,18 +237,17 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final creatorName = creatorUid == null
         ? ''
         : (household?.memberInfo[creatorUid]?.name ?? user?.displayName ?? '');
-    final creatorIndex =
-        creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
+    final creatorIndex = creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
     final members = household?.members ?? const <String>[];
     final payer = _paidBy ?? user?.uid;
-    final suggestedTags = tagsByUse(ref.watch(transactionsForYearProvider(_date.year)).value ?? const [])
-        .where((t) => !_tags.contains(t))
-        .take(8)
-        .toList();
+    final l10n = context.l10n;
+    final suggestedTags = tagsByUse(
+      ref.watch(transactionsForYearProvider(_date.year)).value ?? const [],
+    ).where((t) => !_tags.contains(t)).take(8).toList();
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing ? 'Editar movimiento' : 'Nuevo movimiento',
+        title: isEditing ? l10n.transactionsEditTitle : l10n.transactionsNewTitle,
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -265,9 +256,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Finan2SegmentedControl<_Segment>(
-              options: {
-                for (final s in _Segment.values) s: s.label,
-              },
+              options: {for (final s in _Segment.values) s: s.label(l10n)},
               selected: _segment,
               onChanged: (s) => setState(() {
                 _segment = s;
@@ -275,16 +264,13 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               }),
             ),
             const SizedBox(height: Finan2Space.sm),
-            Finan2AmountInput(
-              controller: _amountController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
-            Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.commonCategory, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             if (categoriesOfSegment.isEmpty)
               Text(
-                'No hay categorías de este tipo todavía. Créalas en Ajustes.',
+                l10n.transactionsNoCategoriesOfType,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
@@ -304,15 +290,15 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             const SizedBox(height: Finan2Space.lg),
             if (accounts.isEmpty && cards.isEmpty)
               Text(
-                'No hay cuentas todavía. Créalas en Ajustes.',
+                l10n.transactionsNoAccounts,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
               )
             else
               Finan2TapField(
-                label: 'Cuenta',
+                label: l10n.commonAccount,
                 value: selectedCard != null
                     ? selectedCard.name
-                    : (selectedAccount?.name ?? 'Selecciona una cuenta'),
+                    : (selectedAccount?.name ?? l10n.transactionsSelectAccount),
                 leading: Icon(
                   selectedCard != null
                       ? Icons.credit_card_outlined
@@ -323,18 +309,15 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 onTap: () => _pickSource(accounts, cards),
               ),
             const SizedBox(height: Finan2Space.md),
-            Finan2Field(
-              label: 'Descripción',
-              controller: _descriptionController,
-            ),
+            Finan2Field(label: l10n.commonDescription, controller: _descriptionController),
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
-              label: 'Fecha',
-              value: DateFormat('dd MMM yyyy', 'es').format(_date),
+              label: l10n.commonDate,
+              value: DateFormat('dd MMM yyyy').format(_date),
               onTap: _pickDate,
             ),
             const SizedBox(height: Finan2Space.lg),
-            Text('Etiquetas', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.transactionsTags, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
             if (_tags.isNotEmpty) ...[
               Wrap(
@@ -358,10 +341,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               textInputAction: TextInputAction.done,
               decoration: InputDecoration(
                 isDense: true,
-                hintText: 'Añadir etiqueta, por ejemplo viaje-cartagena',
+                hintText: l10n.transactionsAddTagHint,
                 hintStyle: TextStyle(fontSize: 13, color: colors.inkFaint),
                 suffixIcon: IconButton(
-                  tooltip: 'Añadir etiqueta',
+                  tooltip: l10n.transactionsAddTag,
                   icon: const Icon(Icons.add),
                   onPressed: () => _addTag(_tagController.text),
                 ),
@@ -374,11 +357,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 runSpacing: 7,
                 children: [
                   for (final tag in suggestedTags)
-                    Finan2Chip(
-                      label: '#$tag',
-                      selected: false,
-                      onTap: () => _addTag(tag),
-                    ),
+                    Finan2Chip(label: '#$tag', selected: false, onTap: () => _addTag(tag)),
                 ],
               ),
             ],
@@ -386,7 +365,9 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             if (members.length > 1) ...[
               const SizedBox(height: Finan2Space.lg),
               Text(
-                _segment == _Segment.ingreso ? 'Lo recibió' : 'Pagó',
+                _segment == _Segment.ingreso
+                    ? l10n.transactionsReceivedBy
+                    : l10n.transactionsPaidBy,
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               const SizedBox(height: Finan2Space.sm),
@@ -406,7 +387,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
             if (isEditing && creatorName.isNotEmpty) ...[
               const SizedBox(height: Finan2Space.md),
               Finan2TapField(
-                label: 'Registrado por',
+                label: l10n.transactionsLoggedBy,
                 value: creatorName,
                 leading: Finan2Avatar(
                   label: creatorName.substring(0, 1).toUpperCase(),
@@ -421,7 +402,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
-                child: const Text('Eliminar movimiento'),
+                child: Text(l10n.transactionsDelete),
               ),
             ],
           ],
