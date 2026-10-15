@@ -285,7 +285,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                       ].join(' · '),
                                       avatarLabel: memberName.isEmpty
                                           ? '?'
-                                          : memberName.substring(0, 1).toUpperCase(),
+                                          : memberName.split(' ').first,
                                       avatarIndex: memberIndex < 0 ? 0 : memberIndex,
                                       amountText: tx.isIncome
                                           ? '+${formatMoney(tx.amount)}'

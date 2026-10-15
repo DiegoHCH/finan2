@@ -243,8 +243,10 @@ abstract class Finan2Space {
 /// Radios de esquina.
 abstract class Finan2Radius {
   static const chip = 999.0; // pill
-  static const field = 12.0;
+  static const field = 14.0;
+  static const button = 16.0;
   static const card = 16.0;
+  static const sheetTop = 24.0;
   static const sheet = 34.0;
 }
 
@@ -640,30 +642,32 @@ abstract class Finan2Theme {
         foregroundColor: ext.onAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
+      // .btn: the screen's one action, violet, 16 radius, 14.5/700.
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: brand,
           foregroundColor: ext.onAccent,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.field)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.button)),
           textStyle: const TextStyle(
             fontFamily: Finan2Type.fontFamily,
             fontWeight: FontWeight.w700,
-            fontSize: 14,
+            fontSize: 14.5,
           ),
         ),
       ),
+      // .btn.quiet: the secondary action, a sunken tone with no outline.
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          backgroundColor: surface,
+          backgroundColor: ext.surfaceAlt,
           foregroundColor: ink,
-          side: BorderSide(color: line),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.field)),
+          side: BorderSide.none,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Finan2Radius.button)),
           textStyle: const TextStyle(
             fontFamily: Finan2Type.fontFamily,
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            fontSize: 14.5,
           ),
         ),
       ),
@@ -681,6 +685,29 @@ abstract class Finan2Theme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Finan2Radius.field),
           borderSide: BorderSide(color: brand, width: 1.6),
+        ),
+      ),
+      // Interruptor: violeta encendido, tono hundido apagado, sin contorno.
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? ext.onAccent : surface,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? brand : line,
+        ),
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      ),
+      // .sheet: separated by tone, not by shadow.
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        modalElevation: 0,
+        showDragHandle: true,
+        dragHandleColor: line,
+        dragHandleSize: const Size(36, 4),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(Finan2Radius.sheetTop)),
         ),
       ),
       // Mockup's .nav only changes color on the active tab (.nav a.on) -

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/finan2_tone.dart';
+import 'finan2_person_tag.dart';
 
-/// A single transaction row matching the mockup's `.tx`: icon tile,
-/// description + sub-label (with a mini avatar for who registered it), and
-/// the signed amount.
+/// The redesign's `.row`: the category tile on its own soft tone,
+/// description over a faint sub-label (with who paid, in their color), and
+/// the signed amount in tabular figures.
 class Finan2TransactionRow extends StatelessWidget {
   const Finan2TransactionRow({
     required this.icon,
@@ -34,24 +36,20 @@ class Finan2TransactionRow extends StatelessWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final avatarIndex = this.avatarIndex;
     final avatarLabel = this.avatarLabel;
-    final avatarColor = avatarIndex == 0 ? colors.userA : colors.userB;
+    final tone = Finan2Tone.of(context, iconColor);
 
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 11),
         child: Row(
           children: [
             Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: Border.all(color: colors.line),
-                borderRadius: BorderRadius.circular(11),
-              ),
+              decoration: BoxDecoration(color: tone.tint, borderRadius: BorderRadius.circular(12)),
               alignment: Alignment.center,
-              child: Icon(icon, size: 17, color: iconColor),
+              child: Icon(icon, size: 19, color: tone.color),
             ),
             const SizedBox(width: 11),
             Expanded(
@@ -62,30 +60,24 @@ class Finan2TransactionRow extends StatelessWidget {
                     description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.ink),
                   ),
-                  const SizedBox(height: 1),
+                  const SizedBox(height: 2),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (avatarLabel != null && avatarIndex != null) ...[
-                        Container(
-                          width: 14,
-                          height: 14,
-                          decoration: BoxDecoration(color: avatarColor, shape: BoxShape.circle),
-                          alignment: Alignment.center,
-                          child: Text(
-                            avatarLabel,
-                            style: TextStyle(
-                              color: colors.onAccent,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 5),
+                        Finan2PersonTag(label: avatarLabel, memberIndex: avatarIndex),
+                        const SizedBox(width: 6),
                       ],
-                      Text(subLabel, style: TextStyle(fontSize: 11, color: colors.inkFaint)),
+                      Flexible(
+                        child: Text(
+                          subLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 11.5, color: colors.inkFaint),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -93,7 +85,11 @@ class Finan2TransactionRow extends StatelessWidget {
             ),
             Text(
               amountText,
-              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: amountColor),
+              style: Finan2Type.money.copyWith(
+                fontSize: 15,
+                letterSpacing: -0.15,
+                color: amountColor,
+              ),
             ),
           ],
         ),
