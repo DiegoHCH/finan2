@@ -39,8 +39,9 @@ Future<void> pumpScreen(
 /// Lets fake Firestore snapshots and decryption land. Not pumpAndSettle:
 /// a loading spinner would keep it from ever settling.
 Future<void> settle(WidgetTester tester) async {
-  for (var i = 0; i < 5; i++) {
+  // Long enough for a page transition to finish.
+  for (var i = 0; i < 8; i++) {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
-    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pump(const Duration(milliseconds: 100));
   }
 }

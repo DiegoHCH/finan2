@@ -1,5 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/core/crypto/household_crypto.dart';
+import 'package:finan2/core/notifications/notification_providers.dart';
+import 'package:finan2/core/notifications/push_service.dart';
 import 'package:finan2/features/accounts/data/account_repository.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
 import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
@@ -47,6 +49,26 @@ class FakeUser extends Fake implements User {
 
   @override
   final String uid;
+
+  @override
+  String? get displayName => 'Diego';
+
+  @override
+  String? get email => 'diego@example.com';
+}
+
+/// Never reaches FCM or the Worker.
+class FakePushService extends Fake implements PushService {
+  @override
+  Future<void> registerToken(String householdId, String uid) async {}
+
+  @override
+  Future<void> sendPush({
+    required String householdId,
+    required String excludeUid,
+    required String title,
+    required String body,
+  }) async {}
 }
 
 /// A signed-in member of [testHouseholdId] with every repository writing to
@@ -59,26 +81,31 @@ class TestApp {
   final FakeFirebaseFirestore firestore;
   final HouseholdCrypto crypto;
 
-  static Future<TestApp> start() async {
+  /// With [withHousehold] false the member has none yet: the household
+  /// comes from the fake Firestore, so creating one in the app shows it.
+  static Future<TestApp> start({bool withHousehold = true}) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
     final container = ProviderContainer(
       overrides: [
         authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),
-        currentHouseholdProvider.overrideWith(
-          (ref) => Stream<Household?>.value(
-            const Household(
-              id: testHouseholdId,
-              name: 'Casa',
-              members: [testUid],
-              memberInfo: {},
-              currency: 'COP',
-              startYear: 2026,
-              weekStartsOn: 'monday',
+        if (withHousehold)
+          currentHouseholdProvider.overrideWith(
+            (ref) => Stream<Household?>.value(
+              const Household(
+                id: testHouseholdId,
+                name: 'Casa',
+                members: [testUid],
+                memberInfo: {},
+                currency: 'COP',
+                startYear: 2026,
+                weekStartsOn: 'monday',
+              ),
             ),
           ),
-        ),
         householdCryptoProvider.overrideWithValue(crypto),
+        pushServiceProvider.overrideWithValue(FakePushService()),
+        foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
         notificationRepositoryProvider.overrideWithValue(
           NotificationRepository(firestore: firestore),

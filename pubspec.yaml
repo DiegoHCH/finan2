@@ -41,6 +41,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   fake_cloud_firestore: ^4.1.1
   flutter_native_splash: ^2.4.8
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
