@@ -22,6 +22,7 @@ import '../../../investments/presentation/screens/investments_screen.dart';
 import '../../../investments/presentation/viewmodels/investment_providers.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/viewmodels/notification_providers.dart';
+import '../../../../l10n/l10n.dart';
 import 'account_settings_screen.dart';
 import 'financial_settings_screen.dart';
 
@@ -43,12 +44,13 @@ class SettingsScreen extends ConsumerWidget {
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final hasKey = ref.watch(householdHasKeyProvider(household.id)).value;
+    final l10n = context.l10n;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(label: 'Ajustes', title: 'Configuración'),
+            Finan2AppTop(label: l10n.settingsTitle, title: l10n.settingsHeading),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
@@ -73,10 +75,7 @@ class SettingsScreen extends ConsumerWidget {
                                 const SizedBox(width: Finan2Space.sm),
                                 Expanded(
                                   child: Text(
-                                    'Este dispositivo no tiene la llave para ver los '
-                                    'montos de este hogar. Pega el código que tu '
-                                    'pareja compartió desde su tarjeta del hogar, o '
-                                    'escribe la frase de recuperación.',
+                                    l10n.settingsMissingKeyBanner,
                                     style: TextStyle(color: colors.ink, fontSize: 13),
                                   ),
                                 ),
@@ -87,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
                               width: double.infinity,
                               child: FilledButton(
                                 onPressed: () => _importMissingKey(context, ref, household.id),
-                                child: const Text('Pegar código para desbloquear montos'),
+                                child: Text(l10n.settingsPasteCodeToUnlock),
                               ),
                             ),
                             const SizedBox(height: Finan2Space.sm),
@@ -95,7 +94,7 @@ class SettingsScreen extends ConsumerWidget {
                               width: double.infinity,
                               child: OutlinedButton(
                                 onPressed: () => _recoverWithPhrase(context, ref, household.id),
-                                child: const Text('Usar frase de recuperación'),
+                                child: Text(l10n.settingsUseRecoveryPhrase),
                               ),
                             ),
                           ],
@@ -119,11 +118,7 @@ class SettingsScreen extends ConsumerWidget {
                             const SizedBox(width: Finan2Space.sm),
                             Expanded(
                               child: Text(
-                                'Tu navegador no garantizó que los datos de Finan2 '
-                                'se conserven. Si no abres la app por varios días, '
-                                'podrías perder el acceso a los montos cifrados de '
-                                'este dispositivo. Asegúrate de tener una frase de '
-                                'recuperación en Ajustes de la cuenta.',
+                                l10n.settingsStorageWarning,
                                 style: TextStyle(color: colors.ink, fontSize: 13),
                               ),
                             ),
@@ -176,9 +171,8 @@ class SettingsScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Text(
-                                  '${members.length} miembro'
-                                  '${members.length == 1 ? '' : 's'} · '
-                                  '${members.length < 2 ? 'toca para invitar' : 'toca para compartir la llave'}',
+                                  '${l10n.settingsMemberCount(members.length)} · '
+                                  '${members.length < 2 ? l10n.settingsTapToInvite : l10n.settingsTapToShareKey}',
                                   style: const TextStyle(color: Colors.white, fontSize: 11),
                                 ),
                               ],
@@ -193,7 +187,7 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Finan2ListRow(
                         icon: Icons.tune,
-                        label: 'Ajustes financieros',
+                        label: l10n.settingsFinancialSettings,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => FinancialSettingsScreen(household: household),
@@ -202,8 +196,8 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Icons.manage_accounts_outlined,
-                        label: 'Ajustes de la cuenta',
-                        value: 'Hogar y notificaciones',
+                        label: l10n.settingsAccountSettings,
+                        value: l10n.settingsAccountSettingsSubtitle,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => AccountSettingsScreen(household: household),
@@ -212,14 +206,14 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Icons.ios_share_outlined,
-                        label: 'Exportar reporte',
+                        label: l10n.settingsExportReport,
                         onTap: () => Navigator.of(
                           context,
                         ).push(MaterialPageRoute<void>(builder: (_) => const ExportScreen())),
                       ),
                       Finan2ListRow(
                         icon: Icons.cloud_sync_outlined,
-                        label: 'Copia de seguridad',
+                        label: l10n.settingsBackup,
                         onTap: () => Navigator.of(
                           context,
                         ).push(MaterialPageRoute<void>(builder: (_) => const BackupScreen())),
@@ -231,15 +225,15 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Finan2ListRow(
                         icon: Icons.donut_large_outlined,
-                        label: 'Presupuesto',
-                        value: '${formatMoney(totalPlanned)} planeado',
+                        label: l10n.settingsBudget,
+                        value: l10n.settingsBudgetPlanned(formatMoney(totalPlanned)),
                         onTap: () => Navigator.of(
                           context,
                         ).push(MaterialPageRoute<void>(builder: (_) => const BudgetScreen())),
                       ),
                       Finan2ListRow(
                         icon: Icons.bar_chart_outlined,
-                        label: 'Resumen anual',
+                        label: l10n.settingsAnnualSummary,
                         value: '${DateTime.now().year}',
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -249,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Icons.trending_up,
-                        label: 'Inversiones',
+                        label: l10n.settingsInvestments,
                         value: formatMoney(totalInvestments),
                         onTap: () => Navigator.of(
                           context,
@@ -257,7 +251,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Icons.notifications_none_outlined,
-                        label: 'Centro de notificaciones',
+                        label: l10n.settingsNotificationCenter,
                         value: unreadNotifications > 0 ? '$unreadNotifications' : null,
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute<void>(builder: (_) => const NotificationsScreen()),
@@ -269,7 +263,7 @@ class SettingsScreen extends ConsumerWidget {
                   OutlinedButton(
                     onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
                     style: OutlinedButton.styleFrom(foregroundColor: colors.expense),
-                    child: const Text('Cerrar sesión'),
+                    child: Text(l10n.settingsSignOut),
                   ),
                   const SizedBox(height: Finan2Space.xl),
                 ],
@@ -286,13 +280,11 @@ Future<void> _importMissingKey(BuildContext context, WidgetRef ref, String house
   final controller = TextEditingController();
   final pasted = await showFinan2InputSheet(
     context,
-    title: 'Desbloquear montos',
-    message:
-        'Pega el código completo (con la llave después del punto) que '
-        'tu pareja copió desde su tarjeta del hogar en Ajustes.',
-    fieldLabel: 'Código completo (CODIGO.llave)',
+    title: context.l10n.settingsUnlockAmountsTitle,
+    message: context.l10n.settingsUnlockAmountsMessage,
+    fieldLabel: context.l10n.settingsUnlockCodeLabel,
     controller: controller,
-    confirmLabel: 'Desbloquear',
+    confirmLabel: context.l10n.settingsUnlock,
   );
   if (pasted == null || pasted.trim().isEmpty) return;
 
@@ -306,8 +298,8 @@ Future<void> _importMissingKey(BuildContext context, WidgetRef ref, String house
   } else {
     await showFinan2InfoSheet(
       context,
-      title: 'Montos desbloqueados',
-      message: 'Ya puedes ver los montos de este hogar.',
+      title: context.l10n.settingsAmountsUnlockedTitle,
+      message: context.l10n.settingsAmountsUnlockedMessage,
     );
   }
 }
@@ -316,14 +308,12 @@ Future<void> _recoverWithPhrase(BuildContext context, WidgetRef ref, String hous
   final controller = TextEditingController();
   final input = await showFinan2InputSheet(
     context,
-    title: 'Frase de recuperación',
-    message:
-        'Escribe las 12 palabras en orden, separadas por espacios. Las '
-        'tildes y las mayúsculas no importan.',
-    fieldLabel: 'Frase (12 palabras)',
+    title: context.l10n.householdRecoveryPhraseTitle,
+    message: context.l10n.settingsRecoveryPhraseMessage,
+    fieldLabel: context.l10n.settingsRecoveryPhraseLabel,
     controller: controller,
     keyboardType: TextInputType.text,
-    confirmLabel: 'Desbloquear',
+    confirmLabel: context.l10n.settingsUnlock,
   );
   if (input == null || input.trim().isEmpty || !context.mounted) return;
 
@@ -337,8 +327,8 @@ Future<void> _recoverWithPhrase(BuildContext context, WidgetRef ref, String hous
   } else {
     await showFinan2InfoSheet(
       context,
-      title: 'Montos desbloqueados',
-      message: 'Ya puedes ver los montos de este hogar.',
+      title: context.l10n.settingsAmountsUnlockedTitle,
+      message: context.l10n.settingsAmountsUnlockedMessage,
     );
   }
 }
@@ -353,12 +343,7 @@ Future<void> _shareHousehold(BuildContext context, WidgetRef ref, Household hous
     final shareCode = await controller.createInvite(household.id);
     if (!context.mounted) return;
     if (shareCode == null) {
-      await showFinan2ErrorSheet(
-        context,
-        message:
-            'Este dispositivo no tiene la llave del hogar, así que no '
-            'puede invitar a nadie que vea los montos.',
-      );
+      await showFinan2ErrorSheet(context, message: context.l10n.settingsNoKeyToInvite);
       return;
     }
     await Navigator.of(
@@ -370,17 +355,14 @@ Future<void> _shareHousehold(BuildContext context, WidgetRef ref, Household hous
   final shareCode = await controller.keyShareCode(household.id);
   if (!context.mounted) return;
   if (shareCode == null) {
-    await showFinan2ErrorSheet(
-      context,
-      message: 'Este dispositivo tampoco tiene la llave del hogar.',
-    );
+    await showFinan2ErrorSheet(context, message: context.l10n.settingsNoKeyToShare);
     return;
   }
   await SharePlus.instance.share(
     ShareParams(
       text: shareCode,
-      title: 'Llave de nuestro hogar en Finan2',
-      subject: 'Llave de nuestro hogar en Finan2',
+      title: context.l10n.settingsKeyShareSubject,
+      subject: context.l10n.settingsKeyShareSubject,
     ),
   );
 }

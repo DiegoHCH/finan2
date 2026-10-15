@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/crypto/recovery_phrase.dart';
 import '../../../../core/utils/currency.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../data/household_model.dart';
@@ -127,21 +128,19 @@ class HouseholdController extends AsyncNotifier<Household?> {
   /// for a device that's already a member of [householdId] but never got the
   /// key locally (reinstall, new device, or it joined pasting only the short
   /// code). Any prefix works - an invite or the household's own ID - since
-  /// only the key half matters here. Returns a Spanish error message, or
-  /// null on success.
+  /// only the key half matters here. Returns a user-facing error message,
+  /// or null on success.
   Future<String?> importMissingKey({
     required String householdId,
     required String pastedCode,
   }) async {
     final key = pastedCode.trim().split('.').last;
     if (!HouseholdCrypto.isWellFormedKey(key)) {
-      return 'Ese código no trae la llave completa. Pide a tu pareja que lo '
-          'comparta de nuevo desde la tarjeta del hogar en Ajustes.';
+      return currentL10n.householdKeyIncomplete;
     }
     final sample = await ref.read(householdRepositoryProvider).sampleCiphertext(householdId);
     if (sample != null && !await HouseholdCrypto.keyOpens(key, sample)) {
-      return 'Esa llave no es de este hogar. Revisa que el código sea el que '
-          'tu pareja compartió desde este mismo hogar.';
+      return currentL10n.householdKeyWrongHousehold;
     }
     await ref.read(householdCryptoProvider).importKey(householdId, key);
     ref.invalidate(householdHasKeyProvider(householdId));
@@ -191,8 +190,8 @@ class HouseholdController extends AsyncNotifier<Household?> {
   }
 
   /// Tries to recover this device's missing key for [householdId] with the
-  /// typed recovery [input]. Returns a Spanish message describing what went
-  /// wrong, or null on success.
+  /// typed recovery [input]. Returns a user-facing message describing what
+  /// went wrong, or null on success.
   Future<String?> recoverKeyWithPhrase({required String householdId, required String input}) async {
     final RecoveryPhrase phrase;
     try {
@@ -202,14 +201,13 @@ class HouseholdController extends AsyncNotifier<Household?> {
     }
     final recovery = await ref.read(householdRepositoryProvider).getKeyRecovery(householdId);
     if (recovery == null) {
-      return 'Este hogar no tiene una frase de recuperación configurada.';
+      return currentL10n.householdRecoveryNotSet;
     }
     final unwrapped = await ref
         .read(householdCryptoProvider)
         .tryUnwrapKeyWithRecoveryPhrase(householdId, phrase, recovery.wrapped);
     if (!unwrapped) {
-      return 'Esa frase no corresponde a este hogar. Si tu pareja generó una '
-          'nueva, la anterior dejó de servir.';
+      return currentL10n.householdRecoveryPhraseMismatch;
     }
     ref.invalidate(householdHasKeyProvider(householdId));
     return null;

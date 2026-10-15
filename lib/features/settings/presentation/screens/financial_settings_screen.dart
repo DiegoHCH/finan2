@@ -11,9 +11,18 @@ import '../../../categories/presentation/screens/categories_screen.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../../l10n/l10n.dart';
 
-const _currencies = {'COP': 'Peso COP · \$', 'USD': 'Dólar USD · US\$'};
-const _weekStarts = {'monday': 'Lunes', 'sunday': 'Domingo'};
+// Keys are what the household's settings store; values, their labels.
+Map<String, String> _currencies(AppLocalizations l10n) => {
+  'COP': l10n.settingsCurrencyCop,
+  'USD': l10n.settingsCurrencyUsd,
+};
+
+Map<String, String> _weekStarts(AppLocalizations l10n) => {
+  'monday': l10n.settingsWeekMonday,
+  'sunday': l10n.settingsWeekSunday,
+};
 
 class FinancialSettingsScreen extends ConsumerWidget {
   const FinancialSettingsScreen({required this.household, super.key});
@@ -75,7 +84,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
       firstDate: DateTime(2020),
       lastDate: DateTime(2035),
       initialDatePickerMode: DatePickerMode.year,
-      helpText: 'Selecciona el año activo',
+      helpText: context.l10n.settingsPickActiveYear,
     );
     if (picked != null && context.mounted) {
       await _saveSettings(context, ref, startYear: picked.year);
@@ -85,14 +94,17 @@ class FinancialSettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoryCount = ref.watch(categoriesProvider).value?.length ?? 0;
+    final l10n = context.l10n;
+    final currencies = _currencies(l10n);
+    final weekStarts = _weekStarts(l10n);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(
-              label: 'Ajustes financieros',
-              title: 'Moneda, año y categorías',
+            Finan2AppTop(
+              label: l10n.settingsFinancialSettings,
+              title: l10n.settingsFinancialSettingsSubtitle,
               showBackButton: true,
             ),
             Expanded(
@@ -103,37 +115,37 @@ class FinancialSettingsScreen extends ConsumerWidget {
                     children: [
                       Finan2ListRow(
                         icon: Finan2Icons.moneda,
-                        label: 'Moneda',
-                        value: _currencies[household.currency] ?? household.currency,
+                        label: l10n.settingsCurrency,
+                        value: currencies[household.currency] ?? household.currency,
                         onTap: () => _pickFromOptions(
                           context,
                           ref,
-                          options: _currencies,
+                          options: currencies,
                           current: household.currency,
                           onSelected: (value) => _saveSettings(context, ref, currency: value),
                         ),
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.anio,
-                        label: 'Año activo',
+                        label: l10n.settingsActiveYear,
                         value: '${household.startYear}',
                         onTap: () => _pickYear(context, ref),
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.semana,
-                        label: 'La semana inicia en',
-                        value: _weekStarts[household.weekStartsOn] ?? household.weekStartsOn,
+                        label: l10n.settingsWeekStartsOn,
+                        value: weekStarts[household.weekStartsOn] ?? household.weekStartsOn,
                         onTap: () => _pickFromOptions(
                           context,
                           ref,
-                          options: _weekStarts,
+                          options: weekStarts,
                           current: household.weekStartsOn,
                           onSelected: (value) => _saveSettings(context, ref, weekStartsOn: value),
                         ),
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.categorias,
-                        label: 'Categorías',
+                        label: l10n.settingsCategories,
                         value: '$categoryCount',
                         onTap: () => Navigator.of(
                           context,
@@ -141,7 +153,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.cuentas,
-                        label: 'Cuentas',
+                        label: l10n.settingsAccounts,
                         onTap: () => Navigator.of(
                           context,
                         ).push(MaterialPageRoute<void>(builder: (_) => const AccountsScreen())),
