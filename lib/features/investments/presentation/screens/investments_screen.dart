@@ -33,7 +33,7 @@ class InvestmentsScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'investmentsFab',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditInvestmentScreen()),
+                MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen()),
               ),
               child: const Icon(Icons.add),
             ),
@@ -60,7 +60,7 @@ class InvestmentsScreen extends ConsumerWidget {
                           'a tu portafolio.',
                       actionLabel: '+ Nueva inversión',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => const EditInvestmentScreen(),
                         ),
                       ),
@@ -141,7 +141,7 @@ class InvestmentsScreen extends ConsumerWidget {
                             investment: investment,
                             formatMoney: formatMoney,
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => EditInvestmentScreen(
                                   investment: investment,
                                 ),

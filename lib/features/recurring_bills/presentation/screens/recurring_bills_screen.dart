@@ -31,7 +31,7 @@ class RecurringBillsScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'recurringBillsFab',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (_) => const EditRecurringBillScreen(),
                 ),
               ),
@@ -73,7 +73,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                           'se registren solos cada mes.',
                       actionLabel: '+ Nueva factura recurrente',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => const EditRecurringBillScreen(),
                         ),
                       ),
@@ -149,7 +149,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                                 category: categoryById[bills[i].categoryId],
                                 formatMoney: formatMoney,
                                 onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (_) =>
                                         EditRecurringBillScreen(bill: bills[i]),
                                   ),

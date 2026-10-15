@@ -41,7 +41,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
                       title: 'Notas de este mes',
                       text: notes.thisMonth,
                       onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => EditMonthlyNoteScreen(
                             title: 'Notas de este mes',
                             initialText: notes.thisMonth,
@@ -57,7 +57,7 @@ class MonthlyNotesScreen extends ConsumerWidget {
                       title: 'Para el siguiente mes',
                       text: notes.nextMonth,
                       onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => EditMonthlyNoteScreen(
                             title: 'Para el siguiente mes',
                             initialText: notes.nextMonth,

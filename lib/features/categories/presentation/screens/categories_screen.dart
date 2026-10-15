@@ -25,7 +25,7 @@ class CategoriesScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'categoriesFab',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditCategoryScreen()),
+                MaterialPageRoute<void>(builder: (_) => const EditCategoryScreen()),
               ),
               child: const Icon(Icons.add),
             ),
@@ -51,7 +51,7 @@ class CategoriesScreen extends ConsumerWidget {
                           'movimientos.',
                       actionLabel: '+ Nueva categoría',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => const EditCategoryScreen(),
                         ),
                       ),
@@ -89,7 +89,7 @@ class CategoriesScreen extends ConsumerWidget {
                                   ).withValues(alpha: 0.14),
                                   iconColor: Color(category.color),
                                   onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                    MaterialPageRoute<void>(
                                       builder: (_) => EditCategoryScreen(
                                         category: category,
                                       ),

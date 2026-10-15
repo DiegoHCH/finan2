@@ -37,7 +37,7 @@ class DebtsScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'debtsFab',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditDebtScreen()),
+                MaterialPageRoute<void>(builder: (_) => const EditDebtScreen()),
               ),
               child: const Icon(Icons.add),
             ),
@@ -67,7 +67,7 @@ class DebtsScreen extends ConsumerWidget {
                       actionLabel: '+ Agregar una deuda',
                       gold: true,
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => const EditDebtScreen(),
                         ),
                       ),
@@ -88,7 +88,7 @@ class DebtsScreen extends ConsumerWidget {
                             debt: debt,
                             formatMoney: formatMoney,
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => DebtDetailScreen(debt: debt),
                               ),
                             ),

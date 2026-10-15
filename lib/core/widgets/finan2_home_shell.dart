@@ -141,7 +141,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     if (shareCode == null || _setupOpen || !mounted) return;
     _setupOpen = true;
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)),
+      MaterialPageRoute<void>(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)),
     );
   }
 

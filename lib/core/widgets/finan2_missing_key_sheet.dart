@@ -49,7 +49,7 @@ Future<void> showMissingKeySheet(BuildContext context, Household household) asyn
   );
   if (goToSettings == true && context.mounted) {
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => SettingsScreen(household: household)),
+      MaterialPageRoute<void>(builder: (_) => SettingsScreen(household: household)),
     );
   }
 }

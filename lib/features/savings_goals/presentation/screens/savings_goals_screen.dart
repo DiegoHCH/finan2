@@ -42,7 +42,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
               heroTag: 'savingsGoalsFab',
               backgroundColor: colors.saving,
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditSavingsGoalScreen()),
+                MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen()),
               ),
               child: const Icon(Icons.add),
             ),
@@ -90,7 +90,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                               'con tu pareja.',
                           actionLabel: '+ Nueva meta',
                           onAction: () => Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (_) => const EditSavingsGoalScreen(),
                             ),
                           ),
@@ -104,7 +104,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                               formatMoney: formatMoney,
                               now: now,
                               onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (_) => SavingsGoalDetailScreen(goal: goal),
                                 ),
                               ),
@@ -117,7 +117,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                             icon: Icons.emoji_events_outlined,
                             label: 'Reto de ahorro',
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const SavingsChallengeScreen(),
                               ),
                             ),

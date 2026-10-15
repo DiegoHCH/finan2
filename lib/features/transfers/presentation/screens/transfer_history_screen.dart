@@ -67,7 +67,7 @@ class TransferHistoryScreen extends ConsumerWidget {
                           'cuentas aparecerán aquí.',
                       actionLabel: '+ Transferir',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const TransferScreen()),
+                        MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
                       ),
                     );
                   }

@@ -66,7 +66,7 @@ class DebtDetailScreen extends ConsumerWidget {
               trailing: IconButton(
                 icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (_) => EditDebtScreen(debt: current),
                   ),
                 ),

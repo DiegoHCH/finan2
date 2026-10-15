@@ -15,6 +15,7 @@ import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../debts/data/debt_model.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
@@ -57,7 +58,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   Future<void> _openMovement(Movement tx) async {
     final toDelete = await Navigator.of(context).push<Movement>(
-      MaterialPageRoute(builder: (_) => EditTransactionScreen(transaction: tx)),
+      MaterialPageRoute<Movement>(builder: (_) => EditTransactionScreen(transaction: tx)),
     );
     if (toDelete != null && mounted) await _deleteWithUndo(toDelete);
   }
@@ -107,7 +108,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   void _addMovement() {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => EditTransactionScreen(initialDate: _newMovementDate),
       ),
     );
@@ -189,7 +190,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 categories: categories,
                 accounts: ref.watch(accountsProvider).value ?? const [],
                 cards: [
-                  for (final d in ref.watch(debtsProvider).value ?? const [])
+                  for (final d in ref.watch(debtsProvider).value ?? const <Debt>[])
                     if (d.type.isCard) d,
                 ],
                 tags: tagsByUse(allTransactions),
@@ -320,7 +321,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                             icon: Icons.autorenew,
                             label: 'Facturas recurrentes',
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const RecurringBillsScreen(),
                               ),
                             ),
@@ -329,7 +330,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                             icon: Icons.sticky_note_2_outlined,
                             label: 'Notas',
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const MonthlyNotesScreen(),
                               ),
                             ),

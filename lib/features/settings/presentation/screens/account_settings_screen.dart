@@ -184,7 +184,7 @@ class AccountSettingsScreen extends ConsumerWidget {
                         icon: Icons.notifications_outlined,
                         label: 'Notificaciones',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const NotificationPreferencesScreen(),
                           ),
                         ),

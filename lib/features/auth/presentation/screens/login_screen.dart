@@ -204,7 +204,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SignupScreen()),
+                      MaterialPageRoute<void>(builder: (_) => const SignupScreen()),
                     ),
                     child: Text.rich(
                       TextSpan(

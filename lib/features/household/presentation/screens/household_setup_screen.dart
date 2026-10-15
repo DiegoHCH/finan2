@@ -71,7 +71,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode),
       ),
     );

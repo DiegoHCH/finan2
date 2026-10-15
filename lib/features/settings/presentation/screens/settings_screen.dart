@@ -205,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Icons.tune,
                         label: 'Ajustes financieros',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => FinancialSettingsScreen(household: household),
                           ),
                         ),
@@ -215,7 +215,7 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Ajustes de la cuenta',
                         value: 'Hogar y notificaciones',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => AccountSettingsScreen(household: household),
                           ),
                         ),
@@ -224,14 +224,14 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Icons.ios_share_outlined,
                         label: 'Exportar reporte',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const ExportScreen()),
+                          MaterialPageRoute<void>(builder: (_) => const ExportScreen()),
                         ),
                       ),
                       Finan2ListRow(
                         icon: Icons.cloud_sync_outlined,
                         label: 'Copia de seguridad',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const BackupScreen()),
+                          MaterialPageRoute<void>(builder: (_) => const BackupScreen()),
                         ),
                       ),
                     ],
@@ -244,7 +244,7 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Presupuesto',
                         value: '${formatMoney(totalPlanned)} planeado',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const BudgetScreen()),
+                          MaterialPageRoute<void>(builder: (_) => const BudgetScreen()),
                         ),
                       ),
                       Finan2ListRow(
@@ -252,7 +252,7 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Resumen anual',
                         value: '${DateTime.now().year}',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => AnnualSummaryScreen(household: household),
                           ),
                         ),
@@ -262,7 +262,7 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Inversiones',
                         value: formatMoney(totalInvestments),
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const InvestmentsScreen()),
+                          MaterialPageRoute<void>(builder: (_) => const InvestmentsScreen()),
                         ),
                       ),
                       Finan2ListRow(
@@ -270,7 +270,7 @@ class SettingsScreen extends ConsumerWidget {
                         label: 'Centro de notificaciones',
                         value: unreadNotifications > 0 ? '$unreadNotifications' : null,
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                          MaterialPageRoute<void>(builder: (_) => const NotificationsScreen()),
                         ),
                       ),
                     ],
@@ -382,7 +382,7 @@ Future<void> _shareHousehold(
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)),
+      MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)),
     );
     return;
   }

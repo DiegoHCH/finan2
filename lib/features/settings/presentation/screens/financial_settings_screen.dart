@@ -142,7 +142,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
                         label: 'Categorías',
                         value: '$categoryCount',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const CategoriesScreen(),
                           ),
                         ),
@@ -151,7 +151,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
                         icon: Finan2Icons.cuentas,
                         label: 'Cuentas',
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const AccountsScreen(),
                           ),
                         ),

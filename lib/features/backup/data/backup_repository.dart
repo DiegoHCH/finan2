@@ -219,8 +219,8 @@ class BackupRepository {
 /// stores.
 Object? _encode(Object? value) => switch (value) {
       Timestamp t => {r'$ts': t.microsecondsSinceEpoch},
-      Map m => {for (final e in m.entries) e.key as String: _encode(e.value)},
-      List l => [for (final v in l) _encode(v)],
+      Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _encode(e.value)},
+      List<Object?> l => [for (final v in l) _encode(v)],
       String() || num() || bool() || null => value,
       _ => throw BackupException('Tipo de dato no soportado en la copia: ${value.runtimeType}'),
     };
@@ -228,8 +228,8 @@ Object? _encode(Object? value) => switch (value) {
 Object? _decode(Object? value) => switch (value) {
       {r'$ts': final int micros} when (value as Map).length == 1 =>
         Timestamp.fromMicrosecondsSinceEpoch(micros),
-      Map m => {for (final e in m.entries) e.key as String: _decode(e.value)},
-      List l => [for (final v in l) _decode(v)],
+      Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _decode(e.value)},
+      List<Object?> l => [for (final v in l) _decode(v)],
       _ => value,
     };
 

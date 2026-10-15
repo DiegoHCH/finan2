@@ -135,7 +135,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
                     ),
                     child: Text.rich(
                       TextSpan(

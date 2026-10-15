@@ -37,7 +37,7 @@ class AccountsScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'accountsFab',
               onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditAccountScreen()),
+                MaterialPageRoute<void>(builder: (_) => const EditAccountScreen()),
               ),
               child: const Icon(Icons.add),
             ),
@@ -64,7 +64,7 @@ class AccountsScreen extends ConsumerWidget {
                           'billetera) para empezar a registrar movimientos.',
                       actionLabel: '+ Nueva cuenta',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (_) => const EditAccountScreen(),
                         ),
                       ),
@@ -132,7 +132,7 @@ class AccountsScreen extends ConsumerWidget {
                                 amountText: formatMoney(accounts[i].balance),
                                 amountColor: colors.ink,
                                 onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (_) =>
                                         EditAccountScreen(account: accounts[i]),
                                   ),
@@ -150,7 +150,7 @@ class AccountsScreen extends ConsumerWidget {
                             if (accounts.length >= 2)
                               TextButton.icon(
                                 onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (_) => const TransferScreen(),
                                   ),
                                 ),
@@ -159,7 +159,7 @@ class AccountsScreen extends ConsumerWidget {
                               ),
                             TextButton.icon(
                               onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (_) => const TransferHistoryScreen(),
                                 ),
                               ),
