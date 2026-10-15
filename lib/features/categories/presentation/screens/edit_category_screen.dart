@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/category_model.dart';
+import '../../data/category_usage.dart';
 import '../viewmodels/category_providers.dart';
 
 const _iconsByType = <CategoryType, List<String>>{
@@ -91,8 +94,97 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
   Future<void> _delete() async {
     final category = widget.category;
     if (category == null) return;
-    await ref.read(categoryControllerProvider.notifier).delete(category.id);
-    if (mounted) Navigator.of(context).pop();
+    final controller = ref.read(categoryControllerProvider.notifier);
+    final usage = await controller.usage(category.id);
+    if (!mounted) return;
+
+    String? moveTo;
+    if (usage.isEmpty) {
+      final confirmed = await showFinan2ConfirmSheet(
+        context,
+        title: 'Eliminar categoría',
+        message: 'Se eliminará "${category.name}". Esta acción no se puede deshacer.',
+        confirmLabel: 'Eliminar',
+        destructive: true,
+      );
+      if (!confirmed) return;
+    } else {
+      // Anything left pointing at a deleted category would show up blank,
+      // so it has to go somewhere first.
+      final options = (ref.read(categoriesProvider).value ?? const <Category>[])
+          .where((c) => c.type == category.type && c.id != category.id)
+          .toList();
+      if (options.isEmpty) {
+        await showFinan2InfoSheet(
+          context,
+          title: 'No se puede eliminar todavía',
+          message: '"${category.name}" tiene ${usage.describe()}. Crea otra categoría '
+              'de ${category.type.label.toLowerCase()} para pasarlos ahí y luego '
+              'elimina esta.',
+        );
+        return;
+      }
+      final target = await _pickReplacement(category, usage, options);
+      if (target == null) return;
+      moveTo = target.id;
+    }
+
+    await controller.delete(category.id, moveTo: moveTo);
+    if (!mounted) return;
+    final result = ref.read(categoryControllerProvider);
+    if (result.hasError) {
+      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(result.error!));
+      return;
+    }
+    Navigator.of(context).pop();
+  }
+
+  Future<Category?> _pickReplacement(
+    Category category,
+    CategoryUsage usage,
+    List<Category> options,
+  ) {
+    return showModalBottomSheet<Category>(
+      context: context,
+      builder: (sheetContext) {
+        final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Finan2Space.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '¿A dónde pasamos lo de ${category.name}?',
+                  style: Theme.of(sheetContext).textTheme.titleMedium,
+                ),
+                const SizedBox(height: Finan2Space.sm),
+                Text(
+                  'Tiene ${usage.describe()}. Elige la categoría que se quedará con '
+                  'ellos; después "${category.name}" se elimina.',
+                  style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
+                ),
+                const SizedBox(height: Finan2Space.lg),
+                Wrap(
+                  spacing: 7,
+                  runSpacing: 7,
+                  children: [
+                    for (final option in options)
+                      Finan2Chip(
+                        icon: Finan2Icons.categoria(option.iconSlug),
+                        label: option.name,
+                        selected: false,
+                        onTap: () => Navigator.of(sheetContext).pop(option),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
