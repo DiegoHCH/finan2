@@ -8,6 +8,7 @@ import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
@@ -16,8 +17,10 @@ import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
+import '../../data/movement_filter.dart';
 import '../../data/transaction_model.dart';
 import '../viewmodels/transaction_providers.dart';
+import '../widgets/movement_search_bar.dart';
 import 'edit_transaction_screen.dart';
 
 class TransactionsScreen extends ConsumerStatefulWidget {
@@ -29,9 +32,25 @@ class TransactionsScreen extends ConsumerStatefulWidget {
 
 class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   YearMonth _month = currentYearMonth();
+  final _searchController = TextEditingController();
+  var _filter = const MovementFilter();
+
+  /// A search looks through the browsed month's whole year when on.
+  var _wholeYear = false;
 
   /// Deleted on screen but not yet in Firestore, while "Deshacer" is offered.
   final _pendingDeletion = <String>{};
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    setState(() => _filter = const MovementFilter());
+  }
 
   Future<void> _openMovement(Movement tx) async {
     final toDelete = await Navigator.of(context).push<Movement>(
@@ -93,7 +112,10 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final transactionsAsync = ref.watch(transactionsOfMonthProvider(_month));
+    final searchingYear = _wholeYear && _filter.hasQuery;
+    final transactionsAsync = searchingYear
+        ? ref.watch(transactionsForYearProvider(_month.year))
+        : ref.watch(transactionsOfMonthProvider(_month));
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final household = ref.watch(currentHouseholdProvider).value;
     final formatMoney = ref.watch(moneyFormatterProvider);
@@ -102,16 +124,21 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final categoryById = {for (final c in categories) c.id: c};
     final monthLabelCap = _month.label;
 
-    final currentTransactions = (transactionsAsync.value ?? const <Movement>[])
+    final allTransactions = (transactionsAsync.value ?? const <Movement>[])
         .where((tx) => !_pendingDeletion.contains(tx.id))
         .toList();
+    final currentTransactions = _filter.apply(
+      allTransactions,
+      {for (final c in categories) c.id: c.name},
+    );
+    final filtering = !_filter.isEmpty;
     final net = currentTransactions.fold<int>(
       0,
       (sum, tx) => sum + (tx.isIncome ? tx.amount : -tx.amount),
     );
 
     return Scaffold(
-      floatingActionButton: currentTransactions.isEmpty
+      floatingActionButton: allTransactions.isEmpty
           ? null
           : FloatingActionButton(
               heroTag: 'transactionsFab',
@@ -125,7 +152,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               label: 'Movimientos',
               title: currentTransactions.isEmpty
                   ? monthLabelCap
-                  : '${formatMoney(net)} neto',
+                  : '${formatMoney(net)} neto${searchingYear ? ' en ${_month.year}' : ''}${filtering ? ' · filtrado' : ''}',
               household: household,
             ),
             Padding(
@@ -146,12 +173,58 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                     : () => setState(() => _month = currentYearMonth()),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Finan2Space.xl,
+                0,
+                Finan2Space.xl,
+                Finan2Space.sm,
+              ),
+              child: MovementSearchBar(
+                controller: _searchController,
+                filter: _filter,
+                categories: categories,
+                household: household,
+                onQueryChanged: (q) => setState(() => _filter = _filter.copyWith(query: q)),
+                onFilterChanged: (f) => setState(() => _filter = f),
+              ),
+            ),
+            if (_filter.hasQuery)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.xl,
+                  0,
+                  Finan2Space.xl,
+                  Finan2Space.sm,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Finan2Chip(
+                    icon: Icons.calendar_month_outlined,
+                    label: 'Buscar en todo ${_month.year}',
+                    selected: _wholeYear,
+                    onTap: () => setState(() => _wholeYear = !_wholeYear),
+                  ),
+                ),
+              ),
             Expanded(
               child: transactionsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (_) {
                   final transactions = currentTransactions;
+                  if (transactions.isEmpty && filtering) {
+                    return Finan2EmptyState(
+                      icon: Icons.search_off,
+                      title: 'Nada coincide',
+                      description: searchingYear
+                          ? 'Ningún movimiento de ${_month.year} coincide con la búsqueda.'
+                          : 'Ningún movimiento de $monthLabelCap coincide con la '
+                              'búsqueda o los filtros.',
+                      actionLabel: 'Limpiar búsqueda',
+                      onAction: _clearSearch,
+                    );
+                  }
                   if (transactions.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.receipt_long_outlined,
