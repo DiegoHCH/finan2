@@ -13,10 +13,10 @@ enum ExportPeriod { thisMonth, quarter, year }
 
 extension ExportPeriodLabel on ExportPeriod {
   String get label => switch (this) {
-        ExportPeriod.thisMonth => 'Este mes',
-        ExportPeriod.quarter => 'Trimestre',
-        ExportPeriod.year => 'Año',
-      };
+    ExportPeriod.thisMonth => 'Este mes',
+    ExportPeriod.quarter => 'Trimestre',
+    ExportPeriod.year => 'Año',
+  };
 }
 
 class ReportSection {
@@ -63,10 +63,7 @@ class ReportBuilder {
     };
     return [
       for (var i = count - 1; i >= 0; i--)
-        (
-          DateTime(now.year, now.month - i).year,
-          DateTime(now.year, now.month - i).month,
-        ),
+        (DateTime(now.year, now.month - i).year, DateTime(now.year, now.month - i).month),
     ];
   }
 
@@ -130,10 +127,7 @@ class ReportBuilder {
                     : (accountById[tx.accountId]?.name ?? ''),
                 tx.description,
                 money(tx.amount),
-                if (plainValues) ...[
-                  memberNames[tx.payer] ?? '',
-                  tx.tags.join(' '),
-                ],
+                if (plainValues) ...[memberNames[tx.payer] ?? '', tx.tags.join(' ')],
               ],
           ],
         ),
@@ -144,8 +138,9 @@ class ReportBuilder {
       final plannedTotals = <String, int>{};
       final realTotals = <String, int>{};
       for (final (year, month) in months) {
-        final budget =
-            await budgetRepository.watchBudget(householdId, year: year, month: month).first;
+        final budget = await budgetRepository
+            .watchBudget(householdId, year: year, month: month)
+            .first;
         final transactions = await transactionRepository
             .watchTransactions(householdId, year: year, month: month)
             .first;
@@ -181,12 +176,7 @@ class ReportBuilder {
       sections.add(
         ReportSection(
           title: 'Deudas',
-          headers: [
-            'Nombre',
-            'Tipo',
-            'Saldo',
-            plainValues ? 'Tasa E.A. (%)' : 'Tasa E.A.',
-          ],
+          headers: ['Nombre', 'Tipo', 'Saldo', plainValues ? 'Tasa E.A. (%)' : 'Tasa E.A.'],
           rows: [
             for (final debt in debts)
               [
@@ -203,12 +193,7 @@ class ReportBuilder {
       sections.add(
         ReportSection(
           title: 'Metas de ahorro',
-          headers: [
-            'Nombre',
-            'Ahorrado',
-            'Meta',
-            plainValues ? 'Completado (%)' : '% Completado',
-          ],
+          headers: ['Nombre', 'Ahorrado', 'Meta', plainValues ? 'Completado (%)' : '% Completado'],
           rows: [
             for (final goal in goals)
               [

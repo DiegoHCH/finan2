@@ -58,9 +58,7 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
               trailing: IconButton(
                 icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => EditSavingsGoalScreen(goal: current),
-                  ),
+                  MaterialPageRoute<void>(builder: (_) => EditSavingsGoalScreen(goal: current)),
                 ),
               ),
             ),
@@ -266,13 +264,10 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
                               contribution: sortedContributions[i],
                               runningTotal: runningTotals[i],
                               memberName:
-                                  household?.memberInfo[sortedContributions[i].createdBy]
-                                          ?.name ??
-                                      '?',
-                              memberIndex: household?.members.indexOf(
-                                    sortedContributions[i].createdBy,
-                                  ) ??
-                                  0,
+                                  household?.memberInfo[sortedContributions[i].createdBy]?.name ??
+                                  '?',
+                              memberIndex:
+                                  household?.members.indexOf(sortedContributions[i].createdBy) ?? 0,
                               formatMoney: formatMoney,
                               showDivider: i > 0,
                             ),
@@ -370,7 +365,9 @@ class _ContributionRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
       decoration: showDivider
-          ? BoxDecoration(border: Border(bottom: BorderSide(color: colors.line)))
+          ? BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.line)),
+            )
           : null,
       child: Row(
         children: [
@@ -385,10 +382,7 @@ class _ContributionRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Aporte',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                ),
+                const Text('Aporte', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
                 Text(
                   'Total → ${formatMoney(runningTotal)}',
                   style: TextStyle(fontSize: 10.5, color: colors.inkFaint),

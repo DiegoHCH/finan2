@@ -28,10 +28,7 @@ class KeyRecovery {
 
   factory KeyRecovery.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
-    return KeyRecovery(
-      salt: data['salt'] as String,
-      wrappedKey: data['wrappedKey'] as String,
-    );
+    return KeyRecovery(salt: data['salt'] as String, wrappedKey: data['wrappedKey'] as String);
   }
 }
 
@@ -70,23 +67,17 @@ const householdSubcollections = [
 
 class HouseholdRepository {
   HouseholdRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+    : _db = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _db;
 
-  CollectionReference<Map<String, dynamic>> get _households =>
-      _db.collection('households');
+  CollectionReference<Map<String, dynamic>> get _households => _db.collection('households');
 
-  CollectionReference<Map<String, dynamic>> get _invites =>
-      _db.collection('invites');
+  CollectionReference<Map<String, dynamic>> get _invites => _db.collection('invites');
 
   /// Watches the (at most one) household the given user belongs to.
   Stream<Household?> watchHouseholdForUser(String uid) {
-    return _households
-        .where('members', arrayContains: uid)
-        .limit(1)
-        .snapshots()
-        .map((snap) {
+    return _households.where('members', arrayContains: uid).limit(1).snapshots().map((snap) {
       if (snap.docs.isEmpty) return null;
       return Household.fromFirestore(snap.docs.first);
     });
@@ -111,11 +102,7 @@ class HouseholdRepository {
       weekStartsOn: 'monday',
     );
     final batch = _db.batch()
-      ..set(docRef, {
-        ...household.toFirestore(),
-        'createdBy': uid,
-        'activeInvite': code,
-      })
+      ..set(docRef, {...household.toFirestore(), 'createdBy': uid, 'activeInvite': code})
       ..set(_invites.doc(code), _inviteData(docRef.id, uid));
     await batch.commit();
     return (household, code);
@@ -136,10 +123,10 @@ class HouseholdRepository {
   }
 
   Map<String, dynamic> _inviteData(String householdId, String uid) => {
-        'householdId': householdId,
-        'createdBy': uid,
-        'expiresAt': Timestamp.fromDate(DateTime.now().add(_inviteLifetime)),
-      };
+    'householdId': householdId,
+    'createdBy': uid,
+    'expiresAt': Timestamp.fromDate(DateTime.now().add(_inviteLifetime)),
+  };
 
   /// Joins the household behind invite [code], consuming the invite.
   Future<Household> joinHousehold({
@@ -189,10 +176,7 @@ class HouseholdRepository {
       return;
     }
 
-    final myTokens = await docRef
-        .collection('fcmTokens')
-        .where('uid', isEqualTo: uid)
-        .get();
+    final myTokens = await docRef.collection('fcmTokens').where('uid', isEqualTo: uid).get();
     final batch = _db.batch();
     for (final doc in myTokens.docs) {
       batch.delete(doc.reference);

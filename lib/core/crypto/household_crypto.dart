@@ -49,8 +49,7 @@ class _SecureKeyStore implements Finan2KeyStore {
   Future<String?> read(String key) => _storage.read(key: key);
 
   @override
-  Future<void> write(String key, String value) =>
-      _storage.write(key: key, value: value);
+  Future<void> write(String key, String value) => _storage.write(key: key, value: value);
 
   @override
   Future<void> delete(String key) => _storage.delete(key: key);
@@ -65,8 +64,7 @@ class _SecureKeyStore implements Finan2KeyStore {
 /// [RecoveryPhrase], which nobody - including an admin of the Firebase/GCP
 /// project - can open without the phrase.
 class HouseholdCrypto {
-  HouseholdCrypto({Finan2KeyStore? keyStore})
-      : _keyStore = keyStore ?? const _SecureKeyStore();
+  HouseholdCrypto({Finan2KeyStore? keyStore}) : _keyStore = keyStore ?? const _SecureKeyStore();
 
   final Finan2KeyStore _keyStore;
   static final _algorithm = AesGcm.with256bits();
@@ -176,19 +174,12 @@ class HouseholdCrypto {
       nonceLength: _algorithm.nonceLength,
       macLength: _algorithm.macAlgorithm.macLength,
     );
-    return _algorithm.decrypt(
-      secretBox,
-      secretKey: key,
-      aad: utf8.encode('$context:$householdId'),
-    );
+    return _algorithm.decrypt(secretBox, secretKey: key, aad: utf8.encode('$context:$householdId'));
   }
 
   Future<String> encryptAmount(String householdId, int amount) async {
     final key = await _keyFor(householdId);
-    final secretBox = await _algorithm.encrypt(
-      utf8.encode(amount.toString()),
-      secretKey: key,
-    );
+    final secretBox = await _algorithm.encrypt(utf8.encode(amount.toString()), secretKey: key);
     return base64Url.encode(secretBox.concatenation());
   }
 
@@ -207,17 +198,11 @@ class HouseholdCrypto {
   /// [phrase] so it can be saved to Firestore as a cross-device recovery
   /// path. Throws [Finan2CryptoException] if this device doesn't have the
   /// key either - there's nothing to wrap.
-  Future<WrappedKey> wrapKeyWithRecoveryPhrase(
-    String householdId,
-    RecoveryPhrase phrase,
-  ) async {
+  Future<WrappedKey> wrapKeyWithRecoveryPhrase(String householdId, RecoveryPhrase phrase) async {
     final key = await _keyFor(householdId);
     final salt = _randomBytes(16);
     final kek = await _deriveRecoveryKek(phrase, salt);
-    final secretBox = await _algorithm.encrypt(
-      await key.extractBytes(),
-      secretKey: kek,
-    );
+    final secretBox = await _algorithm.encrypt(await key.extractBytes(), secretKey: kek);
     return WrappedKey(
       salt: base64Url.encode(salt),
       ciphertext: base64Url.encode(secretBox.concatenation()),

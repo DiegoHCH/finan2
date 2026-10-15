@@ -48,19 +48,14 @@ AvalancheResult computeAvalanche(List<Debt> debts, {DateTime? now}) {
   // extraPool below, so a debt's own extra isn't counted twice when it
   // happens to be the current avalanche target.
   final basePayments = {
-    for (final d in active)
-      d.id: (d.type.isCard ? d.minPayment : d.monthlyPayment).toDouble(),
+    for (final d in active) d.id: (d.type.isCard ? d.minPayment : d.monthlyPayment).toDouble(),
   };
-  final monthlyRates = {
-    for (final d in active) d.id: math.pow(1 + d.rate / 100, 1 / 12) - 1,
-  };
+  final monthlyRates = {for (final d in active) d.id: math.pow(1 + d.rate / 100, 1 / 12) - 1};
   final rateById = {for (final d in active) d.id: d.rate};
 
   var extraPool = active.fold<double>(0, (sum, d) => sum + d.extraPayment);
 
-  final schedule = <String, List<DebtScheduleEntry>>{
-    for (final d in active) d.id: [],
-  };
+  final schedule = <String, List<DebtScheduleEntry>>{for (final d in active) d.id: []};
   final paidOffIds = <String>{};
   DateTime? freeDate;
 

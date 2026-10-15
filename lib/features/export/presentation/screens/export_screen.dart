@@ -39,7 +39,9 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
     if (household == null) return;
     setState(() => _generating = true);
     try {
-      final report = await ref.read(reportBuilderProvider).build(
+      final report = await ref
+          .read(reportBuilderProvider)
+          .build(
             householdId: household.id,
             householdName: household.name,
             period: _period,
@@ -64,11 +66,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
           ShareParams(
             files: [
               for (final MapEntry(key: name, value: bytes) in files.entries)
-                XFile.fromData(
-                  Uint8List.fromList(bytes),
-                  mimeType: 'text/csv',
-                  name: name,
-                ),
+                XFile.fromData(Uint8List.fromList(bytes), mimeType: 'text/csv', name: name),
             ],
           ),
         );
@@ -84,11 +82,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Finan2AppTop(
-              label: 'Exportar reporte',
-              title: 'PDF o CSV',
-              showBackButton: true,
-            ),
+            const Finan2AppTop(label: 'Exportar reporte', title: 'PDF o CSV', showBackButton: true),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(Finan2Space.xl),
@@ -96,10 +90,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Finan2SegmentedControl<_ExportFormat>(
-                      options: const {
-                        _ExportFormat.pdf: '📄 PDF',
-                        _ExportFormat.csv: '📊 CSV',
-                      },
+                      options: const {_ExportFormat.pdf: '📄 PDF', _ExportFormat.csv: '📊 CSV'},
                       selected: _format,
                       onChanged: (v) => setState(() => _format = v),
                     ),
@@ -130,10 +121,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                       ],
                     ),
                     const SizedBox(height: Finan2Space.lg),
-                    Text(
-                      'Incluir en el reporte',
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
+                    Text('Incluir en el reporte', style: Theme.of(context).textTheme.labelMedium),
                     const SizedBox(height: Finan2Space.sm),
                     Finan2ListCard(
                       children: [
@@ -166,9 +154,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : Text(
-                              _format == _ExportFormat.pdf ? 'Generar PDF' : 'Generar CSV',
-                            ),
+                          : Text(_format == _ExportFormat.pdf ? 'Generar PDF' : 'Generar CSV'),
                     ),
                   ],
                 ),
@@ -213,10 +199,7 @@ class _ToggleRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-            ),
+            child: Text(label, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
           ),
           Switch(value: value, onChanged: onChanged),
         ],

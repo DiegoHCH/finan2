@@ -16,9 +16,7 @@ class NotificationPrefsController extends AsyncNotifier<NotificationPrefs> {
     return ref.read(notificationPrefsRepositoryProvider).load();
   }
 
-  Future<void> updatePrefs(
-    NotificationPrefs Function(NotificationPrefs current) updater,
-  ) async {
+  Future<void> updatePrefs(NotificationPrefs Function(NotificationPrefs current) updater) async {
     final current = state.value ?? NotificationPrefs.defaults;
     final next = updater(current);
     state = AsyncData(next);
@@ -55,5 +53,5 @@ class NotificationPrefsController extends AsyncNotifier<NotificationPrefs> {
 
 final notificationPrefsControllerProvider =
     AsyncNotifierProvider<NotificationPrefsController, NotificationPrefs>(
-  NotificationPrefsController.new,
-);
+      NotificationPrefsController.new,
+    );

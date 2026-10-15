@@ -15,10 +15,7 @@ class Finan2CodeBox extends StatelessWidget {
     final brand = Theme.of(context).colorScheme.primary;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: colors.brandTint,
-        borderRadius: BorderRadius.circular(13),
-      ),
+      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(13)),
       child: Text(
         code,
         style: TextStyle(

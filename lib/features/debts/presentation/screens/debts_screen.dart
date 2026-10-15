@@ -36,9 +36,9 @@ class DebtsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'debtsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const EditDebtScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditDebtScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -66,11 +66,9 @@ class DebtsScreen extends ConsumerWidget {
                           'Avalancha.',
                       actionLabel: '+ Agregar una deuda',
                       gold: true,
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const EditDebtScreen(),
-                        ),
-                      ),
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditDebtScreen())),
                     );
                   }
 
@@ -88,9 +86,7 @@ class DebtsScreen extends ConsumerWidget {
                             debt: debt,
                             formatMoney: formatMoney,
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => DebtDetailScreen(debt: debt),
-                              ),
+                              MaterialPageRoute<void>(builder: (_) => DebtDetailScreen(debt: debt)),
                             ),
                           ),
                         ),
@@ -115,10 +111,7 @@ class _AvalancheBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: colors.brandTint,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -173,11 +166,7 @@ class _FreeDateBanner extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
           ),
           Text(
             value,
@@ -195,11 +184,7 @@ class _FreeDateBanner extends StatelessWidget {
 }
 
 class _DebtCard extends StatelessWidget {
-  const _DebtCard({
-    required this.debt,
-    required this.formatMoney,
-    required this.onTap,
-  });
+  const _DebtCard({required this.debt, required this.formatMoney, required this.onTap});
 
   final Debt debt;
   final String Function(num) formatMoney;
@@ -209,8 +194,7 @@ class _DebtCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final accent = debt.status.of(colors);
-    final displayMinPayment =
-        debt.type.isCard ? debt.minPayment : debt.monthlyPayment;
+    final displayMinPayment = debt.type.isCard ? debt.minPayment : debt.monthlyPayment;
     final ratePct = debt.rate == debt.rate.roundToDouble()
         ? debt.rate.toStringAsFixed(0)
         : debt.rate.toStringAsFixed(1);

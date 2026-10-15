@@ -22,9 +22,8 @@ List<String> tagsByUse(Iterable<Movement> movements) {
       counts[tag] = (counts[tag] ?? 0) + 1;
     }
   }
-  return counts.keys.toList()
-    ..sort((a, b) {
-      final byCount = counts[b]!.compareTo(counts[a]!);
-      return byCount != 0 ? byCount : a.compareTo(b);
-    });
+  return counts.keys.toList()..sort((a, b) {
+    final byCount = counts[b]!.compareTo(counts[a]!);
+    return byCount != 0 ? byCount : a.compareTo(b);
+  });
 }

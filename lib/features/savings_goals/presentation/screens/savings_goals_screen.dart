@@ -41,9 +41,9 @@ class SavingsGoalsScreen extends ConsumerWidget {
           : FloatingActionButton(
               heroTag: 'savingsGoalsFab',
               backgroundColor: colors.saving,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -62,11 +62,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                   final falta = goals.fold<int>(
                     0,
                     (sum, g) =>
-                        sum +
-                        (g.targetAmount - g.currentAmountAsOf(now)).clamp(
-                          0,
-                          g.targetAmount,
-                        ),
+                        sum + (g.targetAmount - g.currentAmountAsOf(now)).clamp(0, g.targetAmount),
                   );
 
                   return ListView(
@@ -90,9 +86,7 @@ class SavingsGoalsScreen extends ConsumerWidget {
                               'con tu pareja.',
                           actionLabel: '+ Nueva meta',
                           onAction: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const EditSavingsGoalScreen(),
-                            ),
+                            MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen()),
                           ),
                         )
                       else
@@ -160,11 +154,7 @@ class _Banner extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
           ),
           Text(
             value,
@@ -198,9 +188,7 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final brand = Theme.of(context).colorScheme.primary;
-    final dateLabel = goal.targetDate == null
-        ? 'sin fecha'
-        : _monthYearLabel(goal.targetDate!);
+    final dateLabel = goal.targetDate == null ? 'sin fecha' : _monthYearLabel(goal.targetDate!);
     final current = goal.currentAmountAsOf(now);
 
     return Finan2ProgressCard(

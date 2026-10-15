@@ -80,8 +80,8 @@ class RestoreResult {
 /// with that same key - and balances match the movements at that moment.
 class BackupRepository {
   BackupRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -97,13 +97,15 @@ class BackupRepository {
     }
     final clear = utf8.encode(jsonEncode({'collections': collections}));
     final sealed = await _crypto.seal(householdId, _sealContext, clear);
-    return utf8.encode(jsonEncode({
-      'format': _format,
-      'version': _version,
-      'householdId': householdId,
-      'createdAt': (now ?? DateTime.now()).toUtc().toIso8601String(),
-      'data': base64Url.encode(sealed),
-    }));
+    return utf8.encode(
+      jsonEncode({
+        'format': _format,
+        'version': _version,
+        'householdId': householdId,
+        'createdAt': (now ?? DateTime.now()).toUtc().toIso8601String(),
+        'data': base64Url.encode(sealed),
+      }),
+    );
   }
 
   /// Reads the file's outside without the key - to say whose it is.
@@ -143,7 +145,8 @@ class BackupRepository {
       throw const BackupException('La copia está dañada o se modificó. No se puede abrir.');
     }
     final collections =
-        (jsonDecode(utf8.decode(clear)) as Map<String, dynamic>)['collections'] as Map<String, dynamic>;
+        (jsonDecode(utf8.decode(clear)) as Map<String, dynamic>)['collections']
+            as Map<String, dynamic>;
 
     var restored = 0;
     var removed = 0;
@@ -151,8 +154,9 @@ class BackupRepository {
     final writes = _BatchedWrites(_db);
 
     for (final name in backupCollections) {
-      final saved = (collections[name] as Map<String, dynamic>? ?? const {})
-          .map((id, data) => MapEntry(id, _decode(data) as Map<String, dynamic>));
+      final saved = (collections[name] as Map<String, dynamic>? ?? const {}).map(
+        (id, data) => MapEntry(id, _decode(data) as Map<String, dynamic>),
+      );
       final col = _household(householdId).collection(name);
       final current = {for (final doc in (await col.get()).docs) doc.id: doc.data()};
 
@@ -180,7 +184,9 @@ class BackupRepository {
             ...data,
             'createdBy': currentUid,
             if (name == 'transactions')
-              'paidBy': (data['paidBy'] as String?)?.isNotEmpty ?? false ? data['paidBy'] : createdBy,
+              'paidBy': (data['paidBy'] as String?)?.isNotEmpty ?? false
+                  ? data['paidBy']
+                  : createdBy,
           };
           reattributed++;
         }
@@ -218,20 +224,20 @@ class BackupRepository {
 /// Firestore values to JSON: timestamps are the only non-JSON type the app
 /// stores.
 Object? _encode(Object? value) => switch (value) {
-      Timestamp t => {r'$ts': t.microsecondsSinceEpoch},
-      Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _encode(e.value)},
-      List<Object?> l => [for (final v in l) _encode(v)],
-      String() || num() || bool() || null => value,
-      _ => throw BackupException('Tipo de dato no soportado en la copia: ${value.runtimeType}'),
-    };
+  Timestamp t => {r'$ts': t.microsecondsSinceEpoch},
+  Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _encode(e.value)},
+  List<Object?> l => [for (final v in l) _encode(v)],
+  String() || num() || bool() || null => value,
+  _ => throw BackupException('Tipo de dato no soportado en la copia: ${value.runtimeType}'),
+};
 
 Object? _decode(Object? value) => switch (value) {
-      {r'$ts': final int micros} when (value as Map).length == 1 =>
-        Timestamp.fromMicrosecondsSinceEpoch(micros),
-      Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _decode(e.value)},
-      List<Object?> l => [for (final v in l) _decode(v)],
-      _ => value,
-    };
+  {r'$ts': final int micros} when (value as Map).length == 1 =>
+    Timestamp.fromMicrosecondsSinceEpoch(micros),
+  Map<Object?, Object?> m => {for (final e in m.entries) e.key as String: _decode(e.value)},
+  List<Object?> l => [for (final v in l) _decode(v)],
+  _ => value,
+};
 
 /// Commits every 400 writes - Firestore's batch limit is 500.
 class _BatchedWrites {

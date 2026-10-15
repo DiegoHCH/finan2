@@ -46,11 +46,11 @@ class AccountSettingsScreen extends ConsumerWidget {
       title: 'Salir del hogar',
       message: isSolo
           ? 'Eres el único miembro de "${household.name}". Si sales, se '
-              'borrarán para siempre todos sus datos: cuentas, movimientos, '
-              'presupuestos, deudas y metas.'
+                'borrarán para siempre todos sus datos: cuentas, movimientos, '
+                'presupuestos, deudas y metas.'
           : 'Vas a salir de "${household.name}". Tus cuentas, movimientos y '
-              'demás datos seguirán disponibles para el resto del hogar. '
-              'Podrás crear o unirte a otro hogar después.',
+                'demás datos seguirán disponibles para el resto del hogar. '
+                'Podrás crear o unirte a otro hogar después.',
       confirmLabel: isSolo ? 'Salir y borrar' : 'Salir',
       destructive: true,
     );
@@ -86,11 +86,11 @@ class AccountSettingsScreen extends ConsumerWidget {
       title: 'Eliminar mi cuenta',
       message: isSolo
           ? 'Perderás el acceso a Finan2 de forma permanente y no se puede '
-              'deshacer. Como eres el único miembro, también se borrarán '
-              'todos los datos de "${household.name}".'
+                'deshacer. Como eres el único miembro, también se borrarán '
+                'todos los datos de "${household.name}".'
           : 'Perderás el acceso a Finan2 de forma permanente y no se puede '
-              'deshacer. También saldrás de tu hogar - sus datos seguirán '
-              'disponibles para el otro miembro.',
+                'deshacer. También saldrás de tu hogar - sus datos seguirán '
+                'disponibles para el otro miembro.',
       confirmLabel: 'Continuar',
       destructive: true,
     );
@@ -106,11 +106,7 @@ class AccountSettingsScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _pickThemeMode(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeMode current,
-  ) async {
+  Future<void> _pickThemeMode(BuildContext context, WidgetRef ref, ThemeMode current) async {
     await showModalBottomSheet<void>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -146,9 +142,7 @@ class AccountSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final members = household.members;
-    final memberNames = members
-        .map((uid) => household.memberInfo[uid]?.name ?? '?')
-        .join(', ');
+    final memberNames = members.map((uid) => household.memberInfo[uid]?.name ?? '?').join(', ');
     final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
     final myUid = ref.watch(authStateChangesProvider).value?.uid;
     final myName = myUid == null ? '' : (household.memberInfo[myUid]?.name ?? '');

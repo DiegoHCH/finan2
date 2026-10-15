@@ -30,25 +30,15 @@ class InviteHouseholdScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.home_work_outlined,
-                size: Finan2Sizes.iconXl,
-                color: brand,
-              ),
+              Icon(Icons.home_work_outlined, size: Finan2Sizes.iconXl, color: brand),
               const SizedBox(height: Finan2Space.md),
-              Text(
-                'Invita a tu pareja',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              Text('Invita a tu pareja', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: Finan2Space.xs),
               Text(
                 'Comparte este código para que entre con su propia cuenta '
                 'al mismo hogar. Sirve una sola vez y vence en 7 días.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: colors.inkSoft),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
               ),
               const SizedBox(height: Finan2Space.lg),
               Finan2CodeBox(code: _displayCode),
@@ -59,10 +49,7 @@ class InviteHouseholdScreen extends StatelessWidget {
                 'que no se ve aquí. Sin el código completo, tu pareja no '
                 'podrá ver los montos.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: colors.inkSoft),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.inkSoft),
               ),
               const SizedBox(height: Finan2Space.lg),
               FilledButton.icon(

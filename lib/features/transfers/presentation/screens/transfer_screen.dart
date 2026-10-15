@@ -76,14 +76,14 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final to = _toAccountId;
     final user = ref.read(authStateChangesProvider).value;
     if (amount <= 0 || from == null || to == null || from == to || user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Elige un monto y dos cuentas distintas.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Elige un monto y dos cuentas distintas.')));
       return;
     }
-    await ref.read(transferControllerProvider.notifier).createTransfer(
+    await ref
+        .read(transferControllerProvider.notifier)
+        .createTransfer(
           Transfer(
             id: '',
             amount: amount,
@@ -125,10 +125,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _amountController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Finan2TapField(
               label: 'Desde',
@@ -149,9 +146,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
               ),
             ),
             const SizedBox(height: Finan2Space.sm),
-            Center(
-              child: Icon(Icons.arrow_downward, color: colors.inkFaint, size: 20),
-            ),
+            Center(child: Icon(Icons.arrow_downward, color: colors.inkFaint, size: 20)),
             const SizedBox(height: Finan2Space.sm),
             Finan2TapField(
               label: 'Hacia',
@@ -160,11 +155,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                   : '${toAccount.name} · ${formatMoney(toAccount.balance)}',
               leading: toAccount == null
                   ? null
-                  : Icon(
-                      Finan2Icons.cuenta(toAccount.type.name),
-                      size: 18,
-                      color: colors.inkSoft,
-                    ),
+                  : Icon(Finan2Icons.cuenta(toAccount.type.name), size: 18, color: colors.inkSoft),
               onTap: () => _pickAccount(
                 accounts: accounts,
                 exclude: _fromAccountId,

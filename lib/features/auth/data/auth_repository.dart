@@ -17,8 +17,8 @@ const _webGoogleClientId =
 /// layer maps those to user-facing messages.
 class AuthRepository {
   AuthRepository({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
-      : _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.instance {
+    : _auth = auth ?? FirebaseAuth.instance,
+      _googleSignIn = googleSignIn ?? GoogleSignIn.instance {
     // Controls the language of every email/SMS Firebase Auth sends on our
     // behalf (password reset, email verification...) - without this it
     // defaults to English regardless of the device's locale.
@@ -45,9 +45,7 @@ class AuthRepository {
   /// Whether the signed-in user's only sign-in method is Google (so
   /// deleting the account must reauthenticate via Google, not a password).
   bool get signedInWithGoogle {
-    return _auth.currentUser?.providerData
-            .any((info) => info.providerId == 'google.com') ??
-        false;
+    return _auth.currentUser?.providerData.any((info) => info.providerId == 'google.com') ?? false;
   }
 
   Future<UserCredential> signUpWithEmail({
@@ -55,10 +53,7 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     await credential.user?.updateDisplayName(name);
     // updateDisplayName() only lands on the server - without a reload the
     // in-memory `currentUser` (what authStateChangesProvider and every
@@ -77,10 +72,7 @@ class AuthRepository {
     await _auth.currentUser?.reload();
   }
 
-  Future<UserCredential> signInWithEmail({
-    required String email,
-    required String password,
-  }) {
+  Future<UserCredential> signInWithEmail({required String email, required String password}) {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
@@ -131,10 +123,7 @@ class AuthRepository {
   Future<void> reauthenticateWithPassword(String password) async {
     final user = _auth.currentUser;
     if (user == null || user.email == null) return;
-    final credential = EmailAuthProvider.credential(
-      email: user.email!,
-      password: password,
-    );
+    final credential = EmailAuthProvider.credential(email: user.email!, password: password);
     await user.reauthenticateWithCredential(credential);
   }
 

@@ -39,6 +39,5 @@ class _ListIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ListIconPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(covariant _ListIconPainter oldDelegate) => oldDelegate.color != color;
 }

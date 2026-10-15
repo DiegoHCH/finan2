@@ -7,15 +7,15 @@ enum InvestmentKind { rentaFija, rentaVariable, cripto }
 
 extension InvestmentKindLabel on InvestmentKind {
   String get label => switch (this) {
-        InvestmentKind.rentaFija => 'Renta fija',
-        InvestmentKind.rentaVariable => 'Renta variable',
-        InvestmentKind.cripto => 'Alto riesgo',
-      };
+    InvestmentKind.rentaFija => 'Renta fija',
+    InvestmentKind.rentaVariable => 'Renta variable',
+    InvestmentKind.cripto => 'Alto riesgo',
+  };
 
   static InvestmentKind fromName(String name) => InvestmentKind.values.firstWhere(
-        (k) => k.name == name,
-        orElse: () => InvestmentKind.rentaVariable,
-      );
+    (k) => k.name == name,
+    orElse: () => InvestmentKind.rentaVariable,
+  );
 }
 
 /// A household investment (CDT, stock fund, crypto...). Like Account.balance
@@ -56,22 +56,13 @@ class Investment {
       name: data['name'] as String? ?? '',
       kind: InvestmentKindLabel.fromName(data['kind'] as String? ?? 'rentaVariable'),
       rate: (data['rate'] as num?)?.toDouble() ?? 0,
-      investedAmount: await crypto.decryptAmount(
-        householdId,
-        data['investedAmount'] as String,
-      ),
-      currentValue: await crypto.decryptAmount(
-        householdId,
-        data['currentValue'] as String,
-      ),
+      investedAmount: await crypto.decryptAmount(householdId, data['investedAmount'] as String),
+      currentValue: await crypto.decryptAmount(householdId, data['currentValue'] as String),
       createdBy: data['createdBy'] as String? ?? '',
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'kind': kind.name,

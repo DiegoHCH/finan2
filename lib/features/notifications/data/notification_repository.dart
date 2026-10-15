@@ -4,7 +4,7 @@ import 'notification_model.dart';
 
 class NotificationRepository {
   NotificationRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+    : _db = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _db;
 

@@ -65,25 +65,18 @@ void main() {
 
   testWidgets('passes maxLines through to the underlying field', (tester) async {
     final controller = TextEditingController();
-    await pumpFinan2(
-      tester,
-      Finan2Field(label: 'Notas', controller: controller, maxLines: 12),
-    );
+    await pumpFinan2(tester, Finan2Field(label: 'Notas', controller: controller, maxLines: 12));
     final field = tester.widget<EditableText>(find.byType(EditableText));
     expect(field.maxLines, 12);
   });
 
-  testWidgets('forces maxLines to 1 for a password field even if requested otherwise',
-      (tester) async {
+  testWidgets('forces maxLines to 1 for a password field even if requested otherwise', (
+    tester,
+  ) async {
     final controller = TextEditingController();
     await pumpFinan2(
       tester,
-      Finan2Field(
-        label: 'Contraseña',
-        controller: controller,
-        obscureText: true,
-        maxLines: 5,
-      ),
+      Finan2Field(label: 'Contraseña', controller: controller, obscureText: true, maxLines: 5),
     );
     final field = tester.widget<EditableText>(find.byType(EditableText));
     expect(field.maxLines, 1);

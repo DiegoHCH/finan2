@@ -5,23 +5,21 @@ enum CategoryType { ingreso, factura, gasto, ahorro }
 
 extension CategoryTypeLabel on CategoryType {
   String get label => switch (this) {
-        CategoryType.ingreso => 'Ingreso',
-        CategoryType.factura => 'Factura',
-        CategoryType.gasto => 'Gasto',
-        CategoryType.ahorro => 'Ahorro',
-      };
+    CategoryType.ingreso => 'Ingreso',
+    CategoryType.factura => 'Factura',
+    CategoryType.gasto => 'Gasto',
+    CategoryType.ahorro => 'Ahorro',
+  };
 
   String get plural => switch (this) {
-        CategoryType.ingreso => 'Ingresos',
-        CategoryType.factura => 'Facturas',
-        CategoryType.gasto => 'Gastos',
-        CategoryType.ahorro => 'Ahorros',
-      };
+    CategoryType.ingreso => 'Ingresos',
+    CategoryType.factura => 'Facturas',
+    CategoryType.gasto => 'Gastos',
+    CategoryType.ahorro => 'Ahorros',
+  };
 
-  static CategoryType fromName(String name) => CategoryType.values.firstWhere(
-        (t) => t.name == name,
-        orElse: () => CategoryType.gasto,
-      );
+  static CategoryType fromName(String name) =>
+      CategoryType.values.firstWhere((t) => t.name == name, orElse: () => CategoryType.gasto);
 }
 
 class Category {

@@ -105,10 +105,7 @@ class _NoteCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-            ),
+            Text(title, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
             if (lines.isEmpty)
               Text(
@@ -140,11 +137,7 @@ class _NoteCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               line,
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                height: 1.4,
-                                color: colors.inkSoft,
-                              ),
+                              style: TextStyle(fontSize: 12.5, height: 1.4, color: colors.inkSoft),
                             ),
                           ),
                         ],

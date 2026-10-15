@@ -29,12 +29,9 @@ class MonthlyNotesController extends AsyncNotifier<void> {
     final now = DateTime.now();
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(monthlyNotesRepositoryProvider).saveThisMonth(
-            householdId,
-            year: now.year,
-            month: now.month,
-            text: text,
-          ),
+      () => ref
+          .read(monthlyNotesRepositoryProvider)
+          .saveThisMonth(householdId, year: now.year, month: now.month, text: text),
     );
   }
 
@@ -44,17 +41,13 @@ class MonthlyNotesController extends AsyncNotifier<void> {
     final now = DateTime.now();
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(monthlyNotesRepositoryProvider).saveNextMonth(
-            householdId,
-            year: now.year,
-            month: now.month,
-            text: text,
-          ),
+      () => ref
+          .read(monthlyNotesRepositoryProvider)
+          .saveNextMonth(householdId, year: now.year, month: now.month, text: text),
     );
   }
 }
 
-final monthlyNotesControllerProvider =
-    AsyncNotifierProvider<MonthlyNotesController, void>(
+final monthlyNotesControllerProvider = AsyncNotifierProvider<MonthlyNotesController, void>(
   MonthlyNotesController.new,
 );

@@ -5,11 +5,7 @@ import '../../../transactions/presentation/viewmodels/transaction_providers.dart
 /// A year's totals, computed client-side from every transaction in the
 /// year - no separate Firestore aggregate needed.
 class AnnualSummary {
-  const AnnualSummary({
-    required this.ganado,
-    required this.gastado,
-    required this.gastoPorMes,
-  });
+  const AnnualSummary({required this.ganado, required this.gastado, required this.gastoPorMes});
 
   final int ganado;
   final int gastado;

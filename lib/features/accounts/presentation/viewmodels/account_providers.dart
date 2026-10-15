@@ -19,9 +19,7 @@ final accountsProvider = StreamProvider<List<Account>>((ref) {
 /// Sum of balances for accounts flagged as "incluir en disponible".
 final availableBalanceProvider = Provider<int>((ref) {
   final accounts = ref.watch(accountsProvider).value ?? const [];
-  return accounts
-      .where((a) => a.includeInAvailable)
-      .fold(0, (sum, a) => sum + a.balance);
+  return accounts.where((a) => a.includeInAvailable).fold(0, (sum, a) => sum + a.balance);
 });
 
 class AccountController extends AsyncNotifier<void> {
@@ -51,13 +49,11 @@ class AccountController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(accountRepositoryProvider).deleteAccount(
-            householdId,
-            accountId,
-          ),
+      () => ref.read(accountRepositoryProvider).deleteAccount(householdId, accountId),
     );
   }
 }
 
-final accountControllerProvider =
-    AsyncNotifierProvider<AccountController, void>(AccountController.new);
+final accountControllerProvider = AsyncNotifierProvider<AccountController, void>(
+  AccountController.new,
+);

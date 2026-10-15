@@ -9,10 +9,7 @@ class ThemeModeRepository {
   Future<ThemeMode> load() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_key);
-    return ThemeMode.values.firstWhere(
-      (m) => m.name == stored,
-      orElse: () => ThemeMode.system,
-    );
+    return ThemeMode.values.firstWhere((m) => m.name == stored, orElse: () => ThemeMode.system);
   }
 
   Future<void> save(ThemeMode mode) async {

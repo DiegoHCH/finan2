@@ -25,9 +25,7 @@ class EditAccountScreen extends ConsumerStatefulWidget {
 }
 
 class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
-  late final _nameController = TextEditingController(
-    text: widget.account?.name ?? '',
-  );
+  late final _nameController = TextEditingController(text: widget.account?.name ?? '');
   late final _balanceController = TextEditingController(
     text: widget.account != null ? widget.account!.balance.toString() : '',
   );
@@ -45,16 +43,17 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final balance = int.tryParse(_balanceController.text) ?? 0;
-    await ref.read(accountControllerProvider.notifier).save(
+    await ref
+        .read(accountControllerProvider.notifier)
+        .save(
           Account(
             id: widget.account?.id ?? '',
             name: name,
             type: _type,
             balance: balance,
             includeInAvailable: _includeInAvailable,
-            createdBy: widget.account?.createdBy ??
-                ref.read(authStateChangesProvider).value?.uid ??
-                '',
+            createdBy:
+                widget.account?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -72,7 +71,8 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
       await showFinan2InfoSheet(
         context,
         title: 'No se puede eliminar',
-        message: '"${account.name}" tiene ${usage == 1 ? '1 registro' : '$usage registros'} '
+        message:
+            '"${account.name}" tiene ${usage == 1 ? '1 registro' : '$usage registros'} '
             '(movimientos, transferencias, pagos de tarjeta o facturas recurrentes). '
             'Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, '
             'desactiva "Incluir en dinero disponible".',
@@ -103,10 +103,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
 
     return Scaffold(
-      appBar: Finan2FormTop(
-        title: isEditing ? 'Editar cuenta' : 'Nueva cuenta',
-        onSave: _save,
-      ),
+      appBar: Finan2FormTop(title: isEditing ? 'Editar cuenta' : 'Nueva cuenta', onSave: _save),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
@@ -135,25 +132,20 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _balanceController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _balanceController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Incluir en dinero disponible'),
               value: _includeInAvailable,
-              onChanged: (value) =>
-                  setState(() => _includeInAvailable = value),
+              onChanged: (value) => setState(() => _includeInAvailable = value),
             ),
             if (isEditing) ...[
               const SizedBox(height: Finan2Space.lg),
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(
-                  foregroundColor:
-                      Theme.of(context).extension<Finan2Colors>()!.expense,
+                  foregroundColor: Theme.of(context).extension<Finan2Colors>()!.expense,
                 ),
                 child: const Text('Eliminar cuenta'),
               ),

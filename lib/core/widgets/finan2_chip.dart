@@ -6,13 +6,8 @@ import '../theme/app_theme.dart';
 /// a filled surface pill with soft text, selected gets a brand-tinted
 /// background, brand border and brand-colored text/icon.
 class Finan2Chip extends StatelessWidget {
-  const Finan2Chip({
-    this.label,
-    required this.selected,
-    required this.onTap,
-    this.icon,
-    super.key,
-  }) : assert(label != null || icon != null, 'Provide a label and/or icon');
+  const Finan2Chip({this.label, required this.selected, required this.onTap, this.icon, super.key})
+    : assert(label != null || icon != null, 'Provide a label and/or icon');
 
   final String? label;
   final bool selected;

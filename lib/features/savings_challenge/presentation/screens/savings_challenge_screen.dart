@@ -48,7 +48,8 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
     final confirmed = await showFinan2ConfirmSheet(
       context,
       title: 'Eliminar reto de ahorro',
-      message: 'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
+      message:
+          'Se eliminará "${challenge.name}" y el progreso marcado. Esta acción '
           'no se puede deshacer.',
       confirmLabel: 'Eliminar',
       destructive: true,
@@ -63,9 +64,7 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
       newDone.add(false);
     }
     newDone[index] = !newDone[index];
-    await ref
-        .read(savingsChallengeControllerProvider.notifier)
-        .toggleCell(challenge.id, newDone);
+    await ref.read(savingsChallengeControllerProvider.notifier).toggleCell(challenge.id, newDone);
   }
 
   @override

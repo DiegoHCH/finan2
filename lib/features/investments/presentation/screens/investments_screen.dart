@@ -32,9 +32,9 @@ class InvestmentsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'investmentsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -59,18 +59,13 @@ class InvestmentsScreen extends ConsumerWidget {
                           'Agrega tu CDT, fondo o cripto para llevarle el pulso '
                           'a tu portafolio.',
                       actionLabel: '+ Nueva inversión',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const EditInvestmentScreen(),
-                        ),
-                      ),
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditInvestmentScreen())),
                     );
                   }
 
-                  final totalReturn = investments.fold<int>(
-                    0,
-                    (sum, i) => sum + i.returnAmount,
-                  );
+                  final totalReturn = investments.fold<int>(0, (sum, i) => sum + i.returnAmount);
 
                   return ListView(
                     padding: const EdgeInsets.all(Finan2Space.xl),
@@ -81,10 +76,7 @@ class InvestmentsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
@@ -108,9 +100,7 @@ class InvestmentsScreen extends ConsumerWidget {
                             Row(
                               children: [
                                 Icon(
-                                  totalReturn >= 0
-                                      ? Icons.arrow_upward
-                                      : Icons.arrow_downward,
+                                  totalReturn >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
                                   size: 12,
                                   color: Colors.white,
                                 ),
@@ -142,9 +132,7 @@ class InvestmentsScreen extends ConsumerWidget {
                             formatMoney: formatMoney,
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) => EditInvestmentScreen(
-                                  investment: investment,
-                                ),
+                                builder: (_) => EditInvestmentScreen(investment: investment),
                               ),
                             ),
                           ),
@@ -162,11 +150,7 @@ class InvestmentsScreen extends ConsumerWidget {
 }
 
 class _InvestmentCard extends StatelessWidget {
-  const _InvestmentCard({
-    required this.investment,
-    required this.formatMoney,
-    required this.onTap,
-  });
+  const _InvestmentCard({required this.investment, required this.formatMoney, required this.onTap});
 
   final Investment investment;
   final String Function(num) formatMoney;
@@ -223,20 +207,13 @@ class _InvestmentCard extends StatelessWidget {
                         investment.name,
                         style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
                       ),
-                      Text(
-                        subtitle,
-                        style: TextStyle(fontSize: 11, color: colors.inkFaint),
-                      ),
+                      Text(subtitle, style: TextStyle(fontSize: 11, color: colors.inkFaint)),
                     ],
                   ),
                 ),
                 Text(
                   '${gain ? '+' : ''}${formatMoney(investment.returnAmount)}',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: gainColor,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: gainColor),
                 ),
               ],
             ),
@@ -246,7 +223,11 @@ class _InvestmentCard extends StatelessWidget {
               children: [
                 Text(
                   'Valor actual',
-                  style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: colors.inkFaint,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
@@ -255,7 +236,11 @@ class _InvestmentCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       formatMoney(investment.currentValue),
-                      style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkFaint),
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w600,
+                        color: colors.inkFaint,
+                      ),
                     ),
                   ),
                 ),

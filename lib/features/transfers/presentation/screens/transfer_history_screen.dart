@@ -25,7 +25,8 @@ class TransferHistoryScreen extends ConsumerWidget {
     final confirmed = await showFinan2ConfirmSheet(
       context,
       title: 'Eliminar transferencia',
-      message: 'Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no '
+      message:
+          'Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no '
           'se puede deshacer.',
       confirmLabel: 'Eliminar',
       destructive: true,
@@ -66,9 +67,9 @@ class TransferHistoryScreen extends ConsumerWidget {
                           'Los movimientos de dinero entre tus propias '
                           'cuentas aparecerán aquí.',
                       actionLabel: '+ Transferir',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
-                      ),
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const TransferScreen())),
                     );
                   }
                   return Container(

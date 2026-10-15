@@ -4,21 +4,18 @@ import 'monthly_notes_model.dart';
 
 class MonthlyNotesRepository {
   MonthlyNotesRepository({FirebaseFirestore? firestore})
-      : _db = firestore ?? FirebaseFirestore.instance;
+    : _db = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _db;
 
-  DocumentReference<Map<String, dynamic>> _doc(String householdId, int year, int month) =>
-      _db
-          .collection('households')
-          .doc(householdId)
-          .collection('monthlyNotes')
-          .doc('${year}_$month');
+  DocumentReference<Map<String, dynamic>> _doc(String householdId, int year, int month) => _db
+      .collection('households')
+      .doc(householdId)
+      .collection('monthlyNotes')
+      .doc('${year}_$month');
 
   Stream<MonthlyNotes> watchNotes(String householdId, {required int year, required int month}) {
-    return _doc(householdId, year, month)
-        .snapshots()
-        .map(MonthlyNotes.fromFirestore);
+    return _doc(householdId, year, month).snapshots().map(MonthlyNotes.fromFirestore);
   }
 
   Future<void> saveThisMonth(

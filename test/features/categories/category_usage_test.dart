@@ -59,6 +59,9 @@ void main() {
 
   test('describe uses singular and plural', () {
     expect(const CategoryUsage(movements: 1, recurringBills: 0).describe(), '1 movimiento');
-    expect(const CategoryUsage(movements: 0, recurringBills: 2).describe(), '2 facturas recurrentes');
+    expect(
+      const CategoryUsage(movements: 0, recurringBills: 2).describe(),
+      '2 facturas recurrentes',
+    );
   });
 }

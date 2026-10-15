@@ -45,15 +45,14 @@ class MovementFilter {
     String? Function()? sourceId,
     String? Function()? payer,
     String? Function()? tag,
-  }) =>
-      MovementFilter(
-        query: query ?? this.query,
-        types: types ?? this.types,
-        categoryId: categoryId != null ? categoryId() : this.categoryId,
-        sourceId: sourceId != null ? sourceId() : this.sourceId,
-        payer: payer != null ? payer() : this.payer,
-        tag: tag != null ? tag() : this.tag,
-      );
+  }) => MovementFilter(
+    query: query ?? this.query,
+    types: types ?? this.types,
+    categoryId: categoryId != null ? categoryId() : this.categoryId,
+    sourceId: sourceId != null ? sourceId() : this.sourceId,
+    payer: payer != null ? payer() : this.payer,
+    tag: tag != null ? tag() : this.tag,
+  );
 
   /// Keeps only the text query - what "Limpiar filtros" leaves behind.
   MovementFilter withoutFilters() => MovementFilter(query: query);
@@ -81,17 +80,32 @@ class MovementFilter {
   }
 
   List<Movement> apply(List<Movement> movements, Map<String, String> categoryNames) => [
-        for (final tx in movements)
-          if (matches(tx, categoryName: categoryNames[tx.categoryId] ?? '')) tx,
-      ];
+    for (final tx in movements)
+      if (matches(tx, categoryName: categoryNames[tx.categoryId] ?? '')) tx,
+  ];
 }
 
 const _accents = {
-  'á': 'a', 'à': 'a', 'ä': 'a', 'â': 'a',
-  'é': 'e', 'è': 'e', 'ë': 'e', 'ê': 'e',
-  'í': 'i', 'ì': 'i', 'ï': 'i', 'î': 'i',
-  'ó': 'o', 'ò': 'o', 'ö': 'o', 'ô': 'o',
-  'ú': 'u', 'ù': 'u', 'ü': 'u', 'û': 'u',
+  'á': 'a',
+  'à': 'a',
+  'ä': 'a',
+  'â': 'a',
+  'é': 'e',
+  'è': 'e',
+  'ë': 'e',
+  'ê': 'e',
+  'í': 'i',
+  'ì': 'i',
+  'ï': 'i',
+  'î': 'i',
+  'ó': 'o',
+  'ò': 'o',
+  'ö': 'o',
+  'ô': 'o',
+  'ú': 'u',
+  'ù': 'u',
+  'ü': 'u',
+  'û': 'u',
   'ñ': 'n',
 };
 

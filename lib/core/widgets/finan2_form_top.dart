@@ -5,12 +5,7 @@ import '../theme/app_theme.dart';
 /// The form header matching the mockup's `.form-top`: "Cancelar" / title /
 /// "Guardar", instead of a default AppBar.
 class Finan2FormTop extends StatefulWidget implements PreferredSizeWidget {
-  const Finan2FormTop({
-    required this.title,
-    required this.onSave,
-    this.onCancel,
-    super.key,
-  });
+  const Finan2FormTop({required this.title, required this.onSave, this.onCancel, super.key});
 
   final String title;
   final Future<void> Function() onSave;
@@ -64,10 +59,7 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                 ),
               ),
             ),
-            Text(
-              widget.title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-            ),
+            Text(widget.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
             Expanded(
               child: GestureDetector(
                 key: const Key('finan2FormTopSave'),
@@ -87,11 +79,7 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                       : Text(
                           'Guardar',
                           textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: brand,
-                          ),
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: brand),
                         ),
                 ),
               ),

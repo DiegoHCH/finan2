@@ -38,8 +38,7 @@ class EditSavingsGoalScreen extends ConsumerStatefulWidget {
   final SavingsGoal? goal;
 
   @override
-  ConsumerState<EditSavingsGoalScreen> createState() =>
-      _EditSavingsGoalScreenState();
+  ConsumerState<EditSavingsGoalScreen> createState() => _EditSavingsGoalScreenState();
 }
 
 class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
@@ -87,9 +86,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
     final isEditing = widget.goal != null;
-    final contributions = <Contribution>[
-      ...widget.goal?.contributions ?? const <Contribution>[],
-    ];
+    final contributions = <Contribution>[...widget.goal?.contributions ?? const <Contribution>[]];
     if (!isEditing) {
       final seed = int.tryParse(_seedController.text) ?? 0;
       if (seed > 0) {
@@ -108,9 +105,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
       monthlyContribution: int.tryParse(_monthlyController.text) ?? 0,
       interestRate: double.tryParse(_rateController.text.replaceAll(',', '.')) ?? 0,
       contributions: contributions,
-      createdBy: widget.goal?.createdBy ??
-          ref.read(authStateChangesProvider).value?.uid ??
-          '',
+      createdBy: widget.goal?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
     );
     await ref.read(savingsGoalControllerProvider.notifier).save(goal);
     if (mounted) Navigator.of(context).pop();
@@ -122,7 +117,8 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final confirmed = await showFinan2ConfirmSheet(
       context,
       title: 'Eliminar meta',
-      message: 'Se eliminará "${goal.name}" con todos sus aportes. Esta acción no se puede deshacer.',
+      message:
+          'Se eliminará "${goal.name}" con todos sus aportes. Esta acción no se puede deshacer.',
       confirmLabel: 'Eliminar',
       destructive: true,
     );
@@ -138,10 +134,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
-      appBar: Finan2FormTop(
-        title: isEditing ? 'Editar meta' : 'Nueva meta',
-        onSave: _save,
-      ),
+      appBar: Finan2FormTop(title: isEditing ? 'Editar meta' : 'Nueva meta', onSave: _save),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
@@ -170,10 +163,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _targetController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _targetController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Row(
               children: [

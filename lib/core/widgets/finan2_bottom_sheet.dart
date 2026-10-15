@@ -27,10 +27,7 @@ Future<bool> showFinan2ConfirmSheet(
             children: [
               Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
               const SizedBox(height: Finan2Space.sm),
-              Text(
-                message,
-                style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
-              ),
+              Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),
               const SizedBox(height: Finan2Space.lg),
               Row(
                 children: [
@@ -113,10 +110,7 @@ Future<void> _showFinan2NoticeSheet(
             children: [
               Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
               const SizedBox(height: Finan2Space.sm),
-              Text(
-                message,
-                style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45),
-              ),
+              Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),
               const SizedBox(height: Finan2Space.lg),
               SizedBox(
                 width: double.infinity,

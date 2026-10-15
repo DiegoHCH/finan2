@@ -36,9 +36,9 @@ class AccountsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'accountsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const EditAccountScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -63,11 +63,9 @@ class AccountsScreen extends ConsumerWidget {
                           'Agrega tu primera cuenta (efectivo, banco, '
                           'billetera) para empezar a registrar movimientos.',
                       actionLabel: '+ Nueva cuenta',
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const EditAccountScreen(),
-                        ),
-                      ),
+                      onAction: () => Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
                     );
                   }
                   return ListView(
@@ -79,10 +77,7 @@ class AccountsScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
@@ -133,8 +128,7 @@ class AccountsScreen extends ConsumerWidget {
                                 amountColor: colors.ink,
                                 onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        EditAccountScreen(account: accounts[i]),
+                                    builder: (_) => EditAccountScreen(account: accounts[i]),
                                   ),
                                 ),
                               ),
@@ -150,9 +144,7 @@ class AccountsScreen extends ConsumerWidget {
                             if (accounts.length >= 2)
                               TextButton.icon(
                                 onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const TransferScreen(),
-                                  ),
+                                  MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
                                 ),
                                 icon: const Icon(Icons.swap_horiz),
                                 label: const Text('Transferir entre cuentas'),

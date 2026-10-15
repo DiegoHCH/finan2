@@ -25,7 +25,11 @@ void main() {
 
   test('every default category has a known icon and a unique name', () {
     for (final category in defaultCategories) {
-      expect(Finan2Icons.categoria(category.iconSlug), isNot(Icons.label_outline), reason: category.name);
+      expect(
+        Finan2Icons.categoria(category.iconSlug),
+        isNot(Icons.label_outline),
+        reason: category.name,
+      );
     }
     final names = defaultCategories.map((c) => c.name).toList();
     expect(names.toSet(), hasLength(names.length));

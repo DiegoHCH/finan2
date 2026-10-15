@@ -4,15 +4,15 @@ import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Movement _spend(String categoryId, int month, int amount, {bool income = false}) => Movement(
-      id: '$categoryId-$month-$amount',
-      amount: amount,
-      type: income ? CategoryType.ingreso : CategoryType.gasto,
-      categoryId: categoryId,
-      accountId: 'a',
-      description: '',
-      date: DateTime(2026, month, 10),
-      createdBy: 'u1',
-    );
+  id: '$categoryId-$month-$amount',
+  amount: amount,
+  type: income ? CategoryType.ingreso : CategoryType.gasto,
+  categoryId: categoryId,
+  accountId: 'a',
+  description: '',
+  date: DateTime(2026, month, 10),
+  createdBy: 'u1',
+);
 
 void main() {
   test('leftovers and overspending chain from January', () {
@@ -38,7 +38,9 @@ void main() {
     final carry = computeCarryOver(
       month: 2,
       rolloverCategoryIds: {'ocio'},
-      budgets: {1: {'ocio': 100}},
+      budgets: {
+        1: {'ocio': 100},
+      },
       transactions: [_spend('ocio', 1, 160)],
     );
     expect(carry, {'ocio': -60});
@@ -51,10 +53,7 @@ void main() {
       budgets: {
         1: {'ropa': 100, 'mercado': 500},
       },
-      transactions: [
-        _spend('mercado', 1, 100),
-        _spend('ropa', 1, 40, income: true),
-      ],
+      transactions: [_spend('mercado', 1, 100), _spend('ropa', 1, 40, income: true)],
     );
     expect(carry, {'ropa': 100});
   });
@@ -73,7 +72,9 @@ void main() {
       computeCarryOver(
         month: 2,
         rolloverCategoryIds: {'ropa'},
-        budgets: {1: {'ropa': 100}},
+        budgets: {
+          1: {'ropa': 100},
+        },
         transactions: [_spend('ropa', 1, 100)],
       ),
       isEmpty,

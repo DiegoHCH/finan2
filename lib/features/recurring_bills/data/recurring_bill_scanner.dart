@@ -41,7 +41,8 @@ class RecurringBillScanner {
     for (final marker in pending) {
       final bill = billById[marker.billId];
       // Deleted or paused since, or a date the bill no longer has.
-      final stillDue = bill != null &&
+      final stillDue =
+          bill != null &&
           !bill.paused &&
           bill.occurrencesBetween(marker.date, marker.date).isNotEmpty &&
           movementIdFor(bill, marker.date) == marker.id;
@@ -53,12 +54,7 @@ class RecurringBillScanner {
     }
   }
 
-  Future<void> _generate(
-    String householdId,
-    String currentUid,
-    RecurringBill bill,
-    DateTime date,
-  ) {
+  Future<void> _generate(String householdId, String currentUid, RecurringBill bill, DateTime date) {
     final id = movementIdFor(bill, date);
     return _transactionRepository.createIfAbsent(
       householdId,
@@ -82,6 +78,6 @@ class RecurringBillScanner {
   /// Mirrored by movementIdFor in cloudflare/finan2-notifications/worker.js.
   static String movementIdFor(RecurringBill bill, DateTime date) =>
       bill.frequency == RecurringFrequency.monthly
-          ? 'recurring_${bill.id}_${date.year}_${date.month}'
-          : 'recurring_${bill.id}_${date.year}_${date.month}_${date.day}';
+      ? 'recurring_${bill.id}_${date.year}_${date.month}'
+      : 'recurring_${bill.id}_${date.year}_${date.month}_${date.day}';
 }

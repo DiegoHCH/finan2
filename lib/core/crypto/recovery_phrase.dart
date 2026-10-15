@@ -32,8 +32,7 @@ class RecoveryPhrase {
   final List<String> words;
 
   static final Map<String, int> _indexByWord = {
-    for (var i = 0; i < recoveryWordlistEs.length; i++)
-      _normalizeWord(recoveryWordlistEs[i]): i,
+    for (var i = 0; i < recoveryWordlistEs.length; i++) _normalizeWord(recoveryWordlistEs[i]): i,
   };
 
   static Future<RecoveryPhrase> generate() async {

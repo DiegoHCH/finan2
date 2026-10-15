@@ -23,11 +23,13 @@ Future<bool> createRecoveryPhrase(
   Household household, {
   bool askFirst = true,
 }) async {
-  final confirmed = !askFirst ||
+  final confirmed =
+      !askFirst ||
       await showFinan2ConfirmSheet(
         context,
         title: 'Frase de recuperación',
-        message: 'Si algún día ninguno de los dos tiene la llave del hogar en su '
+        message:
+            'Si algún día ninguno de los dos tiene la llave del hogar en su '
             'dispositivo, estas 12 palabras permiten recuperar los montos. Vas a '
             'verlas una sola vez: anótalas en papel y guárdalas con tu pareja. '
             'Si ya había una frase o un PIN, dejarán de servir.',
@@ -48,7 +50,8 @@ Future<bool> createRecoveryPhrase(
     await showFinan2InfoSheet(
       context,
       title: 'Frase guardada',
-      message: 'Desde ahora esta frase permite recuperar los montos del '
+      message:
+          'Desde ahora esta frase permite recuperar los montos del '
           'hogar en cualquier dispositivo.',
     );
     return true;
@@ -58,7 +61,8 @@ Future<bool> createRecoveryPhrase(
     if (context.mounted) {
       await showFinan2ErrorSheet(
         context,
-        message: 'No se pudo guardar la frase nueva, así que no sirve: la '
+        message:
+            'No se pudo guardar la frase nueva, así que no sirve: la '
             'anterior sigue siendo la válida. ${friendlyErrorMessage(error)}',
       );
     }

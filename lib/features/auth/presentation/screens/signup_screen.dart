@@ -37,7 +37,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signUpWithEmail(
+    await ref
+        .read(authControllerProvider.notifier)
+        .signUpWithEmail(
           name: toTitleCase(_nameController.text),
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -75,10 +77,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
-                Text(
-                  'Crea tu cuenta',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                Text('Crea tu cuenta', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: Finan2Space.xs),
                 Text(
                   'Regístrate para empezar a organizar las finanzas del hogar.',
@@ -89,9 +88,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   label: 'Nombre',
                   controller: _nameController,
                   autofillHints: const [AutofillHints.name],
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? 'Ingresa tu nombre'
-                      : null,
+                  validator: (value) =>
+                      (value == null || value.trim().isEmpty) ? 'Ingresa tu nombre' : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
@@ -99,9 +97,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  validator: (value) => (value == null || !value.contains('@'))
-                      ? 'Ingresa un correo válido'
-                      : null,
+                  validator: (value) =>
+                      (value == null || !value.contains('@')) ? 'Ingresa un correo válido' : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
@@ -116,9 +113,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   label: 'Confirmar contraseña',
                   controller: _confirmController,
                   obscureText: true,
-                  validator: (value) => value != _passwordController.text
-                      ? 'Las contraseñas no coinciden'
-                      : null,
+                  validator: (value) =>
+                      value != _passwordController.text ? 'Las contraseñas no coinciden' : null,
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 FilledButton(
@@ -134,9 +130,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 const SizedBox(height: Finan2Space.md),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
-                    ),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pushReplacement(MaterialPageRoute<void>(builder: (_) => const LoginScreen())),
                     child: Text.rich(
                       TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,

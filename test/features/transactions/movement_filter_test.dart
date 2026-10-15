@@ -11,18 +11,17 @@ Movement _tx({
   String description = '',
   String createdBy = 'ana',
   String paidBy = '',
-}) =>
-    Movement(
-      id: id,
-      amount: amount,
-      type: type,
-      categoryId: categoryId,
-      accountId: 'cuenta',
-      description: description,
-      date: DateTime(2026, 7, 10),
-      createdBy: createdBy,
-      paidBy: paidBy,
-    );
+}) => Movement(
+  id: id,
+  amount: amount,
+  type: type,
+  categoryId: categoryId,
+  accountId: 'cuenta',
+  description: description,
+  date: DateTime(2026, 7, 10),
+  createdBy: createdBy,
+  paidBy: paidBy,
+);
 
 void main() {
   test('an empty filter keeps everything', () {
@@ -69,17 +68,19 @@ void main() {
     const filter = MovementFilter(sourceId: 'visa');
     expect(filter.matches(_tx()), isFalse);
     expect(
-      filter.matches(Movement(
-        id: 'c',
-        amount: 1,
-        type: CategoryType.gasto,
-        categoryId: 'mercado',
-        accountId: '',
-        cardDebtId: 'visa',
-        description: '',
-        date: DateTime(2026),
-        createdBy: 'ana',
-      )),
+      filter.matches(
+        Movement(
+          id: 'c',
+          amount: 1,
+          type: CategoryType.gasto,
+          categoryId: 'mercado',
+          accountId: '',
+          cardDebtId: 'visa',
+          description: '',
+          date: DateTime(2026),
+          createdBy: 'ana',
+        ),
+      ),
       isTrue,
     );
     expect(const MovementFilter(sourceId: 'cuenta').matches(_tx()), isTrue);

@@ -124,17 +124,17 @@ enum _Kind { ingreso, gasto, ahorro }
 
 extension on _Kind {
   String get label => switch (this) {
-        _Kind.ingreso => 'Ingresos',
-        _Kind.gasto => 'Gastos',
-        _Kind.ahorro => 'Ahorros',
-      };
+    _Kind.ingreso => 'Ingresos',
+    _Kind.gasto => 'Gastos',
+    _Kind.ahorro => 'Ahorros',
+  };
 
   /// Gastos covers facturas too, like the movement form's segments.
   Set<CategoryType> get types => switch (this) {
-        _Kind.ingreso => {CategoryType.ingreso},
-        _Kind.gasto => {CategoryType.gasto, CategoryType.factura},
-        _Kind.ahorro => {CategoryType.ahorro},
-      };
+    _Kind.ingreso => {CategoryType.ingreso},
+    _Kind.gasto => {CategoryType.gasto, CategoryType.factura},
+    _Kind.ahorro => {CategoryType.ahorro},
+  };
 }
 
 class _FilterSheet extends StatefulWidget {
@@ -172,10 +172,7 @@ class _FilterSheetState extends State<_FilterSheet> {
     final category = widget.categories.where((c) => c.id == _filter.categoryId).firstOrNull;
     final keepCategory = category == null || types.isEmpty || types.contains(category.type);
     setState(() {
-      _filter = _filter.copyWith(
-        types: types,
-        categoryId: keepCategory ? null : () => null,
-      );
+      _filter = _filter.copyWith(types: types, categoryId: keepCategory ? null : () => null);
     });
   }
 
@@ -251,8 +248,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                     for (final (id, name, icon) in [
                       for (final a in widget.accounts)
                         (a.id, a.name, Finan2Icons.cuenta(a.type.name)),
-                      for (final c in widget.cards)
-                        (c.id, c.name, Icons.credit_card_outlined),
+                      for (final c in widget.cards) (c.id, c.name, Icons.credit_card_outlined),
                     ])
                       Finan2Chip(
                         icon: icon,
@@ -280,9 +276,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                         label: '#$tag',
                         selected: _filter.tag == tag,
                         onTap: () => setState(() {
-                          _filter = _filter.copyWith(
-                            tag: () => _filter.tag == tag ? null : tag,
-                          );
+                          _filter = _filter.copyWith(tag: () => _filter.tag == tag ? null : tag);
                         }),
                       ),
                   ],

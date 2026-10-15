@@ -39,27 +39,19 @@ class EditRecurringBillScreen extends ConsumerStatefulWidget {
   final RecurringBill? bill;
 
   @override
-  ConsumerState<EditRecurringBillScreen> createState() =>
-      _EditRecurringBillScreenState();
+  ConsumerState<EditRecurringBillScreen> createState() => _EditRecurringBillScreenState();
 }
 
-class _EditRecurringBillScreenState
-    extends ConsumerState<EditRecurringBillScreen> {
-  late final _nameController = TextEditingController(
-    text: widget.bill?.name ?? '',
-  );
+class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScreen> {
+  late final _nameController = TextEditingController(text: widget.bill?.name ?? '');
   late final _amountController = TextEditingController(
     text: widget.bill != null ? widget.bill!.amount.toString() : '',
   );
   late var _frequency = widget.bill?.frequency ?? RecurringFrequency.monthly;
-  late var _startDate = widget.bill == null
-      ? _today()
-      : scheduleAnchor(widget.bill!);
+  late var _startDate = widget.bill == null ? _today() : scheduleAnchor(widget.bill!);
   late DateTime? _endDate = widget.bill?.endDate;
   late var _paused = widget.bill?.paused ?? false;
-  late _Segment _segment = _segmentFor(
-    widget.bill?.type ?? CategoryType.factura,
-  );
+  late _Segment _segment = _segmentFor(widget.bill?.type ?? CategoryType.factura);
   late String? _categoryId = widget.bill?.categoryId;
   late String? _accountId = widget.bill?.accountId;
 
@@ -124,14 +116,9 @@ class _EditRecurringBillScreenState
     final amount = int.tryParse(_amountController.text) ?? 0;
     final categoryId = _categoryId;
     final accountId = _accountId;
-    if (name.isEmpty ||
-        amount <= 0 ||
-        categoryId == null ||
-        accountId == null) {
+    if (name.isEmpty || amount <= 0 || categoryId == null || accountId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Completa el nombre, monto, categoría y cuenta.'),
-        ),
+        const SnackBar(content: Text('Completa el nombre, monto, categoría y cuenta.')),
       );
       return;
     }
@@ -165,9 +152,7 @@ class _EditRecurringBillScreenState
                 ? _today()
                 : widget.bill?.resumedOn,
             createdBy:
-                widget.bill?.createdBy ??
-                ref.read(authStateChangesProvider).value?.uid ??
-                '',
+                widget.bill?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
     if (mounted) Navigator.of(context).pop();
@@ -193,22 +178,15 @@ class _EditRecurringBillScreenState
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final accounts = ref.watch(accountsProvider).value ?? const [];
-    final currencySymbol = currencySymbolFor(
-      ref.watch(currentCurrencyProvider),
-    );
+    final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.bill != null;
 
-    final categoriesOfSegment = categories
-        .where((c) => c.type == _segment.categoryType)
-        .toList();
-    if (_categoryId != null &&
-        !categoriesOfSegment.any((c) => c.id == _categoryId)) {
+    final categoriesOfSegment = categories.where((c) => c.type == _segment.categoryType).toList();
+    if (_categoryId != null && !categoriesOfSegment.any((c) => c.id == _categoryId)) {
       _categoryId = null;
     }
-    _categoryId ??= categoriesOfSegment.isNotEmpty
-        ? categoriesOfSegment.first.id
-        : null;
+    _categoryId ??= categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
 
     Account? selectedAccount;
     for (final a in accounts) {
@@ -221,9 +199,7 @@ class _EditRecurringBillScreenState
 
     return Scaffold(
       appBar: Finan2FormTop(
-        title: isEditing
-            ? 'Editar factura recurrente'
-            : 'Nueva factura recurrente',
+        title: isEditing ? 'Editar factura recurrente' : 'Nueva factura recurrente',
         onSave: _save,
       ),
       body: SingleChildScrollView(
@@ -247,10 +223,7 @@ class _EditRecurringBillScreenState
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _amountController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),

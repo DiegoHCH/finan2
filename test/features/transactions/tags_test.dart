@@ -5,16 +5,16 @@ import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Movement _tx(List<String> tags, {String id = 't'}) => Movement(
-      id: id,
-      amount: 1000,
-      type: CategoryType.gasto,
-      categoryId: 'c',
-      accountId: 'a',
-      description: '',
-      date: DateTime(2026, 10, 1),
-      createdBy: 'u1',
-      tags: tags,
-    );
+  id: id,
+  amount: 1000,
+  type: CategoryType.gasto,
+  categoryId: 'c',
+  accountId: 'a',
+  description: '',
+  date: DateTime(2026, 10, 1),
+  createdBy: 'u1',
+  tags: tags,
+);
 
 void main() {
   test('normalizeTag lowercases, drops # and joins words', () {

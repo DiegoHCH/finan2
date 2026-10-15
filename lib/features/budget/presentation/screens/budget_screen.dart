@@ -73,9 +73,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
             Finan2AppTop(
               label: 'Presupuesto · $monthLabelCap',
               title: '${formatMoney(totalPlanned)} planeado',
-              trailing: pctAsignado != null
-                  ? _Badge(text: '$pctAsignado% asignado')
-                  : null,
+              trailing: pctAsignado != null ? _Badge(text: '$pctAsignado% asignado') : null,
               showBackButton: true,
             ),
             Expanded(
@@ -108,10 +106,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [
-                          Theme.of(context).colorScheme.primary,
-                          colors.brandDeep,
-                        ],
+                        colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -191,8 +186,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     const SizedBox(height: Finan2Space.md),
                     Center(
                       child: TextButton(
-                        onPressed: () =>
-                            _pickCategoryToBudget(context, ref, _month, unbudgeted),
+                        onPressed: () => _pickCategoryToBudget(context, ref, _month, unbudgeted),
                         child: const Text('+ Presupuestar otra categoría'),
                       ),
                     ),
@@ -214,9 +208,7 @@ Future<void> _editCategoryBudget(
   Category category,
   int currentAmount,
 ) async {
-  final controller = TextEditingController(
-    text: currentAmount > 0 ? currentAmount.toString() : '',
-  );
+  final controller = TextEditingController(text: currentAmount > 0 ? currentAmount.toString() : '');
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
   await showModalBottomSheet<void>(
     context: context,
@@ -335,10 +327,7 @@ class _CopyBudgetCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: Finan2Space.md),
-          FilledButton(
-            onPressed: busy ? null : onCopy,
-            child: Text(busy ? 'Copiando…' : 'Copiar'),
-          ),
+          FilledButton(onPressed: busy ? null : onCopy, child: Text(busy ? 'Copiando…' : 'Copiar')),
         ],
       ),
     );
@@ -355,10 +344,7 @@ class _Badge extends StatelessWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: colors.brandTint,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
       child: Text(
         text,
         style: TextStyle(
@@ -470,10 +456,7 @@ class _BudgetRow extends StatelessWidget {
                   carry > 0
                       ? 'Incluye ${formatMoney(carry)} que sobró antes'
                       : 'Descuenta ${formatMoney(-carry)} que te pasaste antes',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: carry > 0 ? colors.income : colors.expense,
-                  ),
+                  style: TextStyle(fontSize: 11, color: carry > 0 ? colors.income : colors.expense),
                 ),
               ),
             const SizedBox(height: 8),

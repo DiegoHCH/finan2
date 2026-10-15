@@ -19,12 +19,10 @@ class CreateJoinHouseholdScreen extends ConsumerStatefulWidget {
   const CreateJoinHouseholdScreen({super.key});
 
   @override
-  ConsumerState<CreateJoinHouseholdScreen> createState() =>
-      _CreateJoinHouseholdScreenState();
+  ConsumerState<CreateJoinHouseholdScreen> createState() => _CreateJoinHouseholdScreenState();
 }
 
-class _CreateJoinHouseholdScreenState
-    extends ConsumerState<CreateJoinHouseholdScreen> {
+class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdScreen> {
   final _formKey = GlobalKey<FormState>();
   final _householdNameController = TextEditingController(text: 'Nuestro hogar');
   final _codeController = TextEditingController();
@@ -42,16 +40,15 @@ class _CreateJoinHouseholdScreenState
     final controller = ref.read(householdControllerProvider.notifier);
     if (_choice == _HouseholdChoice.create) {
       // The home screen takes over from here - see householdSetupProvider.
-      await controller.createHousehold(
-        householdName: toTitleCase(_householdNameController.text),
-      );
+      await controller.createHousehold(householdName: toTitleCase(_householdNameController.text));
     } else {
       await controller.joinHousehold(code: _codeController.text.trim());
       if (controller.joinedWithoutKey && mounted) {
         await showFinan2InfoSheet(
           context,
           title: 'Te uniste al hogar',
-          message: 'Este código no traía la llave para ver montos. Pide a tu '
+          message:
+              'Este código no traía la llave para ver montos. Pide a tu '
               'pareja que te comparta el código completo desde la tarjeta del '
               'hogar en Ajustes.',
         );
@@ -62,8 +59,7 @@ class _CreateJoinHouseholdScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(householdControllerProvider);
-    ref.listen<AsyncValue<dynamic>>(householdControllerProvider,
-        (previous, next) {
+    ref.listen<AsyncValue<dynamic>>(householdControllerProvider, (previous, next) {
       if (next.hasError && !next.isLoading) {
         showFinan2ErrorSheet(context, message: friendlyErrorMessage(next.error));
       }
@@ -79,10 +75,7 @@ class _CreateJoinHouseholdScreenState
               children: [
                 const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
-                Text(
-                  'Un último paso',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+                Text('Un último paso', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: Finan2Space.xs),
                 Text(
                   'Crea el hogar desde cero o únete al que ya tiene tu pareja.',
@@ -94,8 +87,7 @@ class _CreateJoinHouseholdScreenState
                   title: 'Crear un hogar nuevo',
                   subtitle: 'Empiezas de cero e invitas a tu pareja.',
                   selected: _choice == _HouseholdChoice.create,
-                  onTap: () =>
-                      setState(() => _choice = _HouseholdChoice.create),
+                  onTap: () => setState(() => _choice = _HouseholdChoice.create),
                 ),
                 const SizedBox(height: Finan2Space.sm),
                 Finan2OptionCard(
@@ -103,18 +95,16 @@ class _CreateJoinHouseholdScreenState
                   title: 'Unirme con un código',
                   subtitle: 'Tu pareja ya creó el hogar.',
                   selected: _choice == _HouseholdChoice.join,
-                  onTap: () =>
-                      setState(() => _choice = _HouseholdChoice.join),
+                  onTap: () => setState(() => _choice = _HouseholdChoice.join),
                 ),
                 const SizedBox(height: Finan2Space.lg),
                 if (_choice == _HouseholdChoice.create)
                   Finan2Field(
                     label: 'Nombre del hogar',
                     controller: _householdNameController,
-                    validator: (value) =>
-                        (value == null || value.trim().isEmpty)
-                            ? 'Ponle un nombre a tu hogar'
-                            : null,
+                    validator: (value) => (value == null || value.trim().isEmpty)
+                        ? 'Ponle un nombre a tu hogar'
+                        : null,
                   )
                 else
                   Finan2Field(
@@ -134,9 +124,7 @@ class _CreateJoinHouseholdScreenState
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          _choice == _HouseholdChoice.create
-                              ? 'Crear hogar'
-                              : 'Entrar al hogar',
+                          _choice == _HouseholdChoice.create ? 'Crear hogar' : 'Entrar al hogar',
                         ),
                 ),
               ],

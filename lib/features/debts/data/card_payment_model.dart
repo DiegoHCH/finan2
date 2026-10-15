@@ -29,10 +29,7 @@ class CardPayment {
     String householdId,
   ) async {
     final data = doc.data()!;
-    final amount = await crypto.decryptAmount(
-      householdId,
-      data['amount'] as String,
-    );
+    final amount = await crypto.decryptAmount(householdId, data['amount'] as String);
     return CardPayment(
       id: doc.id,
       amount: amount,
@@ -43,10 +40,7 @@ class CardPayment {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'amount': await crypto.encryptAmount(householdId, amount),
       'fromAccountId': fromAccountId,

@@ -44,10 +44,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signInWithEmail(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+    await ref
+        .read(authControllerProvider.notifier)
+        .signInWithEmail(email: _emailController.text.trim(), password: _passwordController.text);
   }
 
   Future<void> _forgotPassword() async {
@@ -115,9 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       TextSpan(
                         text: '2',
                         style: TextStyle(
-                          color: Theme.of(context)
-                              .extension<Finan2Colors>()!
-                              .saving,
+                          color: Theme.of(context).extension<Finan2Colors>()!.saving,
                         ),
                       ),
                     ],
@@ -135,9 +132,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  validator: (value) => (value == null || !value.contains('@'))
-                      ? 'Ingresa un correo válido'
-                      : null,
+                  validator: (value) =>
+                      (value == null || !value.contains('@')) ? 'Ingresa un correo válido' : null,
                 ),
                 const SizedBox(height: Finan2Space.md),
                 Finan2Field(
@@ -145,9 +141,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.password],
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? 'Ingresa tu contraseña'
-                      : null,
+                  validator: (value) =>
+                      (value == null || value.isEmpty) ? 'Ingresa tu contraseña' : null,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -172,13 +167,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     const Expanded(child: Divider()),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Finan2Space.sm,
-                      ),
-                      child: Text(
-                        'o',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: Finan2Space.sm),
+                      child: Text('o', style: Theme.of(context).textTheme.bodySmall),
                     ),
                     const Expanded(child: Divider()),
                   ],
@@ -194,18 +184,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   OutlinedButton.icon(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref
-                            .read(authControllerProvider.notifier)
-                            .signInWithGoogle(),
+                        : () => ref.read(authControllerProvider.notifier).signInWithGoogle(),
                     icon: const Finan2GoogleIcon(),
                     label: const Text('Continuar con Google'),
                   ),
                 const SizedBox(height: Finan2Space.lg),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(builder: (_) => const SignupScreen()),
-                    ),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute<void>(builder: (_) => const SignupScreen())),
                     child: Text.rich(
                       TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,

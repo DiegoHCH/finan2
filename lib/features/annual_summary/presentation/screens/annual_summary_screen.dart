@@ -119,9 +119,7 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                               for (var i = 0; i < 12; i++)
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                      right: i == 11 ? 0 : 4,
-                                    ),
+                                    padding: EdgeInsets.only(right: i == 11 ? 0 : 4),
                                     child: Column(
                                       children: [
                                         Expanded(
@@ -132,17 +130,14 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
                                               heightFactor: maxSpend == 0
                                                   ? 0.04
                                                   : (0.04 +
-                                                          (summary.gastoPorMes[i] /
-                                                                  maxSpend) *
-                                                              0.96)
-                                                      .clamp(0.04, 1.0),
+                                                            (summary.gastoPorMes[i] / maxSpend) *
+                                                                0.96)
+                                                        .clamp(0.04, 1.0),
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: i == currentMonthIndex
                                                       ? colors.saving
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
+                                                      : Theme.of(context).colorScheme.primary,
                                                   borderRadius: const BorderRadius.only(
                                                     topLeft: Radius.circular(4),
                                                     topRight: Radius.circular(4),

@@ -34,9 +34,8 @@ class SavingsGoalController extends AsyncNotifier<void> {
     final repo = ref.read(savingsGoalRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => goal.id.isEmpty
-          ? repo.createGoal(householdId, goal)
-          : repo.updateGoal(householdId, goal),
+      () =>
+          goal.id.isEmpty ? repo.createGoal(householdId, goal) : repo.updateGoal(householdId, goal),
     );
   }
 
@@ -55,7 +54,9 @@ class SavingsGoalController extends AsyncNotifier<void> {
     if (householdId == null || user == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(savingsGoalRepositoryProvider).addContribution(
+      () => ref
+          .read(savingsGoalRepositoryProvider)
+          .addContribution(
             householdId,
             goalId,
             Contribution(date: DateTime.now(), amount: amount, createdBy: user.uid),
@@ -64,7 +65,6 @@ class SavingsGoalController extends AsyncNotifier<void> {
   }
 }
 
-final savingsGoalControllerProvider =
-    AsyncNotifierProvider<SavingsGoalController, void>(
+final savingsGoalControllerProvider = AsyncNotifierProvider<SavingsGoalController, void>(
   SavingsGoalController.new,
 );

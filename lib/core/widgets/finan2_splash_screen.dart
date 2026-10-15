@@ -48,7 +48,10 @@ class Finan2SplashScreen extends StatelessWidget {
                       ),
                       children: [
                         const TextSpan(text: 'Finan'),
-                        TextSpan(text: '2', style: TextStyle(color: saving)),
+                        TextSpan(
+                          text: '2',
+                          style: TextStyle(color: saving),
+                        ),
                       ],
                     ),
                   ),
@@ -100,11 +103,11 @@ class _LoadingDots extends StatefulWidget {
   State<_LoadingDots> createState() => _LoadingDotsState();
 }
 
-class _LoadingDotsState extends State<_LoadingDots>
-    with SingleTickerProviderStateMixin {
-  late final _controller =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1100))
-        ..repeat();
+class _LoadingDotsState extends State<_LoadingDots> with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat();
 
   @override
   void dispose() {

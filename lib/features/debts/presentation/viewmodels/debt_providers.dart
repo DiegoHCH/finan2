@@ -39,9 +39,8 @@ class DebtController extends AsyncNotifier<void> {
     final repo = ref.read(debtRepositoryProvider);
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => debt.id.isEmpty
-          ? repo.createDebt(householdId, debt)
-          : repo.updateDebt(householdId, debt),
+      () =>
+          debt.id.isEmpty ? repo.createDebt(householdId, debt) : repo.updateDebt(householdId, debt),
     );
   }
 
@@ -55,5 +54,4 @@ class DebtController extends AsyncNotifier<void> {
   }
 }
 
-final debtControllerProvider =
-    AsyncNotifierProvider<DebtController, void>(DebtController.new);
+final debtControllerProvider = AsyncNotifierProvider<DebtController, void>(DebtController.new);

@@ -25,9 +25,7 @@ class NotificationsScreen extends ConsumerWidget {
               title: unreadCount > 0 ? '$unreadCount nuevas' : 'Al día',
               trailing: unreadCount > 0
                   ? GestureDetector(
-                      onTap: () => ref
-                          .read(notificationControllerProvider.notifier)
-                          .markAllRead(),
+                      onTap: () => ref.read(notificationControllerProvider.notifier).markAllRead(),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                         decoration: BoxDecoration(
@@ -97,30 +95,18 @@ class _NotificationRow extends StatelessWidget {
     final brand = Theme.of(context).colorScheme.primary;
     final (icon, tint, iconColor) = switch (notification.type) {
       NotificationType.debtDue => (
-          Icons.credit_card_outlined,
-          colors.expense.withValues(alpha: 0.14),
-          colors.expense,
-        ),
-      NotificationType.goalNear => (
-          Icons.track_changes_outlined,
-          colors.brandTint,
-          brand,
-        ),
-      NotificationType.contribution => (
-          Icons.savings_outlined,
-          colors.savingTint,
-          colors.saving,
-        ),
+        Icons.credit_card_outlined,
+        colors.expense.withValues(alpha: 0.14),
+        colors.expense,
+      ),
+      NotificationType.goalNear => (Icons.track_changes_outlined, colors.brandTint, brand),
+      NotificationType.contribution => (Icons.savings_outlined, colors.savingTint, colors.saving),
       NotificationType.budgetExceeded => (
-          Icons.warning_amber_outlined,
-          colors.expense.withValues(alpha: 0.14),
-          colors.expense,
-        ),
-      NotificationType.partnerActivity => (
-          Icons.groups_outlined,
-          colors.brandTint,
-          brand,
-        ),
+        Icons.warning_amber_outlined,
+        colors.expense.withValues(alpha: 0.14),
+        colors.expense,
+      ),
+      NotificationType.partnerActivity => (Icons.groups_outlined, colors.brandTint, brand),
     };
 
     return Container(

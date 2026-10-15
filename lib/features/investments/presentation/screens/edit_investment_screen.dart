@@ -65,9 +65,8 @@ class _EditInvestmentScreenState extends ConsumerState<EditInvestmentScreen> {
           : 0,
       investedAmount: int.tryParse(_investedController.text) ?? 0,
       currentValue: int.tryParse(_currentValueController.text) ?? 0,
-      createdBy: widget.investment?.createdBy ??
-          ref.read(authStateChangesProvider).value?.uid ??
-          '',
+      createdBy:
+          widget.investment?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
     );
     await ref.read(investmentControllerProvider.notifier).save(investment);
     if (mounted) Navigator.of(context).pop();

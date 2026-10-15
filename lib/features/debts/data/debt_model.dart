@@ -12,18 +12,16 @@ enum DebtStatus { critical, warning, good }
 
 extension DebtTypeLabel on DebtType {
   String get label => switch (this) {
-        DebtType.tarjeta => 'Tarjeta',
-        DebtType.credito => 'Crédito',
-        DebtType.hipoteca => 'Hipoteca',
-        DebtType.vehiculo => 'Vehículo',
-      };
+    DebtType.tarjeta => 'Tarjeta',
+    DebtType.credito => 'Crédito',
+    DebtType.hipoteca => 'Hipoteca',
+    DebtType.vehiculo => 'Vehículo',
+  };
 
   bool get isCard => this == DebtType.tarjeta;
 
-  static DebtType fromName(String name) => DebtType.values.firstWhere(
-        (t) => t.name == name,
-        orElse: () => DebtType.credito,
-      );
+  static DebtType fromName(String name) =>
+      DebtType.values.firstWhere((t) => t.name == name, orElse: () => DebtType.credito);
 }
 
 /// A debt shared by the household - a credit card or a fixed-installment
@@ -97,8 +95,7 @@ class Debt {
   /// El pago mensual "base" más el abono extra: para tarjetas es el mínimo,
   /// para créditos es la cuota fija - en ambos casos más lo que se declare
   /// como abono extra.
-  int get monthlyBasePayment =>
-      (type.isCard ? minPayment : monthlyPayment) + extraPayment;
+  int get monthlyBasePayment => (type.isCard ? minPayment : monthlyPayment) + extraPayment;
 
   static Future<Debt> fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
@@ -130,10 +127,7 @@ class Debt {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'type': type.name,
@@ -149,10 +143,8 @@ class Debt {
       'minPayment': await crypto.encryptAmount(householdId, minPayment),
       'extraPayment': await crypto.encryptAmount(householdId, extraPayment),
       'cutoffDay': cutoffDay,
-      'originalAmount':
-          await crypto.encryptAmount(householdId, originalAmount),
-      'monthlyPayment':
-          await crypto.encryptAmount(householdId, monthlyPayment),
+      'originalAmount': await crypto.encryptAmount(householdId, originalAmount),
+      'monthlyPayment': await crypto.encryptAmount(householdId, monthlyPayment),
       'termMonths': termMonths,
       'paidInstallments': paidInstallments,
       'createdBy': createdBy,

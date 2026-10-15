@@ -13,10 +13,7 @@ class PdfReportWriter {
     doc.addPage(
       pw.MultiPage(
         build: (context) => [
-          pw.Text(
-            report.title,
-            style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
-          ),
+          pw.Text(report.title, style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
           pw.Text(
             report.subtitle,
             style: const pw.TextStyle(fontSize: 11, color: PdfColors.grey700),

@@ -8,8 +8,8 @@ import '../data/debt_model.dart';
 /// trio, since they're already the same red/gold/green used everywhere else.
 extension DebtStatusColor on DebtStatus {
   Color of(Finan2Colors colors) => switch (this) {
-        DebtStatus.critical => colors.expense,
-        DebtStatus.warning => colors.saving,
-        DebtStatus.good => colors.income,
-      };
+    DebtStatus.critical => colors.expense,
+    DebtStatus.warning => colors.saving,
+    DebtStatus.good => colors.income,
+  };
 }

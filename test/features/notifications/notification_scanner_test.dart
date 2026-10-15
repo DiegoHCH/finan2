@@ -17,12 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _householdId = 'h1';
 final _now = DateTime(2026, 7, 9);
 
-Debt _debt({
-  String id = 'd1',
-  int paymentDay = 10,
-  int balance = 1000000,
-  String createdBy = '',
-}) {
+Debt _debt({String id = 'd1', int paymentDay = 10, int balance = 1000000, String createdBy = ''}) {
   return Debt(
     id: id,
     name: 'Tarjeta',
@@ -127,10 +122,7 @@ void main() {
       );
       expect(returned, hasLength(1));
       expect(returned.single.notification.title, 'Hoy pagas Tarjeta');
-      expect(
-        returned.single.notification.body,
-        'Hoy es el día de pago de tu deuda Tarjeta.',
-      );
+      expect(returned.single.notification.body, 'Hoy es el día de pago de tu deuda Tarjeta.');
     });
 
     test('does not notify when payment day is more than 3 days away', () async {

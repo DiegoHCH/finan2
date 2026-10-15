@@ -44,7 +44,6 @@ class NotificationController extends AsyncNotifier<void> {
   }
 }
 
-final notificationControllerProvider =
-    AsyncNotifierProvider<NotificationController, void>(
+final notificationControllerProvider = AsyncNotifierProvider<NotificationController, void>(
   NotificationController.new,
 );

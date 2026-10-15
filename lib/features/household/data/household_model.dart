@@ -16,10 +16,7 @@ class HouseholdMemberInfo {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      if (photoUrl != null) 'photoUrl': photoUrl,
-    };
+    return {'name': name, if (photoUrl != null) 'photoUrl': photoUrl};
   }
 }
 
@@ -46,9 +43,7 @@ class Household {
   final int startYear;
   final String weekStartsOn;
 
-  factory Household.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
+  factory Household.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     final rawMemberInfo = (data['memberInfo'] as Map?)?.cast<String, dynamic>() ?? {};
     return Household(
@@ -56,10 +51,8 @@ class Household {
       name: data['name'] as String? ?? 'Nuestro hogar',
       members: List<String>.from(data['members'] as List? ?? const []),
       memberInfo: rawMemberInfo.map(
-        (uid, info) => MapEntry(
-          uid,
-          HouseholdMemberInfo.fromMap((info as Map).cast<String, dynamic>()),
-        ),
+        (uid, info) =>
+            MapEntry(uid, HouseholdMemberInfo.fromMap((info as Map).cast<String, dynamic>())),
       ),
       currency: data['settings']?['currency'] as String? ?? 'COP',
       startYear: data['settings']?['startYear'] as int? ?? DateTime.now().year,
@@ -72,11 +65,7 @@ class Household {
       'name': name,
       'members': members,
       'memberInfo': memberInfo.map((uid, info) => MapEntry(uid, info.toMap())),
-      'settings': {
-        'currency': currency,
-        'startYear': startYear,
-        'weekStartsOn': weekStartsOn,
-      },
+      'settings': {'currency': currency, 'startYear': startYear, 'weekStartsOn': weekStartsOn},
     };
   }
 }

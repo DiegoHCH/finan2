@@ -28,8 +28,7 @@ class NotificationPrefsRepository {
       dailyReminder: prefs.getBool(_keyDailyReminder) ?? defaults.dailyReminder,
       dailyReminderTime: TimeOfDay(
         hour: prefs.getInt(_keyDailyReminderHour) ?? defaults.dailyReminderTime.hour,
-        minute:
-            prefs.getInt(_keyDailyReminderMinute) ?? defaults.dailyReminderTime.minute,
+        minute: prefs.getInt(_keyDailyReminderMinute) ?? defaults.dailyReminderTime.minute,
       ),
       debtPayments: prefs.getBool(_keyDebtPayments) ?? defaults.debtPayments,
       goalProgress: prefs.getBool(_keyGoalProgress) ?? defaults.goalProgress,
@@ -68,14 +67,14 @@ class NotificationPrefsRepository {
         .collection('memberPrefs')
         .doc(uid)
         .set({
-      'dailyReminder': prefs.dailyReminder,
-      'dailyReminderHour': prefs.dailyReminderTime.hour,
-      'dailyReminderMinute': prefs.dailyReminderTime.minute,
-      'weeklySummary': prefs.weeklySummary,
-      'debtPayments': prefs.debtPayments,
-      'goalProgress': prefs.goalProgress,
-      'budgetExceeded': prefs.budgetExceeded,
-      'partnerActivity': prefs.partnerActivity,
-    });
+          'dailyReminder': prefs.dailyReminder,
+          'dailyReminderHour': prefs.dailyReminderTime.hour,
+          'dailyReminderMinute': prefs.dailyReminderTime.minute,
+          'weeklySummary': prefs.weeklySummary,
+          'debtPayments': prefs.debtPayments,
+          'goalProgress': prefs.goalProgress,
+          'budgetExceeded': prefs.budgetExceeded,
+          'partnerActivity': prefs.partnerActivity,
+        });
   }
 }

@@ -65,11 +65,9 @@ class DebtDetailScreen extends ConsumerWidget {
               title: current.name,
               trailing: IconButton(
                 icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => EditDebtScreen(debt: current),
-                  ),
-                ),
+                onPressed: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute<void>(builder: (_) => EditDebtScreen(debt: current))),
               ),
             ),
             Expanded(
@@ -235,17 +233,11 @@ class DebtDetailScreen extends ConsumerWidget {
   }
 }
 
-Future<void> _registerPayment(
-  BuildContext context,
-  WidgetRef ref,
-  String cardDebtId,
-) async {
+Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDebtId) async {
   final accounts = ref.read(accountsProvider).value ?? const <Account>[];
   if (accounts.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Crea una cuenta primero para poder registrar el pago.'),
-      ),
+      const SnackBar(content: Text('Crea una cuenta primero para poder registrar el pago.')),
     );
     return;
   }
@@ -298,15 +290,16 @@ Future<void> _registerPayment(
                       final amount = int.tryParse(controller.text) ?? 0;
                       if (amount > 0) {
                         setSheetState(() => submitting = true);
-                        await ref.read(cardPaymentControllerProvider.notifier).createPayment(
+                        await ref
+                            .read(cardPaymentControllerProvider.notifier)
+                            .createPayment(
                               CardPayment(
                                 id: '',
                                 amount: amount,
                                 fromAccountId: selectedAccountId,
                                 cardDebtId: cardDebtId,
                                 date: DateTime.now(),
-                                createdBy:
-                                    ref.read(authStateChangesProvider).value?.uid ?? '',
+                                createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
                               ),
                             );
                       }
@@ -396,7 +389,9 @@ class _CardPaymentRow extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
       decoration: showDivider
-          ? BoxDecoration(border: Border(bottom: BorderSide(color: colors.line)))
+          ? BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.line)),
+            )
           : null,
       child: Row(
         children: [
@@ -453,7 +448,9 @@ class _ScheduleRow extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 9),
       decoration: showDivider
-          ? BoxDecoration(border: Border(bottom: BorderSide(color: colors.line)))
+          ? BoxDecoration(
+              border: Border(bottom: BorderSide(color: colors.line)),
+            )
           : null,
       child: Row(
         children: [
@@ -482,10 +479,7 @@ class _ScheduleRow extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                ),
+                Text(label, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
                 Text(
                   'Saldo → ${formatMoney(entry.endingBalance)}',
                   style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
@@ -495,11 +489,7 @@ class _ScheduleRow extends ConsumerWidget {
           ),
           Text(
             formatMoney(entry.payment),
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: accent,
-            ),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: accent),
           ),
         ],
       ),

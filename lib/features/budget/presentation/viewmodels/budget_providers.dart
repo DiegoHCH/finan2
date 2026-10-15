@@ -21,30 +21,27 @@ final currentMonthBudgetProvider = StreamProvider<Map<String, int>>((ref) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const {});
   final now = currentYearMonth();
-  return ref.watch(budgetRepositoryProvider).watchBudget(
-    householdId,
-    year: now.year,
-    month: now.month,
-  );
+  return ref
+      .watch(budgetRepositoryProvider)
+      .watchBudget(householdId, year: now.year, month: now.month);
 });
 
 /// categoryId -> planned amount for any month, for Presupuesto while
 /// browsing.
-final budgetOfMonthProvider =
-    StreamProvider.autoDispose.family<Map<String, int>, YearMonth>((ref, month) {
+final budgetOfMonthProvider = StreamProvider.autoDispose.family<Map<String, int>, YearMonth>((
+  ref,
+  month,
+) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const {});
-  return ref.watch(budgetRepositoryProvider).watchBudget(
-    householdId,
-    year: month.year,
-    month: month.month,
-  );
+  return ref
+      .watch(budgetRepositoryProvider)
+      .watchBudget(householdId, year: month.year, month: month.month);
 });
 
 /// What each rollover category carries into [month] - see
 /// computeCarryOver. Empty until the year's budgets and movements load.
-final carryOverProvider =
-    Provider.autoDispose.family<Map<String, int>, YearMonth>((ref, month) {
+final carryOverProvider = Provider.autoDispose.family<Map<String, int>, YearMonth>((ref, month) {
   final rolloverIds = {
     for (final category in ref.watch(categoriesProvider).value ?? const <Category>[])
       if (category.rollover) category.id,
@@ -97,8 +94,10 @@ class BudgetMonthView {
   final bool offerCopy;
 }
 
-final budgetMonthViewProvider =
-    Provider.autoDispose.family<BudgetMonthView, YearMonth>((ref, month) {
+final budgetMonthViewProvider = Provider.autoDispose.family<BudgetMonthView, YearMonth>((
+  ref,
+  month,
+) {
   final budgetAsync = ref.watch(budgetOfMonthProvider(month));
   final budget = budgetAsync.value ?? const <String, int>{};
   final previousBudget =
@@ -126,8 +125,10 @@ final budgetMonthViewProvider =
   );
 });
 
-final _budgetsOfYearProvider =
-    StreamProvider.autoDispose.family<Map<int, Map<String, int>>, int>((ref, year) {
+final _budgetsOfYearProvider = StreamProvider.autoDispose.family<Map<int, Map<String, int>>, int>((
+  ref,
+  year,
+) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const {});
   return ref.watch(budgetRepositoryProvider).watchBudgetsForYear(householdId, year: year);
@@ -142,13 +143,15 @@ class BudgetController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(budgetRepositoryProvider).setCategoryAmount(
-        householdId,
-        year: month.year,
-        month: month.month,
-        categoryId: categoryId,
-        amount: amount,
-      ),
+      () => ref
+          .read(budgetRepositoryProvider)
+          .setCategoryAmount(
+            householdId,
+            year: month.year,
+            month: month.month,
+            categoryId: categoryId,
+            amount: amount,
+          ),
     );
   }
 
@@ -158,11 +161,9 @@ class BudgetController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(budgetRepositoryProvider).copyBudget(
-        householdId,
-        from: month.plusMonths(-1),
-        to: month,
-      ),
+      () => ref
+          .read(budgetRepositoryProvider)
+          .copyBudget(householdId, from: month.plusMonths(-1), to: month),
     );
   }
 }

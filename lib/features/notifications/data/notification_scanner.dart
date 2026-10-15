@@ -120,7 +120,7 @@ class NotificationScanner {
           body: isToday
               ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
               : 'La cuota de ${debt.name} vence en $daysUntil '
-                  '${daysUntil == 1 ? 'día' : 'días'}.',
+                    '${daysUntil == 1 ? 'día' : 'días'}.',
           createdAt: now,
           read: false,
         ),
@@ -227,10 +227,7 @@ class NotificationScanner {
         );
         if (notification != null) {
           created.add(
-            ScannedNotification(
-              notification: notification,
-              excludePushUid: contribution.createdBy,
-            ),
+            ScannedNotification(notification: notification, excludePushUid: contribution.createdBy),
           );
         }
       }
@@ -303,13 +300,7 @@ class NotificationScanner {
       await notify('debt_${debt.id}', debt.createdBy, 'Nueva deuda', debt.name, now);
     }
     for (final account in accounts) {
-      await notify(
-        'account_${account.id}',
-        account.createdBy,
-        'Nueva cuenta',
-        account.name,
-        now,
-      );
+      await notify('account_${account.id}', account.createdBy, 'Nueva cuenta', account.name, now);
     }
     for (final investment in investments) {
       await notify(
@@ -321,13 +312,7 @@ class NotificationScanner {
       );
     }
     for (final bill in recurringBills) {
-      await notify(
-        'bill_${bill.id}',
-        bill.createdBy,
-        'Nueva factura recurrente',
-        bill.name,
-        now,
-      );
+      await notify('bill_${bill.id}', bill.createdBy, 'Nueva factura recurrente', bill.name, now);
     }
     for (final category in categories) {
       await notify(
@@ -349,13 +334,7 @@ class NotificationScanner {
       );
     }
     for (final goal in goals) {
-      await notify(
-        'goal_${goal.id}',
-        goal.createdBy,
-        'Nueva meta de ahorro',
-        goal.name,
-        now,
-      );
+      await notify('goal_${goal.id}', goal.createdBy, 'Nueva meta de ahorro', goal.name, now);
     }
   }
 }

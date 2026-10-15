@@ -3,8 +3,7 @@
 /// but not required.
 final RegExp passwordPolicy = RegExp(r'^(?=.*[A-Z])(?=.*[a-z]).{8,}$');
 
-const String passwordPolicyMessage =
-    'Mínimo 8 caracteres, con una mayúscula y una minúscula';
+const String passwordPolicyMessage = 'Mínimo 8 caracteres, con una mayúscula y una minúscula';
 
 String? validateNewPassword(String? value) {
   if (value == null || !passwordPolicy.hasMatch(value)) {

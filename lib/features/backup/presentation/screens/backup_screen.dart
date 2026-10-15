@@ -43,55 +43,56 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _create() => _run(() async {
-        final bytes = await ref.read(backupControllerProvider.notifier).create();
-        if (bytes == null) return;
-        final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        await SharePlus.instance.share(
-          ShareParams(
-            files: [
-              XFile.fromData(
-                Uint8List.fromList(bytes),
-                mimeType: 'application/json',
-                name: 'finan2-copia-$stamp.finan2',
-              ),
-            ],
+    final bytes = await ref.read(backupControllerProvider.notifier).create();
+    if (bytes == null) return;
+    final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [
+          XFile.fromData(
+            Uint8List.fromList(bytes),
+            mimeType: 'application/json',
+            name: 'finan2-copia-$stamp.finan2',
           ),
-        );
-      });
+        ],
+      ),
+    );
+  });
 
   Future<void> _restore() => _run(() async {
-        final file = await FilePicker.pickFile();
-        if (file == null) return;
-        final bytes = await file.readAsBytes();
-        final backup = ref.read(backupControllerProvider.notifier);
-        final info = backup.inspect(bytes);
-        if (!mounted) return;
-        final confirmed = await showFinan2ConfirmSheet(
-          context,
-          title: 'Restaurar la copia',
-          message: 'El hogar volverá a como estaba el '
-              '${DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es').format(info.createdAt)}. '
-              'Lo que se haya creado después se borra y lo que cambió vuelve a '
-              'como estaba, también para tu pareja.',
-          confirmLabel: 'Restaurar',
-          destructive: true,
-        );
-        if (!confirmed) return;
-        final result = await backup.restore(bytes);
-        if (result == null || !mounted) return;
-        await showFinan2InfoSheet(
-          context,
-          title: 'Copia restaurada',
-          message: [
-            '${result.restored} registros restaurados'
-                '${result.removed > 0 ? ' y ${result.removed} posteriores borrados' : ''}.',
-            if (result.reattributed > 0)
-              '${result.reattributed} registros de tu pareja que se habían borrado '
-                  'quedan a tu nombre: solo puedes crear registros como tuyos. En los '
-                  'movimientos se conserva quién pagó.',
-          ].join(' '),
-        );
-      });
+    final file = await FilePicker.pickFile();
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
+    final backup = ref.read(backupControllerProvider.notifier);
+    final info = backup.inspect(bytes);
+    if (!mounted) return;
+    final confirmed = await showFinan2ConfirmSheet(
+      context,
+      title: 'Restaurar la copia',
+      message:
+          'El hogar volverá a como estaba el '
+          '${DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es').format(info.createdAt)}. '
+          'Lo que se haya creado después se borra y lo que cambió vuelve a '
+          'como estaba, también para tu pareja.',
+      confirmLabel: 'Restaurar',
+      destructive: true,
+    );
+    if (!confirmed) return;
+    final result = await backup.restore(bytes);
+    if (result == null || !mounted) return;
+    await showFinan2InfoSheet(
+      context,
+      title: 'Copia restaurada',
+      message: [
+        '${result.restored} registros restaurados'
+            '${result.removed > 0 ? ' y ${result.removed} posteriores borrados' : ''}.',
+        if (result.reattributed > 0)
+          '${result.reattributed} registros de tu pareja que se habían borrado '
+              'quedan a tu nombre: solo puedes crear registros como tuyos. En los '
+              'movimientos se conserva quién pagó.',
+      ].join(' '),
+    );
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,10 +119,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     style: textStyle,
                   ),
                   const SizedBox(height: Finan2Space.sm),
-                  Text(
-                    'Solo se puede restaurar en este mismo hogar.',
-                    style: textStyle,
-                  ),
+                  Text('Solo se puede restaurar en este mismo hogar.', style: textStyle),
                   const SizedBox(height: Finan2Space.xl),
                   FilledButton.icon(
                     onPressed: _busy ? null : _create,

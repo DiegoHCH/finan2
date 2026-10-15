@@ -120,8 +120,7 @@ void main() {
     int amount = 50000,
     CategoryType type = CategoryType.gasto,
     String cardDebtId = 'card1',
-  }) =>
-      movement(id: id, amount: amount, type: type, accountId: '', cardDebtId: cardDebtId);
+  }) => movement(id: id, amount: amount, type: type, accountId: '', cardDebtId: cardDebtId);
 
   test('creating an expense debits the account balance', () async {
     await seedAccount('acc1', 500000);
@@ -162,10 +161,7 @@ void main() {
         .get();
     final id = snap.docs.single.id;
 
-    await repository.updateTransaction(
-      _householdId,
-      movement(id: id, amount: 80000),
-    );
+    await repository.updateTransaction(_householdId, movement(id: id, amount: 80000));
     expect(await readBalance('acc1'), 420000);
   });
 
@@ -188,15 +184,18 @@ void main() {
     expect(await readBalance('acc2'), 50000);
   });
 
-  test('creating a transaction for a deleted account still records it, balance untouched', () async {
-    await repository.createTransaction(_householdId, movement(accountId: 'ghost'));
-    final snap = await firestore
-        .collection('households')
-        .doc(_householdId)
-        .collection('transactions')
-        .get();
-    expect(snap.docs, hasLength(1));
-  });
+  test(
+    'creating a transaction for a deleted account still records it, balance untouched',
+    () async {
+      await repository.createTransaction(_householdId, movement(accountId: 'ghost'));
+      final snap = await firestore
+          .collection('households')
+          .doc(_householdId)
+          .collection('transactions')
+          .get();
+      expect(snap.docs, hasLength(1));
+    },
+  );
 
   test('a card purchase increases what is owed instead of debiting an account', () async {
     await seedCard('card1', 1000000);

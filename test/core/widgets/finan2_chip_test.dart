@@ -25,10 +25,7 @@ void main() {
   });
 
   testWidgets('still renders with only an icon and no label', (tester) async {
-    await pumpFinan2(
-      tester,
-      Finan2Chip(icon: Icons.credit_card, selected: false, onTap: () {}),
-    );
+    await pumpFinan2(tester, Finan2Chip(icon: Icons.credit_card, selected: false, onTap: () {}));
     expect(find.byIcon(Icons.credit_card), findsOneWidget);
     expect(find.byType(Text), findsNothing);
   });

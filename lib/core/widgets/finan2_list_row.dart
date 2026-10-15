@@ -51,11 +51,7 @@ class Finan2ListRow extends StatelessWidget {
             if (value != null)
               Text(
                 value!,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: colors.inkFaint,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.inkFaint),
               ),
             if (onTap != null) ...[
               const SizedBox(width: 8),

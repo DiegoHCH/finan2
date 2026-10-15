@@ -6,18 +6,14 @@ import '../../../core/observability/error_reporter.dart';
 
 class TransactionRepository {
   TransactionRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
 
-  CollectionReference<Map<String, dynamic>> _transactions(
-    String householdId,
-  ) =>
-      _db.collection('households').doc(householdId).collection(
-            'transactions',
-          );
+  CollectionReference<Map<String, dynamic>> _transactions(String householdId) =>
+      _db.collection('households').doc(householdId).collection('transactions');
 
   CollectionReference<Map<String, dynamic>> _accounts(String householdId) =>
       _db.collection('households').doc(householdId).collection('accounts');
@@ -46,10 +42,7 @@ class TransactionRepository {
   /// The account or card-debt [tx] pays from/into, or null if neither is set
   /// (e.g. the account it pointed to was deleted and the movement was left
   /// as-is).
-  DocumentReference<Map<String, dynamic>>? _sourceRef(
-    String householdId,
-    Movement tx,
-  ) {
+  DocumentReference<Map<String, dynamic>>? _sourceRef(String householdId, Movement tx) {
     if (tx.isCardPurchase) return _debts(householdId).doc(tx.cardDebtId);
     if (tx.accountId.isNotEmpty) return _accounts(householdId).doc(tx.accountId);
     return null;
@@ -121,26 +114,23 @@ class TransactionRepository {
         .where('month', isEqualTo: month)
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap((snap) => Future.wait(
-              snap.docs.map(
-                (doc) => Movement.fromFirestore(doc, _crypto, householdId),
-              ),
-            ));
+        .asyncMap(
+          (snap) => Future.wait(
+            snap.docs.map((doc) => Movement.fromFirestore(doc, _crypto, householdId)),
+          ),
+        );
   }
 
-  Stream<List<Movement>> watchTransactionsForYear(
-    String householdId, {
-    required int year,
-  }) {
+  Stream<List<Movement>> watchTransactionsForYear(String householdId, {required int year}) {
     return _transactions(householdId)
         .where('year', isEqualTo: year)
         .orderBy('date', descending: true)
         .snapshots()
-        .asyncMap((snap) => Future.wait(
-              snap.docs.map(
-                (doc) => Movement.fromFirestore(doc, _crypto, householdId),
-              ),
-            ));
+        .asyncMap(
+          (snap) => Future.wait(
+            snap.docs.map((doc) => Movement.fromFirestore(doc, _crypto, householdId)),
+          ),
+        );
   }
 
   /// Creates [tx] and, atomically, applies its effect on its account's or
@@ -158,10 +148,7 @@ class TransactionRepository {
       if (sourceSnap != null && sourceSnap.exists) {
         final balance = await _decryptBalance(sourceSnap, householdId);
         transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(
-            householdId,
-            balance + _sourceDelta(tx),
-          ),
+          'balance': await _crypto.encryptAmount(householdId, balance + _sourceDelta(tx)),
         });
       }
     });
@@ -209,10 +196,7 @@ class TransactionRepository {
       if (sourceSnap != null && sourceSnap.exists) {
         final balance = await _decryptBalance(sourceSnap, householdId);
         transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(
-            householdId,
-            balance + _sourceDelta(tx),
-          ),
+          'balance': await _crypto.encryptAmount(householdId, balance + _sourceDelta(tx)),
         });
       }
     });
@@ -245,9 +229,7 @@ class TransactionRepository {
 
       // All reads must happen before any writes in a Firestore transaction.
       final newSnap = newRef == null ? null : await transaction.get(newRef);
-      final oldSourceSnap = (samePath || oldRef == null)
-          ? null
-          : await transaction.get(oldRef);
+      final oldSourceSnap = (samePath || oldRef == null) ? null : await transaction.get(oldRef);
 
       transaction.update(txRef, data);
 
@@ -255,29 +237,20 @@ class TransactionRepository {
         if (newRef != null && newSnap != null && newSnap.exists) {
           final balance = await _decryptBalance(newSnap, householdId);
           transaction.update(newRef, {
-            'balance': await _crypto.encryptAmount(
-              householdId,
-              balance - oldDelta + newDelta,
-            ),
+            'balance': await _crypto.encryptAmount(householdId, balance - oldDelta + newDelta),
           });
         }
       } else {
         if (oldRef != null && oldSourceSnap != null && oldSourceSnap.exists) {
           final oldBalance = await _decryptBalance(oldSourceSnap, householdId);
           transaction.update(oldRef, {
-            'balance': await _crypto.encryptAmount(
-              householdId,
-              oldBalance - oldDelta,
-            ),
+            'balance': await _crypto.encryptAmount(householdId, oldBalance - oldDelta),
           });
         }
         if (newRef != null && newSnap != null && newSnap.exists) {
           final newBalance = await _decryptBalance(newSnap, householdId);
           transaction.update(newRef, {
-            'balance': await _crypto.encryptAmount(
-              householdId,
-              newBalance + newDelta,
-            ),
+            'balance': await _crypto.encryptAmount(householdId, newBalance + newDelta),
           });
         }
       }
@@ -289,12 +262,7 @@ class TransactionRepository {
         (oldTx.categoryId != tx.categoryId ||
             oldTx.date.year != tx.date.year ||
             oldTx.date.month != tx.date.month)) {
-      await _refreshBudgetAlert(
-        householdId,
-        oldTx.categoryId,
-        oldTx.date.year,
-        oldTx.date.month,
-      );
+      await _refreshBudgetAlert(householdId, oldTx.categoryId, oldTx.date.year, oldTx.date.month);
     }
   }
 
@@ -321,10 +289,7 @@ class TransactionRepository {
       if (sourceSnap != null && sourceSnap.exists) {
         final balance = await _decryptBalance(sourceSnap, householdId);
         transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(
-            householdId,
-            balance - _sourceDelta(oldTx),
-          ),
+          'balance': await _crypto.encryptAmount(householdId, balance - _sourceDelta(oldTx)),
         });
       }
     });

@@ -7,16 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/test_household_crypto.dart';
 
 Movement _movement({String paidBy = ''}) => Movement(
-      id: '',
-      amount: 1000,
-      type: CategoryType.gasto,
-      categoryId: 'c',
-      accountId: 'a',
-      description: '',
-      date: DateTime(2026, 10, 15),
-      createdBy: 'u1',
-      paidBy: paidBy,
-    );
+  id: '',
+  amount: 1000,
+  type: CategoryType.gasto,
+  categoryId: 'c',
+  accountId: 'a',
+  description: '',
+  date: DateTime(2026, 10, 15),
+  createdBy: 'u1',
+  paidBy: paidBy,
+);
 
 void main() {
   test('the payer defaults to whoever logged the movement', () {

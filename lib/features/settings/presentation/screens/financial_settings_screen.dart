@@ -28,7 +28,9 @@ class FinancialSettingsScreen extends ConsumerWidget {
     String? weekStartsOn,
   }) async {
     try {
-      await ref.read(householdControllerProvider.notifier).updateSettings(
+      await ref
+          .read(householdControllerProvider.notifier)
+          .updateSettings(
             household.id,
             currency: currency,
             startYear: startYear,
@@ -56,8 +58,7 @@ class FinancialSettingsScreen extends ConsumerWidget {
             for (final entry in options.entries)
               ListTile(
                 title: Text(entry.value),
-                trailing:
-                    entry.key == current ? const Icon(Icons.check) : null,
+                trailing: entry.key == current ? const Icon(Icons.check) : null,
                 onTap: () => Navigator.of(context).pop(entry.key),
               ),
           ],
@@ -103,15 +104,13 @@ class FinancialSettingsScreen extends ConsumerWidget {
                       Finan2ListRow(
                         icon: Finan2Icons.moneda,
                         label: 'Moneda',
-                        value: _currencies[household.currency] ??
-                            household.currency,
+                        value: _currencies[household.currency] ?? household.currency,
                         onTap: () => _pickFromOptions(
                           context,
                           ref,
                           options: _currencies,
                           current: household.currency,
-                          onSelected: (value) =>
-                              _saveSettings(context, ref, currency: value),
+                          onSelected: (value) => _saveSettings(context, ref, currency: value),
                         ),
                       ),
                       Finan2ListRow(
@@ -123,38 +122,29 @@ class FinancialSettingsScreen extends ConsumerWidget {
                       Finan2ListRow(
                         icon: Finan2Icons.semana,
                         label: 'La semana inicia en',
-                        value: _weekStarts[household.weekStartsOn] ??
-                            household.weekStartsOn,
+                        value: _weekStarts[household.weekStartsOn] ?? household.weekStartsOn,
                         onTap: () => _pickFromOptions(
                           context,
                           ref,
                           options: _weekStarts,
                           current: household.weekStartsOn,
-                          onSelected: (value) => _saveSettings(
-                            context,
-                            ref,
-                            weekStartsOn: value,
-                          ),
+                          onSelected: (value) => _saveSettings(context, ref, weekStartsOn: value),
                         ),
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.categorias,
                         label: 'Categorías',
                         value: '$categoryCount',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const CategoriesScreen(),
-                          ),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const CategoriesScreen())),
                       ),
                       Finan2ListRow(
                         icon: Finan2Icons.cuentas,
                         label: 'Cuentas',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const AccountsScreen(),
-                          ),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const AccountsScreen())),
                       ),
                     ],
                   ),

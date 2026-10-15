@@ -36,9 +36,10 @@ class SettingsScreen extends ConsumerWidget {
     final brand = Theme.of(context).colorScheme.primary;
     final members = household.members;
     final formatMoney = ref.watch(moneyFormatterProvider);
-    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {})
-        .values
-        .fold(0, (sum, v) => sum + v);
+    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {}).values.fold(
+      0,
+      (sum, v) => sum + v,
+    );
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final hasKey = ref.watch(householdHasKeyProvider(household.id)).value;
@@ -85,19 +86,15 @@ class SettingsScreen extends ConsumerWidget {
                             SizedBox(
                               width: double.infinity,
                               child: FilledButton(
-                                onPressed: () =>
-                                    _importMissingKey(context, ref, household.id),
-                                child: const Text(
-                                  'Pegar código para desbloquear montos',
-                                ),
+                                onPressed: () => _importMissingKey(context, ref, household.id),
+                                child: const Text('Pegar código para desbloquear montos'),
                               ),
                             ),
                             const SizedBox(height: Finan2Space.sm),
                             SizedBox(
                               width: double.infinity,
                               child: OutlinedButton(
-                                onPressed: () =>
-                                    _recoverWithPhrase(context, ref, household.id),
+                                onPressed: () => _recoverWithPhrase(context, ref, household.id),
                                 child: const Text('Usar frase de recuperación'),
                               ),
                             ),
@@ -150,9 +147,7 @@ class SettingsScreen extends ConsumerWidget {
                       child: Row(
                         children: [
                           SizedBox(
-                            width: members.isEmpty
-                                ? 0
-                                : (30.0 + (members.length - 1) * 21),
+                            width: members.isEmpty ? 0 : (30.0 + (members.length - 1) * 21),
                             height: 30,
                             child: Stack(
                               children: [
@@ -160,9 +155,7 @@ class SettingsScreen extends ConsumerWidget {
                                   Positioned(
                                     left: i * 21.0,
                                     child: Finan2Avatar(
-                                      label: _initial(
-                                        household.memberInfo[members[i]]?.name,
-                                      ),
+                                      label: _initial(household.memberInfo[members[i]]?.name),
                                       memberIndex: i,
                                     ),
                                   ),
@@ -186,10 +179,7 @@ class SettingsScreen extends ConsumerWidget {
                                   '${members.length} miembro'
                                   '${members.length == 1 ? '' : 's'} · '
                                   '${members.length < 2 ? 'toca para invitar' : 'toca para compartir la llave'}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                  ),
+                                  style: const TextStyle(color: Colors.white, fontSize: 11),
                                 ),
                               ],
                             ),
@@ -223,16 +213,16 @@ class SettingsScreen extends ConsumerWidget {
                       Finan2ListRow(
                         icon: Icons.ios_share_outlined,
                         label: 'Exportar reporte',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(builder: (_) => const ExportScreen()),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const ExportScreen())),
                       ),
                       Finan2ListRow(
                         icon: Icons.cloud_sync_outlined,
                         label: 'Copia de seguridad',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(builder: (_) => const BackupScreen()),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const BackupScreen())),
                       ),
                     ],
                   ),
@@ -243,9 +233,9 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Icons.donut_large_outlined,
                         label: 'Presupuesto',
                         value: '${formatMoney(totalPlanned)} planeado',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(builder: (_) => const BudgetScreen()),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const BudgetScreen())),
                       ),
                       Finan2ListRow(
                         icon: Icons.bar_chart_outlined,
@@ -261,9 +251,9 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Icons.trending_up,
                         label: 'Inversiones',
                         value: formatMoney(totalInvestments),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(builder: (_) => const InvestmentsScreen()),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute<void>(builder: (_) => const InvestmentsScreen())),
                       ),
                       Finan2ListRow(
                         icon: Icons.notifications_none_outlined,
@@ -277,8 +267,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: Finan2Space.lg),
                   OutlinedButton(
-                    onPressed: () =>
-                        ref.read(authControllerProvider.notifier).signOut(),
+                    onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
                     style: OutlinedButton.styleFrom(foregroundColor: colors.expense),
                     child: const Text('Cerrar sesión'),
                   ),
@@ -293,16 +282,13 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-Future<void> _importMissingKey(
-  BuildContext context,
-  WidgetRef ref,
-  String householdId,
-) async {
+Future<void> _importMissingKey(BuildContext context, WidgetRef ref, String householdId) async {
   final controller = TextEditingController();
   final pasted = await showFinan2InputSheet(
     context,
     title: 'Desbloquear montos',
-    message: 'Pega el código completo (con la llave después del punto) que '
+    message:
+        'Pega el código completo (con la llave después del punto) que '
         'tu pareja copió desde su tarjeta del hogar en Ajustes.',
     fieldLabel: 'Código completo (CODIGO.llave)',
     controller: controller,
@@ -326,16 +312,13 @@ Future<void> _importMissingKey(
   }
 }
 
-Future<void> _recoverWithPhrase(
-  BuildContext context,
-  WidgetRef ref,
-  String householdId,
-) async {
+Future<void> _recoverWithPhrase(BuildContext context, WidgetRef ref, String householdId) async {
   final controller = TextEditingController();
   final input = await showFinan2InputSheet(
     context,
     title: 'Frase de recuperación',
-    message: 'Escribe las 12 palabras en orden, separadas por espacios. Las '
+    message:
+        'Escribe las 12 palabras en orden, separadas por espacios. Las '
         'tildes y las mayúsculas no importan.',
     fieldLabel: 'Frase (12 palabras)',
     controller: controller,
@@ -364,11 +347,7 @@ Future<void> _recoverWithPhrase(
 /// both members are in, shares the key alone so a partner who lost it on a
 /// device can unlock amounts again. Goes through the share sheet rather than
 /// the clipboard, where other apps and clipboard history can read it.
-Future<void> _shareHousehold(
-  BuildContext context,
-  WidgetRef ref,
-  Household household,
-) async {
+Future<void> _shareHousehold(BuildContext context, WidgetRef ref, Household household) async {
   final controller = ref.read(householdControllerProvider.notifier);
   if (household.members.length < 2) {
     final shareCode = await controller.createInvite(household.id);
@@ -376,14 +355,15 @@ Future<void> _shareHousehold(
     if (shareCode == null) {
       await showFinan2ErrorSheet(
         context,
-        message: 'Este dispositivo no tiene la llave del hogar, así que no '
+        message:
+            'Este dispositivo no tiene la llave del hogar, así que no '
             'puede invitar a nadie que vea los montos.',
       );
       return;
     }
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)));
     return;
   }
 

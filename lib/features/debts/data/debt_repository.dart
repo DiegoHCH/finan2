@@ -5,8 +5,8 @@ import 'debt_model.dart';
 
 class DebtRepository {
   DebtRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-      : _db = firestore ?? FirebaseFirestore.instance,
-        _crypto = crypto ?? HouseholdCrypto();
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _crypto = crypto ?? HouseholdCrypto();
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
@@ -15,25 +15,23 @@ class DebtRepository {
       _db.collection('households').doc(householdId).collection('debts');
 
   Stream<List<Debt>> watchDebts(String householdId) {
-    return _debts(householdId).orderBy('name').snapshots().asyncMap(
-          (snap) => Future.wait(
-            snap.docs.map((doc) => Debt.fromFirestore(doc, _crypto, householdId)),
-          ),
+    return _debts(householdId)
+        .orderBy('name')
+        .snapshots()
+        .asyncMap(
+          (snap) =>
+              Future.wait(snap.docs.map((doc) => Debt.fromFirestore(doc, _crypto, householdId))),
         );
   }
 
   /// Returns the new debt's generated ID.
   Future<String> createDebt(String householdId, Debt debt) async {
-    final doc = await _debts(householdId).add(
-      await debt.toFirestore(_crypto, householdId),
-    );
+    final doc = await _debts(householdId).add(await debt.toFirestore(_crypto, householdId));
     return doc.id;
   }
 
   Future<void> updateDebt(String householdId, Debt debt) async {
-    await _debts(householdId).doc(debt.id).update(
-          await debt.toFirestore(_crypto, householdId),
-        );
+    await _debts(householdId).doc(debt.id).update(await debt.toFirestore(_crypto, householdId));
   }
 
   Future<void> deleteDebt(String householdId, String debtId) {

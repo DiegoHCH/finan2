@@ -105,10 +105,7 @@ void main() {
     // Once the card is gone, the loan's payment for that same month index
     // should jump above its own base monthlyPayment (it now absorbs the
     // card's freed-up base payment).
-    expect(
-      loanSchedule[monthsCardTakes].payment,
-      greaterThan(loan.monthlyPayment),
-    );
+    expect(loanSchedule[monthsCardTakes].payment, greaterThan(loan.monthlyPayment));
   });
 
   test('a loan\'s own extraPayment is added on top of its base cuota', () {

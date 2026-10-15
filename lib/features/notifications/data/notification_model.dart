@@ -2,19 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Matches the Firestore schema's `type` field - each one maps to one of
 /// the [notification_scanner.dart] detection rules.
-enum NotificationType {
-  debtDue,
-  goalNear,
-  budgetExceeded,
-  contribution,
-  partnerActivity,
-}
+enum NotificationType { debtDue, goalNear, budgetExceeded, contribution, partnerActivity }
 
 extension NotificationTypeLabel on NotificationType {
   static NotificationType fromName(String name) => NotificationType.values.firstWhere(
-        (t) => t.name == name,
-        orElse: () => NotificationType.contribution,
-      );
+    (t) => t.name == name,
+    orElse: () => NotificationType.contribution,
+  );
 }
 
 class HouseholdNotification {
@@ -34,9 +28,7 @@ class HouseholdNotification {
   final DateTime createdAt;
   final bool read;
 
-  factory HouseholdNotification.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
+  factory HouseholdNotification.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return HouseholdNotification(
       id: doc.id,

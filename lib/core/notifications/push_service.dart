@@ -21,10 +21,10 @@ class PushService {
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     http.Client? httpClient,
-  })  : _messaging = messaging ?? FirebaseMessaging.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance,
-        _httpClient = httpClient ?? http.Client();
+  }) : _messaging = messaging ?? FirebaseMessaging.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance,
+       _httpClient = httpClient ?? http.Client();
 
   final FirebaseMessaging _messaging;
   final FirebaseFirestore _firestore;
@@ -60,13 +60,13 @@ class PushService {
         .collection('fcmTokens')
         .doc(token)
         .set({
-      'token': token,
-      'uid': uid,
-      'platform': kIsWeb
-          ? 'web'
-          : (defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android'),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+          'token': token,
+          'uid': uid,
+          'platform': kIsWeb
+              ? 'web'
+              : (defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android'),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
   }
 
   /// Asks the Worker to push [title]/[body] to every device in [householdId]
@@ -85,10 +85,7 @@ class PushService {
       final idToken = await user.getIdToken();
       await _httpClient.post(
         Uri.parse(_workerUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $idToken',
-        },
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $idToken'},
         body: jsonEncode({
           'householdId': householdId,
           'excludeUid': excludeUid,

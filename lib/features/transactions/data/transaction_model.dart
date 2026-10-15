@@ -60,10 +60,7 @@ class Movement {
   ) async {
     final data = doc.data()!;
     final date = (data['date'] as Timestamp?)?.toDate() ?? DateTime.now();
-    final amount = await crypto.decryptAmount(
-      householdId,
-      data['amount'] as String,
-    );
+    final amount = await crypto.decryptAmount(householdId, data['amount'] as String);
     return Movement(
       id: doc.id,
       amount: amount,
@@ -79,10 +76,7 @@ class Movement {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'amount': await crypto.encryptAmount(householdId, amount),
       'type': type.name,

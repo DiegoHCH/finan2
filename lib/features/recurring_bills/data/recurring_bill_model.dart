@@ -23,11 +23,10 @@ extension RecurringFrequencyLabel on RecurringFrequency {
     RecurringFrequency.yearly => 1 / 12,
   };
 
-  static RecurringFrequency fromName(String? name) =>
-      RecurringFrequency.values.firstWhere(
-        (f) => f.name == name,
-        orElse: () => RecurringFrequency.monthly,
-      );
+  static RecurringFrequency fromName(String? name) => RecurringFrequency.values.firstWhere(
+    (f) => f.name == name,
+    orElse: () => RecurringFrequency.monthly,
+  );
 }
 
 /// A fixed income or bill (salary, rent, utilities...) that generates its
@@ -76,8 +75,7 @@ class RecurringBill {
   final DateTime? resumedOn;
   final String createdBy;
 
-  bool hasEndedBy(DateTime day) =>
-      endDate != null && _dateOnly(day).isAfter(endDate!);
+  bool hasEndedBy(DateTime day) => endDate != null && _dateOnly(day).isAfter(endDate!);
 
   /// Neither paused nor past its end date.
   bool isActiveOn(DateTime day) => !paused && !hasEndedBy(day);
@@ -107,11 +105,7 @@ class RecurringBill {
         // Calendar days, not Durations, so a DST change can't shift the day.
         final skipped = lower.difference(anchor).inDays ~/ step;
         for (var k = skipped < 0 ? 0 : skipped; ; k++) {
-          final date = DateTime(
-            anchor.year,
-            anchor.month,
-            anchor.day + k * step,
-          );
+          final date = DateTime(anchor.year, anchor.month, anchor.day + k * step);
           if (date.isAfter(upper)) break;
           if (!date.isBefore(lower)) dates.add(date);
         }
@@ -127,25 +121,13 @@ class RecurringBill {
             if (frequency == RecurringFrequency.semimonthly) dayOfMonth + 15,
           };
           for (final day in days) {
-            dates.add(
-              DateTime(
-                month.year,
-                month.month,
-                _clampDay(month.year, month.month, day),
-              ),
-            );
+            dates.add(DateTime(month.year, month.month, _clampDay(month.year, month.month, day)));
           }
         }
       case RecurringFrequency.yearly:
         final anchorMonth = startDate?.month ?? 1;
         for (var year = lower.year; year <= upper.year; year++) {
-          dates.add(
-            DateTime(
-              year,
-              anchorMonth,
-              _clampDay(year, anchorMonth, dayOfMonth),
-            ),
-          );
+          dates.add(DateTime(year, anchorMonth, _clampDay(year, anchorMonth, dayOfMonth)));
         }
     }
     return [
@@ -177,10 +159,7 @@ class RecurringBill {
     );
   }
 
-  Future<Map<String, dynamic>> toFirestore(
-    HouseholdCrypto crypto,
-    String householdId,
-  ) async {
+  Future<Map<String, dynamic>> toFirestore(HouseholdCrypto crypto, String householdId) async {
     return {
       'name': name,
       'type': type.name,

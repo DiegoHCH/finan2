@@ -6,10 +6,7 @@ import '../../helpers/pump_app.dart';
 
 void main() {
   testWidgets('uppercases the label and renders the value as-is', (tester) async {
-    await pumpFinan2(
-      tester,
-      const Finan2StatBox(label: 'Ingresos', value: '\$3.400.000'),
-    );
+    await pumpFinan2(tester, const Finan2StatBox(label: 'Ingresos', value: '\$3.400.000'));
     expect(find.text('INGRESOS'), findsOneWidget);
     expect(find.text('\$3.400.000'), findsOneWidget);
   });
@@ -29,8 +26,9 @@ void main() {
     expect(find.text('PAGO MÍN.'), findsOneWidget);
   });
 
-  testWidgets('does not overflow in a narrow dense trio with a long label and big value',
-      (tester) async {
+  testWidgets('does not overflow in a narrow dense trio with a long label and big value', (
+    tester,
+  ) async {
     await pumpFinan2(
       tester,
       SizedBox(
@@ -38,11 +36,7 @@ void main() {
         child: Row(
           children: const [
             Expanded(
-              child: Finan2StatBox(
-                dense: true,
-                label: 'Cuotas restantes',
-                value: '\$123.456.789',
-              ),
+              child: Finan2StatBox(dense: true, label: 'Cuotas restantes', value: '\$123.456.789'),
             ),
           ],
         ),

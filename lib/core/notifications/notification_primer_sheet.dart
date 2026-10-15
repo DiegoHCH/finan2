@@ -45,10 +45,7 @@ Future<bool> showNotificationPrimerSheet(BuildContext context) async {
               'de pago, o se pasen del presupuesto. Puedes ajustar esto después '
               'en Ajustes.',
               textAlign: TextAlign.center,
-              style: Theme.of(sheetContext)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: colors.inkSoft),
+              style: Theme.of(sheetContext).textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
             ),
             const SizedBox(height: Finan2Space.lg),
             SizedBox(

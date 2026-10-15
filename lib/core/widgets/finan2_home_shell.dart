@@ -61,8 +61,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   Future<void> _maybeShowMissingKeySheet() async {
     // Creating it right now: the key may not be stored yet, but it will be.
     if (ref.read(householdSetupProvider).active) return;
-    final hasKey =
-        await ref.read(householdCryptoProvider).hasKey(widget.household.id);
+    final hasKey = await ref.read(householdCryptoProvider).hasKey(widget.household.id);
     if (hasKey || !mounted) return;
     await showMissingKeySheet(context, widget.household);
   }
@@ -71,9 +70,10 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId == null || uid == null) return;
-    final prefs =
-        ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
-    final created = await ref.read(notificationScannerProvider).scan(
+    final prefs = ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
+    final created = await ref
+        .read(notificationScannerProvider)
+        .scan(
           householdId: householdId,
           currentUid: uid,
           debts: ref.read(debtsProvider).value ?? const [],
@@ -89,7 +89,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           prefs: prefs,
         );
     for (final hit in created) {
-      await ref.read(pushServiceProvider).sendPush(
+      await ref
+          .read(pushServiceProvider)
+          .sendPush(
             householdId: householdId,
             excludeUid: hit.excludePushUid,
             title: hit.notification.title,
@@ -143,9 +145,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final shareCode = ref.read(householdSetupProvider).shareCode;
     if (shareCode == null || _setupOpen || !mounted) return;
     _setupOpen = true;
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => HouseholdSetupScreen(shareCode: shareCode)));
   }
 
   /// The primer waited for HouseholdSetupScreen to finish.
@@ -170,8 +172,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   }
 
   Future<void> _rescheduleDebtReminders() async {
-    final prefs =
-        ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
+    final prefs = ref.read(notificationPrefsControllerProvider).value ?? NotificationPrefs.defaults;
     if (!prefs.debtPayments) return;
     final debts = ref.read(debtsProvider).value ?? const [];
     try {
@@ -203,10 +204,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     FirebaseMessaging.onMessage.listen((message) {
       final notification = message.notification;
       if (notification == null) return;
-      ref.read(notificationServiceProvider).showNow(
-            title: notification.title ?? '',
-            body: notification.body ?? '',
-          );
+      ref
+          .read(notificationServiceProvider)
+          .showNow(title: notification.title ?? '', body: notification.body ?? '');
     });
   }
 
@@ -247,9 +247,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       SettingsScreen(household: widget.household),
     ];
 
-    final showInstallBanner = kIsWeb &&
-        !_installBannerDismissed &&
-        isIOSSafariNotInstalled;
+    final showInstallBanner = kIsWeb && !_installBannerDismissed && isIOSSafariNotInstalled;
 
     return Scaffold(
       body: Column(
@@ -263,39 +261,25 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      setState(() => _installBannerDismissed = true),
+                  onPressed: () => setState(() => _installBannerDismissed = true),
                   child: const Text('Entendido'),
                 ),
               ],
             ),
-          Expanded(child: IndexedStack(index: _index, children: tabs)),
+          Expanded(
+            child: IndexedStack(index: _index, children: tabs),
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.inicio),
-            label: 'Inicio',
-          ),
-          const NavigationDestination(
-            icon: Finan2ListIcon(),
-            label: 'Movimientos',
-          ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.deudas),
-            label: 'Deudas',
-          ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.metas),
-            label: 'Metas',
-          ),
-          const NavigationDestination(
-            icon: Icon(Finan2Icons.ajustes),
-            label: 'Ajustes',
-          ),
+          const NavigationDestination(icon: Icon(Finan2Icons.inicio), label: 'Inicio'),
+          const NavigationDestination(icon: Finan2ListIcon(), label: 'Movimientos'),
+          const NavigationDestination(icon: Icon(Finan2Icons.deudas), label: 'Deudas'),
+          const NavigationDestination(icon: Icon(Finan2Icons.metas), label: 'Metas'),
+          const NavigationDestination(icon: Icon(Finan2Icons.ajustes), label: 'Ajustes'),
         ],
       ),
     );

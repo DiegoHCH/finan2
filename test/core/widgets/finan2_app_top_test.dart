@@ -21,16 +21,12 @@ Household _household({List<String> members = const ['u1', 'u2']}) {
 
 void main() {
   testWidgets('renders the label and title', (tester) async {
-    await pumpFinan2(
-      tester,
-      const Finan2AppTop(label: 'Cuentas', title: 'Dinero disponible'),
-    );
+    await pumpFinan2(tester, const Finan2AppTop(label: 'Cuentas', title: 'Dinero disponible'));
     expect(find.text('Cuentas'), findsOneWidget);
     expect(find.text('Dinero disponible'), findsOneWidget);
   });
 
-  testWidgets('shows one avatar per household member when no trailing is given',
-      (tester) async {
+  testWidgets('shows one avatar per household member when no trailing is given', (tester) async {
     await pumpFinan2(
       tester,
       Finan2AppTop(label: 'Hogar', title: 'Casa Hoyos', household: _household()),

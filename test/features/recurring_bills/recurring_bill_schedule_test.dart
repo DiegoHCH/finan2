@@ -11,20 +11,19 @@ RecurringBill _bill({
   DateTime? resumedOn,
   int? dayOfMonth,
   int amount = 120000,
-}) =>
-    RecurringBill(
-      id: 'b',
-      name: 'Bill',
-      type: CategoryType.factura,
-      categoryId: 'c',
-      accountId: 'a',
-      amount: amount,
-      dayOfMonth: dayOfMonth ?? start?.day ?? 1,
-      frequency: frequency,
-      startDate: start,
-      endDate: end,
-      resumedOn: resumedOn,
-    );
+}) => RecurringBill(
+  id: 'b',
+  name: 'Bill',
+  type: CategoryType.factura,
+  categoryId: 'c',
+  accountId: 'a',
+  amount: amount,
+  dayOfMonth: dayOfMonth ?? start?.day ?? 1,
+  frequency: frequency,
+  startDate: start,
+  endDate: end,
+  resumedOn: resumedOn,
+);
 
 void main() {
   setUpAll(() => initializeDateFormatting('es'));
@@ -118,10 +117,17 @@ void main() {
   test('describeSchedule reads naturally', () {
     final monday = DateTime(2026, 10, 5);
     expect(describeSchedule(frequency: RecurringFrequency.weekly, start: monday), 'cada lunes');
-    expect(describeSchedule(frequency: RecurringFrequency.semimonthly, start: DateTime(2026, 10, 15)),
-        'días 15 y 30');
-    expect(describeSchedule(frequency: RecurringFrequency.monthly, start: monday), 'cada mes, día 05');
-    expect(describeSchedule(frequency: RecurringFrequency.yearly, start: DateTime(2026, 3, 3)),
-        'cada año, 3 de marzo');
+    expect(
+      describeSchedule(frequency: RecurringFrequency.semimonthly, start: DateTime(2026, 10, 15)),
+      'días 15 y 30',
+    );
+    expect(
+      describeSchedule(frequency: RecurringFrequency.monthly, start: monday),
+      'cada mes, día 05',
+    );
+    expect(
+      describeSchedule(frequency: RecurringFrequency.yearly, start: DateTime(2026, 3, 3)),
+      'cada año, 3 de marzo',
+    );
   });
 }

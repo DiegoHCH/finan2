@@ -50,7 +50,8 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                           icon: Icons.notifications_outlined,
                           label: 'Recordatorio diario',
                           value: prefs.dailyReminder,
-                          onChanged: (v) => notifier.updatePrefs((c) => c.copyWith(dailyReminder: v)),
+                          onChanged: (v) =>
+                              notifier.updatePrefs((c) => c.copyWith(dailyReminder: v)),
                           trailing: GestureDetector(
                             onTap: () async {
                               final picked = await showTimePicker(
@@ -77,13 +78,15 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                           icon: Icons.credit_card_outlined,
                           label: 'Pagos de deudas',
                           value: prefs.debtPayments,
-                          onChanged: (v) => notifier.updatePrefs((c) => c.copyWith(debtPayments: v)),
+                          onChanged: (v) =>
+                              notifier.updatePrefs((c) => c.copyWith(debtPayments: v)),
                         ),
                         _ToggleRow(
                           icon: Icons.track_changes_outlined,
                           label: 'Avance de metas',
                           value: prefs.goalProgress,
-                          onChanged: (v) => notifier.updatePrefs((c) => c.copyWith(goalProgress: v)),
+                          onChanged: (v) =>
+                              notifier.updatePrefs((c) => c.copyWith(goalProgress: v)),
                         ),
                       ],
                     ),
@@ -120,7 +123,8 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                           icon: Icons.bar_chart_outlined,
                           label: 'Resumen semanal',
                           value: prefs.weeklySummary,
-                          onChanged: (v) => notifier.updatePrefs((c) => c.copyWith(weeklySummary: v)),
+                          onChanged: (v) =>
+                              notifier.updatePrefs((c) => c.copyWith(weeklySummary: v)),
                         ),
                       ],
                     ),
@@ -169,10 +173,7 @@ class _ToggleRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-            ),
+            child: Text(label, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
           ),
           if (trailing != null) ...[trailing!, const SizedBox(width: 8)],
           Switch(value: value, onChanged: onChanged),

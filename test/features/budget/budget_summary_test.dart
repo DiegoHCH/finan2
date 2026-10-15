@@ -3,11 +3,7 @@ import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Movement _tx({
-  required int amount,
-  required CategoryType type,
-  String categoryId = 'cat',
-}) {
+Movement _tx({required int amount, required CategoryType type, String categoryId = 'cat'}) {
   return Movement(
     id: 'tx',
     amount: amount,

@@ -30,11 +30,9 @@ class RecurringBillsScreen extends ConsumerWidget {
           ? null
           : FloatingActionButton(
               heroTag: 'recurringBillsFab',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const EditRecurringBillScreen(),
-                ),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen())),
               child: const Icon(Icons.add),
             ),
       body: SafeArea(
@@ -46,10 +44,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                 final now = DateTime.now();
                 // Weekly and yearly ones counted as their monthly average.
                 final totalFactura = bills
-                    .where(
-                      (b) =>
-                          b.type != CategoryType.ingreso && b.isActiveOn(now),
-                    )
+                    .where((b) => b.type != CategoryType.ingreso && b.isActiveOn(now))
                     .fold(0, (sum, b) => sum + b.monthlyAmount);
                 return Finan2AppTop(
                   label: 'Facturas recurrentes',
@@ -73,9 +68,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                           'se registren solos cada mes.',
                       actionLabel: '+ Nueva factura recurrente',
                       onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const EditRecurringBillScreen(),
-                        ),
+                        MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen()),
                       ),
                     );
                   }
@@ -84,18 +77,12 @@ class RecurringBillsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(Finan2Space.xl),
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 15,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              colors.brandDeep,
-                            ],
+                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -135,9 +122,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           border: Border.all(color: colors.line),
-                          borderRadius: BorderRadius.circular(
-                            Finan2Radius.card,
-                          ),
+                          borderRadius: BorderRadius.circular(Finan2Radius.card),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: Column(
@@ -150,8 +135,7 @@ class RecurringBillsScreen extends ConsumerWidget {
                                 formatMoney: formatMoney,
                                 onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        EditRecurringBillScreen(bill: bills[i]),
+                                    builder: (_) => EditRecurringBillScreen(bill: bills[i]),
                                   ),
                                 ),
                               ),
@@ -179,10 +163,7 @@ class _AutoBadge extends StatelessWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: colors.brandTint,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
       child: Text(
         'Auto',
         style: TextStyle(
@@ -213,10 +194,7 @@ class _BillRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isIncome = bill.type == CategoryType.ingreso;
-    final schedule = describeSchedule(
-      frequency: bill.frequency,
-      start: scheduleAnchor(bill),
-    );
+    final schedule = describeSchedule(frequency: bill.frequency, start: scheduleAnchor(bill));
     final status = bill.paused
         ? 'en pausa'
         : bill.hasEndedBy(DateTime.now())
@@ -224,15 +202,11 @@ class _BillRow extends StatelessWidget {
         : schedule;
 
     return Finan2TransactionRow(
-      icon: category != null
-          ? Finan2Icons.categoria(category!.iconSlug)
-          : Icons.autorenew,
+      icon: category != null ? Finan2Icons.categoria(category!.iconSlug) : Icons.autorenew,
       iconColor: category != null ? Color(category!.color) : colors.inkSoft,
       description: bill.name,
       subLabel: '${bill.type.label} · $status',
-      amountText: isIncome
-          ? '+${formatMoney(bill.amount)}'
-          : '−${formatMoney(bill.amount)}',
+      amountText: isIncome ? '+${formatMoney(bill.amount)}' : '−${formatMoney(bill.amount)}',
       amountColor: !bill.isActiveOn(DateTime.now())
           ? colors.inkFaint
           : isIncome

@@ -10,8 +10,7 @@ final cardPaymentRepositoryProvider = Provider<CardPaymentRepository>((ref) {
   return CardPaymentRepository();
 });
 
-final cardPaymentsProvider =
-    StreamProvider.family<List<CardPayment>, String>((ref, cardDebtId) {
+final cardPaymentsProvider = StreamProvider.family<List<CardPayment>, String>((ref, cardDebtId) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
   return ref.watch(cardPaymentRepositoryProvider).watchPayments(householdId, cardDebtId);
@@ -40,5 +39,6 @@ class CardPaymentController extends AsyncNotifier<void> {
   }
 }
 
-final cardPaymentControllerProvider =
-    AsyncNotifierProvider<CardPaymentController, void>(CardPaymentController.new);
+final cardPaymentControllerProvider = AsyncNotifierProvider<CardPaymentController, void>(
+  CardPaymentController.new,
+);

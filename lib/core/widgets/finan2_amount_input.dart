@@ -28,11 +28,7 @@ class Finan2AmountInput extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
             '$currencySymbol ',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: colors.inkFaint,
-            ),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colors.inkFaint),
           ),
         ),
         IntrinsicWidth(
@@ -42,11 +38,7 @@ class Finan2AmountInput extends StatelessWidget {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
+            style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w700, letterSpacing: -0.5),
             decoration: const InputDecoration(
               isDense: true,
               border: InputBorder.none,

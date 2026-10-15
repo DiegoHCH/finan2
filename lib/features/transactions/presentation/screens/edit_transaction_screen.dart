@@ -29,24 +29,23 @@ enum _Segment { ingreso, gasto, ahorro }
 
 extension on _Segment {
   String get label => switch (this) {
-        _Segment.ingreso => 'Ingreso',
-        _Segment.gasto => 'Gasto',
-        _Segment.ahorro => 'Ahorro',
-      };
+    _Segment.ingreso => 'Ingreso',
+    _Segment.gasto => 'Gasto',
+    _Segment.ahorro => 'Ahorro',
+  };
 
   bool matches(CategoryType type) => switch (this) {
-        _Segment.ingreso => type == CategoryType.ingreso,
-        _Segment.gasto =>
-          type == CategoryType.gasto || type == CategoryType.factura,
-        _Segment.ahorro => type == CategoryType.ahorro,
-      };
+    _Segment.ingreso => type == CategoryType.ingreso,
+    _Segment.gasto => type == CategoryType.gasto || type == CategoryType.factura,
+    _Segment.ahorro => type == CategoryType.ahorro,
+  };
 }
 
 _Segment _segmentFor(CategoryType type) => switch (type) {
-      CategoryType.ingreso => _Segment.ingreso,
-      CategoryType.factura || CategoryType.gasto => _Segment.gasto,
-      CategoryType.ahorro => _Segment.ahorro,
-    };
+  CategoryType.ingreso => _Segment.ingreso,
+  CategoryType.factura || CategoryType.gasto => _Segment.gasto,
+  CategoryType.ahorro => _Segment.ahorro,
+};
 
 class EditTransactionScreen extends ConsumerStatefulWidget {
   const EditTransactionScreen({this.transaction, this.initialDate, super.key});
@@ -59,30 +58,26 @@ class EditTransactionScreen extends ConsumerStatefulWidget {
   final DateTime? initialDate;
 
   @override
-  ConsumerState<EditTransactionScreen> createState() =>
-      _EditTransactionScreenState();
+  ConsumerState<EditTransactionScreen> createState() => _EditTransactionScreenState();
 }
 
 class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   late final _amountController = TextEditingController(
-    text: widget.transaction != null
-        ? widget.transaction!.amount.toString()
-        : '',
+    text: widget.transaction != null ? widget.transaction!.amount.toString() : '',
   );
   late final _descriptionController = TextEditingController(
     text: widget.transaction?.description ?? '',
   );
   final _tagController = TextEditingController();
   late final _tags = [...?widget.transaction?.tags];
-  late _Segment _segment =
-      _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
+  late _Segment _segment = _segmentFor(widget.transaction?.type ?? CategoryType.gasto);
   late String? _categoryId = widget.transaction?.categoryId;
-  late String? _accountId =
-      (widget.transaction != null && widget.transaction!.accountId.isNotEmpty)
-          ? widget.transaction!.accountId
-          : null;
-  late String? _cardDebtId =
-      (widget.transaction?.cardDebtId.isNotEmpty ?? false) ? widget.transaction!.cardDebtId : null;
+  late String? _accountId = (widget.transaction != null && widget.transaction!.accountId.isNotEmpty)
+      ? widget.transaction!.accountId
+      : null;
+  late String? _cardDebtId = (widget.transaction?.cardDebtId.isNotEmpty ?? false)
+      ? widget.transaction!.cardDebtId
+      : null;
   late DateTime _date = widget.transaction?.date ?? widget.initialDate ?? DateTime.now();
 
   /// null until the user picks - then whoever is logging it.
@@ -171,17 +166,17 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     }
     final hasSource = _accountId != null || _cardDebtId != null;
     if (amount <= 0 || category == null || !hasSource || user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Completa el monto, la categoría y la cuenta.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Completa el monto, la categoría y la cuenta.')));
       return;
     }
     // A tag typed but not added yet still counts.
     final pending = normalizeTag(_tagController.text);
     final tags = {..._tags, if (pending.isNotEmpty) pending}.take(maxTagsPerMovement).toList();
-    await ref.read(transactionControllerProvider.notifier).save(
+    await ref
+        .read(transactionControllerProvider.notifier)
+        .save(
           Movement(
             id: widget.transaction?.id ?? '',
             amount: amount,
@@ -211,22 +206,18 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   Widget build(BuildContext context) {
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final accounts = ref.watch(accountsProvider).value ?? const [];
-    final cards =
-        (ref.watch(debtsProvider).value ?? const []).where((d) => d.type.isCard).toList();
+    final cards = (ref.watch(debtsProvider).value ?? const []).where((d) => d.type.isCard).toList();
     final household = ref.watch(currentHouseholdProvider).value;
     final user = ref.watch(authStateChangesProvider).value;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.transaction != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
 
-    final categoriesOfSegment =
-        categories.where((c) => _segment.matches(c.type)).toList();
-    if (_categoryId != null &&
-        !categoriesOfSegment.any((c) => c.id == _categoryId)) {
+    final categoriesOfSegment = categories.where((c) => _segment.matches(c.type)).toList();
+    if (_categoryId != null && !categoriesOfSegment.any((c) => c.id == _categoryId)) {
       _categoryId = null;
     }
-    _categoryId ??=
-        categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
+    _categoryId ??= categoriesOfSegment.isNotEmpty ? categoriesOfSegment.first.id : null;
 
     Account? selectedAccount;
     for (final a in accounts) {
@@ -245,14 +236,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final creatorName = creatorUid == null
         ? ''
         : (household?.memberInfo[creatorUid]?.name ?? user?.displayName ?? '');
-    final creatorIndex =
-        creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
+    final creatorIndex = creatorUid == null ? 0 : (household?.members.indexOf(creatorUid) ?? 0);
     final members = household?.members ?? const <String>[];
     final payer = _paidBy ?? user?.uid;
-    final suggestedTags = tagsByUse(ref.watch(transactionsForYearProvider(_date.year)).value ?? const [])
-        .where((t) => !_tags.contains(t))
-        .take(8)
-        .toList();
+    final suggestedTags = tagsByUse(
+      ref.watch(transactionsForYearProvider(_date.year)).value ?? const [],
+    ).where((t) => !_tags.contains(t)).take(8).toList();
 
     return Scaffold(
       appBar: Finan2FormTop(
@@ -265,9 +254,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Finan2SegmentedControl<_Segment>(
-              options: {
-                for (final s in _Segment.values) s: s.label,
-              },
+              options: {for (final s in _Segment.values) s: s.label},
               selected: _segment,
               onChanged: (s) => setState(() {
                 _segment = s;
@@ -275,10 +262,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               }),
             ),
             const SizedBox(height: Finan2Space.sm),
-            Finan2AmountInput(
-              controller: _amountController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             Text('Categoría', style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: Finan2Space.sm),
@@ -323,10 +307,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 onTap: () => _pickSource(accounts, cards),
               ),
             const SizedBox(height: Finan2Space.md),
-            Finan2Field(
-              label: 'Descripción',
-              controller: _descriptionController,
-            ),
+            Finan2Field(label: 'Descripción', controller: _descriptionController),
             const SizedBox(height: Finan2Space.md),
             Finan2TapField(
               label: 'Fecha',
@@ -374,11 +355,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                 runSpacing: 7,
                 children: [
                   for (final tag in suggestedTags)
-                    Finan2Chip(
-                      label: '#$tag',
-                      selected: false,
-                      onTap: () => _addTag(tag),
-                    ),
+                    Finan2Chip(label: '#$tag', selected: false, onTap: () => _addTag(tag)),
                 ],
               ),
             ],

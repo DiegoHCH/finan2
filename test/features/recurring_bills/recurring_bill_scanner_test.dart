@@ -40,8 +40,7 @@ void main() {
   setUp(() async {
     firestore = FakeFirebaseFirestore();
     crypto = await testHouseholdCrypto(_householdId);
-    transactionRepository =
-        TransactionRepository(firestore: firestore, crypto: crypto);
+    transactionRepository = TransactionRepository(firestore: firestore, crypto: crypto);
     scanner = RecurringBillScanner(
       transactionRepository,
       RecurringBillRepository(firestore: firestore, crypto: crypto),
@@ -54,9 +53,7 @@ void main() {
         .doc(_householdId)
         .collection('transactions')
         .get();
-    return Future.wait(
-      snap.docs.map((doc) => Movement.fromFirestore(doc, crypto, _householdId)),
-    );
+    return Future.wait(snap.docs.map((doc) => Movement.fromFirestore(doc, crypto, _householdId)));
   }
 
   test('generates the Movement once the bill day has arrived', () async {
@@ -95,12 +92,7 @@ void main() {
   test('re-scanning the same month never duplicates the transaction', () async {
     final bills = [_bill(dayOfMonth: _now.day)];
     for (var i = 0; i < 3; i++) {
-      await scanner.scan(
-        householdId: _householdId,
-        currentUid: 'u1',
-        bills: bills,
-        now: _now,
-      );
+      await scanner.scan(householdId: _householdId, currentUid: 'u1', bills: bills, now: _now);
     }
     expect(await readTransactions(), hasLength(1));
   });
@@ -248,10 +240,10 @@ void main() {
     // A month no one opened the app.
     const id = 'recurring_b1_2026_5';
     await col('pendingBills').doc(id).set({'billId': 'b1', 'date': '2026-05-05'});
-    final pending = (await RecurringBillRepository(firestore: firestore, crypto: crypto)
-            .watchPending(_householdId)
-            .first)
-        .single;
+    final pending = (await RecurringBillRepository(
+      firestore: firestore,
+      crypto: crypto,
+    ).watchPending(_householdId).first).single;
     expect(pending.date, DateTime(2026, 5, 5));
 
     await scanner.confirmPending(

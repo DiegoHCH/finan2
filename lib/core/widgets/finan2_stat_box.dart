@@ -26,10 +26,7 @@ class Finan2StatBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: dense ? 10 : 13,
-        vertical: dense ? 10 : 12,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: dense ? 10 : 13, vertical: dense ? 10 : 12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border.all(color: colors.line),

@@ -105,9 +105,7 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
       monthlyPayment: int.tryParse(_monthlyPaymentController.text) ?? 0,
       termMonths: int.tryParse(_termMonthsController.text) ?? 0,
       paidInstallments: int.tryParse(_paidInstallmentsController.text) ?? 0,
-      createdBy: widget.debt?.createdBy ??
-          ref.read(authStateChangesProvider).value?.uid ??
-          '',
+      createdBy: widget.debt?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
     );
     await ref.read(debtControllerProvider.notifier).save(debt);
     if (mounted) Navigator.of(context).pop();
@@ -119,7 +117,8 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
     final confirmed = await showFinan2ConfirmSheet(
       context,
       title: 'Eliminar deuda',
-      message: 'Se eliminará "${debt.name}". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.',
+      message:
+          'Se eliminará "${debt.name}". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.',
       confirmLabel: 'Eliminar',
       destructive: true,
     );
@@ -135,10 +134,7 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
-      appBar: Finan2FormTop(
-        title: isEditing ? 'Editar deuda' : 'Nueva deuda',
-        onSave: _save,
-      ),
+      appBar: Finan2FormTop(title: isEditing ? 'Editar deuda' : 'Nueva deuda', onSave: _save),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Finan2Space.xl),
         child: Column(
@@ -167,10 +163,7 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),
-            Finan2AmountInput(
-              controller: _balanceController,
-              currencySymbol: currencySymbol,
-            ),
+            Finan2AmountInput(controller: _balanceController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
             if (_type.isCard) ...[
               _FieldRow(

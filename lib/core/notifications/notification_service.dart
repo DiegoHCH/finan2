@@ -43,8 +43,8 @@ class NotificationService {
   /// Requests OS notification permission (and, on Android, exact-alarm
   /// permission needed for reminders to fire at the exact chosen time).
   Future<bool> requestPermission() async {
-    final androidImpl = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     final iosImpl = _plugin
         .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
 
@@ -54,12 +54,7 @@ class NotificationService {
       await androidImpl.requestExactAlarmsPermission();
     }
     if (iosImpl != null) {
-      granted = await iosImpl.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          ) ??
-          granted;
+      granted = await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? granted;
     }
     return granted;
   }
@@ -113,15 +108,14 @@ class NotificationService {
           continue;
         }
         final isToday = daysBefore == 0;
-        final reminderDay =
-            debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
+        final reminderDay = debt.paymentDay - daysBefore < 1 ? 1 : debt.paymentDay - daysBefore;
         await _plugin.zonedSchedule(
           id: id,
           title: isToday ? 'Hoy pagas ${debt.name}' : 'Pago de ${debt.name} pronto',
           body: isToday
               ? 'Hoy es el día de pago de tu deuda ${debt.name}.'
               : 'La cuota de ${debt.name} vence en $daysBefore '
-                  '${daysBefore == 1 ? 'día' : 'días'}.',
+                    '${daysBefore == 1 ? 'día' : 'días'}.',
           scheduledDate: _nextInstanceOfMonthDayTime(reminderDay, _debtReminderTime),
           notificationDetails: const NotificationDetails(
             android: AndroidNotificationDetails('debt_reminders', 'Pagos de deudas'),
@@ -161,8 +155,7 @@ class NotificationService {
 
 tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
   final now = tz.TZDateTime.now(tz.local);
-  var scheduled =
-      tz.TZDateTime(tz.local, now.year, now.month, now.day, time.hour, time.minute);
+  var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, time.hour, time.minute);
   if (scheduled.isBefore(now)) scheduled = scheduled.add(const Duration(days: 1));
   return scheduled;
 }
@@ -177,8 +170,7 @@ tz.TZDateTime _nextInstanceOfWeekdayTime(int weekday, TimeOfDay time) {
 
 tz.TZDateTime _nextInstanceOfMonthDayTime(int day, TimeOfDay time) {
   final now = tz.TZDateTime.now(tz.local);
-  var scheduled =
-      tz.TZDateTime(tz.local, now.year, now.month, day, time.hour, time.minute);
+  var scheduled = tz.TZDateTime(tz.local, now.year, now.month, day, time.hour, time.minute);
   if (scheduled.isBefore(now)) {
     scheduled = tz.TZDateTime(tz.local, now.year, now.month + 1, day, time.hour, time.minute);
   }

@@ -108,9 +108,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   void _addMovement() {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => EditTransactionScreen(initialDate: _newMovementDate),
-      ),
+      MaterialPageRoute<void>(builder: (_) => EditTransactionScreen(initialDate: _newMovementDate)),
     );
   }
 
@@ -131,10 +129,9 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final allTransactions = (transactionsAsync.value ?? const <Movement>[])
         .where((tx) => !_pendingDeletion.contains(tx.id))
         .toList();
-    final currentTransactions = _filter.apply(
-      allTransactions,
-      {for (final c in categories) c.id: c.name},
-    );
+    final currentTransactions = _filter.apply(allTransactions, {
+      for (final c in categories) c.id: c.name,
+    });
     final filtering = !_filter.isEmpty;
     final net = currentTransactions.fold<int>(
       0,
@@ -160,12 +157,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               household: household,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Finan2Space.xl,
-                0,
-                Finan2Space.xl,
-                Finan2Space.sm,
-              ),
+              padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.sm),
               child: Finan2PeriodPicker(
                 label: monthLabelCap,
                 previousTooltip: 'Mes anterior',
@@ -178,12 +170,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Finan2Space.xl,
-                0,
-                Finan2Space.xl,
-                Finan2Space.sm,
-              ),
+              padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.sm),
               child: MovementSearchBar(
                 controller: _searchController,
                 filter: _filter,
@@ -230,7 +217,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                       description: searchingYear
                           ? 'Ningún movimiento de ${_month.year} coincide con la búsqueda.'
                           : 'Ningún movimiento de $monthLabelCap coincide con la '
-                              'búsqueda o los filtros.',
+                                'búsqueda o los filtros.',
                       actionLabel: 'Limpiar búsqueda',
                       onAction: _clearSearch,
                     );
@@ -243,7 +230,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                           : 'Sin movimientos en $monthLabelCap',
                       description: _month.isCurrent
                           ? 'Registra tu primer ingreso o gasto del mes y aquí '
-                              'verás el resumen del hogar.'
+                                'verás el resumen del hogar.'
                           : 'No se registró ningún ingreso ni gasto este mes.',
                       actionLabel: '+ Agregar el primero',
                       onAction: _addMovement,
@@ -275,12 +262,8 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                     final tx = transactions[i];
                                     final category = categoryById[tx.categoryId];
                                     // Who paid, not who logged it.
-                                    final memberIndex = household?.members
-                                            .indexOf(tx.payer) ??
-                                        0;
-                                    final memberName = household
-                                            ?.memberInfo[tx.payer]?.name ??
-                                        '?';
+                                    final memberIndex = household?.members.indexOf(tx.payer) ?? 0;
+                                    final memberName = household?.memberInfo[tx.payer]?.name ?? '?';
                                     return Finan2TransactionRow(
                                       icon: category != null
                                           ? Finan2Icons.categoria(category.iconSlug)
@@ -303,8 +286,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                                       amountText: tx.isIncome
                                           ? '+${formatMoney(tx.amount)}'
                                           : '−${formatMoney(tx.amount)}',
-                                      amountColor:
-                                          tx.isIncome ? colors.income : colors.ink,
+                                      amountColor: tx.isIncome ? colors.income : colors.ink,
                                       onTap: () => _openMovement(tx),
                                     );
                                   },
@@ -321,18 +303,14 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                             icon: Icons.autorenew,
                             label: 'Facturas recurrentes',
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const RecurringBillsScreen(),
-                              ),
+                              MaterialPageRoute<void>(builder: (_) => const RecurringBillsScreen()),
                             ),
                           ),
                           Finan2ListRow(
                             icon: Icons.sticky_note_2_outlined,
                             label: 'Notas',
                             onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const MonthlyNotesScreen(),
-                              ),
+                              MaterialPageRoute<void>(builder: (_) => const MonthlyNotesScreen()),
                             ),
                           ),
                         ],

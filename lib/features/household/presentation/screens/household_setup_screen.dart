@@ -30,8 +30,7 @@ class HouseholdSetupScreen extends ConsumerStatefulWidget {
   final String shareCode;
 
   @override
-  ConsumerState<HouseholdSetupScreen> createState() =>
-      _HouseholdSetupScreenState();
+  ConsumerState<HouseholdSetupScreen> createState() => _HouseholdSetupScreenState();
 }
 
 class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
@@ -71,9 +70,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode),
-      ),
+      MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode)),
     );
     if (!mounted) return;
     ref.read(householdSetupProvider.notifier).finish();
@@ -97,8 +94,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       await showFinan2InfoSheet(
         context,
         title: 'Ponle un nombre',
-        message:
-            'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.',
+        message: 'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.',
       );
       return;
     }
@@ -123,12 +119,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
   Future<void> _createPhrase() async {
     final household = ref.read(currentHouseholdProvider).value;
     if (household == null) return;
-    final saved = await createRecoveryPhrase(
-      context,
-      ref,
-      household,
-      askFirst: false,
-    );
+    final saved = await createRecoveryPhrase(context, ref, household, askFirst: false);
     if (saved && mounted) _next();
   }
 
@@ -185,11 +176,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.md),
-            Text(
-              'Saldo de hoy',
-              textAlign: TextAlign.center,
-              style: textTheme.labelMedium,
-            ),
+            Text('Saldo de hoy', textAlign: TextAlign.center, style: textTheme.labelMedium),
             Finan2AmountInput(
               controller: _balanceController,
               currencySymbol: currencySymbolFor(_currency),
@@ -221,11 +208,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
             children: [
               Text(
                 'Paso ${_step.index + 1} de ${_Step.values.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: colors.inkFaint,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: colors.inkFaint),
               ),
               const SizedBox(height: Finan2Space.sm),
               LinearProgressIndicator(
@@ -235,10 +218,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
               const SizedBox(height: Finan2Space.xl),
               Text(title, style: textTheme.headlineSmall),
               const SizedBox(height: Finan2Space.xs),
-              Text(
-                description,
-                style: textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
-              ),
+              Text(description, style: textTheme.bodyMedium?.copyWith(color: colors.inkSoft)),
               const SizedBox(height: Finan2Space.lg),
               body,
               const SizedBox(height: Finan2Space.xl),
@@ -256,11 +236,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
                 const SizedBox(height: Finan2Space.sm),
                 TextButton(
                   onPressed: _busy ? null : _next,
-                  child: Text(
-                    _step == _Step.recovery
-                        ? 'Más tarde, desde Ajustes'
-                        : 'Omitir',
-                  ),
+                  child: Text(_step == _Step.recovery ? 'Más tarde, desde Ajustes' : 'Omitir'),
                 ),
               ],
             ],

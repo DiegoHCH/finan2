@@ -17,7 +17,6 @@ class PersistentStorageStatus extends Notifier<bool?> {
   }
 }
 
-final persistentStorageStatusProvider =
-    NotifierProvider<PersistentStorageStatus, bool?>(
+final persistentStorageStatusProvider = NotifierProvider<PersistentStorageStatus, bool?>(
   PersistentStorageStatus.new,
 );
