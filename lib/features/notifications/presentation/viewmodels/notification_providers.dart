@@ -3,16 +3,20 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/notification_model.dart';
 import '../../data/notification_repository.dart';
-import '../../data/notification_scanner.dart';
+import '../../domain/entities/household_notification.dart';
+import '../../domain/notification_scanner.dart';
+import '../l10n_notification_texts.dart';
 
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
   return NotificationRepository();
 });
 
 final notificationScannerProvider = Provider<NotificationScanner>((ref) {
-  return NotificationScanner(ref.watch(notificationRepositoryProvider));
+  return NotificationScanner(
+    ref.watch(notificationRepositoryProvider),
+    const L10nNotificationTexts(),
+  );
 });
 
 final notificationsProvider = StreamProvider<List<HouseholdNotification>>((ref) {

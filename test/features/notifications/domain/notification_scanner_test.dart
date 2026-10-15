@@ -4,9 +4,12 @@ import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/debts/domain/entities/debt.dart';
 import 'package:finan2/features/investments/data/investment_model.dart';
 import 'package:finan2/features/notification_prefs/data/notification_prefs.dart';
-import 'package:finan2/features/notifications/data/notification_model.dart';
+import 'package:finan2/features/notifications/domain/entities/household_notification.dart';
+import 'package:finan2/features/notifications/data/notification_mapper.dart';
 import 'package:finan2/features/notifications/data/notification_repository.dart';
-import 'package:finan2/features/notifications/data/notification_scanner.dart';
+import 'package:finan2/features/notifications/data/notification_scan_sources.dart';
+import 'package:finan2/features/notifications/domain/notification_scanner.dart';
+import 'package:finan2/features/notifications/presentation/l10n_notification_texts.dart';
 import 'package:finan2/features/recurring_bills/domain/entities/recurring_bill.dart';
 import 'package:finan2/features/savings_challenge/data/savings_challenge_model.dart';
 import 'package:finan2/features/savings_goals/data/savings_goal_model.dart';
@@ -57,7 +60,10 @@ void main() {
 
   setUp(() {
     firestore = FakeFirebaseFirestore();
-    scanner = NotificationScanner(NotificationRepository(firestore: firestore));
+    scanner = NotificationScanner(
+      NotificationRepository(firestore: firestore),
+      const L10nNotificationTexts(),
+    );
   });
 
   Future<List<HouseholdNotification>> readAll() async {
@@ -66,7 +72,7 @@ void main() {
         .doc(_householdId)
         .collection('notifications')
         .get();
-    return snap.docs.map(HouseholdNotification.fromFirestore).toList();
+    return snap.docs.map(householdNotificationFromFirestore).toList();
   }
 
   group('debt payment due', () {
@@ -456,6 +462,8 @@ void main() {
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.partnerActivity);
+      expect(notifications.single.id, 'partner_tx_tx1');
+      expect(notifications.single.body, 'Cine');
     });
 
     test('a new transfer from the partner notifies', () async {
@@ -483,6 +491,7 @@ void main() {
       final notifications = await readAll();
       expect(notifications, hasLength(1));
       expect(notifications.single.type, NotificationType.partnerActivity);
+      expect(notifications.single.id, 'partner_transfer_t1');
     });
 
     test('a new account, investment, bill, category and challenge from the '
@@ -547,7 +556,14 @@ void main() {
         prefs: NotificationPrefs.defaults.copyWith(partnerActivity: true),
         now: _now,
       );
-      expect(await readAll(), hasLength(5));
+      // The IDs are stored, so they must never change - or everything notifies again.
+      expect((await readAll()).map((n) => n.id).toSet(), {
+        'partner_category_c1',
+        'partner_account_a1',
+        'partner_investment_i1',
+        'partner_bill_b1',
+        'partner_challenge_ch1',
+      });
     });
 
     test('does not notify for my own creation', () async {

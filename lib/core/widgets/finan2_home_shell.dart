@@ -19,6 +19,7 @@ import '../../features/household/presentation/viewmodels/household_providers.dar
 import '../../features/investments/presentation/viewmodels/investment_providers.dart';
 import '../../features/notification_prefs/data/notification_prefs.dart';
 import '../../features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
+import '../../features/notifications/data/notification_scan_sources.dart';
 import '../../features/notifications/presentation/viewmodels/notification_providers.dart';
 import '../../features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
 import '../../features/savings_challenge/presentation/viewmodels/savings_challenge_providers.dart';

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'notification_model.dart';
+import '../domain/entities/household_notification.dart';
+import '../domain/repositories/notification_writer.dart';
+import 'notification_mapper.dart';
 
-class NotificationRepository {
+class NotificationRepository implements NotificationWriter {
   NotificationRepository({FirebaseFirestore? firestore})
     : _db = firestore ?? FirebaseFirestore.instance;
 
@@ -15,7 +17,7 @@ class NotificationRepository {
     return _notifications(householdId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map(HouseholdNotification.fromFirestore).toList());
+        .map((snap) => snap.docs.map(householdNotificationFromFirestore).toList());
   }
 
   /// Writes the notification only if [id] doesn't already exist - the
@@ -23,6 +25,7 @@ class NotificationRepository {
   /// duplicates for the same condition. Returns the notification if it was
   /// actually created, or null if it already existed (so callers can tell
   /// genuinely new alerts apart from a no-op re-scan).
+  @override
   Future<HouseholdNotification?> createIfAbsent(
     String householdId,
     String id,

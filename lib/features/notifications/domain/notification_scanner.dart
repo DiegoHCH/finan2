@@ -1,16 +1,8 @@
-import '../../../l10n/l10n.dart';
-import '../../accounts/data/account_model.dart';
-import '../../categories/data/category_model.dart';
 import '../../debts/domain/entities/debt.dart';
-import '../../investments/data/investment_model.dart';
-import '../../notification_prefs/data/notification_prefs.dart';
-import '../../recurring_bills/domain/entities/recurring_bill.dart';
-import '../../savings_challenge/data/savings_challenge_model.dart';
-import '../../savings_goals/data/savings_goal_model.dart';
 import '../../transactions/domain/entities/movement.dart';
-import '../../transfers/data/transfer_model.dart';
-import 'notification_model.dart';
-import 'notification_repository.dart';
+import 'entities/household_notification.dart';
+import 'notification_texts.dart';
+import 'repositories/notification_writer.dart';
 
 /// A notification the scan just created, plus who its push should skip.
 /// For a household-level alert (debt due, budget exceeded...) that's the
@@ -26,6 +18,76 @@ class ScannedNotification {
   final String excludePushUid;
 }
 
+/// Which of the scanner's rules the household has turned on.
+class NotificationRules {
+  const NotificationRules({
+    required this.debtPayments,
+    required this.goalProgress,
+    required this.budgetExceeded,
+    required this.partnerActivity,
+  });
+
+  final bool debtPayments;
+  final bool goalProgress;
+  final bool budgetExceeded;
+  final bool partnerActivity;
+}
+
+/// A savings goal as the scanner sees it.
+class TrackedGoal {
+  const TrackedGoal({
+    required this.id,
+    required this.name,
+    required this.progressFraction,
+    this.contributions = const [],
+  });
+
+  final String id;
+  final String name;
+
+  /// How far along it is right now, 0-1.
+  final double progressFraction;
+  final List<TrackedContribution> contributions;
+}
+
+class TrackedContribution {
+  const TrackedContribution({required this.createdBy, required this.date});
+
+  final String createdBy;
+  final DateTime date;
+}
+
+/// Everything that records a `createdBy`, for partner-activity alerts.
+enum PartnerRecordKind {
+  movement,
+  transfer,
+  debt,
+  account,
+  investment,
+  bill,
+  category,
+  challenge,
+  goal,
+}
+
+class PartnerRecord {
+  const PartnerRecord({
+    required this.kind,
+    required this.id,
+    required this.createdBy,
+    required this.name,
+    required this.createdAt,
+  });
+
+  final PartnerRecordKind kind;
+  final String id;
+  final String createdBy;
+
+  /// What the alert's body shows - a movement's description, a debt's name...
+  final String name;
+  final DateTime createdAt;
+}
+
 /// Detects the household's alert-worthy conditions and writes any missing
 /// notification (deterministic IDs keep re-scans idempotent). Titles and
 /// bodies are stored text, written in the language of the device whose scan
@@ -33,66 +95,48 @@ class ScannedNotification {
 /// on the client - there's no backend to trigger this on a schedule, so it
 /// re-checks whenever the relevant data changes while the app is open.
 class NotificationScanner {
-  const NotificationScanner(this._repository);
+  const NotificationScanner(this._repository, this._texts);
 
-  final NotificationRepository _repository;
+  final NotificationWriter _repository;
+  final NotificationTexts _texts;
 
   /// Returns every notification actually created this scan (as opposed to
   /// ones that already existed) - callers use this to trigger a real push
-  /// only for genuinely new alerts.
-  Future<List<ScannedNotification>> scan({
+  /// only for genuinely new alerts. [partnerRecords] are notified in order.
+  Future<List<ScannedNotification>> detect({
     required String householdId,
     required String currentUid,
+    required NotificationRules rules,
     required List<Debt> debts,
-    required List<SavingsGoal> goals,
+    required List<TrackedGoal> goals,
     required Map<String, int> budget,
     required List<Movement> transactionsThisMonth,
-    required List<Category> categories,
-    required NotificationPrefs prefs,
-    List<Account> accounts = const [],
-    List<Investment> investments = const [],
-    List<RecurringBill> recurringBills = const [],
-    List<Transfer> transfers = const [],
-    SavingsChallenge? savingsChallenge,
-    DateTime? now,
+    required Map<String, String> categoryNames,
+    required List<PartnerRecord> partnerRecords,
+    required DateTime now,
   }) async {
-    now ??= DateTime.now();
     final created = <ScannedNotification>[];
 
-    if (prefs.debtPayments) {
+    if (rules.debtPayments) {
       await _scanDebts(created, householdId, debts, now, currentUid);
     }
-    if (prefs.goalProgress) {
+    if (rules.goalProgress) {
       await _scanGoalProgress(created, householdId, goals, now, currentUid);
     }
-    if (prefs.budgetExceeded) {
+    if (rules.budgetExceeded) {
       await _scanBudget(
         created,
         householdId,
         budget,
         transactionsThisMonth,
-        categories,
+        categoryNames,
         now,
         currentUid,
       );
     }
-    if (prefs.partnerActivity) {
+    if (rules.partnerActivity) {
       await _scanContributions(created, householdId, goals, currentUid);
-      await _scanPartnerCreated(
-        created: created,
-        householdId: householdId,
-        currentUid: currentUid,
-        now: now,
-        transactionsThisMonth: transactionsThisMonth,
-        transfers: transfers,
-        debts: debts,
-        accounts: accounts,
-        investments: investments,
-        recurringBills: recurringBills,
-        categories: categories,
-        savingsChallenge: savingsChallenge,
-        goals: goals,
-      );
+      await _scanPartnerCreated(created, householdId, currentUid, partnerRecords);
     }
     return created;
   }
@@ -104,7 +148,6 @@ class NotificationScanner {
     DateTime now,
     String currentUid,
   ) async {
-    final l10n = currentL10n;
     for (final debt in debts) {
       if (debt.balance <= 0) continue;
       final daysUntil = _daysUntilDayOfMonth(debt.paymentDay, now);
@@ -120,12 +163,10 @@ class NotificationScanner {
         HouseholdNotification(
           id: id,
           type: NotificationType.debtDue,
-          title: isToday
-              ? l10n.notificationsDebtDueTodayTitle(debt.name)
-              : l10n.notificationsDebtDueSoonTitle(debt.name),
+          title: isToday ? _texts.debtDueTodayTitle(debt.name) : _texts.debtDueSoonTitle(debt.name),
           body: isToday
-              ? l10n.notificationsDebtDueTodayBody(debt.name)
-              : l10n.notificationsDebtDueSoonBody(debt.name, daysUntil),
+              ? _texts.debtDueTodayBody(debt.name)
+              : _texts.debtDueSoonBody(debt.name, daysUntil),
           createdAt: now,
           read: false,
         ),
@@ -139,13 +180,12 @@ class NotificationScanner {
   Future<void> _scanGoalProgress(
     List<ScannedNotification> created,
     String householdId,
-    List<SavingsGoal> goals,
+    List<TrackedGoal> goals,
     DateTime now,
     String currentUid,
   ) async {
-    final l10n = currentL10n;
     for (final goal in goals) {
-      final fraction = goal.progressFractionAsOf(now);
+      final fraction = goal.progressFraction;
       if (fraction < 0.9 || fraction >= 1.0) continue;
       final id = 'goal_near_${goal.id}';
       final notification = await _repository.createIfAbsent(
@@ -154,8 +194,8 @@ class NotificationScanner {
         HouseholdNotification(
           id: id,
           type: NotificationType.goalNear,
-          title: l10n.notificationsGoalNearTitle,
-          body: l10n.notificationsGoalNearBody(goal.name, (fraction * 100).round()),
+          title: _texts.goalNearTitle,
+          body: _texts.goalNearBody(goal.name, (fraction * 100).round()),
           createdAt: now,
           read: false,
         ),
@@ -171,7 +211,7 @@ class NotificationScanner {
     String householdId,
     Map<String, int> budget,
     List<Movement> transactionsThisMonth,
-    List<Category> categories,
+    Map<String, String> categoryNames,
     DateTime now,
     String currentUid,
   ) async {
@@ -180,8 +220,6 @@ class NotificationScanner {
       if (tx.isIncome) continue;
       spendByCategory[tx.categoryId] = (spendByCategory[tx.categoryId] ?? 0) + tx.amount;
     }
-    final categoryById = {for (final c in categories) c.id: c};
-    final l10n = currentL10n;
 
     for (final entry in budget.entries) {
       final planned = entry.value;
@@ -189,15 +227,15 @@ class NotificationScanner {
       final real = spendByCategory[entry.key] ?? 0;
       if (real <= planned) continue;
       final id = 'budget_exceeded_${entry.key}_${now.year}_${now.month}';
-      final categoryName = categoryById[entry.key]?.name ?? l10n.notificationsUnknownCategory;
+      final categoryName = categoryNames[entry.key] ?? _texts.unknownCategory;
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
           id: id,
           type: NotificationType.budgetExceeded,
-          title: l10n.notificationsBudgetExceededTitle,
-          body: l10n.notificationsBudgetExceededBody(categoryName),
+          title: _texts.budgetExceededTitle,
+          body: _texts.budgetExceededBody(categoryName),
           createdAt: now,
           read: false,
         ),
@@ -211,10 +249,9 @@ class NotificationScanner {
   Future<void> _scanContributions(
     List<ScannedNotification> created,
     String householdId,
-    List<SavingsGoal> goals,
+    List<TrackedGoal> goals,
     String currentUid,
   ) async {
-    final l10n = currentL10n;
     for (final goal in goals) {
       for (final contribution in goal.contributions) {
         if (contribution.createdBy.isEmpty || contribution.createdBy == currentUid) {
@@ -227,8 +264,8 @@ class NotificationScanner {
           HouseholdNotification(
             id: id,
             type: NotificationType.contribution,
-            title: l10n.notificationsContributionTitle,
-            body: l10n.notificationsContributionBody(goal.name),
+            title: _texts.contributionTitle,
+            body: _texts.contributionBody(goal.name),
             createdAt: contribution.date,
             read: false,
           ),
@@ -245,132 +282,53 @@ class NotificationScanner {
   /// One notification per record the OTHER member created, across every
   /// entity that tracks a `createdBy`. Deterministic per-record IDs keep
   /// this idempotent the same way every other scan is.
-  Future<void> _scanPartnerCreated({
-    required List<ScannedNotification> created,
-    required String householdId,
-    required String currentUid,
-    required DateTime now,
-    required List<Movement> transactionsThisMonth,
-    required List<Transfer> transfers,
-    required List<Debt> debts,
-    required List<Account> accounts,
-    required List<Investment> investments,
-    required List<RecurringBill> recurringBills,
-    required List<Category> categories,
-    required SavingsChallenge? savingsChallenge,
-    required List<SavingsGoal> goals,
-  }) async {
-    final l10n = currentL10n;
-    Future<void> notify(
-      String idSuffix,
-      String createdBy,
-      String title,
-      String body,
-      DateTime createdAt,
-    ) async {
-      if (createdBy.isEmpty || createdBy == currentUid) return;
-      final id = 'partner_$idSuffix';
+  Future<void> _scanPartnerCreated(
+    List<ScannedNotification> created,
+    String householdId,
+    String currentUid,
+    List<PartnerRecord> records,
+  ) async {
+    for (final record in records) {
+      if (record.createdBy.isEmpty || record.createdBy == currentUid) continue;
+      final id = 'partner_${_partnerIdPrefix(record.kind)}_${record.id}';
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
         HouseholdNotification(
           id: id,
           type: NotificationType.partnerActivity,
-          title: title,
-          body: body,
-          createdAt: createdAt,
+          title: _texts.partnerTitle(record.kind),
+          body: switch (record.kind) {
+            PartnerRecordKind.movement =>
+              record.name.isEmpty ? _texts.partnerMovementBody : record.name,
+            PartnerRecordKind.transfer => _texts.partnerTransferBody,
+            _ => record.name,
+          },
+          createdAt: record.createdAt,
           read: false,
         ),
       );
       if (notification != null) {
-        created.add(ScannedNotification(notification: notification, excludePushUid: createdBy));
+        created.add(
+          ScannedNotification(notification: notification, excludePushUid: record.createdBy),
+        );
       }
-    }
-
-    for (final tx in transactionsThisMonth) {
-      await notify(
-        'tx_${tx.id}',
-        tx.createdBy,
-        l10n.notificationsPartnerMovementTitle,
-        tx.description.isEmpty ? l10n.notificationsPartnerMovementBody : tx.description,
-        tx.date,
-      );
-    }
-    for (final transfer in transfers) {
-      await notify(
-        'transfer_${transfer.id}',
-        transfer.createdBy,
-        l10n.notificationsPartnerTransferTitle,
-        l10n.notificationsPartnerTransferBody,
-        transfer.date,
-      );
-    }
-    for (final debt in debts) {
-      await notify(
-        'debt_${debt.id}',
-        debt.createdBy,
-        l10n.notificationsPartnerDebtTitle,
-        debt.name,
-        now,
-      );
-    }
-    for (final account in accounts) {
-      await notify(
-        'account_${account.id}',
-        account.createdBy,
-        l10n.notificationsPartnerAccountTitle,
-        account.name,
-        now,
-      );
-    }
-    for (final investment in investments) {
-      await notify(
-        'investment_${investment.id}',
-        investment.createdBy,
-        l10n.notificationsPartnerInvestmentTitle,
-        investment.name,
-        now,
-      );
-    }
-    for (final bill in recurringBills) {
-      await notify(
-        'bill_${bill.id}',
-        bill.createdBy,
-        l10n.notificationsPartnerBillTitle,
-        bill.name,
-        now,
-      );
-    }
-    for (final category in categories) {
-      await notify(
-        'category_${category.id}',
-        category.createdBy,
-        l10n.notificationsPartnerCategoryTitle,
-        category.name,
-        now,
-      );
-    }
-    final challenge = savingsChallenge;
-    if (challenge != null) {
-      await notify(
-        'challenge_${challenge.id}',
-        challenge.createdBy,
-        l10n.notificationsPartnerChallengeTitle,
-        challenge.name,
-        now,
-      );
-    }
-    for (final goal in goals) {
-      await notify(
-        'goal_${goal.id}',
-        goal.createdBy,
-        l10n.notificationsPartnerGoalTitle,
-        goal.name,
-        now,
-      );
     }
   }
 }
+
+/// Part of the stored notification IDs - changing one would notify again.
+String _partnerIdPrefix(PartnerRecordKind kind) => switch (kind) {
+  PartnerRecordKind.movement => 'tx',
+  PartnerRecordKind.transfer => 'transfer',
+  PartnerRecordKind.debt => 'debt',
+  PartnerRecordKind.account => 'account',
+  PartnerRecordKind.investment => 'investment',
+  PartnerRecordKind.bill => 'bill',
+  PartnerRecordKind.category => 'category',
+  PartnerRecordKind.challenge => 'challenge',
+  PartnerRecordKind.goal => 'goal',
+};
 
 /// Days from today until the next occurrence of [dayOfMonth] (0 = today).
 int _daysUntilDayOfMonth(int dayOfMonth, DateTime now) {

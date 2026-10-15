@@ -5,7 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../l10n/l10n.dart';
-import '../../data/notification_model.dart';
+import '../../domain/entities/household_notification.dart';
 import '../viewmodels/notification_providers.dart';
 
 class NotificationsScreen extends ConsumerWidget {
