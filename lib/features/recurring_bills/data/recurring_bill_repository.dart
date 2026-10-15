@@ -47,4 +47,47 @@ class RecurringBillRepository {
   Future<void> deleteBill(String householdId, String billId) {
     return _bills(householdId).doc(billId).delete();
   }
+
+  /// Dates the Worker found due while no one had the app open.
+  Stream<List<PendingBill>> watchPending(String householdId) {
+    return _db
+        .collection('households')
+        .doc(householdId)
+        .collection('pendingBills')
+        .snapshots()
+        .map((snap) => [for (final doc in snap.docs) PendingBill.fromFirestore(doc)]);
+  }
+
+  Future<void> deletePending(String householdId, String id) {
+    return _db
+        .collection('households')
+        .doc(householdId)
+        .collection('pendingBills')
+        .doc(id)
+        .delete();
+  }
+}
+
+/// A recurring bill's occurrence the Worker left for a phone to register.
+/// Its ID is the movement's - see RecurringBillScanner.movementIdFor.
+class PendingBill {
+  const PendingBill({required this.id, required this.billId, required this.date});
+
+  final String id;
+  final String billId;
+
+  /// Local calendar day, no time.
+  final DateTime date;
+
+  /// The Worker writes the date as `YYYY-MM-DD` so no time zone gets in
+  /// the way.
+  factory PendingBill.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data() ?? const {};
+    final parsed = DateTime.tryParse(data['date'] as String? ?? '');
+    return PendingBill(
+      id: doc.id,
+      billId: data['billId'] as String? ?? '',
+      date: parsed == null ? DateTime(1970) : DateTime(parsed.year, parsed.month, parsed.day),
+    );
+  }
 }

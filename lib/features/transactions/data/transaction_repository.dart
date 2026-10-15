@@ -171,16 +171,36 @@ class TransactionRepository {
   /// never creates a duplicate Movement for the same bill/month. Adjusts the
   /// balance the same way [createTransaction] does, only when the document
   /// is actually created.
-  Future<void> createIfAbsent(String householdId, String id, Movement tx) async {
+  ///
+  /// [recurring]: [id] is a recurring bill's occurrence. It's only generated
+  /// once ever - a `recurringDone` marker outlives the movement, so deleting
+  /// it doesn't bring it back - and the Worker's `pendingBills` marker for
+  /// it, if any, is cleared.
+  Future<void> createIfAbsent(
+    String householdId,
+    String id,
+    Movement tx, {
+    bool recurring = false,
+  }) async {
     final ref = _transactions(householdId).doc(id);
+    final household = _db.collection('households').doc(householdId);
+    final doneRef = household.collection('recurringDone').doc(id);
+    final pendingRef = household.collection('pendingBills').doc(id);
     final sourceRef = _sourceRef(householdId, tx);
     final data = await tx.toFirestore(_crypto, householdId);
     var wasCreated = false;
 
     await _db.runTransaction((transaction) async {
       final snap = await transaction.get(ref);
-      if (snap.exists) return;
-      final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
+      final done = recurring && (await transaction.get(doneRef)).exists;
+      final sourceSnap = snap.exists || done || sourceRef == null
+          ? null
+          : await transaction.get(sourceRef);
+      if (recurring) {
+        transaction.delete(pendingRef);
+        if (!done) transaction.set(doneRef, {'doneAt': FieldValue.serverTimestamp()});
+      }
+      if (snap.exists || done) return;
 
       transaction.set(ref, data);
       wasCreated = true;

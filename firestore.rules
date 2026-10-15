@@ -316,6 +316,25 @@ service cloud.firestore {
         allow create, update: if isMember() && uid == request.auth.uid;
       }
 
+      // A recurring bill's date that came due, left by the Worker's cron
+      // (it can't encrypt the amount itself). The first member to open the
+      // app turns it into a movement and deletes it - see
+      // RecurringBillScanner.confirmPending.
+      match /pendingBills/{movementId} {
+        allow read, delete: if isMember();
+        allow create, update: if false;
+      }
+
+      // One per recurring movement ever generated, kept after the movement
+      // is deleted so it isn't generated again.
+      match /recurringDone/{movementId} {
+        allow read, delete: if isMember();
+        allow create: if isMember()
+          && request.resource.data.keys().hasOnly(['doneAt'])
+          && request.resource.data.doneAt is timestamp;
+        allow update: if false;
+      }
+
       // Dedup markers only the Worker writes (as a service account).
       match /sentReminders/{docId} {
         allow read, delete: if isMember();

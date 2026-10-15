@@ -97,11 +97,20 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId == null || uid == null) return;
-    await ref.read(recurringBillScannerProvider).scan(
-          householdId: householdId,
-          currentUid: uid,
-          bills: ref.read(recurringBillsProvider).value ?? const [],
-        );
+    // Not loaded yet: confirming against an empty list would discard
+    // every pending marker as belonging to a deleted bill.
+    final bills = ref.read(recurringBillsProvider).value;
+    if (bills == null) return;
+    final scanner = ref.read(recurringBillScannerProvider);
+    await scanner.scan(householdId: householdId, currentUid: uid, bills: bills);
+    final pending = ref.read(pendingBillsProvider).value ?? const [];
+    if (pending.isEmpty) return;
+    await scanner.confirmPending(
+      householdId: householdId,
+      currentUid: uid,
+      bills: bills,
+      pending: pending,
+    );
   }
 
   Future<void> _registerPushToken() async {
@@ -184,6 +193,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     ref.listen(recurringBillsProvider, (previous, next) {
       _runScan();
       _runRecurringBillScan();
+    });
+    ref.listen(pendingBillsProvider, (previous, next) {
+      if (next.value?.isNotEmpty ?? false) _runRecurringBillScan();
     });
     ref.listen(accountsProvider, (previous, next) => _runScan());
     ref.listen(investmentsProvider, (previous, next) => _runScan());

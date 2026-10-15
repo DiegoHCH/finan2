@@ -14,6 +14,13 @@
 // (daily/weekly/debt payment) - flutter_local_notifications has no real
 // background-scheduling equivalent on web, so those reminders have to come
 // from somewhere with its own clock. See handleScheduled() below.
+//
+// The same cron leaves a `pendingBills` marker for every recurring bill date
+// that came due, so the months no one opened the app still get their
+// movements - the first phone to open it registers them (the amounts are
+// encrypted with a key only the phones hold). See markPendingBills().
+
+import { coDayOf, day, isoDay, movementIdFor, occurrencesBetween } from './recurring.js';
 
 const ICON_URL = 'https://finan2.web.app/icons/Icon-192.png';
 
@@ -239,6 +246,10 @@ async function handleScheduled(env) {
   if (dryRun) console.log(`[dry-run] scanning ${households.length} household(s)`);
 
   for (const household of households) {
+    if (co.hour === PENDING_BILLS_HOUR) {
+      await markPendingBills({ accessToken, projectId, householdId: household.id, co, dryRun });
+    }
+
     const tokens = await getHouseholdTokens(accessToken, projectId, household.id);
     if (tokens.length === 0) continue;
     const tokensByUid = {};
@@ -414,6 +425,66 @@ async function handleScheduled(env) {
           }
         }
       }
+    }
+  }
+}
+
+// Early, so the movements are there by the time anyone opens the app.
+const PENDING_BILLS_HOUR = 6;
+
+// How far back a bill's missed dates are recovered.
+const PENDING_BILLS_LOOKBACK_DAYS = 92;
+
+/// Leaves `households/{hid}/pendingBills/{movementId}` for each due date of
+/// each recurring bill that has neither a movement nor a `recurringDone`
+/// marker. Never earlier than the month the bill was created in, so a new
+/// bill with an old start date doesn't backfill months - the same as the
+/// app, which only generates the current month.
+async function markPendingBills({ accessToken, projectId, householdId, co, dryRun }) {
+  const today = day(co.year, co.month, co.day);
+  const lookback = day(co.year, co.month, co.day - PENDING_BILLS_LOOKBACK_DAYS);
+  const docs = await getRawDocs(accessToken, projectId, householdId, 'recurringBills');
+
+  for (const doc of docs) {
+    if (fieldBool(doc, 'paused')) continue;
+    const created = coDayOf(doc.createTime);
+    const createdMonth = day(created.getUTCFullYear(), created.getUTCMonth() + 1, 1);
+    const bill = {
+      id: docId(doc),
+      frequency: fieldStr(doc, 'frequency', 'monthly') || 'monthly',
+      dayOfMonth: fieldInt(doc, 'dayOfMonth', 1),
+      startDate: fieldDay(doc, 'startDate'),
+      endDate: fieldDay(doc, 'endDate'),
+      resumedOn: fieldDay(doc, 'resumedOn'),
+    };
+    const from = createdMonth > lookback ? createdMonth : lookback;
+
+    for (const date of occurrencesBetween(bill, from, today)) {
+      const movementId = movementIdFor(bill, date);
+      const [hasMovement, isDone] = await Promise.all([
+        docExists(accessToken, projectId, householdId, 'transactions', movementId),
+        docExists(accessToken, projectId, householdId, 'recurringDone', movementId),
+      ]);
+      if (hasMovement || isDone) continue;
+      if (dryRun) {
+        console.log(`[dry-run] WOULD MARK pending ${movementId} (${isoDay(date)}), household=${householdId}`);
+        continue;
+      }
+      // 409 when it's already there - nothing to do.
+      await fetch(
+        `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/pendingBills?documentId=${movementId}`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields: {
+              billId: { stringValue: bill.id },
+              date: { stringValue: isoDay(date) },
+              createdAt: { timestampValue: new Date().toISOString() },
+            },
+          }),
+        },
+      );
     }
   }
 }
@@ -689,6 +760,19 @@ function fieldInt(doc, key, fallback = 0) {
 
 function fieldBool(doc, key, fallback = false) {
   return doc.fields?.[key]?.booleanValue ?? fallback;
+}
+
+function fieldDay(doc, key) {
+  const ts = doc.fields?.[key]?.timestampValue;
+  return ts ? coDayOf(ts) : null;
+}
+
+async function docExists(accessToken, projectId, householdId, collectionName, id) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/${collectionName}/${id}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+  return res.status === 200;
 }
 
 async function alreadySent(accessToken, projectId, householdId, markerId) {

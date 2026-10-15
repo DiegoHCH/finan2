@@ -20,8 +20,17 @@ final recurringBillsProvider = StreamProvider<List<RecurringBill>>((ref) {
   return ref.watch(recurringBillRepositoryProvider).watchBills(householdId);
 });
 
+final pendingBillsProvider = StreamProvider<List<PendingBill>>((ref) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const []);
+  return ref.watch(recurringBillRepositoryProvider).watchPending(householdId);
+});
+
 final recurringBillScannerProvider = Provider<RecurringBillScanner>((ref) {
-  return RecurringBillScanner(ref.watch(transactionRepositoryProvider));
+  return RecurringBillScanner(
+    ref.watch(transactionRepositoryProvider),
+    ref.watch(recurringBillRepositoryProvider),
+  );
 });
 
 class RecurringBillController extends AsyncNotifier<void> {

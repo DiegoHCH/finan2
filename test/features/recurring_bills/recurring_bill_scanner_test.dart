@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_model.dart';
+import 'package:finan2/features/recurring_bills/data/recurring_bill_repository.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_scanner.dart';
 import 'package:finan2/features/transactions/data/transaction_model.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
@@ -40,7 +42,10 @@ void main() {
     crypto = await testHouseholdCrypto(_householdId);
     transactionRepository =
         TransactionRepository(firestore: firestore, crypto: crypto);
-    scanner = RecurringBillScanner(transactionRepository);
+    scanner = RecurringBillScanner(
+      transactionRepository,
+      RecurringBillRepository(firestore: firestore, crypto: crypto),
+    );
   });
 
   Future<List<Movement>> readTransactions() async {
@@ -223,5 +228,71 @@ void main() {
       DateTime(2026, 7, 8),
     ]);
     expect(transactions.map((t) => t.id), contains('recurring_w_2026_7_8'));
+  });
+
+  CollectionReference<Map<String, dynamic>> col(String name) =>
+      firestore.collection('households').doc(_householdId).collection(name);
+
+  test('a generated movement the user deleted is not generated again', () async {
+    final bills = [_bill(dayOfMonth: _now.day)];
+    await scanner.scan(householdId: _householdId, currentUid: 'u1', bills: bills, now: _now);
+    final id = 'recurring_b1_${_now.year}_${_now.month}';
+    await col('transactions').doc(id).delete();
+
+    await scanner.scan(householdId: _householdId, currentUid: 'u1', bills: bills, now: _now);
+    expect(await readTransactions(), isEmpty);
+    expect((await col('recurringDone').doc(id).get()).exists, isTrue);
+  });
+
+  test('confirmPending registers what the Worker left and clears the marker', () async {
+    // A month no one opened the app.
+    const id = 'recurring_b1_2026_5';
+    await col('pendingBills').doc(id).set({'billId': 'b1', 'date': '2026-05-05'});
+    final pending = (await RecurringBillRepository(firestore: firestore, crypto: crypto)
+            .watchPending(_householdId)
+            .first)
+        .single;
+    expect(pending.date, DateTime(2026, 5, 5));
+
+    await scanner.confirmPending(
+      householdId: _householdId,
+      currentUid: 'u2',
+      bills: [_bill(dayOfMonth: 5)],
+      pending: [pending],
+    );
+    final transactions = await readTransactions();
+    expect(transactions.single.id, id);
+    expect(transactions.single.date, DateTime(2026, 5, 5));
+    expect(transactions.single.createdBy, 'u2');
+    expect((await col('pendingBills').doc(id).get()).exists, isFalse);
+  });
+
+  test('confirmPending drops markers of deleted or paused bills', () async {
+    final pending = [
+      PendingBill(id: 'recurring_gone_2026_5', billId: 'gone', date: DateTime(2026, 5, 5)),
+      PendingBill(id: 'recurring_p_2026_5', billId: 'p', date: DateTime(2026, 5, 5)),
+    ];
+    for (final p in pending) {
+      await col('pendingBills').doc(p.id).set({'billId': p.billId, 'date': '2026-05-05'});
+    }
+    await scanner.confirmPending(
+      householdId: _householdId,
+      currentUid: 'u1',
+      bills: [
+        RecurringBill(
+          id: 'p',
+          name: 'Gym',
+          type: CategoryType.factura,
+          categoryId: 'cat',
+          accountId: 'acc',
+          amount: 90000,
+          dayOfMonth: 5,
+          paused: true,
+        ),
+      ],
+      pending: pending,
+    );
+    expect(await readTransactions(), isEmpty);
+    expect((await col('pendingBills').get()).docs, isEmpty);
   });
 }
