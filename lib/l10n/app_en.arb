@@ -1,4 +1,21 @@
 {
   "@@locale": "en",
-  "appTitle": "Finan2"
+  "appTitle": "Finan2",
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "commonDelete": "Delete",
+  "commonConfirm": "Confirm",
+  "commonContinue": "Continue",
+  "commonNext": "Next",
+  "commonSkip": "Skip",
+  "commonUndo": "Undo",
+  "commonCopy": "Copy",
+  "commonGotIt": "Got it",
+  "commonNotNow": "Not now",
+  "commonName": "Name",
+  "commonAmount": "Amount",
+  "commonDate": "Date",
+  "commonDescription": "Description",
+  "commonCategory": "Category",
+  "commonAccount": "Account"
 }

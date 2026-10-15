@@ -98,6 +98,108 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Finan2'**
   String get appTitle;
+
+  /// Shared labels (common*) are reused by every feature: buttons, field labels.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get commonSave;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get commonCancel;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get commonDelete;
+
+  /// No description provided for @commonConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar'**
+  String get commonConfirm;
+
+  /// No description provided for @commonContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get commonContinue;
+
+  /// No description provided for @commonNext.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get commonNext;
+
+  /// No description provided for @commonSkip.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get commonSkip;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In es, this message translates to:
+  /// **'Deshacer'**
+  String get commonUndo;
+
+  /// No description provided for @commonCopy.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar'**
+  String get commonCopy;
+
+  /// No description provided for @commonGotIt.
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get commonGotIt;
+
+  /// No description provided for @commonNotNow.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora no'**
+  String get commonNotNow;
+
+  /// No description provided for @commonName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get commonName;
+
+  /// No description provided for @commonAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto'**
+  String get commonAmount;
+
+  /// No description provided for @commonDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha'**
+  String get commonDate;
+
+  /// No description provided for @commonDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción'**
+  String get commonDescription;
+
+  /// No description provided for @commonCategory.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría'**
+  String get commonCategory;
+
+  /// No description provided for @commonAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta'**
+  String get commonAccount;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

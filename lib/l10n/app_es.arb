@@ -1,5 +1,27 @@
 {
   "@@locale": "es",
   "appTitle": "Finan2",
-  "@appTitle": {"description": "App name, shown by the OS in the task switcher."}
+  "@appTitle": {
+    "description": "App name, shown by the OS in the task switcher."
+  },
+  "commonSave": "Guardar",
+  "commonCancel": "Cancelar",
+  "commonDelete": "Eliminar",
+  "commonConfirm": "Confirmar",
+  "commonContinue": "Continuar",
+  "commonNext": "Siguiente",
+  "commonSkip": "Omitir",
+  "commonUndo": "Deshacer",
+  "commonCopy": "Copiar",
+  "commonGotIt": "Entendido",
+  "commonNotNow": "Ahora no",
+  "commonName": "Nombre",
+  "commonAmount": "Monto",
+  "commonDate": "Fecha",
+  "commonDescription": "Descripción",
+  "commonCategory": "Categoría",
+  "commonAccount": "Cuenta",
+  "@commonSave": {
+    "description": "Shared labels (common*) are reused by every feature: buttons, field labels."
+  }
 }
