@@ -118,6 +118,14 @@ service cloud.firestore {
           && request.resource.data.keys().hasAll(keys);
       }
 
+      // For fields added after documents already existed: the app always
+      // writes them, but an older document without them must still accept a
+      // partial update (CategoryRepository.reassign touches categoryId only).
+      function hasFields(required, optional) {
+        return request.resource.data.keys().hasOnly(required.concat(optional))
+          && request.resource.data.keys().hasAll(required);
+      }
+
       function text(v, max) {
         return v is string && v.size() <= max;
       }
@@ -130,12 +138,12 @@ service cloud.firestore {
 
       function validCategory() {
         let d = request.resource.data;
-        return hasExactly(['name', 'type', 'icon', 'color', 'rollover', 'createdBy'])
+        return hasFields(['name', 'type', 'icon', 'color', 'createdBy'], ['rollover'])
           && text(d.name, 200)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.icon, 50)
           && d.color is int
-          && d.rollover is bool;
+          && d.get('rollover', false) is bool;
       }
 
       function validAccount() {
@@ -156,17 +164,17 @@ service cloud.firestore {
 
       function validTransaction() {
         let d = request.resource.data;
-        return hasExactly(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
-                           'description', 'date', 'year', 'month', 'paidBy', 'tags',
-                           'createdBy'])
+        return hasFields(['amount', 'type', 'categoryId', 'accountId', 'cardDebtId',
+                          'description', 'date', 'year', 'month', 'createdBy'],
+                         ['paidBy', 'tags'])
           && encryptedAmount(d.amount)
           && d.type in ['ingreso', 'factura', 'gasto', 'ahorro']
           && text(d.categoryId, 100)
           && text(d.accountId, 100)
           && text(d.cardDebtId, 100)
           && text(d.description, 1000)
-          && text(d.paidBy, 128)
-          && d.tags is list && d.tags.size() <= maxTags()
+          && text(d.get('paidBy', ''), 128)
+          && d.get('tags', []) is list && d.get('tags', []).size() <= maxTags()
           && d.date is timestamp
           && d.year is int
           && d.month is int && d.month >= 1 && d.month <= 12;

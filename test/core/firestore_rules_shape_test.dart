@@ -37,7 +37,10 @@ void main() {
     List<Enum> enumValues,
   ) async {
     final body = ruleFunction(function);
-    expect(quotedList(body, 'hasExactly(').toSet(), written.keys.toSet(), reason: function);
+    final allowed = body.contains('hasFields(')
+        ? {...quotedList(body, 'hasFields('), ...quotedList(body, '],')}
+        : quotedList(body, 'hasExactly(').toSet();
+    expect(allowed, written.keys.toSet(), reason: function);
     expect(
       quotedList(body, 'd.type in').toSet(),
       enumValues.map((e) => e.name).toSet(),
