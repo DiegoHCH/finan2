@@ -179,4 +179,49 @@ void main() {
     final transactions = await readTransactions();
     expect(transactions.single.isIncome, isTrue);
   });
+
+  test('a paused bill generates nothing', () async {
+    await scanner.scan(
+      householdId: _householdId,
+      currentUid: 'u1',
+      bills: [
+        RecurringBill(
+          id: 'p',
+          name: 'Gym',
+          type: CategoryType.factura,
+          categoryId: 'cat',
+          accountId: 'acc',
+          amount: 90000,
+          dayOfMonth: 1,
+          paused: true,
+        ),
+      ],
+      now: _now,
+    );
+    expect(await readTransactions(), isEmpty);
+  });
+
+  test('a weekly bill generates every date of the month so far, once each', () async {
+    // Wednesdays from 2026-07-01; _now is the 9th.
+    final bill = RecurringBill(
+      id: 'w',
+      name: 'Mercado',
+      type: CategoryType.factura,
+      categoryId: 'cat',
+      accountId: 'acc',
+      amount: 150000,
+      dayOfMonth: 1,
+      frequency: RecurringFrequency.weekly,
+      startDate: DateTime(2026, 7, 1),
+    );
+    for (var i = 0; i < 2; i++) {
+      await scanner.scan(householdId: _householdId, currentUid: 'u1', bills: [bill], now: _now);
+    }
+    final transactions = await readTransactions();
+    expect(transactions.map((t) => t.date).toList()..sort(), [
+      DateTime(2026, 7, 1),
+      DateTime(2026, 7, 8),
+    ]);
+    expect(transactions.map((t) => t.id), contains('recurring_w_2026_7_8'));
+  });
 }

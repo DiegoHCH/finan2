@@ -8,7 +8,9 @@ import '../../data/recurring_bill_model.dart';
 import '../../data/recurring_bill_repository.dart';
 import '../../data/recurring_bill_scanner.dart';
 
-final recurringBillRepositoryProvider = Provider<RecurringBillRepository>((ref) {
+final recurringBillRepositoryProvider = Provider<RecurringBillRepository>((
+  ref,
+) {
   return RecurringBillRepository();
 });
 
@@ -43,12 +45,14 @@ class RecurringBillController extends AsyncNotifier<void> {
     if (householdId == null) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(recurringBillRepositoryProvider).deleteBill(householdId, billId),
+      () => ref
+          .read(recurringBillRepositoryProvider)
+          .deleteBill(householdId, billId),
     );
   }
 }
 
 final recurringBillControllerProvider =
     AsyncNotifierProvider<RecurringBillController, void>(
-  RecurringBillController.new,
-);
+      RecurringBillController.new,
+    );
