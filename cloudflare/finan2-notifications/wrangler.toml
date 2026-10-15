@@ -19,5 +19,3 @@ simple = { limit = 30, period = 60 }
 # Secrets - set with wrangler secret put (never in this file):
 #   wrangler secret put FIREBASE_SERVICE_ACCOUNT
 #   wrangler secret put FIREBASE_PROJECT_ID
-# WORKER_SECRET is no longer used (requests carry a Firebase ID token) -
-# remove it with: wrangler secret delete WORKER_SECRET
