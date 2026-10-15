@@ -16,7 +16,7 @@ import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
-import '../../../debts/data/debt_model.dart';
+import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';

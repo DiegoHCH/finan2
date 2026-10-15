@@ -12,7 +12,8 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/debt_model.dart';
+import '../../domain/entities/debt.dart';
+import '../../data/debt_mapper.dart';
 import '../viewmodels/debt_providers.dart';
 
 const _debtTypeIcons = <DebtType, IconData>{

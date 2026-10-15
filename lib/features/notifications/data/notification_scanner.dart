@@ -1,7 +1,7 @@
 import '../../../l10n/l10n.dart';
 import '../../accounts/data/account_model.dart';
 import '../../categories/data/category_model.dart';
-import '../../debts/data/debt_model.dart';
+import '../../debts/domain/entities/debt.dart';
 import '../../investments/data/investment_model.dart';
 import '../../notification_prefs/data/notification_prefs.dart';
 import '../../recurring_bills/data/recurring_bill_model.dart';

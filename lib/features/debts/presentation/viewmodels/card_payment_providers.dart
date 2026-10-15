@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/card_payment_model.dart';
+import '../../domain/entities/card_payment.dart';
 import '../../data/card_payment_repository.dart';
 
 final cardPaymentRepositoryProvider = Provider<CardPaymentRepository>((ref) {

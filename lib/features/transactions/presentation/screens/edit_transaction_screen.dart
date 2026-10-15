@@ -19,7 +19,7 @@ import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
-import '../../../debts/data/debt_model.dart';
+import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../domain/tags.dart';

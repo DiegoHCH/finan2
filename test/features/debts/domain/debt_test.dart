@@ -1,4 +1,5 @@
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
+import 'package:finan2/features/debts/data/debt_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 

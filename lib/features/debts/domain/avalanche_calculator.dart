@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'debt_model.dart';
+import 'entities/debt.dart';
 
 /// A projected month for a single debt: what would be paid and what the
 /// balance would be afterward, assuming the household keeps following the

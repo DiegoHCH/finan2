@@ -1,9 +1,11 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
-import 'package:finan2/features/debts/data/card_payment_model.dart';
+import 'package:finan2/features/debts/domain/entities/card_payment.dart';
+import 'package:finan2/features/debts/data/card_payment_mapper.dart';
 import 'package:finan2/features/debts/data/card_payment_repository.dart';
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
+import 'package:finan2/features/debts/data/debt_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/test_household_crypto.dart';
@@ -72,7 +74,7 @@ void main() {
         .collection('debts')
         .doc(debtId)
         .get();
-    return (await Debt.fromFirestore(doc, crypto, _householdId)).balance;
+    return (await debtFromFirestore(doc, crypto, _householdId)).balance;
   }
 
   CardPayment payment({String id = '', int amount = 100000}) {
@@ -104,7 +106,7 @@ void main() {
         .doc(_householdId)
         .collection('cardPayments')
         .get();
-    final saved = await CardPayment.fromFirestore(snap.docs.single, crypto, _householdId);
+    final saved = await cardPaymentFromFirestore(snap.docs.single, crypto, _householdId);
     await repository.deletePayment(_householdId, saved);
 
     expect(await readBalance('acc1'), 500000);

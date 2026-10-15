@@ -1,5 +1,5 @@
-import 'package:finan2/features/debts/data/avalanche_calculator.dart';
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/avalanche_calculator.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Debt _card({

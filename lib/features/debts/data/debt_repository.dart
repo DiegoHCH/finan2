@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
-import 'debt_model.dart';
+import '../domain/entities/debt.dart';
+import 'debt_mapper.dart';
 
 class DebtRepository {
   DebtRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
@@ -19,7 +20,7 @@ class DebtRepository {
     return _debts(householdId)
         .orderBy('name')
         .snapshots()
-        .decryptEach((doc) => Debt.fromFirestore(doc, _crypto, householdId));
+        .decryptEach((doc) => debtFromFirestore(doc, _crypto, householdId));
   }
 
   /// Returns the new debt's generated ID.

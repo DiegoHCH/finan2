@@ -9,7 +9,7 @@ import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_progress_card.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/debt_model.dart';
+import '../../domain/entities/debt.dart';
 import '../debt_status_color.dart';
 import '../viewmodels/debt_providers.dart';
 import 'debt_detail_screen.dart';

@@ -1,7 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
 import 'package:finan2/features/investments/data/investment_model.dart';
 import 'package:finan2/features/notification_prefs/data/notification_prefs.dart';
 import 'package:finan2/features/notifications/data/notification_model.dart';

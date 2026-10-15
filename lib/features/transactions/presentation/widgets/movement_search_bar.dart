@@ -5,7 +5,7 @@ import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../categories/data/category_model.dart';
-import '../../../debts/data/debt_model.dart';
+import '../../../debts/domain/entities/debt.dart';
 import '../../../household/data/household_model.dart';
 import '../../domain/movement_filter.dart';
 

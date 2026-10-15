@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../data/avalanche_calculator.dart';
-import '../../data/debt_model.dart';
+import '../../domain/avalanche_calculator.dart';
+import '../../domain/entities/debt.dart';
 import '../../data/debt_repository.dart';
 
 final debtRepositoryProvider = Provider<DebtRepository>((ref) {

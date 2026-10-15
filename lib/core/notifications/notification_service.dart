@@ -3,7 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../features/debts/data/debt_model.dart';
+import '../../features/debts/domain/entities/debt.dart';
 import '../../l10n/l10n.dart';
 import '../utils/local_timezone.dart';
 import '../observability/error_reporter.dart';

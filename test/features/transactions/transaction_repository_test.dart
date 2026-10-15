@@ -2,7 +2,8 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/core/crypto/household_crypto.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
-import 'package:finan2/features/debts/data/debt_model.dart';
+import 'package:finan2/features/debts/domain/entities/debt.dart';
+import 'package:finan2/features/debts/data/debt_mapper.dart';
 import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -73,7 +74,7 @@ void main() {
         .collection('debts')
         .doc(debtId)
         .get();
-    return (await Debt.fromFirestore(doc, crypto, _householdId)).balance;
+    return (await debtFromFirestore(doc, crypto, _householdId)).balance;
   }
 
   Future<void> seedBudget(String categoryId, int year, int month, int planned) async {

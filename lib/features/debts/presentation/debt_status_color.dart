@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../data/debt_model.dart';
+import '../domain/entities/debt.dart';
 
 /// Maps [DebtStatus] to the app's existing semantic colors - reuses
 /// `expense`/`saving`/`income` rather than adding a dedicated debt-status
