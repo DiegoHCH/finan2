@@ -13,6 +13,7 @@ import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/data/debt_model.dart';
@@ -72,12 +73,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final messenger = ScaffoldMessenger.of(context);
     // Outlives this screen, so the delete still happens after a tab switch.
     final container = ProviderScope.containerOf(context);
+    final l10n = context.l10n;
     messenger.hideCurrentSnackBar();
     final reason = await messenger
         .showSnackBar(
           SnackBar(
-            content: const Text('Movimiento borrado'),
-            action: SnackBarAction(label: 'Deshacer', onPressed: () {}),
+            content: Text(l10n.transactionsDeleted),
+            action: SnackBarAction(label: l10n.commonUndo, onPressed: () {}),
             duration: const Duration(seconds: 5),
           ),
         )
@@ -89,7 +91,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       if (result.hasError && mounted) {
         await showFinan2ErrorSheet(
           context,
-          title: 'No se pudo borrar',
+          title: l10n.transactionsDeleteFailed,
           message: friendlyErrorMessage(result.error!),
         );
       }
@@ -137,6 +139,10 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       0,
       (sum, tx) => sum + (tx.isIncome ? tx.amount : -tx.amount),
     );
+    final l10n = context.l10n;
+    final netLabel = searchingYear
+        ? l10n.transactionsNetInYear(formatMoney(net), _month.year)
+        : l10n.transactionsNet(formatMoney(net));
 
     return Scaffold(
       floatingActionButton: allTransactions.isEmpty
@@ -150,18 +156,18 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
         child: Column(
           children: [
             Finan2AppTop(
-              label: 'Movimientos',
+              label: l10n.transactionsTitle,
               title: currentTransactions.isEmpty
                   ? monthLabelCap
-                  : '${formatMoney(net)} neto${searchingYear ? ' en ${_month.year}' : ''}${filtering ? ' · filtrado' : ''}',
+                  : (filtering ? l10n.transactionsFiltered(netLabel) : netLabel),
               household: household,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.sm),
               child: Finan2PeriodPicker(
                 label: monthLabelCap,
-                previousTooltip: 'Mes anterior',
-                nextTooltip: 'Mes siguiente',
+                previousTooltip: l10n.transactionsPreviousMonth,
+                nextTooltip: l10n.transactionsNextMonth,
                 onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
                 onNext: () => setState(() => _month = _month.plusMonths(1)),
                 onReset: _month.isCurrent
@@ -198,7 +204,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   alignment: Alignment.centerLeft,
                   child: Finan2Chip(
                     icon: Icons.calendar_month_outlined,
-                    label: 'Buscar en todo ${_month.year}',
+                    label: l10n.transactionsSearchWholeYear(_month.year),
                     selected: _wholeYear,
                     onTap: () => setState(() => _wholeYear = !_wholeYear),
                   ),
@@ -213,12 +219,11 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   if (transactions.isEmpty && filtering) {
                     return Finan2EmptyState(
                       icon: Icons.search_off,
-                      title: 'Nada coincide',
+                      title: l10n.transactionsNoMatchTitle,
                       description: searchingYear
-                          ? 'Ningún movimiento de ${_month.year} coincide con la búsqueda.'
-                          : 'Ningún movimiento de $monthLabelCap coincide con la '
-                                'búsqueda o los filtros.',
-                      actionLabel: 'Limpiar búsqueda',
+                          ? l10n.transactionsNoMatchYear(_month.year)
+                          : l10n.transactionsNoMatchMonth(monthLabelCap),
+                      actionLabel: l10n.transactionsClearSearch,
                       onAction: _clearSearch,
                     );
                   }
@@ -226,13 +231,12 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                     return Finan2EmptyState(
                       icon: Icons.receipt_long_outlined,
                       title: _month.isCurrent
-                          ? 'Aún no hay movimientos'
-                          : 'Sin movimientos en $monthLabelCap',
+                          ? l10n.transactionsEmptyTitle
+                          : l10n.transactionsEmptyTitleMonth(monthLabelCap),
                       description: _month.isCurrent
-                          ? 'Registra tu primer ingreso o gasto del mes y aquí '
-                                'verás el resumen del hogar.'
-                          : 'No se registró ningún ingreso ni gasto este mes.',
-                      actionLabel: '+ Agregar el primero',
+                          ? l10n.transactionsEmptyDescription
+                          : l10n.transactionsEmptyDescriptionMonth,
+                      actionLabel: l10n.transactionsEmptyAction,
                       onAction: _addMovement,
                     );
                   }
@@ -301,14 +305,14 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                         children: [
                           Finan2ListRow(
                             icon: Icons.autorenew,
-                            label: 'Facturas recurrentes',
+                            label: l10n.transactionsRecurringBills,
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute<void>(builder: (_) => const RecurringBillsScreen()),
                             ),
                           ),
                           Finan2ListRow(
                             icon: Icons.sticky_note_2_outlined,
-                            label: 'Notas',
+                            label: l10n.transactionsNotes,
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute<void>(builder: (_) => const MonthlyNotesScreen()),
                             ),

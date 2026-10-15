@@ -845,5 +845,311 @@
   "investmentsRate": "Tasa E.A.",
   "@investmentsRate": {
     "description": "Effective annual interest rate."
-  }
+  },
+  "transactionsTitle": "Movimientos",
+  "transactionsNewTitle": "Nuevo movimiento",
+  "transactionsEditTitle": "Editar movimiento",
+  "transactionsDelete": "Eliminar movimiento",
+  "transactionsDeleted": "Movimiento borrado",
+  "transactionsDeleteFailed": "No se pudo borrar",
+  "transactionsMaxTagsTitle": "Máximo {max} etiquetas",
+  "@transactionsMaxTagsTitle": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "transactionsMaxTagsMessage": "Quita una antes de añadir otra.",
+  "transactionsCreditCard": "Tarjeta de crédito",
+  "transactionsIncomplete": "Completa el monto, la categoría y la cuenta.",
+  "transactionsNoCategoriesOfType": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
+  "transactionsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
+  "transactionsSelectAccount": "Selecciona una cuenta",
+  "transactionsTags": "Etiquetas",
+  "transactionsAddTagHint": "Añadir etiqueta, por ejemplo viaje-cartagena",
+  "@transactionsAddTagHint": {
+    "description": "Tags are lowercase words joined by hyphens."
+  },
+  "transactionsAddTag": "Añadir etiqueta",
+  "transactionsReceivedBy": "Lo recibió",
+  "@transactionsReceivedBy": {
+    "description": "Label above the member chips on an income: who received it."
+  },
+  "transactionsPaidBy": "Pagó",
+  "@transactionsPaidBy": {
+    "description": "Label above the member chips: who paid the movement."
+  },
+  "transactionsLoggedBy": "Registrado por",
+  "transactionsNet": "{amount} neto",
+  "@transactionsNet": {
+    "description": "Header: the net of the listed movements, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsNetInYear": "{amount} neto en {year}",
+  "@transactionsNetInYear": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "transactionsFiltered": "{text} · filtrado",
+  "@transactionsFiltered": {
+    "description": "Appended to the header's net when filters or a search are on.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsPreviousMonth": "Mes anterior",
+  "transactionsNextMonth": "Mes siguiente",
+  "transactionsSearchWholeYear": "Buscar en todo {year}",
+  "@transactionsSearchWholeYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "transactionsNoMatchTitle": "Nada coincide",
+  "transactionsNoMatchYear": "Ningún movimiento de {year} coincide con la búsqueda.",
+  "@transactionsNoMatchYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "transactionsNoMatchMonth": "Ningún movimiento de {month} coincide con la búsqueda o los filtros.",
+  "@transactionsNoMatchMonth": {
+    "description": "month is a month and year, e.g. Julio 2026.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsClearSearch": "Limpiar búsqueda",
+  "transactionsEmptyTitle": "Aún no hay movimientos",
+  "transactionsEmptyTitleMonth": "Sin movimientos en {month}",
+  "@transactionsEmptyTitleMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsEmptyDescription": "Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.",
+  "transactionsEmptyDescriptionMonth": "No se registró ningún ingreso ni gasto este mes.",
+  "transactionsEmptyAction": "+ Agregar el primero",
+  "transactionsRecurringBills": "Facturas recurrentes",
+  "transactionsNotes": "Notas",
+  "transactionsSearchHint": "Buscar descripción, categoría o monto",
+  "transactionsFilters": "Filtros",
+  "transactionsFilterTitle": "Filtrar movimientos",
+  "transactionsFilterType": "Tipo",
+  "transactionsFilterNoCategories": "No hay categorías de este tipo.",
+  "transactionsFilterTag": "Etiqueta",
+  "transactionsFilterClear": "Limpiar",
+  "transactionsFilterApply": "Aplicar",
+  "transfersTitle": "Transferir",
+  "transfersInvalid": "Elige un monto y dos cuentas distintas.",
+  "transfersAmountLabel": "Monto a transferir",
+  "transfersFrom": "Desde",
+  "transfersTo": "Hacia",
+  "transfersSelectAccount": "Selecciona una cuenta",
+  "transfersHistoryTitle": "Transferencias",
+  "transfersDeleteTitle": "Eliminar transferencia",
+  "transfersDeleteMessage": "Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no se puede deshacer.",
+  "transfersDeletedAccount": "Cuenta eliminada",
+  "@transfersDeletedAccount": {
+    "description": "Shown in place of the name of an account that no longer exists."
+  },
+  "transfersEmptyTitle": "Aún no hay transferencias",
+  "transfersEmptyDescription": "Los movimientos de dinero entre tus propias cuentas aparecerán aquí.",
+  "transfersEmptyAction": "+ Transferir",
+  "accountsTitle": "Cuentas",
+  "accountsAvailableMoney": "Dinero disponible",
+  "accountsTotalAvailable": "Total disponible",
+  "accountsCountInHousehold": "{count, plural, =1{en 1 cuenta del hogar} other{en {count} cuentas del hogar}}",
+  "@accountsCountInHousehold": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountsEmptyTitle": "Aún no hay cuentas",
+  "accountsEmptyDescription": "Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.",
+  "accountsEmptyAction": "+ Nueva cuenta",
+  "accountsTransferBetween": "Transferir entre cuentas",
+  "accountsHistory": "Historial",
+  "accountsNewTitle": "Nueva cuenta",
+  "accountsEditTitle": "Editar cuenta",
+  "accountsTypeLabel": "Tipo de cuenta",
+  "accountsCurrentBalance": "Saldo actual",
+  "accountsIncludeInAvailable": "Incluir en dinero disponible",
+  "accountsDeleteTitle": "Eliminar cuenta",
+  "accountsDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
+  "@accountsDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsCannotDeleteTitle": "No se puede eliminar",
+  "accountsCannotDeleteMessage": "\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".",
+  "@accountsCannotDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountsTypeCash": "Efectivo",
+  "@accountsTypeCash": {
+    "description": "Account types."
+  },
+  "accountsTypeBank": "Banco",
+  "accountsTypeWallet": "Billetera",
+  "@accountsTypeWallet": {
+    "description": "A digital wallet app, e.g. Nequi."
+  },
+  "accountsTypeDebit": "Débito",
+  "categoriesTitle": "Categorías",
+  "categoriesActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
+  "@categoriesActiveCount": {
+    "description": "How many categories the household has.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoriesEmptyTitle": "Aún no hay categorías",
+  "categoriesEmptyDescription": "Crea tu primera categoría para poder registrar movimientos.",
+  "categoriesEmptyAction": "+ Nueva categoría",
+  "categoriesNewTitle": "Nueva categoría",
+  "categoriesEditTitle": "Editar categoría",
+  "categoriesPreview": "Vista previa",
+  "categoriesTypeLabel": "Tipo",
+  "categoriesIcon": "Ícono",
+  "categoriesColor": "Color",
+  "categoriesRolloverTitle": "Acumular de un mes a otro",
+  "categoriesRolloverSubtitle": "Lo que sobre del presupuesto pasa al mes siguiente, y lo que te pases se descuenta. Se reinicia cada enero.",
+  "categoriesDeleteTitle": "Eliminar categoría",
+  "categoriesDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
+  "@categoriesDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesCannotDeleteYetTitle": "No se puede eliminar todavía",
+  "categoriesCannotDeleteYetMessage": "\"{name}\" tiene {usage}. Crea otra categoría de {type} para pasarlos ahí y luego elimina esta.",
+  "@categoriesCannotDeleteYetMessage": {
+    "description": "usage is categoriesUsage*, e.g. 2 movimientos y 1 factura recurrente; type is the category type in lowercase.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "usage": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesReassignTitle": "¿A dónde pasamos lo de {name}?",
+  "@categoriesReassignTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesReassignMessage": "Tiene {usage}. Elige la categoría que se quedará con ellos; después \"{name}\" se elimina.",
+  "@categoriesReassignMessage": {
+    "placeholders": {
+      "usage": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesUsageMovements": "{count, plural, =1{1 movimiento} other{{count} movimientos}}",
+  "@categoriesUsageMovements": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoriesUsageRecurringBills": "{count, plural, =1{1 factura recurrente} other{{count} facturas recurrentes}}",
+  "@categoriesUsageRecurringBills": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoriesUsageBoth": "{movements} y {bills}",
+  "@categoriesUsageBoth": {
+    "placeholders": {
+      "movements": {
+        "type": "String"
+      },
+      "bills": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesTypeIncome": "Ingreso",
+  "@categoriesTypeIncome": {
+    "description": "Category types, singular."
+  },
+  "categoriesTypeBill": "Factura",
+  "categoriesTypeExpense": "Gasto",
+  "categoriesTypeSavings": "Ahorro",
+  "categoriesTypeIncomePlural": "Ingresos",
+  "@categoriesTypeIncomePlural": {
+    "description": "Category types, plural: section headers and filters."
+  },
+  "categoriesTypeBillPlural": "Facturas",
+  "categoriesTypeExpensePlural": "Gastos",
+  "categoriesTypeSavingsPlural": "Ahorros",
+  "categoriesDefaultSalary": "Salario",
+  "@categoriesDefaultSalary": {
+    "description": "Default categories a new household starts with. Stored as data, in the language of the phone that created the household."
+  },
+  "categoriesDefaultFreelance": "Freelance",
+  "categoriesDefaultRent": "Arriendo",
+  "categoriesDefaultUtilities": "Servicios",
+  "categoriesDefaultPhoneInternet": "Celular e internet",
+  "categoriesDefaultStreaming": "Streaming",
+  "categoriesDefaultGroceries": "Mercado",
+  "categoriesDefaultTransport": "Transporte",
+  "categoriesDefaultRestaurants": "Restaurantes",
+  "categoriesDefaultLeisure": "Ocio",
+  "categoriesDefaultHealth": "Salud",
+  "categoriesDefaultHomeCleaning": "Hogar y aseo",
+  "categoriesDefaultEmergencyFund": "Fondo de emergencia",
+  "categoriesDefaultTravel": "Viaje"
 }

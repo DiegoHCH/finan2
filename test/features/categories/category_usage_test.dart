@@ -3,6 +3,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:finan2/features/categories/data/category_repository.dart';
 import 'package:finan2/features/categories/data/category_usage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   const householdId = 'h1';
@@ -62,6 +63,15 @@ void main() {
     expect(
       const CategoryUsage(movements: 0, recurringBills: 2).describe(),
       '2 facturas recurrentes',
+    );
+  });
+
+  test('describe follows the app language', () {
+    Intl.defaultLocale = 'en';
+    addTearDown(() => Intl.defaultLocale = 'es');
+    expect(
+      const CategoryUsage(movements: 2, recurringBills: 1).describe(),
+      '2 transactions and 1 recurring bill',
     );
   });
 }
