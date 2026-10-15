@@ -13,7 +13,9 @@ import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_period_picker.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
+import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
@@ -184,6 +186,11 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 controller: _searchController,
                 filter: _filter,
                 categories: categories,
+                accounts: ref.watch(accountsProvider).value ?? const [],
+                cards: [
+                  for (final d in ref.watch(debtsProvider).value ?? const [])
+                    if (d.type.isCard) d,
+                ],
                 household: household,
                 onQueryChanged: (q) => setState(() => _filter = _filter.copyWith(query: q)),
                 onFilterChanged: (f) => setState(() => _filter = f),

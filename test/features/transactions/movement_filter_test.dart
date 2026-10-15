@@ -65,6 +65,26 @@ void main() {
     expect(filter.matches(_tx(paidBy: 'ben', type: CategoryType.ingreso)), isFalse);
   });
 
+  test('the source matches an account or a credit card', () {
+    const filter = MovementFilter(sourceId: 'visa');
+    expect(filter.matches(_tx()), isFalse);
+    expect(
+      filter.matches(Movement(
+        id: 'c',
+        amount: 1,
+        type: CategoryType.gasto,
+        categoryId: 'mercado',
+        accountId: '',
+        cardDebtId: 'visa',
+        description: '',
+        date: DateTime(2026),
+        createdBy: 'ana',
+      )),
+      isTrue,
+    );
+    expect(const MovementFilter(sourceId: 'cuenta').matches(_tx()), isTrue);
+  });
+
   test('copyWith can clear a nullable field', () {
     const filter = MovementFilter(categoryId: 'mercado', payer: 'ana');
     final cleared = filter.copyWith(categoryId: () => null);

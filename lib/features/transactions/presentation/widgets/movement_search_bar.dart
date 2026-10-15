@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_chip.dart';
+import '../../../accounts/data/account_model.dart';
 import '../../../categories/data/category_model.dart';
+import '../../../debts/data/debt_model.dart';
 import '../../../household/data/household_model.dart';
 import '../../data/movement_filter.dart';
 
@@ -14,6 +16,8 @@ class MovementSearchBar extends StatelessWidget {
     required this.onQueryChanged,
     required this.onFilterChanged,
     required this.categories,
+    required this.accounts,
+    required this.cards,
     required this.household,
     super.key,
   });
@@ -23,6 +27,8 @@ class MovementSearchBar extends StatelessWidget {
   final ValueChanged<String> onQueryChanged;
   final ValueChanged<MovementFilter> onFilterChanged;
   final List<Category> categories;
+  final List<Account> accounts;
+  final List<Debt> cards;
   final Household? household;
 
   Future<void> _openFilters(BuildContext context) async {
@@ -32,6 +38,8 @@ class MovementSearchBar extends StatelessWidget {
       builder: (_) => _FilterSheet(
         initial: filter,
         categories: categories,
+        accounts: accounts,
+        cards: cards,
         household: household,
       ),
     );
@@ -128,11 +136,15 @@ class _FilterSheet extends StatefulWidget {
   const _FilterSheet({
     required this.initial,
     required this.categories,
+    required this.accounts,
+    required this.cards,
     required this.household,
   });
 
   final MovementFilter initial;
   final List<Category> categories;
+  final List<Account> accounts;
+  final List<Debt> cards;
   final Household? household;
 
   @override
@@ -221,6 +233,33 @@ class _FilterSheetState extends State<_FilterSheet> {
                       ),
                   ],
                 ),
+              if (widget.accounts.length + widget.cards.length > 1) ...[
+                const SizedBox(height: Finan2Space.lg),
+                Text('Cuenta', style: labelStyle),
+                const SizedBox(height: Finan2Space.sm),
+                Wrap(
+                  spacing: 7,
+                  runSpacing: 7,
+                  children: [
+                    for (final (id, name, icon) in [
+                      for (final a in widget.accounts)
+                        (a.id, a.name, Finan2Icons.cuenta(a.type.name)),
+                      for (final c in widget.cards)
+                        (c.id, c.name, Icons.credit_card_outlined),
+                    ])
+                      Finan2Chip(
+                        icon: icon,
+                        label: name,
+                        selected: _filter.sourceId == id,
+                        onTap: () => setState(() {
+                          _filter = _filter.copyWith(
+                            sourceId: () => _filter.sourceId == id ? null : id,
+                          );
+                        }),
+                      ),
+                  ],
+                ),
+              ],
               // Only worth asking once there's a partner to tell apart.
               if (members.length > 1) ...[
                 const SizedBox(height: Finan2Space.lg),

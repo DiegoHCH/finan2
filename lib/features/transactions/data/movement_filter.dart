@@ -8,6 +8,7 @@ class MovementFilter {
     this.query = '',
     this.types = const {},
     this.categoryId,
+    this.sourceId,
     this.payer,
   });
 
@@ -18,13 +19,19 @@ class MovementFilter {
   /// Empty means every type.
   final Set<CategoryType> types;
   final String? categoryId;
+
+  /// An account or a credit card - a movement targets exactly one.
+  final String? sourceId;
   final String? payer;
 
   bool get hasQuery => query.trim().isNotEmpty;
 
   /// Filters other than the text query - the ones behind the filter button.
   int get activeFilterCount =>
-      (types.isEmpty ? 0 : 1) + (categoryId == null ? 0 : 1) + (payer == null ? 0 : 1);
+      (types.isEmpty ? 0 : 1) +
+      (categoryId == null ? 0 : 1) +
+      (sourceId == null ? 0 : 1) +
+      (payer == null ? 0 : 1);
 
   bool get isEmpty => !hasQuery && activeFilterCount == 0;
 
@@ -32,12 +39,14 @@ class MovementFilter {
     String? query,
     Set<CategoryType>? types,
     String? Function()? categoryId,
+    String? Function()? sourceId,
     String? Function()? payer,
   }) =>
       MovementFilter(
         query: query ?? this.query,
         types: types ?? this.types,
         categoryId: categoryId != null ? categoryId() : this.categoryId,
+        sourceId: sourceId != null ? sourceId() : this.sourceId,
         payer: payer != null ? payer() : this.payer,
       );
 
@@ -47,6 +56,9 @@ class MovementFilter {
   bool matches(Movement tx, {String categoryName = ''}) {
     if (types.isNotEmpty && !types.contains(tx.type)) return false;
     if (categoryId != null && tx.categoryId != categoryId) return false;
+    if (sourceId != null && tx.accountId != sourceId && tx.cardDebtId != sourceId) {
+      return false;
+    }
     if (payer != null && tx.payer != payer) return false;
     if (!hasQuery) return true;
 
