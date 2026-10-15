@@ -18,10 +18,10 @@ class AuthGate extends ConsumerStatefulWidget {
 }
 
 /// Firebase Auth often resolves a persisted session almost instantly, which
-/// left the splash's loading state on screen for a single frame - too fast
-/// to register as the intended branding moment. This holds it visible for
-/// at least this long regardless of how fast the real check finishes.
-const _minSplashDuration = Duration(seconds: 5);
+/// left the splash's loading state on screen for a single frame - a flash
+/// rather than a moment. This holds it just long enough to read as
+/// intentional; anything longer is the user waiting on nothing.
+const _minSplashDuration = Duration(milliseconds: 700);
 
 class _AuthGateState extends ConsumerState<AuthGate> {
   var _minSplashElapsed = false;
