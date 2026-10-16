@@ -51,6 +51,13 @@ final moneyFormatterProvider = Provider<String Function(num)>((ref) {
   return (amount) => formatMoney(amount, currency);
 });
 
+/// [moneyFormatterProvider]'s short form: `$1,9M`, `$60k` - see
+/// [formatMoneyCompact].
+final compactMoneyFormatterProvider = Provider<String Function(num)>((ref) {
+  final currency = ref.watch(currentCurrencyProvider);
+  return (amount) => formatMoneyCompact(amount, currency);
+});
+
 class HouseholdController extends AsyncNotifier<Household?> {
   @override
   FutureOr<Household?> build() => null;

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
-import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_set_row.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
+import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../household/presentation/viewmodels/member_providers.dart';
+import '../../data/notification_prefs.dart';
 import '../viewmodels/notification_prefs_providers.dart';
 
+/// Qué avisar: each switch says, under it, when its notice arrives - what
+/// decides whether it gets in the way. On is green here, not violet: a
+/// switch that's on isn't an action.
 class NotificationPreferencesScreen extends ConsumerWidget {
   const NotificationPreferencesScreen({super.key});
 
@@ -16,169 +26,160 @@ class NotificationPreferencesScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final prefsAsync = ref.watch(notificationPrefsControllerProvider);
     final notifier = ref.read(notificationPrefsControllerProvider.notifier);
+    final l10n = context.l10n;
+
+    final myUid = ref.watch(authStateChangesProvider).value?.uid;
+    final members = ref.watch(currentHouseholdProvider).value?.members ?? const <String>[];
+    final partnerUid = members.where((uid) => uid != myUid).firstOrNull;
+    final partner = partnerUid == null
+        ? null
+        : ref.watch(memberLabelProvider)(partnerUid).firstName;
+    final hasPartner = partner != null && partner != '?';
+
+    // Green for on, for this screen only.
+    final theme = Theme.of(context);
+    final switchTheme = theme.switchTheme.copyWith(
+      trackColor: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.selected) ? colors.income : colors.line,
+      ),
+    );
 
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2AppTop(
-              label: context.l10n.notificationsTitle,
-              title: context.l10n.notificationPrefsTitle,
-              showBackButton: true,
+            Finan2Head(
+              overLabel: l10n.settingsTitle,
+              title: l10n.notificationPrefsTitle,
+              onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).pop() : null,
             ),
             Expanded(
               child: prefsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(rows: 5),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
-                data: (prefs) => ListView(
-                  padding: const EdgeInsets.all(Finan2Space.xl),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        context.l10n.notificationPrefsRemindersHeader,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.7,
-                          color: colors.inkFaint,
-                        ),
+                data: (prefs) {
+                  Future<void> update(NotificationPrefs Function(NotificationPrefs) change) =>
+                      notifier.updatePrefs(change);
+                  Widget toggle(bool value, NotificationPrefs Function(bool) change) =>
+                      Switch(value: value, onChanged: (v) => update((_) => change(v)));
+
+                  return Theme(
+                    data: theme.copyWith(switchTheme: switchTheme),
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(
+                        Finan2Space.lg,
+                        0,
+                        Finan2Space.lg,
+                        Finan2Space.xxl,
                       ),
-                    ),
-                    Finan2ListCard(
                       children: [
-                        _ToggleRow(
-                          icon: Icons.notifications_outlined,
-                          label: context.l10n.notificationPrefsDailyReminder,
-                          value: prefs.dailyReminder,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(dailyReminder: v)),
-                          trailing: GestureDetector(
-                            onTap: () async {
-                              final picked = await showTimePicker(
-                                context: context,
-                                initialTime: prefs.dailyReminderTime,
-                              );
-                              if (picked != null) {
-                                await notifier.updatePrefs(
-                                  (c) => c.copyWith(dailyReminderTime: picked),
-                                );
-                              }
-                            },
-                            child: Text(
-                              prefs.dailyReminderTime.format(context),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: colors.inkFaint,
-                              ),
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Text(
+                            hasPartner
+                                ? l10n.notificationPrefsIntro(partner)
+                                : l10n.notificationPrefsIntroSolo,
+                            style: TextStyle(fontSize: 13, height: 1.45, color: colors.inkSoft),
                           ),
                         ),
-                        _ToggleRow(
-                          icon: Icons.credit_card_outlined,
-                          label: context.l10n.notificationPrefsDebtPayments,
-                          value: prefs.debtPayments,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(debtPayments: v)),
-                        ),
-                        _ToggleRow(
-                          icon: Icons.track_changes_outlined,
-                          label: context.l10n.notificationPrefsGoalProgress,
-                          value: prefs.goalProgress,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(goalProgress: v)),
+                        const SizedBox(height: Finan2Space.md),
+                        Finan2Sheet(
+                          children: [
+                            Finan2SetRow(
+                              label: l10n.notificationPrefsDebtPayments,
+                              detail: l10n.notificationPrefsDebtPaymentsWhen,
+                              trailing: toggle(
+                                prefs.debtPayments,
+                                (v) => prefs.copyWith(debtPayments: v),
+                              ),
+                            ),
+                            Finan2SetRow(
+                              label: l10n.notificationPrefsBudgetExceeded,
+                              detail: l10n.notificationPrefsBudgetExceededWhen,
+                              trailing: toggle(
+                                prefs.budgetExceeded,
+                                (v) => prefs.copyWith(budgetExceeded: v),
+                              ),
+                            ),
+                            Finan2SetRow(
+                              label: hasPartner
+                                  ? l10n.notificationPrefsPartnerActivityNamed(partner)
+                                  : l10n.notificationPrefsPartnerActivity,
+                              detail: l10n.notificationPrefsPartnerActivityWhen,
+                              trailing: toggle(
+                                prefs.partnerActivity,
+                                (v) => prefs.copyWith(partnerActivity: v),
+                              ),
+                            ),
+                            Finan2SetRow(
+                              label: l10n.notificationPrefsGoalProgress,
+                              detail: l10n.notificationPrefsGoalProgressWhen,
+                              trailing: toggle(
+                                prefs.goalProgress,
+                                (v) => prefs.copyWith(goalProgress: v),
+                              ),
+                            ),
+                            Finan2SetRow(
+                              label: l10n.notificationPrefsDailyReminder,
+                              detail: l10n.notificationPrefsDailyReminderWhen,
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextButton(
+                                    key: const Key('dailyReminderTime'),
+                                    onPressed: () async {
+                                      final picked = await showTimePicker(
+                                        context: context,
+                                        initialTime: prefs.dailyReminderTime,
+                                        helpText: l10n.notificationPrefsDailyReminderTimeTooltip,
+                                      );
+                                      if (picked != null) {
+                                        await update((c) => c.copyWith(dailyReminderTime: picked));
+                                      }
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: colors.inkFaint,
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    child: Text(
+                                      prefs.dailyReminderTime.format(context),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: colors.inkFaint,
+                                        fontFeatures: const [FontFeature.tabularFigures()],
+                                      ),
+                                    ),
+                                  ),
+                                  toggle(
+                                    prefs.dailyReminder,
+                                    (v) => prefs.copyWith(dailyReminder: v),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Finan2SetRow(
+                              label: l10n.notificationPrefsWeeklySummary,
+                              detail: l10n.notificationPrefsWeeklySummaryWhen(
+                                NotificationService.weeklySummaryTime.format(context),
+                              ),
+                              trailing: toggle(
+                                prefs.weeklySummary,
+                                (v) => prefs.copyWith(weeklySummary: v),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: Finan2Space.lg),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        context.l10n.notificationPrefsAlertsHeader,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.7,
-                          color: colors.inkFaint,
-                        ),
-                      ),
-                    ),
-                    Finan2ListCard(
-                      children: [
-                        _ToggleRow(
-                          icon: Icons.warning_amber_outlined,
-                          label: context.l10n.notificationPrefsBudgetExceeded,
-                          value: prefs.budgetExceeded,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(budgetExceeded: v)),
-                        ),
-                        _ToggleRow(
-                          icon: Icons.people_outline,
-                          label: context.l10n.notificationPrefsPartnerActivity,
-                          value: prefs.partnerActivity,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(partnerActivity: v)),
-                        ),
-                        _ToggleRow(
-                          icon: Icons.bar_chart_outlined,
-                          label: context.l10n.notificationPrefsWeeklySummary,
-                          value: prefs.weeklySummary,
-                          onChanged: (v) =>
-                              notifier.updatePrefs((c) => c.copyWith(weeklySummary: v)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ToggleRow extends StatelessWidget {
-  const _ToggleRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onChanged,
-    this.trailing,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              color: colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(9),
-            ),
-            alignment: Alignment.center,
-            child: Icon(icon, size: 16, color: colors.ink),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
-          ),
-          if (trailing != null) ...[trailing!, const SizedBox(width: 8)],
-          Switch(value: value, onChanged: onChanged),
-        ],
       ),
     );
   }

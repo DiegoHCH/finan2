@@ -17,7 +17,6 @@ class Finan2SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final saving = Theme.of(context).extension<Finan2Colors>()!.saving;
 
     return Scaffold(
       body: DecoratedBox(
@@ -26,8 +25,8 @@ class Finan2SplashScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? const [Color(0xFF1FB382), Finan2Palette.brandDeep]
-                : const [Colors.white, Finan2Palette.groundLight],
+                ? const [Finan2Palette.heroStartLight, Finan2Palette.brandDeep]
+                : const [Finan2Palette.surfaceLight, Finan2Palette.groundLight],
           ),
         ),
         child: Stack(
@@ -45,13 +44,13 @@ class Finan2SplashScreen extends StatelessWidget {
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.4,
-                        color: isDark ? Colors.white : Finan2Palette.inkSoftLight,
+                        color: isDark ? Finan2Palette.onHero : Finan2Palette.inkSoftLight,
                       ),
                       children: [
                         const TextSpan(text: 'Finan'),
                         TextSpan(
                           text: '2',
-                          style: TextStyle(color: saving),
+                          style: const TextStyle(color: Finan2Palette.logoAccent),
                         ),
                       ],
                     ),
@@ -64,7 +63,7 @@ class Finan2SplashScreen extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.84)
+                          ? Finan2Palette.onHero.withValues(alpha: 0.84)
                           : Finan2Palette.inkFaintLight,
                     ),
                   ),
@@ -79,7 +78,7 @@ class Finan2SplashScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 24),
                   child: Center(
-                    child: _LoadingDots(color: isDark ? Colors.white : Finan2Palette.brand),
+                    child: _LoadingDots(color: isDark ? Finan2Palette.onHero : Finan2Palette.brand),
                   ),
                 ),
               ),

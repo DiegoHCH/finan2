@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
+import '../theme/finan2_tone.dart';
 import 'finan2_field.dart';
+import 'finan2_tile.dart';
 
 /// A confirm/cancel prompt as a bottom sheet - the app never shows a
 /// centered [AlertDialog] for these, always a sheet from the bottom.
@@ -21,12 +23,12 @@ Future<bool> showFinan2ConfirmSheet(
       final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(Finan2Space.xl),
+          padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+              Text(title, style: Theme.of(sheetContext).textTheme.titleLarge),
               const SizedBox(height: Finan2Space.sm),
               Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),
               const SizedBox(height: Finan2Space.lg),
@@ -74,6 +76,7 @@ Future<void> showFinan2ErrorSheet(
     title: title ?? context.l10n.coreSheetErrorTitle,
     message: message,
     confirmLabel: confirmLabel ?? context.l10n.commonGotIt,
+    isError: true,
   );
 }
 
@@ -99,6 +102,7 @@ Future<void> _showFinan2NoticeSheet(
   required String title,
   required String message,
   required String confirmLabel,
+  bool isError = false,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -106,12 +110,21 @@ Future<void> _showFinan2NoticeSheet(
       final colors = Theme.of(sheetContext).extension<Finan2Colors>()!;
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(Finan2Space.xl),
+          padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+              if (isError) ...[
+                // .state .glyph in the over tone: an error reads as one at a glance.
+                Finan2Tile(
+                  icon: Finan2Icons.alerta,
+                  tone: Finan2Tone(colors.expense, colors.expenseTint),
+                  size: 44,
+                ),
+                const SizedBox(height: Finan2Space.md),
+              ],
+              Text(title, style: Theme.of(sheetContext).textTheme.titleLarge),
               const SizedBox(height: Finan2Space.sm),
               Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),
               const SizedBox(height: Finan2Space.lg),
@@ -161,7 +174,7 @@ Future<String?> showFinan2InputSheet(
       return Padding(
         padding: EdgeInsets.fromLTRB(
           Finan2Space.xl,
-          Finan2Space.lg,
+          0,
           Finan2Space.xl,
           MediaQuery.of(sheetContext).viewInsets.bottom + Finan2Space.lg,
         ),
@@ -169,7 +182,7 @@ Future<String?> showFinan2InputSheet(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(sheetContext).textTheme.titleMedium),
+            Text(title, style: Theme.of(sheetContext).textTheme.titleLarge),
             if (message != null) ...[
               const SizedBox(height: Finan2Space.sm),
               Text(message, style: TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45)),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 /// The Finan2 brand mark: 4 ascending stroked bars, traced from the mockup's
 /// `#fbars`/`.logo svg` path (`M4 18V8m5 10V5m5 13v-7m5 7V9`), used inside the
 /// gradient logo tile and the splash screen.
 class Finan2BarsIcon extends StatelessWidget {
-  const Finan2BarsIcon({this.size = 26, this.color = Colors.white, super.key});
+  const Finan2BarsIcon({this.size = 26, this.color = Finan2Palette.onHero, super.key});
 
   final double size;
   final Color color;

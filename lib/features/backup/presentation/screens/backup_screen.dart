@@ -9,8 +9,8 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/error_messages.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../core/widgets/finan2_prompt_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/backup_repository.dart';
 import '../viewmodels/backup_providers.dart';
@@ -25,8 +25,14 @@ class BackupScreen extends ConsumerStatefulWidget {
 class _BackupScreenState extends ConsumerState<BackupScreen> {
   var _busy = false;
 
-  Future<void> _run(Future<void> Function() action) async {
-    setState(() => _busy = true);
+  /// Which of the two is running, for its button's spinner.
+  var _restoring = false;
+
+  Future<void> _run(Future<void> Function() action, {bool restoring = false}) async {
+    setState(() {
+      _busy = true;
+      _restoring = restoring;
+    });
     try {
       await action();
     } catch (error) {
@@ -84,49 +90,63 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         if (result.reattributed > 0) l10n.backupReattributed(result.reattributed),
       ].join(' '),
     );
-  });
+  }, restoring: true);
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final textStyle = TextStyle(fontSize: 13, color: colors.inkSoft, height: 1.45);
+    final l10n = context.l10n;
+    final busySpinner = SizedBox(
+      width: 18,
+      height: 18,
+      child: CircularProgressIndicator(strokeWidth: 2, color: colors.inkFaint),
+    );
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Finan2AppTop(
-              label: context.l10n.backupTitle,
-              title: context.l10n.backupSubtitle,
-              showBackButton: true,
+      body: Finan2PromptPage(
+        top: Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(Icons.arrow_back, size: Finan2Sizes.iconMd, color: colors.inkSoft),
+          ),
+        ),
+        title: l10n.backupTitle,
+        message: l10n.backupDescription,
+        // Creating is the screen's one action; restoring - rare and the
+        // dangerous one - sits back on the sunken tone.
+        actions: [
+          FilledButton(
+            onPressed: _busy ? null : _create,
+            child: _busy && !_restoring ? busySpinner : Text(l10n.backupCreate),
+          ),
+          OutlinedButton(onPressed: _busy ? null : _restore, child: Text(l10n.backupRestoreAction)),
+        ],
+        children: [
+          // What restoring does - for both, and it erases what came later -
+          // is said before touching anything, not only in the confirmation.
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(20),
             ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(Finan2Space.xl),
+            child: Text.rich(
+              TextSpan(
+                style: TextStyle(fontSize: 12.5, height: 1.5, color: colors.inkSoft),
                 children: [
-                  Text(context.l10n.backupDescription, style: textStyle),
-                  const SizedBox(height: Finan2Space.sm),
-                  Text(context.l10n.backupSameHouseholdOnly, style: textStyle),
-                  const SizedBox(height: Finan2Space.xl),
-                  FilledButton.icon(
-                    onPressed: _busy ? null : _create,
-                    icon: const Icon(Icons.save_alt),
-                    label: Text(context.l10n.backupCreate),
+                  TextSpan(
+                    text: l10n.backupRestoreLead,
+                    style: TextStyle(fontWeight: FontWeight.w700, color: colors.ink),
                   ),
-                  const SizedBox(height: Finan2Space.sm),
-                  OutlinedButton.icon(
-                    onPressed: _busy ? null : _restore,
-                    icon: const Icon(Icons.restore),
-                    label: Text(context.l10n.backupRestoreAction),
-                  ),
-                  if (_busy) ...[
-                    const SizedBox(height: Finan2Space.lg),
-                    const Center(child: CircularProgressIndicator()),
-                  ],
+                  TextSpan(text: l10n.backupRestoreNote),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

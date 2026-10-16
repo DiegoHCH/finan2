@@ -7,6 +7,8 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_section_label.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
@@ -14,8 +16,12 @@ import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/account_model.dart';
+import '../account_style.dart';
 import '../viewmodels/account_providers.dart';
 
+/// Cuentas · crear: today's balance, nothing more - the name, the type as
+/// chips with their icon, and the switch for «Disponible» with one line
+/// saying what it does.
 class EditAccountScreen extends ConsumerStatefulWidget {
   const EditAccountScreen({this.account, super.key});
 
@@ -43,7 +49,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   Future<void> _save() async {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
-    final balance = int.tryParse(_balanceController.text) ?? 0;
+    final balance = Finan2AmountInput.parse(_balanceController.text) ?? 0;
     await ref
         .read(accountControllerProvider.notifier)
         .save(
@@ -97,58 +103,92 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.account != null;
+    final account = widget.account;
+    final isEditing = account != null;
     final currencySymbol = currencySymbolFor(ref.watch(currentCurrencyProvider));
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
     final l10n = context.l10n;
+    // A new account has no ID yet, so no color of its own: the accent.
+    final tone = account == null ? null : accountTone(context, ref, account.id);
 
     return Scaffold(
       appBar: Finan2FormTop(
         title: isEditing ? l10n.accountsEditTitle : l10n.accountsNewTitle,
+        closeIcon: true,
+        saveLabel: isEditing ? null : l10n.commonCreate,
         onSave: _save,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(Finan2Space.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Finan2Space.lg,
+          Finan2Space.sm,
+          Finan2Space.lg,
+          Finan2Space.xl,
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.accountsTypeLabel, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
+            Finan2Field(label: l10n.commonName, controller: _nameController),
+            const SizedBox(height: Finan2Space.lg),
+            Finan2SectionLabel(l10n.accountsTypeLabel),
             Wrap(
               spacing: 7,
               runSpacing: 7,
               children: [
-                for (final type in AccountType.values)
+                for (final type in accountTypeOrder)
                   Finan2Chip(
-                    icon: Finan2Icons.cuenta(type.name),
+                    icon: accountIcon(type),
                     label: type.label,
+                    tone: tone,
                     selected: _type == type,
                     onTap: () => setState(() => _type = type),
                   ),
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Finan2Field(label: l10n.commonName, controller: _nameController),
-            const SizedBox(height: Finan2Space.lg),
+            Finan2AmountInput(controller: _balanceController, currencySymbol: currencySymbol),
+            const SizedBox(height: Finan2Space.xxs),
             Text(
               l10n.accountsCurrentBalance,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: TextStyle(fontSize: 12, color: colors.inkFaint),
             ),
-            Finan2AmountInput(controller: _balanceController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.lg),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(l10n.accountsIncludeInAvailable),
-              value: _includeInAvailable,
-              onChanged: (value) => setState(() => _includeInAvailable = value),
+            Finan2Sheet(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.accountsIncludeInAvailable,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: colors.ink,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: _includeInAvailable,
+                        onChanged: (value) => setState(() => _includeInAvailable = value),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: Finan2Space.sm),
+            Text(
+              l10n.accountsIncludeHint,
+              style: TextStyle(fontSize: 12, height: 1.5, color: colors.inkFaint),
             ),
             if (isEditing) ...[
-              const SizedBox(height: Finan2Space.lg),
+              const SizedBox(height: Finan2Space.xl),
               TextButton(
                 onPressed: _delete,
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).extension<Finan2Colors>()!.expense,
-                ),
+                style: TextButton.styleFrom(foregroundColor: colors.expense),
                 child: Text(l10n.accountsDeleteTitle),
               ),
             ],
