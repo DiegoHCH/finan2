@@ -8,7 +8,7 @@ import '../helpers/pump_screen.dart';
 import '../helpers/test_app_container.dart';
 
 /// Create a household, go through its setup, record a movement and plan
-/// its category. Shared by the widget test and the integration test on a
+/// its category from Plan. Shared by the widget test and the integration test on a
 /// device, so it only uses what a person sees and taps.
 Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await pumpScreen(tester, app, const AuthGate());
@@ -39,9 +39,8 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   final balance = (await tester.runAsync(() => app.first(accountsProvider)))!.single.balance;
   expect(balance, 1000000 - 120000);
 
-  // Plan Mercado for the month from Ajustes > Presupuesto.
-  await tap(tester, navTab('Ajustes'));
-  await tap(tester, find.text('Presupuesto'));
+  // Plan Mercado for the month from Plan, which opens on Presupuesto.
+  await tap(tester, navTab('Plan'));
   // Mercado already has a row: it has spending this month. .last because
   // the Movimientos tab, still in the tree, also shows "Mercado".
   await tap(tester, find.text('Mercado').last);

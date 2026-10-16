@@ -4,13 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
-import '../../../../core/widgets/finan2_back_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
+import '../../../../core/widgets/finan2_figure.dart';
+import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_challenge_model.dart';
+import '../../domain/challenge_progress.dart';
 import '../viewmodels/savings_challenge_providers.dart';
 
 const _basePattern = [2000, 5000, 10000, 20000, 30000, 50000];
@@ -104,15 +107,21 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2BackHead(
-              title: context.l10n.savingsChallengeTitle,
-              trailing: challengeAsync.value == null
+            Finan2Head(
+              overLabel: context.l10n.coreHomeTabPlan,
+              title: switch (challengeAsync.value?.name) {
+                final name? when name.isNotEmpty => name,
+                _ => context.l10n.savingsChallengeTitle,
+              },
+              onBack: () => Navigator.of(context).pop(),
+              action: challengeAsync.value == null
                   ? null
-                  : IconButton(
-                      icon: Icon(Icons.delete_outline, size: 20, color: colors.inkSoft),
+                  : Finan2HeadAction(
+                      icon: Icons.delete_outline,
                       tooltip: context.l10n.savingsChallengeDeleteTitle,
-                      onPressed: () => _delete(challengeAsync.value!),
+                      onTap: () => _delete(challengeAsync.value!),
                     ),
             ),
             Expanded(
@@ -185,138 +194,87 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
     SavingsChallenge challenge,
     String Function(num) formatMoney,
   ) {
+    final l10n = context.l10n;
+    final progress = challengeProgress(challenge.cellAmounts, challenge.done);
+    final next = progress.nextIndex;
+    final accent = Theme.of(context).colorScheme.primary;
+    final surface = Theme.of(context).colorScheme.surface;
+
     return ListView(
-      padding: const EdgeInsets.all(Finan2Space.xl),
+      padding: const EdgeInsets.fromLTRB(
+        Finan2Space.lg,
+        Finan2Space.xs,
+        Finan2Space.lg,
+        Finan2Space.xl,
+      ),
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [colors.goalStart, colors.goalEnd],
+        Finan2Figure(
+          label: l10n.challengeSavedIn,
+          amountText: formatMoney(progress.saved),
+          fontSize: 36,
+          subtitle: Text(
+            l10n.challengeCells(
+              progress.doneCount,
+              progress.cellCount,
+              formatMoney(progress.target),
             ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.savingsChallengeGoal,
-                style: TextStyle(color: colors.onHero, fontSize: 11, fontWeight: FontWeight.w600),
-              ),
-              Text(
-                formatMoney(challenge.target),
-                style: TextStyle(
-                  color: colors.onHero,
-                  fontSize: 21,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
-                ),
-              ),
-            ],
           ),
         ),
         const SizedBox(height: Finan2Space.lg),
-        Container(
-          padding: const EdgeInsets.all(Finan2Space.md),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            border: Border.all(color: colors.line),
-            borderRadius: BorderRadius.circular(Finan2Radius.card),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    context.l10n.savingsChallengeProgress,
-                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: formatMoney(challenge.saved),
-                              style: const TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            TextSpan(
-                              text: ' / ${formatMoney(challenge.target)}',
-                              style: TextStyle(fontWeight: FontWeight.w600, color: colors.inkFaint),
-                            ),
-                          ],
-                        ),
-                        style: TextStyle(fontSize: 12.5, color: colors.ink),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(999),
-                child: LinearProgressIndicator(
-                  value: challenge.fraction,
-                  minHeight: 9,
-                  backgroundColor: colors.surfaceAlt,
-                  valueColor: AlwaysStoppedAnimation(colors.saving),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: Finan2Space.lg),
-        Text(
-          context.l10n.savingsChallengeMarkHint,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.6,
-            color: colors.inkFaint,
-          ),
-        ),
-        const SizedBox(height: Finan2Space.sm),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 6,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 5,
-            childAspectRatio: 1,
+            mainAxisSpacing: 6,
+            crossAxisSpacing: 6,
           ),
           itemCount: challenge.cellAmounts.length,
           itemBuilder: (context, index) {
             final done = index < challenge.done.length && challenge.done[index];
-            final brand = Theme.of(context).colorScheme.primary;
-            return GestureDetector(
-              onTap: () => _toggleCell(challenge, index),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: done ? brand : Theme.of(context).colorScheme.surface,
-                  border: Border.all(color: done ? brand : colors.line),
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  _compactAmount(challenge.cellAmounts[index]),
-                  style: TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    color: done ? colors.onAccent : colors.inkSoft,
+            final isNext = index == next;
+            return Semantics(
+              button: true,
+              checked: done,
+              child: GestureDetector(
+                onTap: () => _toggleCell(challenge, index),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: done ? colors.saving : surface,
+                    border: isNext ? Border.all(color: accent, width: 2) : null,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    _compactAmount(challenge.cellAmounts[index]),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: done ? surface : (isNext ? accent : colors.inkFaint),
+                    ),
                   ),
                 ),
               ),
             );
           },
         ),
+        const SizedBox(height: Finan2Space.lg),
+        if (next != null)
+          Finan2Notice(
+            icon: Icons.savings_outlined,
+            title: l10n.challengeNextTitle(formatMoney(challenge.cellAmounts[next])),
+            message: l10n.challengeNextMessage,
+            actionLabel: l10n.challengeMark,
+            onTap: () => _toggleCell(challenge, next),
+          )
+        else
+          Finan2Notice(
+            kind: Finan2NoticeKind.calm,
+            icon: Icons.savings_outlined,
+            title: l10n.challengeDoneTitle,
+            message: l10n.challengeDoneMessage(formatMoney(progress.saved)),
+          ),
       ],
     );
   }

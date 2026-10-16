@@ -24,41 +24,8 @@
   "@commonSave": {
     "description": "Shared labels (common*) are reused by every feature: buttons, field labels."
   },
-  "budgetTitle": "Presupuesto · {month}",
-  "@budgetTitle": {
-    "placeholders": {
-      "month": {
-        "type": "String"
-      }
-    }
-  },
-  "budgetPlannedTotal": "{amount} planeado",
-  "@budgetPlannedTotal": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    },
-    "description": "Header title: total amount budgeted for the month, already formatted."
-  },
-  "budgetAssignedPct": "{pct}% asignado",
-  "@budgetAssignedPct": {
-    "placeholders": {
-      "pct": {
-        "type": "int"
-      }
-    },
-    "description": "Badge: share of the month's income already budgeted."
-  },
   "budgetPreviousMonth": "Mes anterior",
   "budgetNextMonth": "Mes siguiente",
-  "budgetLeftToBudget": "Falta por presupuestar",
-  "budgetNoIncomeYet": "Registra ingresos este mes",
-  "@budgetNoIncomeYet": {
-    "description": "Shown instead of an amount when the month has no income to budget yet."
-  },
-  "budgetOverBudgeted": "Presupuestado de más",
-  "budgetVsActual": "Presupuesto vs. real",
   "budgetEmpty": "Aún no has presupuestado ninguna categoría.",
   "budgetAddCategory": "+ Presupuestar otra categoría",
   "budgetForCategory": "Presupuesto para {category}",
@@ -101,10 +68,8 @@
     "description": "Overspending from earlier months taken off this month's limit."
   },
   "annualSummaryTitle": "Resumen anual",
-  "annualSummaryPreviousYear": "Año anterior",
-  "annualSummaryNextYear": "Año siguiente",
-  "annualSummaryEarned": "Ganado",
-  "annualSummarySpent": "Gastado",
+  "annualSummaryEarned": "Entró",
+  "annualSummarySpent": "Salió",
   "annualSummarySaved": "Ahorrado",
   "annualSummarySpendByMonth": "Gasto por mes",
   "dashboardNoCategorizedSpending": "No hay gastos categorizados este mes.",
@@ -237,9 +202,6 @@
     "description": "Size chip: size name and how many boxes the challenge will have."
   },
   "savingsChallengeCreate": "Crear reto",
-  "savingsChallengeGoal": "¡Tú puedes! Meta del reto",
-  "savingsChallengeProgress": "Progreso",
-  "savingsChallengeMarkHint": "Marca cada casilla al ahorrar",
   "authLoginWelcome": "Bienvenido a Finan",
   "@authLoginWelcome": {
     "description": "Login heading; a highlighted \"2\" follows it, completing the app name Finan2."
@@ -389,17 +351,6 @@
   "settingsAccountSettingsSubtitle": "Hogar y notificaciones",
   "settingsExportReport": "Exportar reporte",
   "settingsBackup": "Copia de seguridad",
-  "settingsBudget": "Presupuesto",
-  "settingsBudgetPlanned": "{amount} planeado",
-  "@settingsBudgetPlanned": {
-    "description": "{amount} is an already-formatted money amount.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "settingsAnnualSummary": "Resumen anual",
   "settingsInvestments": "Inversiones",
   "settingsNotificationCenter": "Centro de notificaciones",
   "settingsSignOut": "Cerrar sesión",
@@ -482,10 +433,6 @@
   "coreSheetErrorTitle": "Algo salió mal",
   "coreReauthTitle": "Confirma tu contraseña",
   "corePassword": "Contraseña",
-  "corePeriodPrevious": "Anterior",
-  "@corePeriodPrevious": {
-    "description": "Default tooltip of the period picker's back arrow."
-  },
   "corePeriodBackToToday": "Volver a hoy",
   "@corePeriodBackToToday": {
     "description": "Shown under the period label when browsing another period; tapping jumps back to the current one."
@@ -609,15 +556,10 @@
     }
   },
   "reminderActivityChannel": "Actividad del hogar",
-  "debtsTitle": "Deudas",
-  "debtsAvalancheStrategy": "Estrategia Avalancha",
-  "@debtsAvalancheStrategy": {
-    "description": "Badge naming the payoff strategy: highest interest rate first."
-  },
   "debtsEmptyTitle": "¡Libres de deudas!",
   "debtsEmptyDescription": "No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.",
   "debtsEmptyAction": "+ Agregar una deuda",
-  "debtsFreeDateLabel": "¡Libre de deudas en!",
+  "debtsFreeDateLabel": "Libres de deudas en",
   "@debtsFreeDateLabel": {
     "description": "Banner caption; the projected month is shown below it."
   },
@@ -626,34 +568,6 @@
     "description": "Banner caption when the projection never reaches zero."
   },
   "debtsCannotPayOff": "No alcanza a pagar",
-  "debtsCardSubtitle": "Tasa {rate}% · mín. {minPayment}/mes",
-  "@debtsCardSubtitle": {
-    "description": "Debt list row. rate is a pre-formatted number, minPayment a formatted amount.",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "minPayment": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsPaidAmount": "Pagado {amount}",
-  "@debtsPaidAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsBalanceAmount": "Saldo {amount}",
-  "@debtsBalanceAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "debtsTypeCard": "Tarjeta",
   "@debtsTypeCard": {
     "description": "Debt type: credit card."
@@ -687,50 +601,22 @@
   "@debtsStatusCannotPayOff": {
     "description": "Lower-case: follows \"Tasa X% E.A. · \"."
   },
-  "debtsRateWithStatus": "Tasa {rate}% E.A. · {status}",
-  "@debtsRateWithStatus": {
-    "description": "E.A. = effective annual rate. status is one of the debtsStatus* texts.",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsCurrentBalance": "Saldo actual",
-  "debtsMinPaymentShort": "Pago mín.",
+  "debtsCurrentBalance": "Saldo pendiente",
   "debtsExtraPayment": "Abono extra",
   "@debtsExtraPayment": {
     "description": "Amount paid on top of the minimum or the installment each month."
   },
-  "debtsPaid": "Pagado",
   "debtsMonthlyInstallment": "Cuota mensual",
-  "debtsInstallmentsLeft": "Cuotas restantes",
   "debtsPaymentSchedule": "Calendario de pagos",
   "debtsAlreadyPaidOff": "Esta deuda ya está pagada.",
   "debtsNoProjection": "No hay una proyección disponible.",
-  "debtsNextPayment": "Próximo pago",
-  "debtsScheduledPayment": "Programado",
-  "debtsScheduleBalance": "Saldo → {amount}",
-  "@debtsScheduleBalance": {
-    "description": "Balance left after this scheduled payment.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "debtsScheduledPayment": "Previsto",
   "debtsNeedAccountFirst": "Crea una cuenta primero para poder registrar el pago.",
   "debtsRecordPayment": "Registrar pago",
   "debtsPaymentFrom": "Desde",
   "@debtsPaymentFrom": {
     "description": "Label above the account the card payment comes from."
   },
-  "debtsRecordedPayments": "Pagos registrados",
-  "debtsNoCardPayments": "Aún no registras pagos a esta tarjeta.",
-  "debtsDeletedAccount": "Cuenta eliminada",
   "debtsDeletePayment": "Eliminar pago",
   "debtsNewTitle": "Nueva deuda",
   "debtsEditTitle": "Editar deuda",
@@ -764,16 +650,7 @@
     "description": "Loan term, as a number of monthly installments."
   },
   "debtsPaidInstallments": "Cuotas pagadas",
-  "savingsGoalsTitle": "Metas de ahorro",
   "savingsGoalsTotalSaved": "Total ahorrado",
-  "savingsGoalsTotalSavedRemaining": "Total ahorrado · falta {amount}",
-  "@savingsGoalsTotalSavedRemaining": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "savingsGoalsEmptyTitle": "Aún no tienes metas",
   "savingsGoalsEmptyDescription": "Crea una meta de ahorro para llevarle el pulso con tu pareja.",
   "savingsGoalsEmptyAction": "+ Nueva meta",
@@ -785,18 +662,6 @@
   "@savingsGoalsNoDate": {
     "description": "Lower-case: shown inline when a goal has no target date."
   },
-  "savingsGoalsCardSubtitle": "Meta {amount} · {date}",
-  "@savingsGoalsCardSubtitle": {
-    "description": "date is a formatted month and year, or savingsGoalsNoDate.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "date": {
-        "type": "String"
-      }
-    }
-  },
   "savingsGoalsPerMonth": "{amount}/mes",
   "@savingsGoalsPerMonth": {
     "placeholders": {
@@ -805,66 +670,10 @@
       }
     }
   },
-  "savingsGoalsSavedAmount": "Ahorrado {amount}",
-  "@savingsGoalsSavedAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsSavedRemaining": "Ahorrado · falta {amount}",
-  "@savingsGoalsSavedRemaining": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsSavedReached": "Ahorrado · meta cumplida",
-  "savingsGoalsContribution": "Aporte",
-  "@savingsGoalsContribution": {
-    "description": "One deposit toward a savings goal."
-  },
-  "savingsGoalsInterestEarned": "Interés ganado",
-  "savingsGoalsRemaining": "Falta",
-  "@savingsGoalsRemaining": {
-    "description": "Amount still missing to reach the goal."
-  },
-  "savingsGoalsProgressOf": "{percent}% de {amount}",
-  "@savingsGoalsProgressOf": {
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      },
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsTargetBy": "meta {date}",
-  "@savingsGoalsTargetBy": {
-    "description": "Lower-case. date is a formatted month and year.",
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsOnTrack": "a tiempo ✓",
-  "savingsGoalsBehind": "atrasado",
+  "savingsGoalsBehind": "va atrasada",
   "savingsGoalsContributions": "Aportes",
   "savingsGoalsNoContributions": "Aún no registras aportes.",
   "savingsGoalsNewContribution": "Nuevo aporte",
-  "savingsGoalsRunningTotal": "Total → {amount}",
-  "@savingsGoalsRunningTotal": {
-    "description": "Goal total after this contribution.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "savingsGoalsIconTrip": "Viaje",
   "savingsGoalsIconEmergency": "Emergencia",
   "savingsGoalsIconHome": "Casa",
@@ -882,15 +691,15 @@
     }
   },
   "savingsGoalsIconField": "Ícono",
-  "savingsGoalsTarget": "Meta",
+  "savingsGoalsTarget": "Cuánto necesitan",
   "@savingsGoalsTarget": {
     "description": "Label above the goal amount."
   },
   "savingsGoalsMonthlyContribution": "Aporte mensual",
-  "savingsGoalsTargetDate": "Fecha meta",
+  "savingsGoalsTargetDate": "Para cuándo",
   "savingsGoalsNoDateValue": "Sin fecha",
   "savingsGoalsClearDate": "Quitar fecha",
-  "savingsGoalsAlreadySaved": "Ya tengo ahorrado",
+  "savingsGoalsAlreadySaved": "Ya tienen",
   "@savingsGoalsAlreadySaved": {
     "description": "Amount saved before creating the goal."
   },
@@ -1680,6 +1489,447 @@
   "@backupErrorUnsupportedType": {
     "placeholders": {
       "type": {
+        "type": "String"
+      }
+    }
+  },
+  "planBudget": "Presupuesto",
+  "@planBudget": {
+    "description": "Plan tab: the segment with the month's budget."
+  },
+  "budgetLeft": "quedan {amount}",
+  "@budgetLeft": {
+    "description": "Right of a budget line: what is still there to spend, already formatted.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetComplete": "Completo",
+  "@budgetComplete": {
+    "description": "Right of a budget line spent exactly to its plan."
+  },
+  "budgetUnplanned": "sin plan",
+  "@budgetUnplanned": {
+    "description": "Right of a budget line with spending and nothing planned."
+  },
+  "budgetSpentOf": "{spent} de {limit}",
+  "@budgetSpentOf": {
+    "description": "Small line under a budget line: spent of the plan.",
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetSpentNoPlan": "{spent} gastado",
+  "@budgetSpentNoPlan": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverTitle": "{category} se pasó {amount}",
+  "@budgetOverTitle": {
+    "description": "Notice on top of the budget when one category went over.",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverManyTitle": "{count} categorías se pasaron",
+  "@budgetOverManyTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetOverMessage": "Sale de lo que queda del plan.",
+  "budgetOverManyMessage": "{category} es la que más: {amount}.",
+  "@budgetOverManyMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedRemaining": "{planned} planeado · faltan {amount} por asignar",
+  "@budgetPlannedRemaining": {
+    "description": "Line under the budget: total planned against what came in.",
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedOver": "{planned} planeado · {amount} más de lo que entró",
+  "@budgetPlannedOver": {
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedNoIncome": "{planned} planeado · aún no entra nada este mes",
+  "@budgetPlannedNoIncome": {
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsSavedTogether": "Ahorrado entre los dos",
+  "@goalsSavedTogether": {
+    "description": "Over the total of every goal, with two members."
+  },
+  "goalsOnTime": "van a tiempo en {onTime} de {dated} metas",
+  "@goalsOnTime": {
+    "description": "Under the goals total: goals with a date that are on time.",
+    "placeholders": {
+      "onTime": {
+        "type": "int"
+      },
+      "dated": {
+        "type": "int"
+      }
+    }
+  },
+  "goalsToGo": "faltan {amount} para completarlas",
+  "@goalsToGo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalRowLine": "{saved} de {target} · {when}",
+  "@goalRowLine": {
+    "description": "A goal's line: saved of target, then its date (or «sin fecha» / «va atrasada»).",
+    "placeholders": {
+      "saved": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "goalFor": "para {date}",
+  "@goalFor": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsFree": "Deudas: libres en {date}",
+  "@goalsDebtsFree": {
+    "description": "Notice under the goals summing up the debts.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsStuck": "Deudas: con los pagos actuales no se terminan",
+  "goalsDebtsOrder": "Primero {first}, luego {second}.",
+  "@goalsDebtsOrder": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsOnly": "Solo queda {name}.",
+  "@goalsDebtsOnly": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "goalOnTimePace": "Van a tiempo: {amount} al mes",
+  "@goalOnTimePace": {
+    "description": "Goal detail, in green: on time at this monthly pace.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalBehindPace": "Van atrasados: hacen falta {amount} al mes",
+  "@goalBehindPace": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalReached": "¡Meta cumplida!",
+  "goalOfFor": "de {target} · {when}",
+  "@goalOfFor": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "goalInterest": "Incluye {amount} de intereses",
+  "@goalInterest": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalContributionOf": "Aporte de {month}",
+  "@goalContributionOf": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "goalCreate": "Crear",
+  "@goalCreate": {
+    "description": "Action of the new-goal form."
+  },
+  "goalNeededTitle": "{amount} al mes",
+  "@goalNeededTitle": {
+    "description": "New goal: what it takes each month to get there.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalNeededMessage": "Es lo que hace falta para llegar en {date}.",
+  "@goalNeededMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "commonEdit": "Editar",
+  "debtsLeftAvalanche": "quedan {amount} · orden Avalancha (primero la tasa más alta)",
+  "@debtsLeftAvalanche": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRowCard": "{rate}% · mín. {amount} · día {day}",
+  "@debtsRowCard": {
+    "description": "A card in the debts list: rate, minimum payment, payment day.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsRowLoan": "{rate}% · cuota {amount} · día {day}",
+  "@debtsRowLoan": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsFirst": "1.º",
+  "@debtsFirst": {
+    "description": "Badge on the first debt of the Avalanche order."
+  },
+  "debtsNextTitle": "Próximo pago: {name}, {date}",
+  "@debtsNextTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNextMinSuggested": "{min} mínimo · sugerido {suggested}",
+  "@debtsNextMinSuggested": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "suggested": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNextMin": "{min} mínimo",
+  "@debtsNextMin": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsDetailSub": "de {reference} · {pct}% pagado · {status}",
+  "@debtsDetailSub": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRateOnly": "Tasa {rate}% E.A.",
+  "@debtsRateOnly": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRateExtra": "Tasa {rate}% E.A. · abono extra {amount}",
+  "@debtsRateExtra": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsPaidBy": "Pagado por",
+  "debtsInDays": "{days, plural, =0{hoy} =1{mañana} other{en {days} días}}",
+  "@debtsInDays": {
+    "description": "Next debt payment: how soon it is due.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsDeletePaymentMessage": "Se quitará el pago de {amount} del {date}.",
+  "@debtsDeletePaymentMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeSavedIn": "Ahorrado en el reto",
+  "challengeCells": "{done} de {total} casillas · meta {target}",
+  "@challengeCells": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeNextTitle": "Siguiente: {amount}",
+  "@challengeNextTitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeNextMessage": "Márcala cuando la aporten.",
+  "challengeMark": "Marcar",
+  "challengeDoneTitle": "Reto completo",
+  "challengeDoneMessage": "Ahorraron {amount}.",
+  "@challengeDoneMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "annualTitleYear": "Resumen {year}",
+  "@annualTitleYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "annualAverage": "prom. {amount}",
+  "@annualAverage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "annualHighestTitle": "{month} fue el mes más alto",
+  "@annualHighestTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "annualHighestReason": "{category}: {amount} más que en un mes normal.",
+  "@annualHighestReason": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
         "type": "String"
       }
     }

@@ -3,18 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/currency.dart';
-import '../../../../core/widgets/finan2_with_text_controller.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
-import '../../../../core/widgets/finan2_avatar.dart';
-import '../../../../core/widgets/finan2_back_head.dart';
-import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_person_tag.dart';
+import '../../../../core/widgets/finan2_progress.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_split.dart';
+import '../../../../core/widgets/finan2_tile.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../household/presentation/viewmodels/member_providers.dart';
 import '../../data/savings_goal_model.dart';
+import '../../domain/goal_plan.dart';
+import '../goal_style.dart';
 import '../viewmodels/savings_goal_providers.dart';
 import 'edit_savings_goal_screen.dart';
 
+/// Metas · aportes: the big ring for how far along the goal is, whether
+/// they're on time and at what monthly pace, what each one put in, and
+/// every contribution.
 class SavingsGoalDetailScreen extends ConsumerWidget {
   const SavingsGoalDetailScreen({required this.goal, super.key});
 
@@ -23,273 +35,228 @@ class SavingsGoalDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final brand = Theme.of(context).colorScheme.primary;
     final formatMoney = ref.watch(moneyFormatterProvider);
     final household = ref.watch(currentHouseholdProvider).value;
+    final memberLabel = ref.watch(memberLabelProvider);
     final goals = ref.watch(savingsGoalsProvider).value ?? const <SavingsGoal>[];
     final current = goals.firstWhere((g) => g.id == goal.id, orElse: () => goal);
+    final tone = goalTone(context, goals, current.id);
     final now = DateTime.now();
     final l10n = context.l10n;
 
-    final currentAmount = current.currentAmountAsOf(now);
-    final interestEarned = current.interestEarnedAsOf(now);
-    final falta = (current.targetAmount - currentAmount).clamp(0, current.targetAmount);
-    final onTrack = current.onTrackAsOf(now);
+    final saved = current.currentAmountAsOf(now);
     final fraction = current.progressFractionAsOf(now);
+    final interest = current.interestEarnedAsOf(now).round();
+    final date = current.targetDate;
+    final when = date == null ? l10n.savingsGoalsNoDate : l10n.goalFor(goalDateLabel(date, now));
+    final needed = monthlyNeeded(
+      target: current.targetAmount,
+      saved: saved,
+      targetDate: date,
+      now: now,
+    );
+    final onTrack = current.onTrackAsOf(now);
+    final (String? pace, Color paceColor) = switch ((saved >= current.targetAmount, onTrack)) {
+      (true, _) => (l10n.goalReached, colors.income),
+      (_, true) => (l10n.goalOnTimePace(formatMoney(current.monthlyContribution)), colors.income),
+      (_, false) => (l10n.goalBehindPace(formatMoney(needed ?? 0)), colors.expense),
+      (_, null) =>
+        current.monthlyContribution > 0
+            ? (l10n.savingsGoalsPerMonth(formatMoney(current.monthlyContribution)), colors.inkSoft)
+            : (null, colors.inkSoft),
+    };
 
-    final sortedContributions = [...current.contributions]
-      ..sort((a, b) => a.date.compareTo(b.date));
-    var running = 0;
-    final runningTotals = <int>[];
-    for (final c in sortedContributions) {
-      running += c.amount;
-      runningTotals.add(running);
-    }
+    final byMember = contributedBy(current.contributions.map((c) => (c.createdBy, c.amount)));
+    final members = household?.members.take(2).toList() ?? const <String>[];
+    final contributions = [...current.contributions]..sort((a, b) => b.date.compareTo(a.date));
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'savingsGoalDetailFab',
-        onPressed: () => _addContribution(context, ref, current.id),
-        child: const Icon(Icons.add),
+      appBar: Finan2FormTop(
+        title: current.name,
+        backIcon: true,
+        saveLabel: l10n.commonEdit,
+        onSave: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => EditSavingsGoalScreen(goal: current))),
       ),
       body: SafeArea(
+        top: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2BackHead(
-              title: current.name,
-              trailing: IconButton(
-                icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => EditSavingsGoalScreen(goal: current)),
-                ),
-              ),
-            ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(Finan2Space.xl),
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.lg,
+                  Finan2Space.md,
+                  Finan2Space.lg,
+                  Finan2Space.xl,
+                ),
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [colors.goalStart, colors.goalEnd],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          falta > 0
-                              ? l10n.savingsGoalsSavedRemaining(formatMoney(falta))
-                              : l10n.savingsGoalsSavedReached,
-                          style: TextStyle(
-                            color: colors.onHero,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          formatMoney(currentAmount),
-                          style: TextStyle(
-                            color: colors.onHero,
-                            fontSize: 21,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: Finan2Space.lg),
                   Row(
                     children: [
-                      Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.savingsGoalsContribution,
-                          value: l10n.savingsGoalsPerMonth(
-                            formatMoney(current.monthlyContribution),
-                          ),
-                        ),
+                      Finan2Ring(
+                        fraction: fraction,
+                        color: tone.color,
+                        label: '${(fraction * 100).floor()}%',
+                        size: 76,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 16),
                       Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.savingsGoalsInterestEarned,
-                          value: current.interestRate > 0
-                              ? '+${formatMoney(interestEarned.round())}'
-                              : '—',
-                          valueColor: current.interestRate > 0 ? brand : null,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.savingsGoalsRemaining,
-                          value: formatMoney(falta),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                formatMoney(saved),
+                                style: Finan2Type.money.copyWith(
+                                  fontSize: 30,
+                                  letterSpacing: -0.9,
+                                  color: colors.ink,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              l10n.goalOfFor(formatMoney(current.targetAmount), when),
+                              style: TextStyle(fontSize: 12.5, color: colors.inkSoft),
+                            ),
+                            if (pace != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 3),
+                                child: Text(
+                                  pace,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: paceColor,
+                                  ),
+                                ),
+                              ),
+                            if (interest > 0)
+                              Text(
+                                l10n.goalInterest(formatMoney(interest)),
+                                style: TextStyle(fontSize: 11.5, color: colors.inkFaint),
+                              ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: Finan2Space.lg),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(color: colors.line),
-                      borderRadius: BorderRadius.circular(Finan2Radius.card),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  if (members.isNotEmpty) ...[
+                    const SizedBox(height: Finan2Space.lg),
+                    Finan2Split(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  l10n.savingsGoalsProgressOf(
-                                    (fraction * 100).round(),
-                                    formatMoney(current.targetAmount),
-                                  ),
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  current.targetDate == null
-                                      ? l10n.savingsGoalsNoDate
-                                      : l10n.savingsGoalsTargetBy(
-                                          _monthYearLabel(current.targetDate!),
-                                        ),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: colors.inkFaint,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: LinearProgressIndicator(
-                            value: fraction,
-                            minHeight: 9,
-                            backgroundColor: colors.surfaceAlt,
-                            valueColor: AlwaysStoppedAnimation(brand),
+                        for (final (i, uid) in members.indexed)
+                          Finan2SplitBlock(
+                            tone: Finan2Tone.member(context, i),
+                            label: memberLabel(uid).firstName,
+                            value: formatMoney(byMember[uid] ?? 0),
                           ),
-                        ),
-                        const SizedBox(height: 7),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  l10n.savingsGoalsPerMonth(
-                                    formatMoney(current.monthlyContribution),
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: colors.inkFaint,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            if (onTrack != null) ...[
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    onTrack ? l10n.savingsGoalsOnTrack : l10n.savingsGoalsBehind,
-                                    style: TextStyle(
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: onTrack ? colors.income : colors.expense,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                       ],
                     ),
+                  ],
+                  const SizedBox(height: Finan2Space.xl),
+                  Text(
+                    l10n.savingsGoalsContributions,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const SizedBox(height: Finan2Space.lg),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(color: colors.line),
-                      borderRadius: BorderRadius.circular(Finan2Radius.card),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  const SizedBox(height: Finan2Space.sm),
+                  Finan2Sheet(
+                    children: [
+                      if (contributions.isEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          padding: const EdgeInsets.symmetric(vertical: Finan2Space.md),
                           child: Text(
-                            l10n.savingsGoalsContributions,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: colors.ink,
-                            ),
+                            l10n.savingsGoalsNoContributions,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                        ),
-                        if (sortedContributions.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Text(
-                              l10n.savingsGoalsNoContributions,
-                              style: TextStyle(fontSize: 12, color: colors.inkSoft),
-                            ),
-                          )
-                        else
-                          for (var i = sortedContributions.length - 1; i >= 0; i--)
-                            _ContributionRow(
-                              contribution: sortedContributions[i],
-                              runningTotal: runningTotals[i],
-                              memberName:
-                                  household?.memberInfo[sortedContributions[i].createdBy]?.name ??
-                                  '?',
-                              memberIndex:
-                                  household?.members.indexOf(sortedContributions[i].createdBy) ?? 0,
-                              formatMoney: formatMoney,
-                              showDivider: i > 0,
-                            ),
-                      ],
-                    ),
+                        )
+                      else
+                        for (final c in contributions)
+                          _ContributionRow(
+                            contribution: c,
+                            tone: tone,
+                            icon: goalIcon(current.iconSlug),
+                            who: memberLabel(c.createdBy),
+                          ),
+                    ],
                   ),
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Finan2Space.lg,
+                Finan2Space.sm,
+                Finan2Space.lg,
+                Finan2Space.lg,
+              ),
+              child: FilledButton(
+                onPressed: () => _addContribution(context, ref, current.id),
+                child: Text(l10n.savingsGoalsNewContribution),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ContributionRow extends ConsumerWidget {
+  const _ContributionRow({
+    required this.contribution,
+    required this.tone,
+    required this.icon,
+    required this.who,
+  });
+
+  final Contribution contribution;
+  final Finan2Tone tone;
+  final IconData icon;
+  final MemberLabel who;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 11),
+      child: Row(
+        children: [
+          Finan2Tile(icon: icon, tone: tone),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.goalContributionOf(DateFormat.MMMM().format(contribution.date)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.ink),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Finan2PersonTag(label: who.firstName, memberIndex: who.index),
+                    Text(
+                      ' · ${DateFormat.MMMd().format(contribution.date)}',
+                      style: TextStyle(fontSize: 11.5, color: colors.inkFaint),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '+${formatMoney(contribution.amount)}',
+            style: Finan2Type.money.copyWith(fontSize: 15, letterSpacing: -0.15, color: colors.ink),
+          ),
+        ],
       ),
     );
   }
@@ -337,6 +304,13 @@ Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId
                                 .addContribution(goalId, amount);
                           }
                           if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                          final result = ref.read(savingsGoalControllerProvider);
+                          if (result.hasError && context.mounted) {
+                            await showFinan2ErrorSheet(
+                              context,
+                              message: friendlyErrorMessage(result.error!),
+                            );
+                          }
                         },
                   child: submitting
                       ? const SizedBox(
@@ -353,71 +327,4 @@ Future<void> _addContribution(BuildContext context, WidgetRef ref, String goalId
       ),
     ),
   );
-}
-
-class _ContributionRow extends StatelessWidget {
-  const _ContributionRow({
-    required this.contribution,
-    required this.runningTotal,
-    required this.memberName,
-    required this.memberIndex,
-    required this.formatMoney,
-    required this.showDivider,
-  });
-
-  final Contribution contribution;
-  final int runningTotal;
-  final String memberName;
-  final int memberIndex;
-  final String Function(num) formatMoney;
-  final bool showDivider;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final brand = Theme.of(context).colorScheme.primary;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      decoration: showDivider
-          ? BoxDecoration(
-              border: Border(bottom: BorderSide(color: colors.line)),
-            )
-          : null,
-      child: Row(
-        children: [
-          Finan2Avatar(
-            label: memberName.isEmpty ? '?' : memberName.substring(0, 1).toUpperCase(),
-            memberIndex: memberIndex < 0 ? 0 : memberIndex,
-            size: 20,
-            borderWidth: 0,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.savingsGoalsContribution,
-                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  context.l10n.savingsGoalsRunningTotal(formatMoney(runningTotal)),
-                  style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            '+${formatMoney(contribution.amount)}',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: brand),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String _monthYearLabel(DateTime date) {
-  final month = DateFormat('MMM').format(date).replaceAll('.', '');
-  return '$month ${date.year}';
 }

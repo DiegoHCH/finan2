@@ -201,24 +201,6 @@ abstract class AppLocalizations {
   /// **'Cuenta'**
   String get commonAccount;
 
-  /// No description provided for @budgetTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto · {month}'**
-  String budgetTitle(String month);
-
-  /// Header title: total amount budgeted for the month, already formatted.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} planeado'**
-  String budgetPlannedTotal(String amount);
-
-  /// Badge: share of the month's income already budgeted.
-  ///
-  /// In es, this message translates to:
-  /// **'{pct}% asignado'**
-  String budgetAssignedPct(int pct);
-
   /// No description provided for @budgetPreviousMonth.
   ///
   /// In es, this message translates to:
@@ -230,30 +212,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Mes siguiente'**
   String get budgetNextMonth;
-
-  /// No description provided for @budgetLeftToBudget.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta por presupuestar'**
-  String get budgetLeftToBudget;
-
-  /// Shown instead of an amount when the month has no income to budget yet.
-  ///
-  /// In es, this message translates to:
-  /// **'Registra ingresos este mes'**
-  String get budgetNoIncomeYet;
-
-  /// No description provided for @budgetOverBudgeted.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuestado de más'**
-  String get budgetOverBudgeted;
-
-  /// No description provided for @budgetVsActual.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto vs. real'**
-  String get budgetVsActual;
 
   /// No description provided for @budgetEmpty.
   ///
@@ -309,28 +267,16 @@ abstract class AppLocalizations {
   /// **'Resumen anual'**
   String get annualSummaryTitle;
 
-  /// No description provided for @annualSummaryPreviousYear.
-  ///
-  /// In es, this message translates to:
-  /// **'Año anterior'**
-  String get annualSummaryPreviousYear;
-
-  /// No description provided for @annualSummaryNextYear.
-  ///
-  /// In es, this message translates to:
-  /// **'Año siguiente'**
-  String get annualSummaryNextYear;
-
   /// No description provided for @annualSummaryEarned.
   ///
   /// In es, this message translates to:
-  /// **'Ganado'**
+  /// **'Entró'**
   String get annualSummaryEarned;
 
   /// No description provided for @annualSummarySpent.
   ///
   /// In es, this message translates to:
-  /// **'Gastado'**
+  /// **'Salió'**
   String get annualSummarySpent;
 
   /// No description provided for @annualSummarySaved.
@@ -500,24 +446,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Crear reto'**
   String get savingsChallengeCreate;
-
-  /// No description provided for @savingsChallengeGoal.
-  ///
-  /// In es, this message translates to:
-  /// **'¡Tú puedes! Meta del reto'**
-  String get savingsChallengeGoal;
-
-  /// No description provided for @savingsChallengeProgress.
-  ///
-  /// In es, this message translates to:
-  /// **'Progreso'**
-  String get savingsChallengeProgress;
-
-  /// No description provided for @savingsChallengeMarkHint.
-  ///
-  /// In es, this message translates to:
-  /// **'Marca cada casilla al ahorrar'**
-  String get savingsChallengeMarkHint;
 
   /// Login heading; a highlighted "2" follows it, completing the app name Finan2.
   ///
@@ -1041,24 +969,6 @@ abstract class AppLocalizations {
   /// **'Copia de seguridad'**
   String get settingsBackup;
 
-  /// No description provided for @settingsBudget.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto'**
-  String get settingsBudget;
-
-  /// {amount} is an already-formatted money amount.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} planeado'**
-  String settingsBudgetPlanned(String amount);
-
-  /// No description provided for @settingsAnnualSummary.
-  ///
-  /// In es, this message translates to:
-  /// **'Resumen anual'**
-  String get settingsAnnualSummary;
-
   /// No description provided for @settingsInvestments.
   ///
   /// In es, this message translates to:
@@ -1335,12 +1245,6 @@ abstract class AppLocalizations {
   /// **'Contraseña'**
   String get corePassword;
 
-  /// Default tooltip of the period picker's back arrow.
-  ///
-  /// In es, this message translates to:
-  /// **'Anterior'**
-  String get corePeriodPrevious;
-
   /// Shown under the period label when browsing another period; tapping jumps back to the current one.
   ///
   /// In es, this message translates to:
@@ -1599,18 +1503,6 @@ abstract class AppLocalizations {
   /// **'Actividad del hogar'**
   String get reminderActivityChannel;
 
-  /// No description provided for @debtsTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Deudas'**
-  String get debtsTitle;
-
-  /// Badge naming the payoff strategy: highest interest rate first.
-  ///
-  /// In es, this message translates to:
-  /// **'Estrategia Avalancha'**
-  String get debtsAvalancheStrategy;
-
   /// No description provided for @debtsEmptyTitle.
   ///
   /// In es, this message translates to:
@@ -1632,7 +1524,7 @@ abstract class AppLocalizations {
   /// Banner caption; the projected month is shown below it.
   ///
   /// In es, this message translates to:
-  /// **'¡Libre de deudas en!'**
+  /// **'Libres de deudas en'**
   String get debtsFreeDateLabel;
 
   /// Banner caption when the projection never reaches zero.
@@ -1646,24 +1538,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No alcanza a pagar'**
   String get debtsCannotPayOff;
-
-  /// Debt list row. rate is a pre-formatted number, minPayment a formatted amount.
-  ///
-  /// In es, this message translates to:
-  /// **'Tasa {rate}% · mín. {minPayment}/mes'**
-  String debtsCardSubtitle(String rate, String minPayment);
-
-  /// No description provided for @debtsPaidAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagado {amount}'**
-  String debtsPaidAmount(String amount);
-
-  /// No description provided for @debtsBalanceAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Saldo {amount}'**
-  String debtsBalanceAmount(String amount);
 
   /// Debt type: credit card.
   ///
@@ -1707,23 +1581,11 @@ abstract class AppLocalizations {
   /// **'no alcanza a pagar con los abonos actuales'**
   String get debtsStatusCannotPayOff;
 
-  /// E.A. = effective annual rate. status is one of the debtsStatus* texts.
-  ///
-  /// In es, this message translates to:
-  /// **'Tasa {rate}% E.A. · {status}'**
-  String debtsRateWithStatus(String rate, String status);
-
   /// No description provided for @debtsCurrentBalance.
   ///
   /// In es, this message translates to:
-  /// **'Saldo actual'**
+  /// **'Saldo pendiente'**
   String get debtsCurrentBalance;
-
-  /// No description provided for @debtsMinPaymentShort.
-  ///
-  /// In es, this message translates to:
-  /// **'Pago mín.'**
-  String get debtsMinPaymentShort;
 
   /// Amount paid on top of the minimum or the installment each month.
   ///
@@ -1731,23 +1593,11 @@ abstract class AppLocalizations {
   /// **'Abono extra'**
   String get debtsExtraPayment;
 
-  /// No description provided for @debtsPaid.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagado'**
-  String get debtsPaid;
-
   /// No description provided for @debtsMonthlyInstallment.
   ///
   /// In es, this message translates to:
   /// **'Cuota mensual'**
   String get debtsMonthlyInstallment;
-
-  /// No description provided for @debtsInstallmentsLeft.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuotas restantes'**
-  String get debtsInstallmentsLeft;
 
   /// No description provided for @debtsPaymentSchedule.
   ///
@@ -1767,23 +1617,11 @@ abstract class AppLocalizations {
   /// **'No hay una proyección disponible.'**
   String get debtsNoProjection;
 
-  /// No description provided for @debtsNextPayment.
-  ///
-  /// In es, this message translates to:
-  /// **'Próximo pago'**
-  String get debtsNextPayment;
-
   /// No description provided for @debtsScheduledPayment.
   ///
   /// In es, this message translates to:
-  /// **'Programado'**
+  /// **'Previsto'**
   String get debtsScheduledPayment;
-
-  /// Balance left after this scheduled payment.
-  ///
-  /// In es, this message translates to:
-  /// **'Saldo → {amount}'**
-  String debtsScheduleBalance(String amount);
 
   /// No description provided for @debtsNeedAccountFirst.
   ///
@@ -1802,24 +1640,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Desde'**
   String get debtsPaymentFrom;
-
-  /// No description provided for @debtsRecordedPayments.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagos registrados'**
-  String get debtsRecordedPayments;
-
-  /// No description provided for @debtsNoCardPayments.
-  ///
-  /// In es, this message translates to:
-  /// **'Aún no registras pagos a esta tarjeta.'**
-  String get debtsNoCardPayments;
-
-  /// No description provided for @debtsDeletedAccount.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuenta eliminada'**
-  String get debtsDeletedAccount;
 
   /// No description provided for @debtsDeletePayment.
   ///
@@ -1905,23 +1725,11 @@ abstract class AppLocalizations {
   /// **'Cuotas pagadas'**
   String get debtsPaidInstallments;
 
-  /// No description provided for @savingsGoalsTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Metas de ahorro'**
-  String get savingsGoalsTitle;
-
   /// No description provided for @savingsGoalsTotalSaved.
   ///
   /// In es, this message translates to:
   /// **'Total ahorrado'**
   String get savingsGoalsTotalSaved;
-
-  /// No description provided for @savingsGoalsTotalSavedRemaining.
-  ///
-  /// In es, this message translates to:
-  /// **'Total ahorrado · falta {amount}'**
-  String savingsGoalsTotalSavedRemaining(String amount);
 
   /// No description provided for @savingsGoalsEmptyTitle.
   ///
@@ -1953,76 +1761,16 @@ abstract class AppLocalizations {
   /// **'sin fecha'**
   String get savingsGoalsNoDate;
 
-  /// date is a formatted month and year, or savingsGoalsNoDate.
-  ///
-  /// In es, this message translates to:
-  /// **'Meta {amount} · {date}'**
-  String savingsGoalsCardSubtitle(String amount, String date);
-
   /// No description provided for @savingsGoalsPerMonth.
   ///
   /// In es, this message translates to:
   /// **'{amount}/mes'**
   String savingsGoalsPerMonth(String amount);
 
-  /// No description provided for @savingsGoalsSavedAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado {amount}'**
-  String savingsGoalsSavedAmount(String amount);
-
-  /// No description provided for @savingsGoalsSavedRemaining.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado · falta {amount}'**
-  String savingsGoalsSavedRemaining(String amount);
-
-  /// No description provided for @savingsGoalsSavedReached.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado · meta cumplida'**
-  String get savingsGoalsSavedReached;
-
-  /// One deposit toward a savings goal.
-  ///
-  /// In es, this message translates to:
-  /// **'Aporte'**
-  String get savingsGoalsContribution;
-
-  /// No description provided for @savingsGoalsInterestEarned.
-  ///
-  /// In es, this message translates to:
-  /// **'Interés ganado'**
-  String get savingsGoalsInterestEarned;
-
-  /// Amount still missing to reach the goal.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta'**
-  String get savingsGoalsRemaining;
-
-  /// No description provided for @savingsGoalsProgressOf.
-  ///
-  /// In es, this message translates to:
-  /// **'{percent}% de {amount}'**
-  String savingsGoalsProgressOf(int percent, String amount);
-
-  /// Lower-case. date is a formatted month and year.
-  ///
-  /// In es, this message translates to:
-  /// **'meta {date}'**
-  String savingsGoalsTargetBy(String date);
-
-  /// No description provided for @savingsGoalsOnTrack.
-  ///
-  /// In es, this message translates to:
-  /// **'a tiempo ✓'**
-  String get savingsGoalsOnTrack;
-
   /// No description provided for @savingsGoalsBehind.
   ///
   /// In es, this message translates to:
-  /// **'atrasado'**
+  /// **'va atrasada'**
   String get savingsGoalsBehind;
 
   /// No description provided for @savingsGoalsContributions.
@@ -2042,12 +1790,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuevo aporte'**
   String get savingsGoalsNewContribution;
-
-  /// Goal total after this contribution.
-  ///
-  /// In es, this message translates to:
-  /// **'Total → {amount}'**
-  String savingsGoalsRunningTotal(String amount);
 
   /// No description provided for @savingsGoalsIconTrip.
   ///
@@ -2112,7 +1854,7 @@ abstract class AppLocalizations {
   /// Label above the goal amount.
   ///
   /// In es, this message translates to:
-  /// **'Meta'**
+  /// **'Cuánto necesitan'**
   String get savingsGoalsTarget;
 
   /// No description provided for @savingsGoalsMonthlyContribution.
@@ -2124,7 +1866,7 @@ abstract class AppLocalizations {
   /// No description provided for @savingsGoalsTargetDate.
   ///
   /// In es, this message translates to:
-  /// **'Fecha meta'**
+  /// **'Para cuándo'**
   String get savingsGoalsTargetDate;
 
   /// No description provided for @savingsGoalsNoDateValue.
@@ -2142,7 +1884,7 @@ abstract class AppLocalizations {
   /// Amount saved before creating the goal.
   ///
   /// In es, this message translates to:
-  /// **'Ya tengo ahorrado'**
+  /// **'Ya tienen'**
   String get savingsGoalsAlreadySaved;
 
   /// Effective annual interest rate.
@@ -3842,6 +3584,342 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Tipo de dato no soportado en la copia: {type}'**
   String backupErrorUnsupportedType(String type);
+
+  /// Plan tab: the segment with the month's budget.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuesto'**
+  String get planBudget;
+
+  /// Right of a budget line: what is still there to spend, already formatted.
+  ///
+  /// In es, this message translates to:
+  /// **'quedan {amount}'**
+  String budgetLeft(String amount);
+
+  /// Right of a budget line spent exactly to its plan.
+  ///
+  /// In es, this message translates to:
+  /// **'Completo'**
+  String get budgetComplete;
+
+  /// Right of a budget line with spending and nothing planned.
+  ///
+  /// In es, this message translates to:
+  /// **'sin plan'**
+  String get budgetUnplanned;
+
+  /// Small line under a budget line: spent of the plan.
+  ///
+  /// In es, this message translates to:
+  /// **'{spent} de {limit}'**
+  String budgetSpentOf(String spent, String limit);
+
+  /// No description provided for @budgetSpentNoPlan.
+  ///
+  /// In es, this message translates to:
+  /// **'{spent} gastado'**
+  String budgetSpentNoPlan(String spent);
+
+  /// Notice on top of the budget when one category went over.
+  ///
+  /// In es, this message translates to:
+  /// **'{category} se pasó {amount}'**
+  String budgetOverTitle(String category, String amount);
+
+  /// No description provided for @budgetOverManyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} categorías se pasaron'**
+  String budgetOverManyTitle(int count);
+
+  /// No description provided for @budgetOverMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Sale de lo que queda del plan.'**
+  String get budgetOverMessage;
+
+  /// No description provided for @budgetOverManyMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'{category} es la que más: {amount}.'**
+  String budgetOverManyMessage(String category, String amount);
+
+  /// Line under the budget: total planned against what came in.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · faltan {amount} por asignar'**
+  String budgetPlannedRemaining(String planned, String amount);
+
+  /// No description provided for @budgetPlannedOver.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · {amount} más de lo que entró'**
+  String budgetPlannedOver(String planned, String amount);
+
+  /// No description provided for @budgetPlannedNoIncome.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · aún no entra nada este mes'**
+  String budgetPlannedNoIncome(String planned);
+
+  /// Over the total of every goal, with two members.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorrado entre los dos'**
+  String get goalsSavedTogether;
+
+  /// Under the goals total: goals with a date that are on time.
+  ///
+  /// In es, this message translates to:
+  /// **'van a tiempo en {onTime} de {dated} metas'**
+  String goalsOnTime(int onTime, int dated);
+
+  /// No description provided for @goalsToGo.
+  ///
+  /// In es, this message translates to:
+  /// **'faltan {amount} para completarlas'**
+  String goalsToGo(String amount);
+
+  /// A goal's line: saved of target, then its date (or «sin fecha» / «va atrasada»).
+  ///
+  /// In es, this message translates to:
+  /// **'{saved} de {target} · {when}'**
+  String goalRowLine(String saved, String target, String when);
+
+  /// No description provided for @goalFor.
+  ///
+  /// In es, this message translates to:
+  /// **'para {date}'**
+  String goalFor(String date);
+
+  /// Notice under the goals summing up the debts.
+  ///
+  /// In es, this message translates to:
+  /// **'Deudas: libres en {date}'**
+  String goalsDebtsFree(String date);
+
+  /// No description provided for @goalsDebtsStuck.
+  ///
+  /// In es, this message translates to:
+  /// **'Deudas: con los pagos actuales no se terminan'**
+  String get goalsDebtsStuck;
+
+  /// No description provided for @goalsDebtsOrder.
+  ///
+  /// In es, this message translates to:
+  /// **'Primero {first}, luego {second}.'**
+  String goalsDebtsOrder(String first, String second);
+
+  /// No description provided for @goalsDebtsOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo queda {name}.'**
+  String goalsDebtsOnly(String name);
+
+  /// Goal detail, in green: on time at this monthly pace.
+  ///
+  /// In es, this message translates to:
+  /// **'Van a tiempo: {amount} al mes'**
+  String goalOnTimePace(String amount);
+
+  /// No description provided for @goalBehindPace.
+  ///
+  /// In es, this message translates to:
+  /// **'Van atrasados: hacen falta {amount} al mes'**
+  String goalBehindPace(String amount);
+
+  /// No description provided for @goalReached.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Meta cumplida!'**
+  String get goalReached;
+
+  /// No description provided for @goalOfFor.
+  ///
+  /// In es, this message translates to:
+  /// **'de {target} · {when}'**
+  String goalOfFor(String target, String when);
+
+  /// No description provided for @goalInterest.
+  ///
+  /// In es, this message translates to:
+  /// **'Incluye {amount} de intereses'**
+  String goalInterest(String amount);
+
+  /// No description provided for @goalContributionOf.
+  ///
+  /// In es, this message translates to:
+  /// **'Aporte de {month}'**
+  String goalContributionOf(String month);
+
+  /// Action of the new-goal form.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get goalCreate;
+
+  /// New goal: what it takes each month to get there.
+  ///
+  /// In es, this message translates to:
+  /// **'{amount} al mes'**
+  String goalNeededTitle(String amount);
+
+  /// No description provided for @goalNeededMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Es lo que hace falta para llegar en {date}.'**
+  String goalNeededMessage(String date);
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get commonEdit;
+
+  /// No description provided for @debtsLeftAvalanche.
+  ///
+  /// In es, this message translates to:
+  /// **'quedan {amount} · orden Avalancha (primero la tasa más alta)'**
+  String debtsLeftAvalanche(String amount);
+
+  /// A card in the debts list: rate, minimum payment, payment day.
+  ///
+  /// In es, this message translates to:
+  /// **'{rate}% · mín. {amount} · día {day}'**
+  String debtsRowCard(String rate, String amount, int day);
+
+  /// No description provided for @debtsRowLoan.
+  ///
+  /// In es, this message translates to:
+  /// **'{rate}% · cuota {amount} · día {day}'**
+  String debtsRowLoan(String rate, String amount, int day);
+
+  /// Badge on the first debt of the Avalanche order.
+  ///
+  /// In es, this message translates to:
+  /// **'1.º'**
+  String get debtsFirst;
+
+  /// No description provided for @debtsNextTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo pago: {name}, {date}'**
+  String debtsNextTitle(String name, String date);
+
+  /// No description provided for @debtsNextMinSuggested.
+  ///
+  /// In es, this message translates to:
+  /// **'{min} mínimo · sugerido {suggested}'**
+  String debtsNextMinSuggested(String min, String suggested);
+
+  /// No description provided for @debtsNextMin.
+  ///
+  /// In es, this message translates to:
+  /// **'{min} mínimo'**
+  String debtsNextMin(String min);
+
+  /// No description provided for @debtsDetailSub.
+  ///
+  /// In es, this message translates to:
+  /// **'de {reference} · {pct}% pagado · {status}'**
+  String debtsDetailSub(String reference, int pct, String status);
+
+  /// No description provided for @debtsRateOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Tasa {rate}% E.A.'**
+  String debtsRateOnly(String rate);
+
+  /// No description provided for @debtsRateExtra.
+  ///
+  /// In es, this message translates to:
+  /// **'Tasa {rate}% E.A. · abono extra {amount}'**
+  String debtsRateExtra(String rate, String amount);
+
+  /// No description provided for @debtsPaidBy.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagado por'**
+  String get debtsPaidBy;
+
+  /// Next debt payment: how soon it is due.
+  ///
+  /// In es, this message translates to:
+  /// **'{days, plural, =0{hoy} =1{mañana} other{en {days} días}}'**
+  String debtsInDays(int days);
+
+  /// No description provided for @debtsDeletePaymentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se quitará el pago de {amount} del {date}.'**
+  String debtsDeletePaymentMessage(String amount, String date);
+
+  /// No description provided for @challengeSavedIn.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorrado en el reto'**
+  String get challengeSavedIn;
+
+  /// No description provided for @challengeCells.
+  ///
+  /// In es, this message translates to:
+  /// **'{done} de {total} casillas · meta {target}'**
+  String challengeCells(int done, int total, String target);
+
+  /// No description provided for @challengeNextTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente: {amount}'**
+  String challengeNextTitle(String amount);
+
+  /// No description provided for @challengeNextMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Márcala cuando la aporten.'**
+  String get challengeNextMessage;
+
+  /// No description provided for @challengeMark.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar'**
+  String get challengeMark;
+
+  /// No description provided for @challengeDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reto completo'**
+  String get challengeDoneTitle;
+
+  /// No description provided for @challengeDoneMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorraron {amount}.'**
+  String challengeDoneMessage(String amount);
+
+  /// No description provided for @annualTitleYear.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen {year}'**
+  String annualTitleYear(int year);
+
+  /// No description provided for @annualAverage.
+  ///
+  /// In es, this message translates to:
+  /// **'prom. {amount}'**
+  String annualAverage(String amount);
+
+  /// No description provided for @annualHighestTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{month} fue el mes más alto'**
+  String annualHighestTitle(String month);
+
+  /// No description provided for @annualHighestReason.
+  ///
+  /// In es, this message translates to:
+  /// **'{category}: {amount} más que en un mes normal.'**
+  String annualHighestReason(String category, String amount);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -63,37 +63,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonAccount => 'Account';
 
   @override
-  String budgetTitle(String month) {
-    return 'Budget · $month';
-  }
-
-  @override
-  String budgetPlannedTotal(String amount) {
-    return '$amount planned';
-  }
-
-  @override
-  String budgetAssignedPct(int pct) {
-    return '$pct% assigned';
-  }
-
-  @override
   String get budgetPreviousMonth => 'Previous month';
 
   @override
   String get budgetNextMonth => 'Next month';
-
-  @override
-  String get budgetLeftToBudget => 'Left to budget';
-
-  @override
-  String get budgetNoIncomeYet => 'Log this month\'s income';
-
-  @override
-  String get budgetOverBudgeted => 'Over-budgeted';
-
-  @override
-  String get budgetVsActual => 'Budget vs. actual';
 
   @override
   String get budgetEmpty => 'You haven\'t budgeted any category yet.';
@@ -137,16 +110,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get annualSummaryTitle => 'Annual summary';
 
   @override
-  String get annualSummaryPreviousYear => 'Previous year';
+  String get annualSummaryEarned => 'In';
 
   @override
-  String get annualSummaryNextYear => 'Next year';
-
-  @override
-  String get annualSummaryEarned => 'Earned';
-
-  @override
-  String get annualSummarySpent => 'Spent';
+  String get annualSummarySpent => 'Out';
 
   @override
   String get annualSummarySaved => 'Saved';
@@ -273,15 +240,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savingsChallengeCreate => 'Create challenge';
-
-  @override
-  String get savingsChallengeGoal => 'You\'ve got this! Challenge goal';
-
-  @override
-  String get savingsChallengeProgress => 'Progress';
-
-  @override
-  String get savingsChallengeMarkHint => 'Check off each box as you save';
 
   @override
   String get authLoginWelcome => 'Welcome to Finan';
@@ -576,17 +534,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsBackup => 'Backup';
 
   @override
-  String get settingsBudget => 'Budget';
-
-  @override
-  String settingsBudgetPlanned(String amount) {
-    return '$amount planned';
-  }
-
-  @override
-  String get settingsAnnualSummary => 'Annual summary';
-
-  @override
   String get settingsInvestments => 'Investments';
 
   @override
@@ -733,9 +680,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get corePassword => 'Password';
-
-  @override
-  String get corePeriodPrevious => 'Previous';
 
   @override
   String get corePeriodBackToToday => 'Back to today';
@@ -896,12 +840,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderActivityChannel => 'Household activity';
 
   @override
-  String get debtsTitle => 'Debts';
-
-  @override
-  String get debtsAvalancheStrategy => 'Avalanche strategy';
-
-  @override
   String get debtsEmptyTitle => 'Debt-free!';
 
   @override
@@ -912,28 +850,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsEmptyAction => '+ Add a debt';
 
   @override
-  String get debtsFreeDateLabel => 'Debt-free by';
+  String get debtsFreeDateLabel => 'Debt-free in';
 
   @override
   String get debtsCurrentPaymentsLabel => 'At current payments';
 
   @override
   String get debtsCannotPayOff => 'Not enough to pay off';
-
-  @override
-  String debtsCardSubtitle(String rate, String minPayment) {
-    return '$rate% rate · min. $minPayment/mo';
-  }
-
-  @override
-  String debtsPaidAmount(String amount) {
-    return 'Paid $amount';
-  }
-
-  @override
-  String debtsBalanceAmount(String amount) {
-    return 'Balance $amount';
-  }
 
   @override
   String get debtsTypeCard => 'Card';
@@ -959,27 +882,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsStatusCannotPayOff => 'current payments won\'t pay it off';
 
   @override
-  String debtsRateWithStatus(String rate, String status) {
-    return '$rate% APR · $status';
-  }
-
-  @override
-  String get debtsCurrentBalance => 'Current balance';
-
-  @override
-  String get debtsMinPaymentShort => 'Min. payment';
+  String get debtsCurrentBalance => 'Outstanding balance';
 
   @override
   String get debtsExtraPayment => 'Extra payment';
 
   @override
-  String get debtsPaid => 'Paid';
-
-  @override
   String get debtsMonthlyInstallment => 'Monthly payment';
-
-  @override
-  String get debtsInstallmentsLeft => 'Payments left';
 
   @override
   String get debtsPaymentSchedule => 'Payment schedule';
@@ -991,15 +900,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsNoProjection => 'No projection available.';
 
   @override
-  String get debtsNextPayment => 'Next payment';
-
-  @override
-  String get debtsScheduledPayment => 'Scheduled';
-
-  @override
-  String debtsScheduleBalance(String amount) {
-    return 'Balance → $amount';
-  }
+  String get debtsScheduledPayment => 'Planned';
 
   @override
   String get debtsNeedAccountFirst => 'Create an account first to record the payment.';
@@ -1009,15 +910,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtsPaymentFrom => 'From';
-
-  @override
-  String get debtsRecordedPayments => 'Recorded payments';
-
-  @override
-  String get debtsNoCardPayments => 'No payments recorded for this card yet.';
-
-  @override
-  String get debtsDeletedAccount => 'Deleted account';
 
   @override
   String get debtsDeletePayment => 'Delete payment';
@@ -1064,15 +956,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsPaidInstallments => 'Payments made';
 
   @override
-  String get savingsGoalsTitle => 'Savings goals';
-
-  @override
   String get savingsGoalsTotalSaved => 'Total saved';
-
-  @override
-  String savingsGoalsTotalSavedRemaining(String amount) {
-    return 'Total saved · $amount to go';
-  }
 
   @override
   String get savingsGoalsEmptyTitle => 'No goals yet';
@@ -1091,49 +975,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoalsNoDate => 'no date';
 
   @override
-  String savingsGoalsCardSubtitle(String amount, String date) {
-    return 'Goal $amount · $date';
-  }
-
-  @override
   String savingsGoalsPerMonth(String amount) {
     return '$amount/mo';
   }
-
-  @override
-  String savingsGoalsSavedAmount(String amount) {
-    return 'Saved $amount';
-  }
-
-  @override
-  String savingsGoalsSavedRemaining(String amount) {
-    return 'Saved · $amount to go';
-  }
-
-  @override
-  String get savingsGoalsSavedReached => 'Saved · goal reached';
-
-  @override
-  String get savingsGoalsContribution => 'Contribution';
-
-  @override
-  String get savingsGoalsInterestEarned => 'Interest earned';
-
-  @override
-  String get savingsGoalsRemaining => 'To go';
-
-  @override
-  String savingsGoalsProgressOf(int percent, String amount) {
-    return '$percent% of $amount';
-  }
-
-  @override
-  String savingsGoalsTargetBy(String date) {
-    return 'goal $date';
-  }
-
-  @override
-  String get savingsGoalsOnTrack => 'on track ✓';
 
   @override
   String get savingsGoalsBehind => 'behind';
@@ -1146,11 +990,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savingsGoalsNewContribution => 'New contribution';
-
-  @override
-  String savingsGoalsRunningTotal(String amount) {
-    return 'Total → $amount';
-  }
 
   @override
   String get savingsGoalsIconTrip => 'Trip';
@@ -1185,13 +1024,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoalsIconField => 'Icon';
 
   @override
-  String get savingsGoalsTarget => 'Target';
+  String get savingsGoalsTarget => 'How much you need';
 
   @override
   String get savingsGoalsMonthlyContribution => 'Monthly contribution';
 
   @override
-  String get savingsGoalsTargetDate => 'Target date';
+  String get savingsGoalsTargetDate => 'By when';
 
   @override
   String get savingsGoalsNoDateValue => 'No date';
@@ -2235,5 +2074,262 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String backupErrorUnsupportedType(String type) {
     return 'Unsupported data type in the backup: $type';
+  }
+
+  @override
+  String get planBudget => 'Budget';
+
+  @override
+  String budgetLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get budgetComplete => 'Complete';
+
+  @override
+  String get budgetUnplanned => 'no plan';
+
+  @override
+  String budgetSpentOf(String spent, String limit) {
+    return '$spent of $limit';
+  }
+
+  @override
+  String budgetSpentNoPlan(String spent) {
+    return '$spent spent';
+  }
+
+  @override
+  String budgetOverTitle(String category, String amount) {
+    return '$category went $amount over';
+  }
+
+  @override
+  String budgetOverManyTitle(int count) {
+    return '$count categories went over';
+  }
+
+  @override
+  String get budgetOverMessage => 'It comes out of what\'s left of the plan.';
+
+  @override
+  String budgetOverManyMessage(String category, String amount) {
+    return '$category the most: $amount.';
+  }
+
+  @override
+  String budgetPlannedRemaining(String planned, String amount) {
+    return '$planned planned · $amount left to assign';
+  }
+
+  @override
+  String budgetPlannedOver(String planned, String amount) {
+    return '$planned planned · $amount more than came in';
+  }
+
+  @override
+  String budgetPlannedNoIncome(String planned) {
+    return '$planned planned · nothing has come in this month yet';
+  }
+
+  @override
+  String get goalsSavedTogether => 'Saved between you two';
+
+  @override
+  String goalsOnTime(int onTime, int dated) {
+    return 'on time in $onTime of $dated goals';
+  }
+
+  @override
+  String goalsToGo(String amount) {
+    return '$amount to go to complete them';
+  }
+
+  @override
+  String goalRowLine(String saved, String target, String when) {
+    return '$saved of $target · $when';
+  }
+
+  @override
+  String goalFor(String date) {
+    return 'by $date';
+  }
+
+  @override
+  String goalsDebtsFree(String date) {
+    return 'Debts: free by $date';
+  }
+
+  @override
+  String get goalsDebtsStuck => 'Debts: current payments don\'t pay them off';
+
+  @override
+  String goalsDebtsOrder(String first, String second) {
+    return 'First $first, then $second.';
+  }
+
+  @override
+  String goalsDebtsOnly(String name) {
+    return 'Only $name is left.';
+  }
+
+  @override
+  String goalOnTimePace(String amount) {
+    return 'On time: $amount a month';
+  }
+
+  @override
+  String goalBehindPace(String amount) {
+    return 'Behind: it takes $amount a month';
+  }
+
+  @override
+  String get goalReached => 'Goal reached!';
+
+  @override
+  String goalOfFor(String target, String when) {
+    return 'of $target · $when';
+  }
+
+  @override
+  String goalInterest(String amount) {
+    return 'Includes $amount in interest';
+  }
+
+  @override
+  String goalContributionOf(String month) {
+    return '$month contribution';
+  }
+
+  @override
+  String get goalCreate => 'Create';
+
+  @override
+  String goalNeededTitle(String amount) {
+    return '$amount a month';
+  }
+
+  @override
+  String goalNeededMessage(String date) {
+    return 'That\'s what it takes to get there by $date.';
+  }
+
+  @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String debtsLeftAvalanche(String amount) {
+    return '$amount to go · Avalanche order (highest rate first)';
+  }
+
+  @override
+  String debtsRowCard(String rate, String amount, int day) {
+    return '$rate% · min. $amount · day $day';
+  }
+
+  @override
+  String debtsRowLoan(String rate, String amount, int day) {
+    return '$rate% · $amount installment · day $day';
+  }
+
+  @override
+  String get debtsFirst => '1st';
+
+  @override
+  String debtsNextTitle(String name, String date) {
+    return 'Next payment: $name, $date';
+  }
+
+  @override
+  String debtsNextMinSuggested(String min, String suggested) {
+    return '$min minimum · suggested $suggested';
+  }
+
+  @override
+  String debtsNextMin(String min) {
+    return '$min minimum';
+  }
+
+  @override
+  String debtsDetailSub(String reference, int pct, String status) {
+    return 'of $reference · $pct% paid · $status';
+  }
+
+  @override
+  String debtsRateOnly(String rate) {
+    return '$rate% APR';
+  }
+
+  @override
+  String debtsRateExtra(String rate, String amount) {
+    return '$rate% APR · extra payment $amount';
+  }
+
+  @override
+  String get debtsPaidBy => 'Paid by';
+
+  @override
+  String debtsInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'tomorrow',
+      zero: 'today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtsDeletePaymentMessage(String amount, String date) {
+    return 'The $amount payment of $date will be removed.';
+  }
+
+  @override
+  String get challengeSavedIn => 'Saved in the challenge';
+
+  @override
+  String challengeCells(int done, int total, String target) {
+    return '$done of $total cells · goal $target';
+  }
+
+  @override
+  String challengeNextTitle(String amount) {
+    return 'Next: $amount';
+  }
+
+  @override
+  String get challengeNextMessage => 'Mark it once you\'ve put it aside.';
+
+  @override
+  String get challengeMark => 'Mark';
+
+  @override
+  String get challengeDoneTitle => 'Challenge complete';
+
+  @override
+  String challengeDoneMessage(String amount) {
+    return 'You saved $amount.';
+  }
+
+  @override
+  String annualTitleYear(int year) {
+    return '$year summary';
+  }
+
+  @override
+  String annualAverage(String amount) {
+    return 'avg. $amount';
+  }
+
+  @override
+  String annualHighestTitle(String month) {
+    return '$month was the highest month';
+  }
+
+  @override
+  String annualHighestReason(String category, String amount) {
+    return '$category: $amount more than in a usual month.';
   }
 }

@@ -9,10 +9,7 @@ import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_avatar.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
-import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
-import '../../../budget/presentation/screens/budget_screen.dart';
-import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/screens/invite_household_screen.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -36,10 +33,6 @@ class SettingsScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final members = household.members;
     final formatMoney = ref.watch(moneyFormatterProvider);
-    final totalPlanned = (ref.watch(currentMonthBudgetProvider).value ?? const {}).values.fold(
-      0,
-      (sum, v) => sum + v,
-    );
     final totalInvestments = ref.watch(totalInvestmentValueProvider);
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final hasKey = ref.watch(householdHasKeyProvider(household.id)).value;
@@ -222,24 +215,6 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: Finan2Space.lg),
                   Finan2ListCard(
                     children: [
-                      Finan2ListRow(
-                        icon: Icons.donut_large_outlined,
-                        label: l10n.settingsBudget,
-                        value: l10n.settingsBudgetPlanned(formatMoney(totalPlanned)),
-                        onTap: () => Navigator.of(
-                          context,
-                        ).push(MaterialPageRoute<void>(builder: (_) => const BudgetScreen())),
-                      ),
-                      Finan2ListRow(
-                        icon: Icons.bar_chart_outlined,
-                        label: l10n.settingsAnnualSummary,
-                        value: '${DateTime.now().year}',
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => AnnualSummaryScreen(household: household),
-                          ),
-                        ),
-                      ),
                       Finan2ListRow(
                         icon: Icons.trending_up,
                         label: l10n.settingsInvestments,

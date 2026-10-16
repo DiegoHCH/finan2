@@ -1,14 +1,14 @@
 import 'package:finan2/core/utils/year_month.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
-import 'package:finan2/features/budget/presentation/screens/budget_screen.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/categories/presentation/viewmodels/category_providers.dart';
 import 'package:finan2/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:finan2/features/debts/presentation/screens/debts_screen.dart';
+import 'package:finan2/features/debts/presentation/widgets/debts_section.dart';
 import 'package:finan2/features/household/presentation/viewmodels/household_providers.dart';
-import 'package:finan2/features/savings_goals/presentation/screens/savings_goals_screen.dart';
+import 'package:finan2/features/plan/presentation/screens/plan_screen.dart';
+import 'package:finan2/features/savings_goals/presentation/widgets/goals_section.dart';
 import 'package:finan2/features/settings/presentation/screens/settings_screen.dart';
 import 'package:finan2/features/transactions/domain/entities/movement.dart';
 import 'package:finan2/features/transactions/presentation/screens/transactions_screen.dart';
@@ -81,24 +81,24 @@ void main() {
           .setCategoryAmount(month.plusMonths(-1), categoryId, 900000);
     });
 
-    await pumpScreen(tester, app, const BudgetScreen());
+    await pumpScreen(tester, app, const PlanScreen());
     expect(find.text('Este mes aún no tiene presupuesto'), findsOneWidget);
   });
 
   testWidgets('Deudas and Metas show their empty states', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
 
-    await pumpScreen(tester, app, const DebtsScreen());
+    await pumpScreen(tester, app, const Scaffold(body: DebtsSection()));
     expect(find.text('¡Libres de deudas!'), findsOneWidget);
 
-    await pumpScreen(tester, app, const SavingsGoalsScreen());
+    await pumpScreen(tester, app, const Scaffold(body: GoalsSection()));
     expect(find.text('Aún no tienes metas'), findsOneWidget);
   });
 
   testWidgets('a phone in English gets the English texts', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
 
-    await pumpScreen(tester, app, const DebtsScreen(), locale: const Locale('en'));
+    await pumpScreen(tester, app, const Scaffold(body: DebtsSection()), locale: const Locale('en'));
 
     expect(find.text('Debt-free!'), findsOneWidget);
   });
