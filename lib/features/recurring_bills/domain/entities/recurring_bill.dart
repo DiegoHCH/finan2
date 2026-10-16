@@ -2,7 +2,8 @@ import '../../../categories/domain/category_type.dart';
 
 enum RecurringFrequency { weekly, biweekly, semimonthly, monthly, yearly }
 
-/// Its UI label is frequencyLabel, in recurring_schedule_label.dart.
+/// Its UI label is frequencyLabel, in recurring_schedule_label.dart; how
+/// it's said in words, describeSchedule there.
 extension RecurringFrequencyLabel on RecurringFrequency {
   /// How many times it happens in an average month.
   double get perMonth => switch (this) {
@@ -69,6 +70,8 @@ class RecurringBill {
 
   /// Neither paused nor past its end date.
   bool isActiveOn(DateTime day) => !paused && !hasEndedBy(day);
+
+  bool get isIncome => type == CategoryType.ingreso;
 
   /// The average amount per month, for the "al mes" total.
   int get monthlyAmount => (amount * frequency.perMonth).round();
