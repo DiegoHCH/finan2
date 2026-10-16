@@ -175,6 +175,7 @@ abstract class Finan2Palette {
 /// | Monto al anotar                   | displayLarge   | 54   | 700  | -2.4     |
 /// | Cifra principal («Les queda»)     | displayMedium  | 46   | 700  | -1.8     |
 /// | Cifra de tarjeta / estado vacío   | displaySmall   | 24   | 700  | -0.5     |
+/// | Pregunta de un paso / acceso      | headlineMedium | 28   | 800  | -1.0     |
 /// | Título de pantalla                | headlineSmall  | 24   | 800  | -0.7     |
 /// | Título de hoja / modal            | titleLarge     | 18   | 700  | -0.36    |
 /// | Monto de una fila / barra de hoja | titleMedium    | 15   | 700  | -0.15    |
@@ -213,6 +214,13 @@ abstract class Finan2Type {
         height: 1.15,
         color: ink,
         fontFeatures: _tabular,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -1.0,
+        height: 1.08,
+        color: ink,
       ),
       headlineSmall: TextStyle(
         fontSize: 24,
@@ -258,6 +266,14 @@ abstract class Finan2Type {
     fontWeight: FontWeight.w700,
     letterSpacing: -0.3,
     fontFeatures: _tabular,
+  );
+
+  /// Lo que hay que copiar exacto (el código de una invitación): letra
+  /// monoespaciada del sistema, donde la O y el 0 no se confunden.
+  static const code = TextStyle(
+    fontFamily: 'monospace',
+    fontFamilyFallback: ['Menlo', 'SF Mono', 'Roboto Mono', 'Courier New', 'Courier'],
+    fontWeight: FontWeight.w700,
   );
 
   /// El signo «$» junto a una cifra grande: a la mitad de su tamaño y en

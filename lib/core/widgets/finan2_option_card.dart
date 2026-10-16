@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// A selectable option row matching the mockup's `.opt`: icon tile, title +
-/// subtitle, and a two-layer radio dot on the right.
+/// One of a few big choices, the redesign's `.opt`: an icon tile, title and
+/// a line under it. The chosen one takes the violet border on the accent
+/// tint; the rest sit on the plain sheet.
 class Finan2OptionCard extends StatelessWidget {
   const Finan2OptionCard({
     required this.icon,
@@ -23,75 +24,64 @@ class Finan2OptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final brand = Theme.of(context).colorScheme.primary;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: selected ? brand : colors.line, width: 1.5),
-          color: selected ? colors.brandTint : null,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: colors.surfaceAlt,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              alignment: Alignment.center,
-              child: Icon(icon, size: 18, color: colors.ink),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 11, height: 1.35, color: colors.inkSoft),
-                  ),
-                ],
-              ),
-            ),
-            _RadioDot(selected: selected, color: brand, line: colors.line),
-          ],
-        ),
-      ),
+    final surface = Theme.of(context).colorScheme.surface;
+    final accent = Theme.of(context).colorScheme.primary;
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(18),
+      side: BorderSide(color: selected ? accent : Colors.transparent, width: 1.5),
     );
-  }
-}
 
-class _RadioDot extends StatelessWidget {
-  const _RadioDot({required this.selected, required this.color, required this.line});
-
-  final bool selected;
-  final Color color;
-  final Color line;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 18,
-      height: 18,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: selected ? color : line, width: 2),
+    return Semantics(
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      child: Material(
+        color: selected ? colors.brandTint : surface,
+        shape: shape,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: shape,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    // On the tint, the tile turns to the sheet so it still
+                    // stands out.
+                    color: selected ? surface : colors.brandTint,
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(icon, size: 20, color: accent),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: colors.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(fontSize: 12, height: 1.35, color: colors.inkSoft),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      alignment: Alignment.center,
-      child: selected
-          ? Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-            )
-          : null,
     );
   }
 }

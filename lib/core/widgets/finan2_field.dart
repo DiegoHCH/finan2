@@ -19,6 +19,8 @@ class Finan2Field extends StatefulWidget {
     this.autofillHints,
     this.maxLines = 1,
     this.moneySymbol,
+    this.monospace = false,
+    this.hint,
     super.key,
   });
 
@@ -34,6 +36,13 @@ class Finan2Field extends StatefulWidget {
   /// Makes it a money field: digits grouped as they're typed, after this
   /// currency sign. Read it with [Finan2AmountInput.parse].
   final String? moneySymbol;
+
+  /// Something to copy exactly - an invite code - in monospaced letters.
+  final bool monospace;
+
+  /// A faint line under the field, said before anything goes wrong - a
+  /// password's rule.
+  final String? hint;
 
   @override
   State<Finan2Field> createState() => _Finan2FieldState();
@@ -59,7 +68,7 @@ class _Finan2FieldState extends State<Finan2Field> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return Container(
+    final box = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -88,7 +97,9 @@ class _Finan2FieldState extends State<Finan2Field> {
             validator: widget.validator,
             autofillHints: widget.autofillHints,
             maxLines: widget.obscureText ? 1 : widget.maxLines,
-            style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: colors.ink),
+            style: widget.monospace
+                ? Finan2Type.code.copyWith(fontSize: 14.5, letterSpacing: 1.7, color: colors.ink)
+                : TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: colors.ink),
             decoration: InputDecoration(
               isDense: true,
               isCollapsed: true,
@@ -122,6 +133,20 @@ class _Finan2FieldState extends State<Finan2Field> {
           ),
         ],
       ),
+    );
+    final hint = widget.hint;
+    if (hint == null) return box;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        box,
+        const SizedBox(height: Finan2Space.xs),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(hint, style: TextStyle(fontSize: 12, height: 1.4, color: colors.inkFaint)),
+        ),
+      ],
     );
   }
 }
