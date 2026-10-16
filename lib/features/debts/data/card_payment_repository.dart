@@ -1,17 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import '../domain/entities/card_payment.dart';
 import 'card_payment_mapper.dart';
 
 class CardPaymentRepository {
-  CardPaymentRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-    : _db = firestore ?? FirebaseFirestore.instance,
-      _crypto = crypto ?? HouseholdCrypto();
+  CardPaymentRepository({
+    FirebaseFirestore? firestore,
+    HouseholdCrypto? crypto,
+    BalanceLedger? ledger,
+  }) : _db = firestore ?? FirebaseFirestore.instance,
+       _crypto = crypto ?? HouseholdCrypto(),
+       _ledger = ledger ?? BalanceLedger(firestore: firestore, crypto: crypto);
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
+  final BalanceLedger _ledger;
 
   DocumentReference<Map<String, dynamic>> _household(String householdId) =>
       _db.collection('households').doc(householdId);
@@ -25,71 +31,27 @@ class CardPaymentRepository {
         .decryptEach((doc) => cardPaymentFromFirestore(doc, _crypto, householdId));
   }
 
-  /// Decrypts an already-fetched account/debt snapshot's `balance` field.
-  Future<int> _decryptBalance(
-    DocumentSnapshot<Map<String, dynamic>> snap,
-    String householdId,
-  ) async {
-    final packed = snap.data()?['balance'] as String?;
-    if (packed == null) return 0;
-    return _crypto.decryptAmount(householdId, packed);
-  }
-
-  /// Atomically: debits [CardPayment.fromAccountId], credits down (reduces)
-  /// [CardPayment.cardDebtId]'s balance, and logs the payment - all 3 writes
-  /// commit together or not at all.
-  Future<void> createPayment(String householdId, CardPayment payment) {
+  /// In one write: debits [CardPayment.fromAccountId], reduces
+  /// [CardPayment.cardDebtId]'s balance and logs the payment. Works offline.
+  Future<void> createPayment(String householdId, CardPayment payment) async {
     final household = _household(householdId);
-    final accountRef = household.collection('accounts').doc(payment.fromAccountId);
-    final debtRef = household.collection('debts').doc(payment.cardDebtId);
-    final paymentRef = household.collection('cardPayments').doc();
-
-    return _db.runTransaction((tx) async {
-      final accountSnap = await tx.get(accountRef);
-      final debtSnap = await tx.get(debtRef);
-
-      if (accountSnap.exists) {
-        final accountBalance = await _decryptBalance(accountSnap, householdId);
-        tx.update(accountRef, {
-          'balance': await _crypto.encryptAmount(householdId, accountBalance - payment.amount),
-        });
-      }
-      if (debtSnap.exists) {
-        final debtBalance = await _decryptBalance(debtSnap, householdId);
-        tx.update(debtRef, {
-          'balance': await _crypto.encryptAmount(householdId, debtBalance - payment.amount),
-        });
-      }
-      tx.set(paymentRef, await payment.toFirestore(_crypto, householdId));
-    });
+    final batch = _db.batch()
+      ..set(household.collection('cardPayments').doc(), await payment.toFirestore(_crypto, householdId));
+    await _ledger.commit(householdId, [
+      (household.collection('accounts').doc(payment.fromAccountId), -payment.amount),
+      (household.collection('debts').doc(payment.cardDebtId), -payment.amount),
+    ], batch: batch);
   }
 
   /// Reverses the balance change from [createPayment] and removes the
   /// record. If either the account or the card was deleted since, its
   /// balance is simply left alone (nothing to reverse it on).
-  Future<void> deletePayment(String householdId, CardPayment payment) {
+  Future<void> deletePayment(String householdId, CardPayment payment) async {
     final household = _household(householdId);
-    final accountRef = household.collection('accounts').doc(payment.fromAccountId);
-    final debtRef = household.collection('debts').doc(payment.cardDebtId);
-    final paymentRef = household.collection('cardPayments').doc(payment.id);
-
-    return _db.runTransaction((tx) async {
-      final accountSnap = await tx.get(accountRef);
-      final debtSnap = await tx.get(debtRef);
-
-      if (accountSnap.exists) {
-        final accountBalance = await _decryptBalance(accountSnap, householdId);
-        tx.update(accountRef, {
-          'balance': await _crypto.encryptAmount(householdId, accountBalance + payment.amount),
-        });
-      }
-      if (debtSnap.exists) {
-        final debtBalance = await _decryptBalance(debtSnap, householdId);
-        tx.update(debtRef, {
-          'balance': await _crypto.encryptAmount(householdId, debtBalance + payment.amount),
-        });
-      }
-      tx.delete(paymentRef);
-    });
+    final batch = _db.batch()..delete(household.collection('cardPayments').doc(payment.id));
+    await _ledger.commit(householdId, [
+      (household.collection('accounts').doc(payment.fromAccountId), payment.amount),
+      (household.collection('debts').doc(payment.cardDebtId), payment.amount),
+    ], batch: batch);
   }
 }

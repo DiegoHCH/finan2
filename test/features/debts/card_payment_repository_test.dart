@@ -8,6 +8,7 @@ import 'package:finan2/features/debts/domain/entities/debt.dart';
 import 'package:finan2/features/debts/data/debt_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../helpers/test_balance_ledger.dart';
 import '../../helpers/test_household_crypto.dart';
 
 const _householdId = 'h1';
@@ -20,7 +21,11 @@ void main() {
   setUp(() async {
     firestore = FakeFirebaseFirestore();
     crypto = await testHouseholdCrypto(_householdId);
-    repository = CardPaymentRepository(firestore: firestore, crypto: crypto);
+    repository = CardPaymentRepository(
+      firestore: firestore,
+      crypto: crypto,
+      ledger: testBalanceLedger(firestore, crypto),
+    );
   });
 
   Future<void> seedAccount(String id, int balance) async {

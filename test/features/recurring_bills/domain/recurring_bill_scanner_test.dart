@@ -11,6 +11,7 @@ import 'package:finan2/features/transactions/data/movement_mapper.dart';
 import 'package:finan2/features/transactions/data/transaction_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../helpers/test_balance_ledger.dart';
 import '../../../helpers/test_household_crypto.dart';
 
 const _householdId = 'h1';
@@ -42,7 +43,11 @@ void main() {
   setUp(() async {
     firestore = FakeFirebaseFirestore();
     crypto = await testHouseholdCrypto(_householdId);
-    transactionRepository = TransactionRepository(firestore: firestore, crypto: crypto);
+    transactionRepository = TransactionRepository(
+      firestore: firestore,
+      crypto: crypto,
+      ledger: testBalanceLedger(firestore, crypto),
+    );
     scanner = RecurringBillScanner(
       transactionRepository,
       RecurringBillRepository(firestore: firestore, crypto: crypto),

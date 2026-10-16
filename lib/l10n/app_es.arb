@@ -466,7 +466,7 @@
     }
   },
   "coreMissingKeyPasteCode": "Pegar el código de la llave",
-  "coreOffline": "Sin conexión. Ves lo último que llegó; para anotar hace falta señal.",
+  "coreOffline": "Sin conexión. Lo que anotes se guarda aquí y se envía solo cuando vuelva la señal.",
   "coreUnsynced": "por enviar",
   "coreLoading": "Cargando",
   "coreNotificationPrimerTitle": "Activa las notificaciones",

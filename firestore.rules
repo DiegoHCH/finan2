@@ -146,12 +146,21 @@ service cloud.firestore {
           && d.get('rollover', false) is bool;
       }
 
+      // lib/core/balance/balance_ledger.dart: each device's share of the
+      // balance, keyed by device. Rules can't loop, so only the map's size
+      // is bounded.
+      function deviceBalances(d) {
+        return d.get('deviceBalances', {}) is map && d.get('deviceBalances', {}).size() <= 50;
+      }
+
       function validAccount() {
         let d = request.resource.data;
-        return hasExactly(['name', 'type', 'balance', 'includeInAvailable', 'createdBy'])
+        return hasFields(['name', 'type', 'balance', 'includeInAvailable', 'createdBy'],
+                         ['deviceBalances'])
           && text(d.name, 200)
           && d.type in ['efectivo', 'banco', 'billetera', 'debito']
           && encryptedAmount(d.balance)
+          && deviceBalances(d)
           && d.includeInAvailable is bool;
       }
 
@@ -184,13 +193,15 @@ service cloud.firestore {
       // bound them either, and a rejected save would just look broken.
       function validDebt() {
         let d = request.resource.data;
-        return hasExactly(['name', 'type', 'balance', 'hasBalance', 'rate', 'paymentDay',
-                           'creditLimit', 'minPayment', 'extraPayment', 'cutoffDay',
-                           'originalAmount', 'monthlyPayment', 'termMonths',
-                           'paidInstallments', 'createdBy'])
+        return hasFields(['name', 'type', 'balance', 'hasBalance', 'rate', 'paymentDay',
+                          'creditLimit', 'minPayment', 'extraPayment', 'cutoffDay',
+                          'originalAmount', 'monthlyPayment', 'termMonths',
+                          'paidInstallments', 'createdBy'],
+                         ['deviceBalances'])
           && text(d.name, 200)
           && d.type in ['tarjeta', 'credito', 'hipoteca', 'vehiculo']
           && encryptedAmount(d.balance)
+          && deviceBalances(d)
           && d.hasBalance is bool
           && d.rate is number
           && d.paymentDay is int

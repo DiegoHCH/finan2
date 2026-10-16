@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/household_crypto.dart';
 import '../../../l10n/l10n.dart';
 
@@ -41,7 +42,7 @@ class Account {
     String householdId,
   ) async {
     final data = doc.data()!;
-    final balance = await crypto.decryptAmount(householdId, data['balance'] as String);
+    final balance = await storedBalance(data, crypto, householdId);
     return Account(
       id: doc.id,
       name: data['name'] as String? ?? '',

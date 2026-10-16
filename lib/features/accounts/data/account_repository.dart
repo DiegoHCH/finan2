@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'account_model.dart';
 
 class AccountRepository {
-  AccountRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
+  AccountRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto, BalanceLedger? ledger})
     : _db = firestore ?? FirebaseFirestore.instance,
-      _crypto = crypto ?? HouseholdCrypto();
+      _crypto = crypto ?? HouseholdCrypto(),
+      _ledger = ledger ?? BalanceLedger(firestore: firestore, crypto: crypto);
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
+  final BalanceLedger _ledger;
 
   CollectionReference<Map<String, dynamic>> _accounts(String householdId) =>
       _db.collection('households').doc(householdId).collection('accounts');
@@ -28,10 +31,15 @@ class AccountRepository {
     return doc.id;
   }
 
+  /// [Account.balance] is the whole balance; what each device moved stays
+  /// in its share, so `balance` keeps the rest.
   Future<void> updateAccount(String householdId, Account account) async {
-    await _accounts(
-      householdId,
-    ).doc(account.id).update(await account.toFirestore(_crypto, householdId));
+    final ref = _accounts(householdId).doc(account.id);
+    final shares = await _ledger.sharesOf(householdId, ref);
+    await ref.update({
+      ...await account.toFirestore(_crypto, householdId),
+      'balance': await _crypto.encryptAmount(householdId, account.balance - shares),
+    });
   }
 
   /// How many records still move money through [accountId]: movements,
