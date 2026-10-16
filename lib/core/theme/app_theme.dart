@@ -278,6 +278,7 @@ abstract class Finan2Icons {
   static const movimientos = Icons.reorder; // ver Finan2ListIcon para el trazo exacto del mockup
   static const deudas = Icons.credit_card_outlined;
   static const metas = Icons.track_changes_outlined;
+  static const plan = Icons.donut_large_rounded;
   static const ajustes = Icons.settings_outlined;
 
   // Acciones
@@ -635,11 +636,15 @@ abstract class Finan2Theme {
           borderRadius: BorderRadius.circular(Finan2Radius.card),
         ),
       ),
-      // Material 3's default FAB uses colorScheme.primaryContainer (a pale
-      // tint), not the vivid brand violet from the mockup's .fab - force it.
+      // «Anotar» in the nav bar is the one solid violet action; a screen's
+      // own «+» (a new goal, a new account) sits back in the violet tint.
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: brand,
-        foregroundColor: ext.onAccent,
+        backgroundColor: ext.brandTint,
+        foregroundColor: brand,
+        elevation: 0,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       // .btn: the screen's one action, violet, 16 radius, 14.5/700.

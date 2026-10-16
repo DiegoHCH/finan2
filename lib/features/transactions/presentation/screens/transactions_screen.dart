@@ -145,13 +145,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
         : l10n.transactionsNet(formatMoney(net));
 
     return Scaffold(
-      floatingActionButton: allTransactions.isEmpty
-          ? null
-          : FloatingActionButton(
-              heroTag: 'transactionsFab',
-              onPressed: _addMovement,
-              child: const Icon(Icons.add),
-            ),
       body: SafeArea(
         child: Column(
           children: [

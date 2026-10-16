@@ -723,6 +723,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreHomeTabGoals => 'Goals';
 
   @override
+  String get coreHomeTabPlan => 'Plan';
+
+  @override
+  String get coreHomeAdd => 'Add';
+
+  @override
   String get coreHomeTabSettings => 'Settings';
 
   @override

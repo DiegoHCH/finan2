@@ -724,6 +724,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get coreHomeTabGoals => 'Metas';
 
   @override
+  String get coreHomeTabPlan => 'Plan';
+
+  @override
+  String get coreHomeAdd => 'Anotar';
+
+  @override
   String get coreHomeTabSettings => 'Ajustes';
 
   @override

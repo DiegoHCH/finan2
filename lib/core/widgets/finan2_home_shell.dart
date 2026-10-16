@@ -11,7 +11,6 @@ import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/budget/presentation/viewmodels/budget_providers.dart';
 import '../../features/categories/presentation/viewmodels/category_providers.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
-import '../../features/debts/presentation/screens/debts_screen.dart';
 import '../../features/debts/presentation/viewmodels/debt_providers.dart';
 import '../../features/household/presentation/screens/household_setup_screen.dart';
 import '../../features/household/data/household_model.dart';
@@ -21,11 +20,12 @@ import '../../features/notification_prefs/data/notification_prefs.dart';
 import '../../features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
 import '../../features/notifications/data/notification_scan_sources.dart';
 import '../../features/notifications/presentation/viewmodels/notification_providers.dart';
+import '../../features/plan/presentation/screens/plan_screen.dart';
 import '../../features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
 import '../../features/savings_challenge/presentation/viewmodels/savings_challenge_providers.dart';
-import '../../features/savings_goals/presentation/screens/savings_goals_screen.dart';
 import '../../features/savings_goals/presentation/viewmodels/savings_goal_providers.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
@@ -37,10 +37,11 @@ import '../pwa/pwa_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
 import 'finan2_missing_key_sheet.dart';
+import 'finan2_nav_bar.dart';
 import '../observability/error_reporter.dart';
 
-/// The app's root navigation once a household exists: bottom nav with the
-/// 5 destinations from the design mockup. Also the integration point for
+/// The app's root navigation once a household exists: four places and
+/// «Anotar» in the middle of the bottom bar (R9). Also the integration point for
 /// the notification scanner - it re-runs whenever debts/goals/budget/
 /// transactions change while the app is open (there's no backend to
 /// trigger it on a schedule), and (re)schedules the per-debt local payment
@@ -253,8 +254,7 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     final tabs = [
       DashboardScreen(household: widget.household),
       const TransactionsScreen(),
-      const DebtsScreen(),
-      const SavingsGoalsScreen(),
+      const PlanScreen(),
       SettingsScreen(household: widget.household),
     ];
 
@@ -278,27 +278,18 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
           ),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: Finan2NavBar(
         selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Finan2Icons.inicio),
-            label: context.l10n.coreHomeTabHome,
-          ),
-          NavigationDestination(
-            icon: const Finan2ListIcon(),
-            label: context.l10n.coreHomeTabMovements,
-          ),
-          NavigationDestination(
-            icon: const Icon(Finan2Icons.deudas),
-            label: context.l10n.coreHomeTabDebts,
-          ),
-          NavigationDestination(
-            icon: const Icon(Finan2Icons.metas),
-            label: context.l10n.coreHomeTabGoals,
-          ),
-          NavigationDestination(
+        onSelected: (i) => setState(() => _index = i),
+        addLabel: context.l10n.coreHomeAdd,
+        onAdd: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const EditTransactionScreen())),
+        items: [
+          Finan2NavItem(icon: const Icon(Finan2Icons.inicio), label: context.l10n.coreHomeTabHome),
+          Finan2NavItem(icon: const Finan2ListIcon(), label: context.l10n.coreHomeTabMovements),
+          Finan2NavItem(icon: const Icon(Finan2Icons.plan), label: context.l10n.coreHomeTabPlan),
+          Finan2NavItem(
             icon: const Icon(Finan2Icons.ajustes),
             label: context.l10n.coreHomeTabSettings,
           ),

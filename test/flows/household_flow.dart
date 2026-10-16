@@ -1,4 +1,5 @@
 import 'package:finan2/core/widgets/auth_gate.dart';
+import 'package:finan2/core/widgets/finan2_nav_bar.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,7 +29,7 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await tap(tester, find.text('Omitir por ahora'));
 
   // A movement from the Movimientos tab.
-  await tap(tester, find.text('Movimientos'));
+  await tap(tester, navTab('Movimientos'));
   await tap(tester, find.text('+ Agregar el primero'));
   await tester.enterText(find.byType(TextField).first, '120000');
   await tap(tester, find.text('Mercado'));
@@ -39,7 +40,7 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   expect(balance, 1000000 - 120000);
 
   // Plan Mercado for the month from Ajustes > Presupuesto.
-  await tap(tester, find.text('Ajustes'));
+  await tap(tester, navTab('Ajustes'));
   await tap(tester, find.text('Presupuesto'));
   // Mercado already has a row: it has spending this month. .last because
   // the Movimientos tab, still in the tree, also shows "Mercado".
@@ -49,6 +50,11 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   expect(find.textContaining('500.000'), findsWidgets);
   expect(find.textContaining('120.000'), findsWidgets);
 }
+
+/// A place in the bottom bar - the hidden tabs repeat some of these names
+/// in their headers.
+Finder navTab(String label) =>
+    find.descendant(of: find.byType(Finan2NavBar), matching: find.text(label));
 
 Future<void> tap(WidgetTester tester, Finder finder) async {
   if (finder.evaluate().isEmpty) {

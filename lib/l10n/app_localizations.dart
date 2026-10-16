@@ -1365,6 +1365,18 @@ abstract class AppLocalizations {
   /// **'Metas'**
   String get coreHomeTabGoals;
 
+  /// Bottom nav tab that holds savings goals and debts.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan'**
+  String get coreHomeTabPlan;
+
+  /// The center button of the bottom nav: record a new movement.
+  ///
+  /// In es, this message translates to:
+  /// **'Anotar'**
+  String get coreHomeAdd;
+
   /// No description provided for @coreHomeTabSettings.
   ///
   /// In es, this message translates to:

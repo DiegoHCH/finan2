@@ -1,5 +1,6 @@
 import 'package:finan2/core/theme/app_theme.dart';
 import 'package:finan2/core/widgets/finan2_figure.dart';
+import 'package:finan2/core/widgets/finan2_nav_bar.dart';
 import 'package:finan2/core/widgets/finan2_person_tag.dart';
 import 'package:finan2/core/widgets/finan2_progress.dart';
 import 'package:finan2/core/widgets/finan2_segmented_control.dart';
@@ -89,5 +90,35 @@ void main() {
     await tester.pump();
     expect(selected, 'ingreso');
     expect(tester.widget<Text>(find.text('Ingreso')).style!.color, Finan2Colors.light.ink);
+  });
+
+  testWidgets('the nav bar keeps its height and routes each tap', (tester) async {
+    int? selected;
+    var added = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: Finan2Theme.light,
+        home: Scaffold(
+          bottomNavigationBar: Finan2NavBar(
+            items: const [
+              Finan2NavItem(icon: Icon(Icons.home), label: 'Inicio'),
+              Finan2NavItem(icon: Icon(Icons.list), label: 'Movimientos'),
+              Finan2NavItem(icon: Icon(Icons.donut_large), label: 'Plan'),
+              Finan2NavItem(icon: Icon(Icons.settings), label: 'Ajustes'),
+            ],
+            selectedIndex: 0,
+            onSelected: (i) => selected = i,
+            addLabel: 'Anotar',
+            onAdd: () => added++,
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(Finan2NavBar)).height, lessThan(120));
+    await tester.tap(find.text('Plan'));
+    expect(selected, 2);
+    await tester.tap(find.byTooltip('Anotar'));
+    expect(added, 1);
   });
 }

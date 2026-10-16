@@ -212,6 +212,8 @@
   "coreHomeTabMovements": "Activity",
   "coreHomeTabDebts": "Debts",
   "coreHomeTabGoals": "Goals",
+  "coreHomeTabPlan": "Plan",
+  "coreHomeAdd": "Add",
   "coreHomeTabSettings": "Settings",
   "coreSplashTagline": "Household finances - for two",
   "errorInvalidEmail": "That email isn't valid.",

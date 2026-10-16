@@ -422,6 +422,14 @@
   "@coreHomeTabGoals": {
     "description": "Bottom nav tab for savings goals."
   },
+  "coreHomeTabPlan": "Plan",
+  "@coreHomeTabPlan": {
+    "description": "Bottom nav tab that holds savings goals and debts."
+  },
+  "coreHomeAdd": "Anotar",
+  "@coreHomeAdd": {
+    "description": "The center button of the bottom nav: record a new movement."
+  },
   "coreHomeTabSettings": "Ajustes",
   "coreSplashTagline": "Finanzas del hogar - para dos",
   "errorInvalidEmail": "El correo no es válido.",
