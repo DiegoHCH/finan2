@@ -36,7 +36,10 @@ class CardPaymentRepository {
   Future<void> createPayment(String householdId, CardPayment payment) async {
     final household = _household(householdId);
     final batch = _db.batch()
-      ..set(household.collection('cardPayments').doc(), await payment.toFirestore(_crypto, householdId));
+      ..set(
+        household.collection('cardPayments').doc(),
+        await payment.toFirestore(_crypto, householdId),
+      );
     await _ledger.commit(householdId, [
       (household.collection('accounts').doc(payment.fromAccountId), -payment.amount),
       (household.collection('debts').doc(payment.cardDebtId), -payment.amount),

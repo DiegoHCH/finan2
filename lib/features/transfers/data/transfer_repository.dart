@@ -32,7 +32,10 @@ class TransferRepository {
     final household = _household(householdId);
     final accounts = household.collection('accounts');
     final batch = _db.batch()
-      ..set(household.collection('transfers').doc(), await transfer.toFirestore(_crypto, householdId));
+      ..set(
+        household.collection('transfers').doc(),
+        await transfer.toFirestore(_crypto, householdId),
+      );
     await _ledger.commit(householdId, [
       (accounts.doc(transfer.fromAccountId), -transfer.amount),
       (accounts.doc(transfer.toAccountId), transfer.amount),

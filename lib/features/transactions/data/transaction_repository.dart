@@ -228,11 +228,14 @@ class TransactionRepository implements MovementWriter {
   Future<void> updateTransaction(String householdId, Movement tx) async {
     final txRef = _transactions(householdId).doc(tx.id);
     final oldSnap = await BalanceLedger.cacheFirst(txRef);
-    final oldTx = oldSnap.exists ? await movementFromFirestore(oldSnap, _crypto, householdId) : null;
+    final oldTx = oldSnap.exists
+        ? await movementFromFirestore(oldSnap, _crypto, householdId)
+        : null;
 
     final batch = _db.batch()..update(txRef, await tx.toFirestore(_crypto, householdId));
     await _ledger.commit(householdId, [
-      if (oldTx != null) for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
+      if (oldTx != null)
+        for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
       ..._effect(householdId, tx),
     ], batch: batch);
 
@@ -255,7 +258,8 @@ class TransactionRepository implements MovementWriter {
 
     final batch = _db.batch()..delete(txRef);
     await _ledger.commit(householdId, [
-      if (oldTx != null) for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
+      if (oldTx != null)
+        for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
     ], batch: batch);
     if (oldTx != null) await _refreshBudgetAlertLater(householdId, oldTx);
   }
