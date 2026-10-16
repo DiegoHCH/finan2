@@ -419,6 +419,13 @@
   "settingsLeave": "Salir",
   "settingsMyName": "Mi nombre",
   "settingsHouseholdMembers": "Miembros del hogar",
+  "settingsLanguage": "Idioma",
+  "settingsLanguageSystem": "Como el teléfono",
+  "settingsLanguageSystemSubtitle": "Sigue el idioma de tu teléfono.",
+  "settingsLanguageFixedSubtitle": "Siempre en este idioma, aunque el teléfono esté en otro.",
+  "@settingsLanguageFixedSubtitle": {
+    "description": "Under «Español» / «English» in the language sheet; those two names are never translated."
+  },
   "settingsTheme": "Tema",
   "settingsRecoveryPhraseHint": "Recuperar montos si pierden la llave",
   "settingsDeleteAccount": "Eliminar mi cuenta",

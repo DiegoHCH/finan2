@@ -628,6 +628,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHouseholdMembers => 'Household members';
 
   @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsLanguageSystem => 'Same as the phone';
+
+  @override
+  String get settingsLanguageSystemSubtitle => 'Follows your phone’s language.';
+
+  @override
+  String get settingsLanguageFixedSubtitle => 'Always in this language, whatever the phone uses.';
+
+  @override
   String get settingsTheme => 'Theme';
 
   @override

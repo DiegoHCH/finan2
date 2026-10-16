@@ -1149,6 +1149,30 @@ abstract class AppLocalizations {
   /// **'Miembros del hogar'**
   String get settingsHouseholdMembers;
 
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In es, this message translates to:
+  /// **'Idioma'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsLanguageSystem.
+  ///
+  /// In es, this message translates to:
+  /// **'Como el teléfono'**
+  String get settingsLanguageSystem;
+
+  /// No description provided for @settingsLanguageSystemSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Sigue el idioma de tu teléfono.'**
+  String get settingsLanguageSystemSubtitle;
+
+  /// Under «Español» / «English» in the language sheet; those two names are never translated.
+  ///
+  /// In es, this message translates to:
+  /// **'Siempre en este idioma, aunque el teléfono esté en otro.'**
+  String get settingsLanguageFixedSubtitle;
+
   /// No description provided for @settingsTheme.
   ///
   /// In es, this message translates to:

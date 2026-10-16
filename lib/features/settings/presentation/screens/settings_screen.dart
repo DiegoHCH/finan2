@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/locale/app_language.dart';
 import '../../../../core/pwa/pwa_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/finan2_tone.dart';
@@ -32,6 +33,7 @@ import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
 import '../../../recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
+import '../language_picker.dart';
 import '../theme_mode_picker.dart';
 import 'account_settings_screen.dart';
 import 'financial_settings_screen.dart';
@@ -57,6 +59,7 @@ class SettingsScreen extends ConsumerWidget {
     final unreadNotifications = ref.watch(unreadNotificationsCountProvider);
     final hasKey = ref.watch(householdHasKeyProvider(household.id)).value;
     final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
+    final language = ref.watch(appLanguageControllerProvider).value ?? AppLanguage.system;
     final accountCount = ref.watch(accountsProvider).value?.length ?? 0;
     final cardCount = (ref.watch(debtsProvider).value ?? const [])
         .where((d) => d.type.isCard)
@@ -197,6 +200,13 @@ class SettingsScreen extends ConsumerWidget {
                         label: l10n.settingsTheme,
                         value: themeModeLabel(l10n, themeMode),
                         onTap: () => pickThemeMode(context, ref, themeMode),
+                      ),
+                      Finan2SetRow(
+                        icon: Icons.translate_outlined,
+                        tone: neutral,
+                        label: l10n.settingsLanguage,
+                        value: appLanguageLabel(l10n, language),
+                        onTap: () => pickAppLanguage(context, ref, language),
                       ),
                     ],
                   ),
