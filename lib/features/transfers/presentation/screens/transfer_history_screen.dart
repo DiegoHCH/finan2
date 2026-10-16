@@ -99,6 +99,7 @@ class TransferHistoryScreen extends ConsumerWidget {
                             Finan2SheetHeading(label: _monthLabel(group.month)),
                             for (final transfer in group.items)
                               _row(
+                                ref: ref,
                                 transfer: transfer,
                                 to: accountName(transfer.toAccountId),
                                 from: accountName(transfer.fromAccountId),
@@ -132,6 +133,7 @@ class TransferHistoryScreen extends ConsumerWidget {
   }
 
   Widget _row({
+    required WidgetRef ref,
     required Transfer transfer,
     required String to,
     required String from,
@@ -144,7 +146,7 @@ class TransferHistoryScreen extends ConsumerWidget {
     final date = DateFormat('d MMM').format(transfer.date).replaceAll('.', '');
     return Finan2TransactionRow(
       icon: Icons.swap_vert,
-      iconColor: accountColor(transfer.toAccountId),
+      iconColor: accountColor(ref, transfer.toAccountId),
       description: l10n.transfersRowTo(to),
       subLabel: '${payer == null ? '' : '· '}${l10n.transfersRowFrom(from, date)}',
       avatarLabel: payer?.firstName,

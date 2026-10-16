@@ -117,7 +117,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final l10n = context.l10n;
     // A new account has no ID yet, so no color of its own: the accent.
-    final tone = account == null ? null : accountTone(context, account.id);
+    final tone = account == null ? null : accountTone(context, ref, account.id);
 
     return Scaffold(
       appBar: Finan2FormTop(

@@ -13,6 +13,7 @@ import 'package:finan2/features/investments/presentation/viewmodels/investment_p
 import 'package:finan2/features/transfers/data/transfer_model.dart';
 import 'package:finan2/features/transfers/presentation/screens/transfer_history_screen.dart';
 import 'package:finan2/features/transfers/presentation/viewmodels/transfer_providers.dart';
+import 'package:finan2/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -79,7 +80,7 @@ void main() {
       final row = tester.widget<Finan2TransactionRow>(
         find.ancestor(of: find.text(account.name), matching: find.byType(Finan2TransactionRow)),
       );
-      expect(row.iconColor, accountColor(account.id));
+      expect(row.iconColor, accountColorOf(app, account.id));
     }
   });
 
@@ -214,6 +215,15 @@ void main() {
       find.ancestor(of: find.text('A Ahorros'), matching: find.byType(Finan2TransactionRow)),
     );
     expect(toSavings.subLabel, 'de Bancolombia · 14 oct');
-    expect(toSavings.iconColor, accountColor(accounts.firstWhere((a) => a.name == 'Ahorros').id));
+    expect(
+      toSavings.iconColor,
+      accountColorOf(app, accounts.firstWhere((a) => a.name == 'Ahorros').id),
+    );
   });
+}
+
+/// [accountColor] as the screens see it, through the app's container.
+Color accountColorOf(TestApp app, String accountId) {
+  final slot = app.container.read(accountSwatchesProvider)[accountId]!;
+  return Finan2Palette.accountSwatches[slot];
 }

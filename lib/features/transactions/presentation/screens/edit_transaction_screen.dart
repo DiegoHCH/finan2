@@ -157,7 +157,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               ListTile(
                 leading: Finan2Tile(
                   icon: accountIcon(account.type),
-                  tone: accountTone(context, account.id),
+                  tone: accountTone(context, ref, account.id),
                 ),
                 title: Text(account.name),
                 onTap: () => Navigator.of(context).pop((false, account.id)),
@@ -209,7 +209,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               ListTile(
                 leading: Finan2Tile(
                   icon: accountIcon(account.type),
-                  tone: accountTone(context, account.id),
+                  tone: accountTone(context, ref, account.id),
                 ),
                 title: Text(account.name),
                 subtitle: Text(formatMoney(account.balance)),
@@ -408,7 +408,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                       dot: selectedCard != null
                           ? Finan2Tone.of(context, debtColor(selectedCard.id)).color
                           : selectedAccount != null
-                          ? accountTone(context, selectedAccount.id).color
+                          ? accountTone(context, ref, selectedAccount.id).color
                           : null,
                       onTap: () => _pickSource(accounts, cards),
                     ),
@@ -623,7 +623,7 @@ class _TransferEnd extends ConsumerWidget {
       child: Row(
         children: [
           if (account != null)
-            Finan2Tile(icon: accountIcon(account.type), tone: accountTone(context, account.id))
+            Finan2Tile(icon: accountIcon(account.type), tone: accountTone(context, ref, account.id))
           else
             Finan2Tile(
               icon: Finan2Icons.cuentas,

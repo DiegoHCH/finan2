@@ -112,7 +112,7 @@ class _AccountsList extends ConsumerWidget {
             for (final account in accounts)
               Finan2TransactionRow(
                 icon: accountIcon(account.type),
-                iconColor: accountColor(account.id),
+                iconColor: accountColor(ref, account.id),
                 description: account.name,
                 subLabel: account.includeInAvailable
                     ? account.type.label
