@@ -17,6 +17,7 @@ class Finan2TransactionRow extends StatelessWidget {
     this.avatarIndex,
     required this.amountText,
     required this.amountColor,
+    this.tags = const [],
     this.onTap,
     super.key,
   });
@@ -29,6 +30,9 @@ class Finan2TransactionRow extends StatelessWidget {
   final int? avatarIndex;
   final String amountText;
   final Color amountColor;
+
+  /// Shown after the sub-label as small `.tag` pills, without the «#».
+  final List<String> tags;
   final VoidCallback? onTap;
 
   @override
@@ -78,11 +82,16 @@ class Finan2TransactionRow extends StatelessWidget {
                           style: TextStyle(fontSize: 11.5, color: colors.inkFaint),
                         ),
                       ),
+                      for (final tag in tags.take(2)) ...[
+                        const SizedBox(width: 6),
+                        Flexible(child: _Tag('#$tag')),
+                      ],
                     ],
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               amountText,
               style: Finan2Type.money.copyWith(
@@ -93,6 +102,28 @@ class Finan2TransactionRow extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The `.tag` pill: a free label on the sunken tone.
+class _Tag extends StatelessWidget {
+  const _Tag(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(color: colors.surfaceAlt, borderRadius: BorderRadius.circular(6)),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.inkSoft),
       ),
     );
   }

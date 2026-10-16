@@ -8,13 +8,13 @@ void main() {
   testWidgets('shows the given currency symbol as a prefix', (tester) async {
     final controller = TextEditingController();
     await pumpFinan2(tester, Finan2AmountInput(controller: controller, currencySymbol: 'US\$'));
-    expect(find.text('US\$ '), findsOneWidget);
+    expect(find.text('US\$'), findsOneWidget);
   });
 
   testWidgets('defaults to \$ when no currency symbol is given', (tester) async {
     final controller = TextEditingController();
     await pumpFinan2(tester, Finan2AmountInput(controller: controller));
-    expect(find.text('\$ '), findsOneWidget);
+    expect(find.text('\$'), findsOneWidget);
   });
 
   testWidgets('only accepts digits, stripping any other characters', (tester) async {

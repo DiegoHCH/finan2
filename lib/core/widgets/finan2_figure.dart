@@ -7,14 +7,14 @@ import '../theme/app_theme.dart';
 /// faint, and an optional line underneath.
 class Finan2Figure extends StatelessWidget {
   const Finan2Figure({
-    required this.label,
+    this.label,
     required this.amountText,
     this.subtitle,
     this.amountColor,
     super.key,
   });
 
-  final String label;
+  final String? label;
 
   /// Already formatted, e.g. `$4.742.000` or `−$38.000`: everything before
   /// the first digit is drawn as the small sign.
@@ -33,11 +33,13 @@ class Finan2Figure extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colors.inkSoft),
-        ),
-        const SizedBox(height: 2),
+        if (label case final label?) ...[
+          Text(
+            label,
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colors.inkSoft),
+          ),
+          const SizedBox(height: 2),
+        ],
         Text.rich(
           TextSpan(
             children: [
