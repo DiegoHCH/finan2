@@ -14,18 +14,21 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_section_label.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
-import '../../../../core/widgets/finan2_tap_field.dart';
+import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
+import '../../../accounts/presentation/account_style.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/domain/entities/debt.dart';
+import '../../../debts/presentation/debt_style.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../household/presentation/viewmodels/member_providers.dart';
 import '../../../transfers/data/transfer_model.dart';
+import '../../../transfers/domain/transfer_plan.dart';
 import '../../../transfers/presentation/viewmodels/transfer_providers.dart';
 import '../../domain/tags.dart';
 import '../../domain/entities/movement.dart';
@@ -152,7 +155,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           children: [
             for (final account in accounts)
               ListTile(
-                leading: Icon(Finan2Icons.cuenta(account.type.name)),
+                leading: Finan2Tile(
+                  icon: accountIcon(account.type),
+                  tone: accountTone(context, account.id),
+                ),
                 title: Text(account.name),
                 onTap: () => Navigator.of(context).pop((false, account.id)),
               ),
@@ -160,7 +166,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               const Divider(height: 1),
               for (final card in cards)
                 ListTile(
-                  leading: const Icon(Icons.credit_card_outlined),
+                  leading: Finan2Tile(
+                    icon: Finan2Icons.tarjetaDebito,
+                    tone: Finan2Tone.of(context, debtColor(card.id)),
+                  ),
                   title: Text(card.name),
                   subtitle: Text(context.l10n.transactionsCreditCard),
                   onTap: () => Navigator.of(context).pop((true, card.id)),
@@ -198,7 +207,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
           children: [
             for (final account in options)
               ListTile(
-                leading: Icon(Finan2Icons.cuenta(account.type.name)),
+                leading: Finan2Tile(
+                  icon: accountIcon(account.type),
+                  tone: accountTone(context, account.id),
+                ),
                 title: Text(account.name),
                 subtitle: Text(formatMoney(account.balance)),
                 onTap: () => Navigator.of(context).pop(account.id),
@@ -317,11 +329,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     }
     _categoryId ??= categoriesOfKind.isNotEmpty ? categoriesOfKind.first.id : null;
 
-    if (_accountId == null && _cardDebtId == null && accounts.isNotEmpty) {
-      _accountId = accounts.first.id;
+    // An account kept out of «Disponible» (savings apart) isn't the usual
+    // place money comes from.
+    final usual = accounts.where((a) => a.includeInAvailable).firstOrNull ?? accounts.firstOrNull;
+    if (_accountId == null && _cardDebtId == null && usual != null) {
+      _accountId = usual.id;
     }
-    if (_kind == _Kind.pasar && accounts.isNotEmpty) {
-      _fromAccountId ??= accounts.first.id;
+    if (_kind == _Kind.pasar && usual != null) {
+      _fromAccountId ??= usual.id;
       _toAccountId ??= accounts.where((a) => a.id != _fromAccountId).firstOrNull?.id;
     }
     final selectedAccount = accounts.where((a) => a.id == _accountId).firstOrNull;
@@ -389,6 +404,12 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
                     _HintButton(
                       key: const Key('anotarSource'),
                       label: sourceLabel ?? l10n.transactionsSelectAccount,
+                      // The source's own color, to recognise it at a glance.
+                      dot: selectedCard != null
+                          ? Finan2Tone.of(context, debtColor(selectedCard.id)).color
+                          : selectedAccount != null
+                          ? accountTone(context, selectedAccount.id).color
+                          : null,
                       onTap: () => _pickSource(accounts, cards),
                     ),
                 ],
@@ -483,21 +504,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     );
   }
 
-  /// «Pasar»: from, to, and what each balance becomes.
+  /// «Pasar»: from and to, each in its color with what it will be left
+  /// with, and the reminder that it isn't an expense.
   List<Widget> _transferFields(List<Account> accounts) {
     final l10n = context.l10n;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final formatMoney = ref.watch(moneyFormatterProvider);
     final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
     final from = accounts.where((a) => a.id == _fromAccountId).firstOrNull;
     final to = accounts.where((a) => a.id == _toAccountId).firstOrNull;
-
-    String describe(Account? account, int delta) {
-      if (account == null) return l10n.transfersSelectAccount;
-      final now = formatMoney(account.balance);
-      if (amount <= 0) return '${account.name} · $now';
-      return '${account.name} · $now → ${formatMoney(account.balance + delta)}';
-    }
 
     if (accounts.length < 2) {
       return [
@@ -508,48 +522,164 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         ),
       ];
     }
+    final after = balancesAfterTransfer(
+      fromBalance: from?.balance ?? 0,
+      toBalance: to?.balance ?? 0,
+      amount: amount,
+    );
     return [
-      Finan2TapField(
-        label: l10n.transfersFrom,
-        value: describe(from, -amount),
-        leading: Icon(
-          Finan2Icons.cuenta(from?.type.name ?? 'banco'),
-          size: 18,
-          color: colors.inkSoft,
+      Container(
+        padding: const EdgeInsets.all(Finan2Space.md),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
         ),
-        onTap: () => _pickTransferAccount(
-          accounts: accounts,
-          exclude: _toAccountId,
-          onPicked: (id) => _fromAccountId = id,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _TransferEnd(
+              key: const Key('pasarFrom'),
+              label: l10n.transfersFrom,
+              account: from,
+              balance: amount > 0 ? after.from : from?.balance,
+              after: amount > 0,
+              overdrawn: amount > 0 && after.overdrawn,
+              onTap: () => _pickTransferAccount(
+                accounts: accounts,
+                exclude: _toAccountId,
+                onPicked: (id) => _fromAccountId = id,
+              ),
+            ),
+            Center(
+              child: IconButton(
+                tooltip: l10n.transfersSwap,
+                visualDensity: VisualDensity.compact,
+                onPressed: () => setState(() {
+                  final previous = _fromAccountId;
+                  _fromAccountId = _toAccountId;
+                  _toAccountId = previous;
+                }),
+                icon: Icon(Icons.swap_vert, size: 20, color: colors.inkFaint),
+              ),
+            ),
+            _TransferEnd(
+              key: const Key('pasarTo'),
+              label: l10n.transfersTo,
+              account: to,
+              balance: amount > 0 ? after.to : to?.balance,
+              after: amount > 0,
+              overdrawn: false,
+              onTap: () => _pickTransferAccount(
+                accounts: accounts,
+                exclude: _fromAccountId,
+                onPicked: (id) => _toAccountId = id,
+              ),
+            ),
+          ],
         ),
       ),
-      const SizedBox(height: Finan2Space.xs),
-      Center(child: Icon(Icons.arrow_downward, color: colors.inkFaint, size: 20)),
-      const SizedBox(height: Finan2Space.xs),
-      Finan2TapField(
-        label: l10n.transfersTo,
-        value: describe(to, amount),
-        leading: Icon(
-          Finan2Icons.cuenta(to?.type.name ?? 'banco'),
-          size: 18,
-          color: colors.inkSoft,
-        ),
-        onTap: () => _pickTransferAccount(
-          accounts: accounts,
-          exclude: _fromAccountId,
-          onPicked: (id) => _toAccountId = id,
-        ),
+      const SizedBox(height: Finan2Space.md),
+      Text(
+        l10n.transfersNotExpense,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 12, color: colors.inkFaint),
       ),
     ];
   }
 }
 
+/// One end of «Pasar»: the account's tile in its color, «De» or «A» over
+/// its name, and on the right what it has - or, once there's an amount,
+/// what it will be left with.
+class _TransferEnd extends ConsumerWidget {
+  const _TransferEnd({
+    required this.label,
+    required this.account,
+    required this.balance,
+    required this.after,
+    required this.overdrawn,
+    required this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final Account? account;
+  final int? balance;
+  final bool after;
+  final bool overdrawn;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final formatCompact = ref.watch(compactMoneyFormatterProvider);
+    final l10n = context.l10n;
+    final account = this.account;
+    final balance = this.balance;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Row(
+        children: [
+          if (account != null)
+            Finan2Tile(icon: accountIcon(account.type), tone: accountTone(context, account.id))
+          else
+            Finan2Tile(
+              icon: Finan2Icons.cuentas,
+              tone: Finan2Tone(colors.inkFaint, colors.surfaceAlt),
+            ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colors.inkFaint,
+                  ),
+                ),
+                Text(
+                  account?.name ?? l10n.transfersSelectAccount,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, color: colors.ink),
+                ),
+              ],
+            ),
+          ),
+          if (balance != null)
+            Text(
+              after
+                  ? l10n.transfersLeaves(formatCompact(balance))
+                  : l10n.transfersHas(formatCompact(balance)),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: overdrawn ? FontWeight.w700 : FontWeight.w400,
+                color: overdrawn ? colors.expense : colors.inkFaint,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+          const SizedBox(width: 4),
+          Icon(Icons.expand_more, size: 16, color: colors.inkFaint),
+        ],
+      ),
+    );
+  }
+}
+
 /// A faint, tappable part of the line under the amount (`.amount .h`).
 class _HintButton extends StatelessWidget {
-  const _HintButton({required this.label, required this.onTap, super.key});
+  const _HintButton({required this.label, required this.onTap, this.dot, super.key});
 
   final String label;
   final VoidCallback onTap;
+
+  /// A small dot before [label] in this color - the account's.
+  final Color? dot;
 
   @override
   Widget build(BuildContext context) {
@@ -562,6 +692,14 @@ class _HintButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (dot case final dot?) ...[
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 5),
+            ],
             Text(
               label,
               style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.inkSoft),

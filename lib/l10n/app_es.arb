@@ -629,8 +629,7 @@
       }
     }
   },
-  "debtsTypeField": "Tipo de deuda",
-  "debtsCreditLimit": "Cupo total",
+  "debtsCreditLimit": "Cupo",
   "debtsRatePercent": "Tasa E.A. %",
   "@debtsRatePercent": {
     "description": "Effective annual interest rate, in percent."
@@ -714,11 +713,6 @@
     "description": "CDT = certificado de depósito a término (a CD)."
   },
   "investmentsEmptyAction": "+ Nueva inversión",
-  "investmentsPortfolioValue": "Valor del portafolio",
-  "investmentsTotalReturnSuffix": " de rendimiento total",
-  "@investmentsTotalReturnSuffix": {
-    "description": "Follows the bold total return amount; keep the leading space."
-  },
   "investmentsKindFixedIncome": "Renta fija",
   "investmentsKindVariableIncome": "Renta variable",
   "investmentsKindHighRisk": "Alto riesgo",
@@ -916,10 +910,10 @@
     }
   },
   "transfersInvalid": "Elige un monto y dos cuentas distintas.",
-  "transfersFrom": "Desde",
-  "transfersTo": "Hacia",
+  "transfersFrom": "De",
+  "transfersTo": "A",
   "transfersSelectAccount": "Selecciona una cuenta",
-  "transfersHistoryTitle": "Transferencias",
+  "transfersHistoryTitle": "Pasos entre cuentas",
   "transfersDeleteTitle": "Eliminar transferencia",
   "transfersDeleteMessage": "Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no se puede deshacer.",
   "transfersDeletedAccount": "Cuenta eliminada",
@@ -928,28 +922,17 @@
   },
   "transfersEmptyTitle": "Aún no hay transferencias",
   "transfersEmptyDescription": "Los movimientos de dinero entre tus propias cuentas aparecerán aquí.",
-  "transfersEmptyAction": "+ Transferir",
+  "transfersEmptyAction": "+ Pasar plata",
   "accountsTitle": "Cuentas",
-  "accountsAvailableMoney": "Dinero disponible",
-  "accountsTotalAvailable": "Total disponible",
-  "accountsCountInHousehold": "{count, plural, =1{en 1 cuenta del hogar} other{en {count} cuentas del hogar}}",
-  "@accountsCountInHousehold": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "accountsEmptyTitle": "Aún no hay cuentas",
   "accountsEmptyDescription": "Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.",
   "accountsEmptyAction": "+ Nueva cuenta",
-  "accountsTransferBetween": "Transferir entre cuentas",
-  "accountsHistory": "Historial",
+  "accountsTransferBetween": "Pasar entre cuentas",
   "accountsNewTitle": "Nueva cuenta",
   "accountsEditTitle": "Editar cuenta",
-  "accountsTypeLabel": "Tipo de cuenta",
-  "accountsCurrentBalance": "Saldo actual",
-  "accountsIncludeInAvailable": "Incluir en dinero disponible",
+  "accountsTypeLabel": "Tipo",
+  "accountsCurrentBalance": "Saldo de hoy",
+  "accountsIncludeInAvailable": "Cuenta en «Disponible»",
   "accountsDeleteTitle": "Eliminar cuenta",
   "accountsDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
   "@accountsDeleteMessage": {
@@ -960,7 +943,7 @@
     }
   },
   "accountsCannotDeleteTitle": "No se puede eliminar",
-  "accountsCannotDeleteMessage": "\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".",
+  "accountsCannotDeleteMessage": "\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, apaga «Cuenta en Disponible».",
   "@accountsCannotDeleteMessage": {
     "placeholders": {
       "name": {
@@ -1933,5 +1916,119 @@
         "type": "String"
       }
     }
-  }
+  },
+  "accountsAvailableLabel": "Disponible entre las cuentas",
+  "accountsAvailableNote": "las tarjetas y créditos no suman aquí",
+  "accountsCards": "Tarjetas",
+  "accountsRowExcluded": "{type} · no suma en «Disponible»",
+  "@accountsRowExcluded": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsIncludeHint": "Apágalo para cuentas que no se tocan, como un ahorro aparte.",
+  "accountsAdd": "Nueva cuenta",
+  "commonCreate": "Crear",
+  "debtsFormTitle": "{type, select, tarjeta{Tarjeta de crédito} credito{Crédito} hipoteca{Hipoteca} vehiculo{Crédito de vehículo} other{Deuda}}",
+  "@debtsFormTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsCardDays": "Corte día {cutoff} · paga día {day}",
+  "@debtsCardDays": {
+    "placeholders": {
+      "cutoff": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsCardPayDay": "Paga día {day}",
+  "@debtsCardPayDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsCardPlaceholder": "Tu tarjeta",
+  "debtsOwedToday": "Cuánto deben hoy",
+  "debtsEndsIn": "Terminan en {date}",
+  "@debtsEndsIn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsEndsSooner": "Si abonan {amount} más al mes: {date}.",
+  "@debtsEndsSooner": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNeverEnds": "Con esa cuota no se termina de pagar",
+  "debtsNeverEndsHint": "Los intereses se comen el pago: suban la cuota o abonen más.",
+  "investmentsWorthToday": "Valen hoy",
+  "investmentsPutIn": "pusieron {amount}",
+  "@investmentsPutIn": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "investmentsGaining": "ganan",
+  "investmentsLosing": "pierden",
+  "investmentsManualNote": "Se actualizan a mano: la app no se conecta a ningún banco.",
+  "investmentsAdd": "Nueva inversión",
+  "transfersRowTo": "A {name}",
+  "@transfersRowTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersRowFrom": "de {name} · {date}",
+  "@transfersRowFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersHas": "tiene {amount}",
+  "@transfersHas": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersLeaves": "queda {amount}",
+  "@transfersLeaves": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersNotExpense": "No es un gasto: no toca el presupuesto.",
+  "transfersSwap": "Invertir el sentido"
 }

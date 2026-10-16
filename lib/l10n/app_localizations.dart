@@ -1671,16 +1671,10 @@ abstract class AppLocalizations {
   /// **'Se eliminará \"{name}\". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.'**
   String debtsDeleteMessage(String name);
 
-  /// No description provided for @debtsTypeField.
-  ///
-  /// In es, this message translates to:
-  /// **'Tipo de deuda'**
-  String get debtsTypeField;
-
   /// No description provided for @debtsCreditLimit.
   ///
   /// In es, this message translates to:
-  /// **'Cupo total'**
+  /// **'Cupo'**
   String get debtsCreditLimit;
 
   /// Effective annual interest rate, in percent.
@@ -1916,18 +1910,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'+ Nueva inversión'**
   String get investmentsEmptyAction;
-
-  /// No description provided for @investmentsPortfolioValue.
-  ///
-  /// In es, this message translates to:
-  /// **'Valor del portafolio'**
-  String get investmentsPortfolioValue;
-
-  /// Follows the bold total return amount; keep the leading space.
-  ///
-  /// In es, this message translates to:
-  /// **' de rendimiento total'**
-  String get investmentsTotalReturnSuffix;
 
   /// No description provided for @investmentsKindFixedIncome.
   ///
@@ -2322,13 +2304,13 @@ abstract class AppLocalizations {
   /// No description provided for @transfersFrom.
   ///
   /// In es, this message translates to:
-  /// **'Desde'**
+  /// **'De'**
   String get transfersFrom;
 
   /// No description provided for @transfersTo.
   ///
   /// In es, this message translates to:
-  /// **'Hacia'**
+  /// **'A'**
   String get transfersTo;
 
   /// No description provided for @transfersSelectAccount.
@@ -2340,7 +2322,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersHistoryTitle.
   ///
   /// In es, this message translates to:
-  /// **'Transferencias'**
+  /// **'Pasos entre cuentas'**
   String get transfersHistoryTitle;
 
   /// No description provided for @transfersDeleteTitle.
@@ -2376,7 +2358,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Transferir'**
+  /// **'+ Pasar plata'**
   String get transfersEmptyAction;
 
   /// No description provided for @accountsTitle.
@@ -2384,24 +2366,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cuentas'**
   String get accountsTitle;
-
-  /// No description provided for @accountsAvailableMoney.
-  ///
-  /// In es, this message translates to:
-  /// **'Dinero disponible'**
-  String get accountsAvailableMoney;
-
-  /// No description provided for @accountsTotalAvailable.
-  ///
-  /// In es, this message translates to:
-  /// **'Total disponible'**
-  String get accountsTotalAvailable;
-
-  /// No description provided for @accountsCountInHousehold.
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{en 1 cuenta del hogar} other{en {count} cuentas del hogar}}'**
-  String accountsCountInHousehold(int count);
 
   /// No description provided for @accountsEmptyTitle.
   ///
@@ -2424,14 +2388,8 @@ abstract class AppLocalizations {
   /// No description provided for @accountsTransferBetween.
   ///
   /// In es, this message translates to:
-  /// **'Transferir entre cuentas'**
+  /// **'Pasar entre cuentas'**
   String get accountsTransferBetween;
-
-  /// No description provided for @accountsHistory.
-  ///
-  /// In es, this message translates to:
-  /// **'Historial'**
-  String get accountsHistory;
 
   /// No description provided for @accountsNewTitle.
   ///
@@ -2448,19 +2406,19 @@ abstract class AppLocalizations {
   /// No description provided for @accountsTypeLabel.
   ///
   /// In es, this message translates to:
-  /// **'Tipo de cuenta'**
+  /// **'Tipo'**
   String get accountsTypeLabel;
 
   /// No description provided for @accountsCurrentBalance.
   ///
   /// In es, this message translates to:
-  /// **'Saldo actual'**
+  /// **'Saldo de hoy'**
   String get accountsCurrentBalance;
 
   /// No description provided for @accountsIncludeInAvailable.
   ///
   /// In es, this message translates to:
-  /// **'Incluir en dinero disponible'**
+  /// **'Cuenta en «Disponible»'**
   String get accountsIncludeInAvailable;
 
   /// No description provided for @accountsDeleteTitle.
@@ -2484,7 +2442,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountsCannotDeleteMessage.
   ///
   /// In es, this message translates to:
-  /// **'\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".'**
+  /// **'\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, apaga «Cuenta en Disponible».'**
   String accountsCannotDeleteMessage(String name, int count);
 
   /// Account types.
@@ -3920,6 +3878,174 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{category}: {amount} más que en un mes normal.'**
   String annualHighestReason(String category, String amount);
+
+  /// No description provided for @accountsAvailableLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible entre las cuentas'**
+  String get accountsAvailableLabel;
+
+  /// No description provided for @accountsAvailableNote.
+  ///
+  /// In es, this message translates to:
+  /// **'las tarjetas y créditos no suman aquí'**
+  String get accountsAvailableNote;
+
+  /// No description provided for @accountsCards.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas'**
+  String get accountsCards;
+
+  /// No description provided for @accountsRowExcluded.
+  ///
+  /// In es, this message translates to:
+  /// **'{type} · no suma en «Disponible»'**
+  String accountsRowExcluded(String type);
+
+  /// No description provided for @accountsIncludeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Apágalo para cuentas que no se tocan, como un ahorro aparte.'**
+  String get accountsIncludeHint;
+
+  /// No description provided for @accountsAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva cuenta'**
+  String get accountsAdd;
+
+  /// No description provided for @commonCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get commonCreate;
+
+  /// No description provided for @debtsFormTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{type, select, tarjeta{Tarjeta de crédito} credito{Crédito} hipoteca{Hipoteca} vehiculo{Crédito de vehículo} other{Deuda}}'**
+  String debtsFormTitle(String type);
+
+  /// No description provided for @debtsCardDays.
+  ///
+  /// In es, this message translates to:
+  /// **'Corte día {cutoff} · paga día {day}'**
+  String debtsCardDays(int cutoff, int day);
+
+  /// No description provided for @debtsCardPayDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Paga día {day}'**
+  String debtsCardPayDay(int day);
+
+  /// No description provided for @debtsCardPlaceholder.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu tarjeta'**
+  String get debtsCardPlaceholder;
+
+  /// No description provided for @debtsOwedToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuánto deben hoy'**
+  String get debtsOwedToday;
+
+  /// No description provided for @debtsEndsIn.
+  ///
+  /// In es, this message translates to:
+  /// **'Terminan en {date}'**
+  String debtsEndsIn(String date);
+
+  /// No description provided for @debtsEndsSooner.
+  ///
+  /// In es, this message translates to:
+  /// **'Si abonan {amount} más al mes: {date}.'**
+  String debtsEndsSooner(String amount, String date);
+
+  /// No description provided for @debtsNeverEnds.
+  ///
+  /// In es, this message translates to:
+  /// **'Con esa cuota no se termina de pagar'**
+  String get debtsNeverEnds;
+
+  /// No description provided for @debtsNeverEndsHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Los intereses se comen el pago: suban la cuota o abonen más.'**
+  String get debtsNeverEndsHint;
+
+  /// No description provided for @investmentsWorthToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Valen hoy'**
+  String get investmentsWorthToday;
+
+  /// No description provided for @investmentsPutIn.
+  ///
+  /// In es, this message translates to:
+  /// **'pusieron {amount}'**
+  String investmentsPutIn(String amount);
+
+  /// No description provided for @investmentsGaining.
+  ///
+  /// In es, this message translates to:
+  /// **'ganan'**
+  String get investmentsGaining;
+
+  /// No description provided for @investmentsLosing.
+  ///
+  /// In es, this message translates to:
+  /// **'pierden'**
+  String get investmentsLosing;
+
+  /// No description provided for @investmentsManualNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Se actualizan a mano: la app no se conecta a ningún banco.'**
+  String get investmentsManualNote;
+
+  /// No description provided for @investmentsAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva inversión'**
+  String get investmentsAdd;
+
+  /// No description provided for @transfersRowTo.
+  ///
+  /// In es, this message translates to:
+  /// **'A {name}'**
+  String transfersRowTo(String name);
+
+  /// No description provided for @transfersRowFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'de {name} · {date}'**
+  String transfersRowFrom(String name, String date);
+
+  /// No description provided for @transfersHas.
+  ///
+  /// In es, this message translates to:
+  /// **'tiene {amount}'**
+  String transfersHas(String amount);
+
+  /// No description provided for @transfersLeaves.
+  ///
+  /// In es, this message translates to:
+  /// **'queda {amount}'**
+  String transfersLeaves(String amount);
+
+  /// No description provided for @transfersNotExpense.
+  ///
+  /// In es, this message translates to:
+  /// **'No es un gasto: no toca el presupuesto.'**
+  String get transfersNotExpense;
+
+  /// No description provided for @transfersSwap.
+  ///
+  /// In es, this message translates to:
+  /// **'Invertir el sentido'**
+  String get transfersSwap;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -191,8 +191,10 @@ void main() {
     await tester.enterText(find.byType(TextField).first, '250000');
     await tester.pump();
 
-    // What each balance becomes.
-    expect(find.textContaining('→'), findsNWidgets(2));
+    // What each balance will be left with, and that it isn't an expense.
+    expect(find.text('queda \$750k'), findsOneWidget);
+    expect(find.text('queda \$350k'), findsOneWidget);
+    expect(find.text('No es un gasto: no toca el presupuesto.'), findsOneWidget);
 
     await tester.tap(find.text('Guardar'));
     await settle(tester);

@@ -929,10 +929,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get debtsTypeField => 'Debt type';
-
-  @override
-  String get debtsCreditLimit => 'Credit limit';
+  String get debtsCreditLimit => 'Limit';
 
   @override
   String get debtsRatePercent => 'APR %';
@@ -1056,12 +1053,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get investmentsEmptyAction => '+ New investment';
-
-  @override
-  String get investmentsPortfolioValue => 'Portfolio value';
-
-  @override
-  String get investmentsTotalReturnSuffix => ' total return';
 
   @override
   String get investmentsKindFixedIncome => 'Fixed income';
@@ -1303,7 +1294,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfersSelectAccount => 'Select an account';
 
   @override
-  String get transfersHistoryTitle => 'Transfers';
+  String get transfersHistoryTitle => 'Moves between accounts';
 
   @override
   String get transfersDeleteTitle => 'Delete transfer';
@@ -1323,27 +1314,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Money moved between your own accounts will show up here.';
 
   @override
-  String get transfersEmptyAction => '+ Transfer';
+  String get transfersEmptyAction => '+ Move money';
 
   @override
   String get accountsTitle => 'Accounts';
-
-  @override
-  String get accountsAvailableMoney => 'Available money';
-
-  @override
-  String get accountsTotalAvailable => 'Total available';
-
-  @override
-  String accountsCountInHousehold(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'across $count household accounts',
-      one: 'across 1 household account',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get accountsEmptyTitle => 'No accounts yet';
@@ -1356,10 +1330,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsEmptyAction => '+ New account';
 
   @override
-  String get accountsTransferBetween => 'Transfer between accounts';
-
-  @override
-  String get accountsHistory => 'History';
+  String get accountsTransferBetween => 'Move between accounts';
 
   @override
   String get accountsNewTitle => 'New account';
@@ -1368,13 +1339,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsEditTitle => 'Edit account';
 
   @override
-  String get accountsTypeLabel => 'Account type';
+  String get accountsTypeLabel => 'Type';
 
   @override
-  String get accountsCurrentBalance => 'Current balance';
+  String get accountsCurrentBalance => 'Today\'s balance';
 
   @override
-  String get accountsIncludeInAvailable => 'Include in available money';
+  String get accountsIncludeInAvailable => 'Counts in «Available»';
 
   @override
   String get accountsDeleteTitle => 'Delete account';
@@ -1395,7 +1366,7 @@ class AppLocalizationsEn extends AppLocalizations {
       other: '$count records',
       one: '1 record',
     );
-    return '\"$name\" has $_temp0 (transactions, transfers, card payments or recurring bills). Delete them or move them to another account first. To just leave it out of the total, turn off \"Include in available money\".';
+    return '\"$name\" has $_temp0 (transactions, transfers, card payments or recurring bills). Delete them or move them to another account first. To just leave it out of the total, turn off «Counts in Available».';
   }
 
   @override
@@ -2332,4 +2303,118 @@ class AppLocalizationsEn extends AppLocalizations {
   String annualHighestReason(String category, String amount) {
     return '$category: $amount more than in a usual month.';
   }
+
+  @override
+  String get accountsAvailableLabel => 'Available across accounts';
+
+  @override
+  String get accountsAvailableNote => 'cards and loans don\'t count here';
+
+  @override
+  String get accountsCards => 'Cards';
+
+  @override
+  String accountsRowExcluded(String type) {
+    return '$type · not in «Available»';
+  }
+
+  @override
+  String get accountsIncludeHint =>
+      'Turn it off for accounts you don\'t touch, like separate savings.';
+
+  @override
+  String get accountsAdd => 'New account';
+
+  @override
+  String get commonCreate => 'Create';
+
+  @override
+  String debtsFormTitle(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'tarjeta': 'Credit card',
+      'credito': 'Loan',
+      'hipoteca': 'Mortgage',
+      'vehiculo': 'Car loan',
+      'other': 'Debt',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String debtsCardDays(int cutoff, int day) {
+    return 'Closes on day $cutoff · due on day $day';
+  }
+
+  @override
+  String debtsCardPayDay(int day) {
+    return 'Due on day $day';
+  }
+
+  @override
+  String get debtsCardPlaceholder => 'Your card';
+
+  @override
+  String get debtsOwedToday => 'Owed today';
+
+  @override
+  String debtsEndsIn(String date) {
+    return 'Paid off in $date';
+  }
+
+  @override
+  String debtsEndsSooner(String amount, String date) {
+    return 'Paying $amount more a month: $date.';
+  }
+
+  @override
+  String get debtsNeverEnds => 'That payment never pays it off';
+
+  @override
+  String get debtsNeverEndsHint => 'The interest eats the payment: raise it or pay extra.';
+
+  @override
+  String get investmentsWorthToday => 'Worth today';
+
+  @override
+  String investmentsPutIn(String amount) {
+    return 'put in $amount';
+  }
+
+  @override
+  String get investmentsGaining => 'gaining';
+
+  @override
+  String get investmentsLosing => 'losing';
+
+  @override
+  String get investmentsManualNote => 'Updated by hand: the app doesn\'t connect to any bank.';
+
+  @override
+  String get investmentsAdd => 'New investment';
+
+  @override
+  String transfersRowTo(String name) {
+    return 'To $name';
+  }
+
+  @override
+  String transfersRowFrom(String name, String date) {
+    return 'from $name · $date';
+  }
+
+  @override
+  String transfersHas(String amount) {
+    return 'has $amount';
+  }
+
+  @override
+  String transfersLeaves(String amount) {
+    return 'ends with $amount';
+  }
+
+  @override
+  String get transfersNotExpense => 'Not an expense: it doesn\'t touch the budget.';
+
+  @override
+  String get transfersSwap => 'Swap direction';
 }

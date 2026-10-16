@@ -929,10 +929,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get debtsTypeField => 'Tipo de deuda';
-
-  @override
-  String get debtsCreditLimit => 'Cupo total';
+  String get debtsCreditLimit => 'Cupo';
 
   @override
   String get debtsRatePercent => 'Tasa E.A. %';
@@ -1056,12 +1053,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get investmentsEmptyAction => '+ Nueva inversión';
-
-  @override
-  String get investmentsPortfolioValue => 'Valor del portafolio';
-
-  @override
-  String get investmentsTotalReturnSuffix => ' de rendimiento total';
 
   @override
   String get investmentsKindFixedIncome => 'Renta fija';
@@ -1295,16 +1286,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transfersInvalid => 'Elige un monto y dos cuentas distintas.';
 
   @override
-  String get transfersFrom => 'Desde';
+  String get transfersFrom => 'De';
 
   @override
-  String get transfersTo => 'Hacia';
+  String get transfersTo => 'A';
 
   @override
   String get transfersSelectAccount => 'Selecciona una cuenta';
 
   @override
-  String get transfersHistoryTitle => 'Transferencias';
+  String get transfersHistoryTitle => 'Pasos entre cuentas';
 
   @override
   String get transfersDeleteTitle => 'Eliminar transferencia';
@@ -1324,27 +1315,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los movimientos de dinero entre tus propias cuentas aparecerán aquí.';
 
   @override
-  String get transfersEmptyAction => '+ Transferir';
+  String get transfersEmptyAction => '+ Pasar plata';
 
   @override
   String get accountsTitle => 'Cuentas';
-
-  @override
-  String get accountsAvailableMoney => 'Dinero disponible';
-
-  @override
-  String get accountsTotalAvailable => 'Total disponible';
-
-  @override
-  String accountsCountInHousehold(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'en $count cuentas del hogar',
-      one: 'en 1 cuenta del hogar',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get accountsEmptyTitle => 'Aún no hay cuentas';
@@ -1357,10 +1331,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountsEmptyAction => '+ Nueva cuenta';
 
   @override
-  String get accountsTransferBetween => 'Transferir entre cuentas';
-
-  @override
-  String get accountsHistory => 'Historial';
+  String get accountsTransferBetween => 'Pasar entre cuentas';
 
   @override
   String get accountsNewTitle => 'Nueva cuenta';
@@ -1369,13 +1340,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountsEditTitle => 'Editar cuenta';
 
   @override
-  String get accountsTypeLabel => 'Tipo de cuenta';
+  String get accountsTypeLabel => 'Tipo';
 
   @override
-  String get accountsCurrentBalance => 'Saldo actual';
+  String get accountsCurrentBalance => 'Saldo de hoy';
 
   @override
-  String get accountsIncludeInAvailable => 'Incluir en dinero disponible';
+  String get accountsIncludeInAvailable => 'Cuenta en «Disponible»';
 
   @override
   String get accountsDeleteTitle => 'Eliminar cuenta';
@@ -1396,7 +1367,7 @@ class AppLocalizationsEs extends AppLocalizations {
       other: '$count registros',
       one: '1 registro',
     );
-    return '\"$name\" tiene $_temp0 (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".';
+    return '\"$name\" tiene $_temp0 (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, apaga «Cuenta en Disponible».';
   }
 
   @override
@@ -2346,4 +2317,117 @@ class AppLocalizationsEs extends AppLocalizations {
   String annualHighestReason(String category, String amount) {
     return '$category: $amount más que en un mes normal.';
   }
+
+  @override
+  String get accountsAvailableLabel => 'Disponible entre las cuentas';
+
+  @override
+  String get accountsAvailableNote => 'las tarjetas y créditos no suman aquí';
+
+  @override
+  String get accountsCards => 'Tarjetas';
+
+  @override
+  String accountsRowExcluded(String type) {
+    return '$type · no suma en «Disponible»';
+  }
+
+  @override
+  String get accountsIncludeHint => 'Apágalo para cuentas que no se tocan, como un ahorro aparte.';
+
+  @override
+  String get accountsAdd => 'Nueva cuenta';
+
+  @override
+  String get commonCreate => 'Crear';
+
+  @override
+  String debtsFormTitle(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'tarjeta': 'Tarjeta de crédito',
+      'credito': 'Crédito',
+      'hipoteca': 'Hipoteca',
+      'vehiculo': 'Crédito de vehículo',
+      'other': 'Deuda',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String debtsCardDays(int cutoff, int day) {
+    return 'Corte día $cutoff · paga día $day';
+  }
+
+  @override
+  String debtsCardPayDay(int day) {
+    return 'Paga día $day';
+  }
+
+  @override
+  String get debtsCardPlaceholder => 'Tu tarjeta';
+
+  @override
+  String get debtsOwedToday => 'Cuánto deben hoy';
+
+  @override
+  String debtsEndsIn(String date) {
+    return 'Terminan en $date';
+  }
+
+  @override
+  String debtsEndsSooner(String amount, String date) {
+    return 'Si abonan $amount más al mes: $date.';
+  }
+
+  @override
+  String get debtsNeverEnds => 'Con esa cuota no se termina de pagar';
+
+  @override
+  String get debtsNeverEndsHint => 'Los intereses se comen el pago: suban la cuota o abonen más.';
+
+  @override
+  String get investmentsWorthToday => 'Valen hoy';
+
+  @override
+  String investmentsPutIn(String amount) {
+    return 'pusieron $amount';
+  }
+
+  @override
+  String get investmentsGaining => 'ganan';
+
+  @override
+  String get investmentsLosing => 'pierden';
+
+  @override
+  String get investmentsManualNote => 'Se actualizan a mano: la app no se conecta a ningún banco.';
+
+  @override
+  String get investmentsAdd => 'Nueva inversión';
+
+  @override
+  String transfersRowTo(String name) {
+    return 'A $name';
+  }
+
+  @override
+  String transfersRowFrom(String name, String date) {
+    return 'de $name · $date';
+  }
+
+  @override
+  String transfersHas(String amount) {
+    return 'tiene $amount';
+  }
+
+  @override
+  String transfersLeaves(String amount) {
+    return 'queda $amount';
+  }
+
+  @override
+  String get transfersNotExpense => 'No es un gasto: no toca el presupuesto.';
+
+  @override
+  String get transfersSwap => 'Invertir el sentido';
 }
