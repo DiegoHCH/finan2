@@ -10,7 +10,6 @@
   "commonConfirm": "Confirmar",
   "commonContinue": "Continuar",
   "commonNext": "Siguiente",
-  "commonSkip": "Omitir",
   "commonUndo": "Deshacer",
   "commonCopy": "Copiar",
   "commonGotIt": "Entendido",
@@ -202,27 +201,23 @@
     "description": "Size chip: size name and how many boxes the challenge will have."
   },
   "savingsChallengeCreate": "Crear reto",
-  "authLoginWelcome": "Bienvenido a Finan",
-  "@authLoginWelcome": {
-    "description": "Login heading; a highlighted \"2\" follows it, completing the app name Finan2."
+  "authLoginSubtitle": "Cada quien entra con su cuenta; lo que anotan es de los dos.",
+  "authLoginHeadline": "La libreta de la casa,\npara los dos.",
+  "@authLoginHeadline": {
+    "description": "Login heading: says what the app is. The line break is intended."
   },
-  "authLoginSubtitle": "Entra con tu cuenta. Cada quien tiene la suya; las finanzas del hogar son compartidas.",
   "authEmailLabel": "Correo",
   "authEmailInvalid": "Ingresa un correo válido",
   "authPasswordLabel": "Contraseña",
   "authPasswordRequired": "Ingresa tu contraseña",
   "authForgotPassword": "¿Olvidaste tu contraseña?",
-  "authSignIn": "Iniciar sesión",
-  "authOr": "o",
-  "@authOr": {
-    "description": "Separator between email sign-in and Google sign-in."
-  },
-  "authContinueWithGoogle": "Continuar con Google",
+  "authSignIn": "Entrar",
+  "authContinueWithGoogle": "Seguir con Google",
   "authNoAccount": "¿No tienes cuenta? ",
   "@authNoAccount": {
     "description": "Followed by the authCreateAccountHere link; keep the trailing space."
   },
-  "authCreateAccountHere": "Créala aquí",
+  "authCreateAccountHere": "Créala",
   "authResetPasswordTitle": "Recuperar contraseña",
   "authResetPasswordMessage": "Te enviamos un enlace a tu correo para elegir una contraseña nueva.",
   "authResetPasswordSend": "Enviar",
@@ -235,36 +230,33 @@
       }
     }
   },
-  "authSignupTitle": "Crea tu cuenta",
-  "authSignupSubtitle": "Regístrate para empezar a organizar las finanzas del hogar.",
+  "authSignupTitle": "Tu cuenta",
+  "authSignupSubtitle": "Es solo tuya. La casa la armas o te unes en el paso siguiente.",
   "authNameRequired": "Ingresa tu nombre",
   "authConfirmPasswordLabel": "Confirmar contraseña",
   "authPasswordsDontMatch": "Las contraseñas no coinciden",
   "authCreateAccount": "Crear cuenta",
+  "authHaveAccountLink": "Ya tengo cuenta",
   "@authCreateAccount": {
     "description": "Sign-up button: creates the user's login account."
   },
-  "authHaveAccount": "¿Ya tienes cuenta? ",
-  "@authHaveAccount": {
-    "description": "Followed by the authSignInLink link; keep the trailing space."
-  },
-  "authSignInLink": "Inicia sesión",
   "householdDefaultName": "Nuestro hogar",
   "@householdDefaultName": {
     "description": "Prefilled, editable name when creating a household."
   },
-  "householdCreateJoinTitle": "Un último paso",
-  "householdCreateJoinSubtitle": "Crea el hogar desde cero o únete al que ya tiene tu pareja.",
-  "householdCreateOptionTitle": "Crear un hogar nuevo",
-  "householdCreateOptionSubtitle": "Empiezas de cero e invitas a tu pareja.",
-  "householdJoinOptionTitle": "Unirme con un código",
-  "householdJoinOptionSubtitle": "Tu pareja ya creó el hogar.",
-  "householdNameLabel": "Nombre del hogar",
-  "householdNameRequired": "Ponle un nombre a tu hogar",
-  "householdCodeLabel": "Código del hogar (pega el código completo)",
+  "householdCreateJoinTitle": "¿Arman la casa o ya existe?",
+  "householdCreateJoinSubtitle": "Uno de los dos la crea; el otro entra con un código.",
+  "householdCreateOptionTitle": "Crear la casa",
+  "householdCreateOptionSubtitle": "Empiezo yo e invito a mi pareja.",
+  "householdJoinOptionTitle": "Tengo un código",
+  "householdJoinOptionSubtitle": "Mi pareja ya la creó.",
+  "householdNameLabel": "Nombre de la casa",
+  "householdNameRequired": "Ponle un nombre a la casa",
+  "householdCodeLabel": "Código",
+  "householdCodeHint": "Pégalo completo, tal como te llegó: lleva la llave de la casa.",
   "householdCodeRequired": "Ingresa el código que te compartieron",
-  "householdCreateButton": "Crear hogar",
-  "householdJoinButton": "Entrar al hogar",
+  "householdCreateButton": "Armar la casa",
+  "householdJoinButton": "Entrar a la casa",
   "householdJoinedWithoutKeyTitle": "Te uniste al hogar",
   "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te comparta el código completo desde la tarjeta del hogar en Ajustes.",
   "householdSetupStep": "Paso {step} de {total}",
@@ -278,35 +270,40 @@
       }
     }
   },
-  "householdSetupCurrencyTitle": "Moneda del hogar",
-  "householdSetupCurrencyDescription": "En la que llevan las cuentas. Se puede cambiar en Ajustes.",
+  "householdSetupCurrencyTitle": "¿En qué moneda llevan las cuentas?",
+  "householdSetupCurrencyDescription": "La de todos los montos de la casa. Se puede cambiar después en Ajustes.",
   "householdCurrencyCop": "Peso colombiano",
   "householdCurrencyUsd": "Dólar estadounidense",
-  "householdSetupAccountTitle": "Tu primera cuenta",
+  "householdSetupAccountTitle": "¿Dónde está la plata hoy?",
   "@householdSetupAccountTitle": {
     "description": "A money account (bank, wallet, cash), not a login."
   },
-  "householdSetupAccountDescription": "De donde sale y a donde llega la plata: el banco, una billetera o el efectivo. Pon lo que tiene hoy para empezar con el saldo real.",
+  "householdSetupAccountDescription": "Una cuenta para empezar: el banco, una billetera o el efectivo. Con el saldo real, lo que anotes cuadra desde el primer día.",
   "householdSetupAccountNameMissingTitle": "Ponle un nombre",
-  "householdSetupAccountNameMissingMessage": "Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.",
+  "householdSetupAccountNameMissingMessage": "Por ejemplo el banco o «Efectivo». Si prefieres, déjala para después con «Ahora no».",
   "householdSetupBalanceToday": "Saldo de hoy",
   "householdSetupCreateAccount": "Crear cuenta",
   "@householdSetupCreateAccount": {
     "description": "Creates a money account (bank, wallet, cash), not a login."
   },
   "householdRecoveryPhraseTitle": "Frase de recuperación",
-  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, estas 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja.",
+  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.",
+  "householdSetupRecoveryTitle": "¿Y si pierden la llave?",
   "householdGeneratePhrase": "Generar frase",
-  "householdSetupLater": "Más tarde, desde Ajustes",
-  "householdInviteTitle": "Invita a tu pareja",
-  "householdInviteMessage": "Comparte este código para que entre con su propia cuenta al mismo hogar. Sirve una sola vez y vence en 7 días.",
-  "householdInviteWarning": "Usa el botón de compartir y envíalo por WhatsApp o mensaje - no lo dictes de viva voz, lleva pegada una llave más larga que no se ve aquí. Sin el código completo, tu pareja no podrá ver los montos.",
+  "householdSetupLater": "Ahora no",
+  "householdInviteTitle": "Ahora tu pareja.",
+  "householdInviteMessage": "Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.",
+  "householdInviteFootnote": "Sirve una vez y vence en 7 días · se puede generar otro en Ajustes",
+  "householdInviteMissingPartner": "Falta tu pareja",
+  "@householdInviteMissingPartner": {
+    "description": "Screen-reader label of the empty, dashed circle where the partner will be."
+  },
   "householdInviteShareSubject": "Invitación a nuestro hogar en Finan2",
   "@householdInviteShareSubject": {
     "description": "Title/subject of the OS share sheet when sharing the invite."
   },
-  "householdInviteShare": "Compartir invitación",
-  "householdInviteSkip": "Omitir por ahora",
+  "householdInviteShare": "Compartir",
+  "householdInviteSkip": "Más tarde",
   "householdRecoveryConfirmMessage": "Si algún día ninguno de los dos tiene la llave del hogar en su dispositivo, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas con tu pareja. Si ya había una frase o un PIN, dejarán de servir.",
   "householdRecoverySavedTitle": "Frase guardada",
   "householdRecoverySavedMessage": "Desde ahora esta frase permite recuperar los montos del hogar en cualquier dispositivo.",
@@ -1411,11 +1408,14 @@
   "exportColumnCompleted": "% Completado",
   "exportColumnCompletedPercent": "Completado (%)",
   "backupTitle": "Copia de seguridad",
-  "backupSubtitle": "Todo el hogar, cifrado",
-  "backupDescription": "La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.",
-  "backupSameHouseholdOnly": "Solo se puede restaurar en este mismo hogar.",
-  "backupCreate": "Crear copia",
+  "backupDescription": "Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.",
+  "backupCreate": "Crear copia ahora",
   "backupRestoreAction": "Restaurar una copia",
+  "backupRestoreLead": "Al restaurar",
+  "backupRestoreNote": ", el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.",
+  "@backupRestoreNote": {
+    "description": "Follows backupRestoreLead, which is shown in bold; keep the leading comma."
+  },
   "backupErrorTitle": "No se pudo completar",
   "backupFileName": "finan2-copia-{date}.finan2",
   "@backupFileName": {

@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonNext => 'Next';
 
   @override
-  String get commonSkip => 'Skip';
-
-  @override
   String get commonUndo => 'Undo';
 
   @override
@@ -242,11 +239,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsChallengeCreate => 'Create challenge';
 
   @override
-  String get authLoginWelcome => 'Welcome to Finan';
+  String get authLoginSubtitle =>
+      'Each of you signs in with your own account; what you write down belongs to both.';
 
   @override
-  String get authLoginSubtitle =>
-      'Sign in with your account. You each have your own; the household\'s finances are shared.';
+  String get authLoginHeadline => 'The household notebook,\nfor the two of you.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -265,9 +262,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSignIn => 'Sign in';
-
-  @override
-  String get authOr => 'or';
 
   @override
   String get authContinueWithGoogle => 'Continue with Google';
@@ -296,10 +290,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get authSignupTitle => 'Create your account';
+  String get authSignupTitle => 'Your account';
 
   @override
-  String get authSignupSubtitle => 'Sign up to start organizing your household\'s finances.';
+  String get authSignupSubtitle =>
+      'It\'s yours alone. You\'ll set up or join the household in the next step.';
 
   @override
   String get authNameRequired => 'Enter your name';
@@ -314,32 +309,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authCreateAccount => 'Create account';
 
   @override
-  String get authHaveAccount => 'Already have an account? ';
-
-  @override
-  String get authSignInLink => 'Sign in';
+  String get authHaveAccountLink => 'I already have an account';
 
   @override
   String get householdDefaultName => 'Our home';
 
   @override
-  String get householdCreateJoinTitle => 'One last step';
+  String get householdCreateJoinTitle => 'Setting up the household, or joining one?';
 
   @override
-  String get householdCreateJoinSubtitle =>
-      'Start a new household or join the one your partner already has.';
+  String get householdCreateJoinSubtitle => 'One of you creates it; the other joins with a code.';
 
   @override
-  String get householdCreateOptionTitle => 'Create a new household';
+  String get householdCreateOptionTitle => 'Create the household';
 
   @override
-  String get householdCreateOptionSubtitle => 'Start fresh and invite your partner.';
+  String get householdCreateOptionSubtitle => 'I\'ll start and invite my partner.';
 
   @override
-  String get householdJoinOptionTitle => 'Join with a code';
+  String get householdJoinOptionTitle => 'I have a code';
 
   @override
-  String get householdJoinOptionSubtitle => 'Your partner already created the household.';
+  String get householdJoinOptionSubtitle => 'My partner already created it.';
 
   @override
   String get householdNameLabel => 'Household name';
@@ -348,16 +339,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdNameRequired => 'Give your household a name';
 
   @override
-  String get householdCodeLabel => 'Household code (paste the full code)';
+  String get householdCodeLabel => 'Code';
+
+  @override
+  String get householdCodeHint => 'Paste it whole, just as it came: it carries the household key.';
 
   @override
   String get householdCodeRequired => 'Enter the code you were sent';
 
   @override
-  String get householdCreateButton => 'Create household';
+  String get householdCreateButton => 'Set up the household';
 
   @override
-  String get householdJoinButton => 'Join household';
+  String get householdJoinButton => 'Join the household';
 
   @override
   String get householdJoinedWithoutKeyTitle => 'You joined the household';
@@ -372,11 +366,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get householdSetupCurrencyTitle => 'Household currency';
+  String get householdSetupCurrencyTitle => 'Which currency do you keep accounts in?';
 
   @override
   String get householdSetupCurrencyDescription =>
-      'The one you keep your books in. You can change it in Settings.';
+      'The one for every amount in the household. You can change it later in Settings.';
 
   @override
   String get householdCurrencyCop => 'Colombian peso';
@@ -385,18 +379,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdCurrencyUsd => 'US dollar';
 
   @override
-  String get householdSetupAccountTitle => 'Your first account';
+  String get householdSetupAccountTitle => 'Where\'s the money today?';
 
   @override
   String get householdSetupAccountDescription =>
-      'Where money comes in and goes out: a bank, a wallet or cash. Enter today\'s balance to start from the real figure.';
+      'One account to start: the bank, a wallet or cash. With the real balance, what you write down adds up from day one.';
 
   @override
   String get householdSetupAccountNameMissingTitle => 'Give it a name';
 
   @override
   String get householdSetupAccountNameMissingMessage =>
-      'Such as the bank or “Cash”. Or skip this step.';
+      'Such as the bank or “Cash”. Or leave it for later with “Not now”.';
 
   @override
   String get householdSetupBalanceToday => 'Today\'s balance';
@@ -409,33 +403,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdSetupRecoveryDescription =>
-      'Amounts are encrypted with a key that lives only on your phones. If you both lose it, these 12 words bring it back. They\'re shown only once: write them down on paper and keep them with your partner.';
+      'Amounts are encrypted with a key that lives only on your phones. If you both lose it, 12 words bring it back. They\'re shown only once: write them down on paper and keep them with your partner. You can also do it later, from Settings.';
+
+  @override
+  String get householdSetupRecoveryTitle => 'What if you lose the key?';
 
   @override
   String get householdGeneratePhrase => 'Generate phrase';
 
   @override
-  String get householdSetupLater => 'Later, from Settings';
+  String get householdSetupLater => 'Not now';
 
   @override
-  String get householdInviteTitle => 'Invite your partner';
+  String get householdInviteTitle => 'Now your partner.';
 
   @override
   String get householdInviteMessage =>
-      'Share this code so they can join the same household with their own account. It works once and expires in 7 days.';
+      'Send them this code with the share button. It carries the household key, which you can\'t see here: share it only with your partner and don\'t post it anywhere.';
 
   @override
-  String get householdInviteWarning =>
-      'Use the share button and send it by WhatsApp or text - don\'t read it out loud, it carries a longer key you can\'t see here. Without the full code, your partner won\'t be able to see amounts.';
+  String get householdInviteFootnote =>
+      'Works once and expires in 7 days · you can make another in Settings';
+
+  @override
+  String get householdInviteMissingPartner => 'Your partner isn\'t here yet';
 
   @override
   String get householdInviteShareSubject => 'Invitation to our household on Finan2';
 
   @override
-  String get householdInviteShare => 'Share invite';
+  String get householdInviteShare => 'Share';
 
   @override
-  String get householdInviteSkip => 'Skip for now';
+  String get householdInviteSkip => 'Later';
 
   @override
   String get householdRecoveryConfirmMessage =>
@@ -1950,20 +1950,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupTitle => 'Backup';
 
   @override
-  String get backupSubtitle => 'Your whole household, encrypted';
-
-  @override
   String get backupDescription =>
-      'The backup keeps accounts, transactions, budgets, debts, goals, recurring bills and notes in a file encrypted with the household key. Without that key no one can read it, so you can keep it in your email or in the cloud.';
+      'The whole household in a file encrypted with the household key. Without the key no one can read it: you can keep it in your email or in the cloud.';
 
   @override
-  String get backupSameHouseholdOnly => 'It can only be restored to this same household.';
-
-  @override
-  String get backupCreate => 'Create backup';
+  String get backupCreate => 'Back up now';
 
   @override
   String get backupRestoreAction => 'Restore a backup';
+
+  @override
+  String get backupRestoreLead => 'When restoring';
+
+  @override
+  String get backupRestoreNote =>
+      ', the household goes back to how it was that day, for both of you: anything created since is deleted. It only works in this same household.';
 
   @override
   String get backupErrorTitle => 'Couldn\'t finish';

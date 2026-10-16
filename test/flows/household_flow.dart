@@ -16,8 +16,8 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await settle(tester);
 
   // Create the household, keeping the suggested name.
-  await tap(tester, find.text('Crear un hogar nuevo'));
-  await tap(tester, find.text('Crear hogar'));
+  await tap(tester, find.text('Crear la casa'));
+  await tap(tester, find.text('Armar la casa'));
 
   // Setup: currency as it is, a first account with today's balance, the
   // recovery phrase later, then out of the invitation.
@@ -25,8 +25,8 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await tester.enterText(find.byType(TextField).at(0), 'Banco');
   await tester.enterText(find.byType(TextField).at(1), '1000000');
   await tap(tester, find.text('Crear cuenta'));
-  await tap(tester, find.text('Más tarde, desde Ajustes'));
-  await tap(tester, find.text('Omitir por ahora'));
+  await tap(tester, find.text('Ahora no'));
+  await tap(tester, find.text('Más tarde'));
 
   // A movement from the Movimientos tab.
   await tap(tester, navTab('Movimientos'));

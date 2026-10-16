@@ -27,5 +27,14 @@ Color accountColor(WidgetRef ref, String accountId) {
 Finan2Tone accountTone(BuildContext context, WidgetRef ref, String accountId) =>
     Finan2Tone.of(context, accountColor(ref, accountId));
 
+/// The types as offered to pick from, the most common first: a bank, a
+/// wallet, cash, a debit card.
+const accountTypeOrder = [
+  AccountType.banco,
+  AccountType.billetera,
+  AccountType.efectivo,
+  AccountType.debito,
+];
+
 /// An account's icon by its type.
 IconData accountIcon(AccountType type) => Finan2Icons.cuenta(type.name);

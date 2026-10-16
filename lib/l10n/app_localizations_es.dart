@@ -30,9 +30,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonNext => 'Siguiente';
 
   @override
-  String get commonSkip => 'Omitir';
-
-  @override
   String get commonUndo => 'Deshacer';
 
   @override
@@ -242,11 +239,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savingsChallengeCreate => 'Crear reto';
 
   @override
-  String get authLoginWelcome => 'Bienvenido a Finan';
+  String get authLoginSubtitle => 'Cada quien entra con su cuenta; lo que anotan es de los dos.';
 
   @override
-  String get authLoginSubtitle =>
-      'Entra con tu cuenta. Cada quien tiene la suya; las finanzas del hogar son compartidas.';
+  String get authLoginHeadline => 'La libreta de la casa,\npara los dos.';
 
   @override
   String get authEmailLabel => 'Correo';
@@ -264,19 +260,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authForgotPassword => '¿Olvidaste tu contraseña?';
 
   @override
-  String get authSignIn => 'Iniciar sesión';
+  String get authSignIn => 'Entrar';
 
   @override
-  String get authOr => 'o';
-
-  @override
-  String get authContinueWithGoogle => 'Continuar con Google';
+  String get authContinueWithGoogle => 'Seguir con Google';
 
   @override
   String get authNoAccount => '¿No tienes cuenta? ';
 
   @override
-  String get authCreateAccountHere => 'Créala aquí';
+  String get authCreateAccountHere => 'Créala';
 
   @override
   String get authResetPasswordTitle => 'Recuperar contraseña';
@@ -297,10 +290,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get authSignupTitle => 'Crea tu cuenta';
+  String get authSignupTitle => 'Tu cuenta';
 
   @override
-  String get authSignupSubtitle => 'Regístrate para empezar a organizar las finanzas del hogar.';
+  String get authSignupSubtitle => 'Es solo tuya. La casa la armas o te unes en el paso siguiente.';
 
   @override
   String get authNameRequired => 'Ingresa tu nombre';
@@ -315,50 +308,49 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authCreateAccount => 'Crear cuenta';
 
   @override
-  String get authHaveAccount => '¿Ya tienes cuenta? ';
-
-  @override
-  String get authSignInLink => 'Inicia sesión';
+  String get authHaveAccountLink => 'Ya tengo cuenta';
 
   @override
   String get householdDefaultName => 'Nuestro hogar';
 
   @override
-  String get householdCreateJoinTitle => 'Un último paso';
+  String get householdCreateJoinTitle => '¿Arman la casa o ya existe?';
 
   @override
-  String get householdCreateJoinSubtitle =>
-      'Crea el hogar desde cero o únete al que ya tiene tu pareja.';
+  String get householdCreateJoinSubtitle => 'Uno de los dos la crea; el otro entra con un código.';
 
   @override
-  String get householdCreateOptionTitle => 'Crear un hogar nuevo';
+  String get householdCreateOptionTitle => 'Crear la casa';
 
   @override
-  String get householdCreateOptionSubtitle => 'Empiezas de cero e invitas a tu pareja.';
+  String get householdCreateOptionSubtitle => 'Empiezo yo e invito a mi pareja.';
 
   @override
-  String get householdJoinOptionTitle => 'Unirme con un código';
+  String get householdJoinOptionTitle => 'Tengo un código';
 
   @override
-  String get householdJoinOptionSubtitle => 'Tu pareja ya creó el hogar.';
+  String get householdJoinOptionSubtitle => 'Mi pareja ya la creó.';
 
   @override
-  String get householdNameLabel => 'Nombre del hogar';
+  String get householdNameLabel => 'Nombre de la casa';
 
   @override
-  String get householdNameRequired => 'Ponle un nombre a tu hogar';
+  String get householdNameRequired => 'Ponle un nombre a la casa';
 
   @override
-  String get householdCodeLabel => 'Código del hogar (pega el código completo)';
+  String get householdCodeLabel => 'Código';
+
+  @override
+  String get householdCodeHint => 'Pégalo completo, tal como te llegó: lleva la llave de la casa.';
 
   @override
   String get householdCodeRequired => 'Ingresa el código que te compartieron';
 
   @override
-  String get householdCreateButton => 'Crear hogar';
+  String get householdCreateButton => 'Armar la casa';
 
   @override
-  String get householdJoinButton => 'Entrar al hogar';
+  String get householdJoinButton => 'Entrar a la casa';
 
   @override
   String get householdJoinedWithoutKeyTitle => 'Te uniste al hogar';
@@ -373,11 +365,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get householdSetupCurrencyTitle => 'Moneda del hogar';
+  String get householdSetupCurrencyTitle => '¿En qué moneda llevan las cuentas?';
 
   @override
   String get householdSetupCurrencyDescription =>
-      'En la que llevan las cuentas. Se puede cambiar en Ajustes.';
+      'La de todos los montos de la casa. Se puede cambiar después en Ajustes.';
 
   @override
   String get householdCurrencyCop => 'Peso colombiano';
@@ -386,18 +378,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get householdCurrencyUsd => 'Dólar estadounidense';
 
   @override
-  String get householdSetupAccountTitle => 'Tu primera cuenta';
+  String get householdSetupAccountTitle => '¿Dónde está la plata hoy?';
 
   @override
   String get householdSetupAccountDescription =>
-      'De donde sale y a donde llega la plata: el banco, una billetera o el efectivo. Pon lo que tiene hoy para empezar con el saldo real.';
+      'Una cuenta para empezar: el banco, una billetera o el efectivo. Con el saldo real, lo que anotes cuadra desde el primer día.';
 
   @override
   String get householdSetupAccountNameMissingTitle => 'Ponle un nombre';
 
   @override
   String get householdSetupAccountNameMissingMessage =>
-      'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.';
+      'Por ejemplo el banco o «Efectivo». Si prefieres, déjala para después con «Ahora no».';
 
   @override
   String get householdSetupBalanceToday => 'Saldo de hoy';
@@ -410,33 +402,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get householdSetupRecoveryDescription =>
-      'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, estas 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja.';
+      'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.';
+
+  @override
+  String get householdSetupRecoveryTitle => '¿Y si pierden la llave?';
 
   @override
   String get householdGeneratePhrase => 'Generar frase';
 
   @override
-  String get householdSetupLater => 'Más tarde, desde Ajustes';
+  String get householdSetupLater => 'Ahora no';
 
   @override
-  String get householdInviteTitle => 'Invita a tu pareja';
+  String get householdInviteTitle => 'Ahora tu pareja.';
 
   @override
   String get householdInviteMessage =>
-      'Comparte este código para que entre con su propia cuenta al mismo hogar. Sirve una sola vez y vence en 7 días.';
+      'Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.';
 
   @override
-  String get householdInviteWarning =>
-      'Usa el botón de compartir y envíalo por WhatsApp o mensaje - no lo dictes de viva voz, lleva pegada una llave más larga que no se ve aquí. Sin el código completo, tu pareja no podrá ver los montos.';
+  String get householdInviteFootnote =>
+      'Sirve una vez y vence en 7 días · se puede generar otro en Ajustes';
+
+  @override
+  String get householdInviteMissingPartner => 'Falta tu pareja';
 
   @override
   String get householdInviteShareSubject => 'Invitación a nuestro hogar en Finan2';
 
   @override
-  String get householdInviteShare => 'Compartir invitación';
+  String get householdInviteShare => 'Compartir';
 
   @override
-  String get householdInviteSkip => 'Omitir por ahora';
+  String get householdInviteSkip => 'Más tarde';
 
   @override
   String get householdRecoveryConfirmMessage =>
@@ -1964,20 +1962,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupTitle => 'Copia de seguridad';
 
   @override
-  String get backupSubtitle => 'Todo el hogar, cifrado';
-
-  @override
   String get backupDescription =>
-      'La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.';
+      'Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.';
 
   @override
-  String get backupSameHouseholdOnly => 'Solo se puede restaurar en este mismo hogar.';
-
-  @override
-  String get backupCreate => 'Crear copia';
+  String get backupCreate => 'Crear copia ahora';
 
   @override
   String get backupRestoreAction => 'Restaurar una copia';
+
+  @override
+  String get backupRestoreLead => 'Al restaurar';
+
+  @override
+  String get backupRestoreNote =>
+      ', el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.';
 
   @override
   String get backupErrorTitle => 'No se pudo completar';

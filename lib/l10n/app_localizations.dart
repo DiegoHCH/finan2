@@ -135,12 +135,6 @@ abstract class AppLocalizations {
   /// **'Siguiente'**
   String get commonNext;
 
-  /// No description provided for @commonSkip.
-  ///
-  /// In es, this message translates to:
-  /// **'Omitir'**
-  String get commonSkip;
-
   /// No description provided for @commonUndo.
   ///
   /// In es, this message translates to:
@@ -447,17 +441,17 @@ abstract class AppLocalizations {
   /// **'Crear reto'**
   String get savingsChallengeCreate;
 
-  /// Login heading; a highlighted "2" follows it, completing the app name Finan2.
-  ///
-  /// In es, this message translates to:
-  /// **'Bienvenido a Finan'**
-  String get authLoginWelcome;
-
   /// No description provided for @authLoginSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Entra con tu cuenta. Cada quien tiene la suya; las finanzas del hogar son compartidas.'**
+  /// **'Cada quien entra con su cuenta; lo que anotan es de los dos.'**
   String get authLoginSubtitle;
+
+  /// Login heading: says what the app is. The line break is intended.
+  ///
+  /// In es, this message translates to:
+  /// **'La libreta de la casa,\npara los dos.'**
+  String get authLoginHeadline;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -492,19 +486,13 @@ abstract class AppLocalizations {
   /// No description provided for @authSignIn.
   ///
   /// In es, this message translates to:
-  /// **'Iniciar sesión'**
+  /// **'Entrar'**
   String get authSignIn;
-
-  /// Separator between email sign-in and Google sign-in.
-  ///
-  /// In es, this message translates to:
-  /// **'o'**
-  String get authOr;
 
   /// No description provided for @authContinueWithGoogle.
   ///
   /// In es, this message translates to:
-  /// **'Continuar con Google'**
+  /// **'Seguir con Google'**
   String get authContinueWithGoogle;
 
   /// Followed by the authCreateAccountHere link; keep the trailing space.
@@ -516,7 +504,7 @@ abstract class AppLocalizations {
   /// No description provided for @authCreateAccountHere.
   ///
   /// In es, this message translates to:
-  /// **'Créala aquí'**
+  /// **'Créala'**
   String get authCreateAccountHere;
 
   /// No description provided for @authResetPasswordTitle.
@@ -552,13 +540,13 @@ abstract class AppLocalizations {
   /// No description provided for @authSignupTitle.
   ///
   /// In es, this message translates to:
-  /// **'Crea tu cuenta'**
+  /// **'Tu cuenta'**
   String get authSignupTitle;
 
   /// No description provided for @authSignupSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Regístrate para empezar a organizar las finanzas del hogar.'**
+  /// **'Es solo tuya. La casa la armas o te unes en el paso siguiente.'**
   String get authSignupSubtitle;
 
   /// No description provided for @authNameRequired.
@@ -585,17 +573,11 @@ abstract class AppLocalizations {
   /// **'Crear cuenta'**
   String get authCreateAccount;
 
-  /// Followed by the authSignInLink link; keep the trailing space.
+  /// No description provided for @authHaveAccountLink.
   ///
   /// In es, this message translates to:
-  /// **'¿Ya tienes cuenta? '**
-  String get authHaveAccount;
-
-  /// No description provided for @authSignInLink.
-  ///
-  /// In es, this message translates to:
-  /// **'Inicia sesión'**
-  String get authSignInLink;
+  /// **'Ya tengo cuenta'**
+  String get authHaveAccountLink;
 
   /// Prefilled, editable name when creating a household.
   ///
@@ -606,56 +588,62 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateJoinTitle.
   ///
   /// In es, this message translates to:
-  /// **'Un último paso'**
+  /// **'¿Arman la casa o ya existe?'**
   String get householdCreateJoinTitle;
 
   /// No description provided for @householdCreateJoinSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Crea el hogar desde cero o únete al que ya tiene tu pareja.'**
+  /// **'Uno de los dos la crea; el otro entra con un código.'**
   String get householdCreateJoinSubtitle;
 
   /// No description provided for @householdCreateOptionTitle.
   ///
   /// In es, this message translates to:
-  /// **'Crear un hogar nuevo'**
+  /// **'Crear la casa'**
   String get householdCreateOptionTitle;
 
   /// No description provided for @householdCreateOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Empiezas de cero e invitas a tu pareja.'**
+  /// **'Empiezo yo e invito a mi pareja.'**
   String get householdCreateOptionSubtitle;
 
   /// No description provided for @householdJoinOptionTitle.
   ///
   /// In es, this message translates to:
-  /// **'Unirme con un código'**
+  /// **'Tengo un código'**
   String get householdJoinOptionTitle;
 
   /// No description provided for @householdJoinOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Tu pareja ya creó el hogar.'**
+  /// **'Mi pareja ya la creó.'**
   String get householdJoinOptionSubtitle;
 
   /// No description provided for @householdNameLabel.
   ///
   /// In es, this message translates to:
-  /// **'Nombre del hogar'**
+  /// **'Nombre de la casa'**
   String get householdNameLabel;
 
   /// No description provided for @householdNameRequired.
   ///
   /// In es, this message translates to:
-  /// **'Ponle un nombre a tu hogar'**
+  /// **'Ponle un nombre a la casa'**
   String get householdNameRequired;
 
   /// No description provided for @householdCodeLabel.
   ///
   /// In es, this message translates to:
-  /// **'Código del hogar (pega el código completo)'**
+  /// **'Código'**
   String get householdCodeLabel;
+
+  /// No description provided for @householdCodeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Pégalo completo, tal como te llegó: lleva la llave de la casa.'**
+  String get householdCodeHint;
 
   /// No description provided for @householdCodeRequired.
   ///
@@ -666,13 +654,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateButton.
   ///
   /// In es, this message translates to:
-  /// **'Crear hogar'**
+  /// **'Armar la casa'**
   String get householdCreateButton;
 
   /// No description provided for @householdJoinButton.
   ///
   /// In es, this message translates to:
-  /// **'Entrar al hogar'**
+  /// **'Entrar a la casa'**
   String get householdJoinButton;
 
   /// No description provided for @householdJoinedWithoutKeyTitle.
@@ -696,13 +684,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupCurrencyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Moneda del hogar'**
+  /// **'¿En qué moneda llevan las cuentas?'**
   String get householdSetupCurrencyTitle;
 
   /// No description provided for @householdSetupCurrencyDescription.
   ///
   /// In es, this message translates to:
-  /// **'En la que llevan las cuentas. Se puede cambiar en Ajustes.'**
+  /// **'La de todos los montos de la casa. Se puede cambiar después en Ajustes.'**
   String get householdSetupCurrencyDescription;
 
   /// No description provided for @householdCurrencyCop.
@@ -720,13 +708,13 @@ abstract class AppLocalizations {
   /// A money account (bank, wallet, cash), not a login.
   ///
   /// In es, this message translates to:
-  /// **'Tu primera cuenta'**
+  /// **'¿Dónde está la plata hoy?'**
   String get householdSetupAccountTitle;
 
   /// No description provided for @householdSetupAccountDescription.
   ///
   /// In es, this message translates to:
-  /// **'De donde sale y a donde llega la plata: el banco, una billetera o el efectivo. Pon lo que tiene hoy para empezar con el saldo real.'**
+  /// **'Una cuenta para empezar: el banco, una billetera o el efectivo. Con el saldo real, lo que anotes cuadra desde el primer día.'**
   String get householdSetupAccountDescription;
 
   /// No description provided for @householdSetupAccountNameMissingTitle.
@@ -738,7 +726,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupAccountNameMissingMessage.
   ///
   /// In es, this message translates to:
-  /// **'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.'**
+  /// **'Por ejemplo el banco o «Efectivo». Si prefieres, déjala para después con «Ahora no».'**
   String get householdSetupAccountNameMissingMessage;
 
   /// No description provided for @householdSetupBalanceToday.
@@ -762,8 +750,14 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupRecoveryDescription.
   ///
   /// In es, this message translates to:
-  /// **'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, estas 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja.'**
+  /// **'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.'**
   String get householdSetupRecoveryDescription;
+
+  /// No description provided for @householdSetupRecoveryTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Y si pierden la llave?'**
+  String get householdSetupRecoveryTitle;
 
   /// No description provided for @householdGeneratePhrase.
   ///
@@ -774,26 +768,32 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupLater.
   ///
   /// In es, this message translates to:
-  /// **'Más tarde, desde Ajustes'**
+  /// **'Ahora no'**
   String get householdSetupLater;
 
   /// No description provided for @householdInviteTitle.
   ///
   /// In es, this message translates to:
-  /// **'Invita a tu pareja'**
+  /// **'Ahora tu pareja.'**
   String get householdInviteTitle;
 
   /// No description provided for @householdInviteMessage.
   ///
   /// In es, this message translates to:
-  /// **'Comparte este código para que entre con su propia cuenta al mismo hogar. Sirve una sola vez y vence en 7 días.'**
+  /// **'Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.'**
   String get householdInviteMessage;
 
-  /// No description provided for @householdInviteWarning.
+  /// No description provided for @householdInviteFootnote.
   ///
   /// In es, this message translates to:
-  /// **'Usa el botón de compartir y envíalo por WhatsApp o mensaje - no lo dictes de viva voz, lleva pegada una llave más larga que no se ve aquí. Sin el código completo, tu pareja no podrá ver los montos.'**
-  String get householdInviteWarning;
+  /// **'Sirve una vez y vence en 7 días · se puede generar otro en Ajustes'**
+  String get householdInviteFootnote;
+
+  /// Screen-reader label of the empty, dashed circle where the partner will be.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta tu pareja'**
+  String get householdInviteMissingPartner;
 
   /// Title/subject of the OS share sheet when sharing the invite.
   ///
@@ -804,13 +804,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdInviteShare.
   ///
   /// In es, this message translates to:
-  /// **'Compartir invitación'**
+  /// **'Compartir'**
   String get householdInviteShare;
 
   /// No description provided for @householdInviteSkip.
   ///
   /// In es, this message translates to:
-  /// **'Omitir por ahora'**
+  /// **'Más tarde'**
   String get householdInviteSkip;
 
   /// No description provided for @householdRecoveryConfirmMessage.
@@ -3429,28 +3429,16 @@ abstract class AppLocalizations {
   /// **'Copia de seguridad'**
   String get backupTitle;
 
-  /// No description provided for @backupSubtitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Todo el hogar, cifrado'**
-  String get backupSubtitle;
-
   /// No description provided for @backupDescription.
   ///
   /// In es, this message translates to:
-  /// **'La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.'**
+  /// **'Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.'**
   String get backupDescription;
-
-  /// No description provided for @backupSameHouseholdOnly.
-  ///
-  /// In es, this message translates to:
-  /// **'Solo se puede restaurar en este mismo hogar.'**
-  String get backupSameHouseholdOnly;
 
   /// No description provided for @backupCreate.
   ///
   /// In es, this message translates to:
-  /// **'Crear copia'**
+  /// **'Crear copia ahora'**
   String get backupCreate;
 
   /// No description provided for @backupRestoreAction.
@@ -3458,6 +3446,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Restaurar una copia'**
   String get backupRestoreAction;
+
+  /// No description provided for @backupRestoreLead.
+  ///
+  /// In es, this message translates to:
+  /// **'Al restaurar'**
+  String get backupRestoreLead;
+
+  /// Follows backupRestoreLead, which is shown in bold; keep the leading comma.
+  ///
+  /// In es, this message translates to:
+  /// **', el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.'**
+  String get backupRestoreNote;
 
   /// No description provided for @backupErrorTitle.
   ///

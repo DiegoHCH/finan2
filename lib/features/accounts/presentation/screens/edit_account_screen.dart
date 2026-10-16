@@ -19,14 +19,6 @@ import '../../data/account_model.dart';
 import '../account_style.dart';
 import '../viewmodels/account_providers.dart';
 
-/// The most common first: a bank, a wallet, cash, a debit card.
-const _typeOrder = [
-  AccountType.banco,
-  AccountType.billetera,
-  AccountType.efectivo,
-  AccountType.debito,
-];
-
 /// Cuentas · crear: today's balance, nothing more - the name, the type as
 /// chips with their icon, and the switch for «Disponible» with one line
 /// saying what it does.
@@ -143,7 +135,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
               spacing: 7,
               runSpacing: 7,
               children: [
-                for (final type in _typeOrder)
+                for (final type in accountTypeOrder)
                   Finan2Chip(
                     icon: accountIcon(type),
                     label: type.label,
