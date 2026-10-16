@@ -120,6 +120,31 @@ class TransactionRepository implements MovementWriter {
         .decryptEach((doc) => movementFromFirestore(doc, _crypto, householdId));
   }
 
+  /// The IDs of [year]/[month]'s movements written on this device that the
+  /// server hasn't confirmed yet - Firestore's `hasPendingWrites`, kept out
+  /// of [Movement] so the domain never sees snapshot metadata. The same
+  /// query as [watchTransactions], so Firestore serves both from one listen.
+  Stream<Set<String>> watchUnsyncedIds(
+    String householdId, {
+    required int year,
+    required int month,
+  }) {
+    return _transactions(householdId)
+        .where('year', isEqualTo: year)
+        .where('month', isEqualTo: month)
+        .orderBy('date', descending: true)
+        .snapshots(includeMetadataChanges: true)
+        .map(
+          (snap) => {
+            for (final doc in snap.docs)
+              if (doc.metadata.hasPendingWrites) doc.id,
+          },
+        )
+        .distinct(_sameIds);
+  }
+
+  static bool _sameIds(Set<String> a, Set<String> b) => a.length == b.length && a.containsAll(b);
+
   Stream<List<Movement>> watchTransactionsForYear(String householdId, {required int year}) {
     return _transactions(householdId)
         .where('year', isEqualTo: year)

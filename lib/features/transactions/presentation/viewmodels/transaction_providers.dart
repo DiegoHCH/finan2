@@ -35,6 +35,20 @@ final transactionsOfMonthProvider = StreamProvider.autoDispose.family<List<Movem
       .watchTransactions(householdId, year: month.year, month: month.month);
 });
 
+/// Which of [month]'s movements are still only on this device - written
+/// while offline and not yet confirmed by the server - for the «por enviar»
+/// mark.
+final unsyncedMovementIdsProvider = StreamProvider.autoDispose.family<Set<String>, YearMonth>((
+  ref,
+  month,
+) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const {});
+  return ref
+      .watch(transactionRepositoryProvider)
+      .watchUnsyncedIds(householdId, year: month.year, month: month.month);
+});
+
 /// All of a year's transactions - used by Resumen anual to compute yearly
 /// totals and the month-by-month spend chart.
 final transactionsForYearProvider = StreamProvider.autoDispose.family<List<Movement>, int>((

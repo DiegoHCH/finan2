@@ -9,6 +9,8 @@ import 'package:finan2/features/budget/data/budget_repository.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
 import 'package:finan2/features/categories/data/category_repository.dart';
 import 'package:finan2/features/categories/presentation/viewmodels/category_providers.dart';
+import 'package:finan2/features/connection/data/connection_repository.dart';
+import 'package:finan2/features/connection/presentation/viewmodels/connection_providers.dart';
 import 'package:finan2/features/debts/data/card_payment_repository.dart';
 import 'package:finan2/features/debts/data/debt_repository.dart';
 import 'package:finan2/features/debts/presentation/viewmodels/card_payment_providers.dart';
@@ -107,6 +109,7 @@ class TestApp {
         pushServiceProvider.overrideWithValue(FakePushService()),
         foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
+        connectionRepositoryProvider.overrideWithValue(ConnectionRepository(firestore: firestore)),
         notificationRepositoryProvider.overrideWithValue(
           NotificationRepository(firestore: firestore),
         ),
