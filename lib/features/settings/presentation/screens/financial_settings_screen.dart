@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/error_messages.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
-import '../../../../core/widgets/finan2_list_row.dart';
-import '../../../accounts/presentation/screens/accounts_screen.dart';
-import '../../../categories/presentation/screens/categories_screen.dart';
-import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../../core/widgets/finan2_set_row.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../../l10n/l10n.dart';
@@ -93,7 +91,6 @@ class FinancialSettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryCount = ref.watch(categoriesProvider).value?.length ?? 0;
     final l10n = context.l10n;
     final currencies = _currencies(l10n);
     final weekStarts = _weekStarts(l10n);
@@ -101,19 +98,25 @@ class FinancialSettingsScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2AppTop(
-              label: l10n.settingsFinancialSettings,
-              title: l10n.settingsFinancialSettingsSubtitle,
-              showBackButton: true,
+            Finan2Head(
+              overLabel: l10n.settingsTitle,
+              title: l10n.settingsFinancialSettings,
+              onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).pop() : null,
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(Finan2Space.xl),
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.lg,
+                  Finan2Space.xs,
+                  Finan2Space.lg,
+                  Finan2Space.xxl,
+                ),
                 children: [
-                  Finan2ListCard(
+                  Finan2Sheet(
                     children: [
-                      Finan2ListRow(
+                      Finan2SetRow(
                         icon: Finan2Icons.moneda,
                         label: l10n.settingsCurrency,
                         value: currencies[household.currency] ?? household.currency,
@@ -125,13 +128,13 @@ class FinancialSettingsScreen extends ConsumerWidget {
                           onSelected: (value) => _saveSettings(context, ref, currency: value),
                         ),
                       ),
-                      Finan2ListRow(
+                      Finan2SetRow(
                         icon: Finan2Icons.anio,
                         label: l10n.settingsActiveYear,
                         value: '${household.startYear}',
                         onTap: () => _pickYear(context, ref),
                       ),
-                      Finan2ListRow(
+                      Finan2SetRow(
                         icon: Finan2Icons.semana,
                         label: l10n.settingsWeekStartsOn,
                         value: weekStarts[household.weekStartsOn] ?? household.weekStartsOn,
@@ -142,21 +145,6 @@ class FinancialSettingsScreen extends ConsumerWidget {
                           current: household.weekStartsOn,
                           onSelected: (value) => _saveSettings(context, ref, weekStartsOn: value),
                         ),
-                      ),
-                      Finan2ListRow(
-                        icon: Finan2Icons.categorias,
-                        label: l10n.settingsCategories,
-                        value: '$categoryCount',
-                        onTap: () => Navigator.of(
-                          context,
-                        ).push(MaterialPageRoute<void>(builder: (_) => const CategoriesScreen())),
-                      ),
-                      Finan2ListRow(
-                        icon: Finan2Icons.cuentas,
-                        label: l10n.settingsAccounts,
-                        onTap: () => Navigator.of(
-                          context,
-                        ).push(MaterialPageRoute<void>(builder: (_) => const AccountsScreen())),
                       ),
                     ],
                   ),

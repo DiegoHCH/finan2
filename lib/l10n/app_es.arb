@@ -258,7 +258,7 @@
   "householdCreateButton": "Armar la casa",
   "householdJoinButton": "Entrar a la casa",
   "householdJoinedWithoutKeyTitle": "Te uniste al hogar",
-  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te comparta el código completo desde la tarjeta del hogar en Ajustes.",
+  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».",
   "householdSetupStep": "Paso {step} de {total}",
   "@householdSetupStep": {
     "placeholders": {
@@ -319,40 +319,38 @@
   "householdRecoveryShowTitle": "Anota estas 12 palabras",
   "householdRecoveryShowMessage": "En este orden. No se vuelven a mostrar y Finan2 no las guarda.",
   "householdRecoveryShowDone": "Ya las anoté",
-  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a tu pareja que lo comparta de nuevo desde la tarjeta del hogar en Ajustes.",
+  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».",
   "householdKeyWrongHousehold": "Esa llave no es de este hogar. Revisa que el código sea el que tu pareja compartió desde este mismo hogar.",
   "householdRecoveryNotSet": "Este hogar no tiene una frase de recuperación configurada.",
   "householdRecoveryPhraseMismatch": "Esa frase no corresponde a este hogar. Si tu pareja generó una nueva, la anterior dejó de servir.",
   "settingsTitle": "Ajustes",
-  "settingsHeading": "Configuración",
-  "@settingsHeading": {
-    "description": "Large title under the small settingsTitle label."
+  "settingsAccountsAndCards": "Cuentas y tarjetas",
+  "settingsMemberYou": "tú",
+  "@settingsMemberYou": {
+    "description": "Under the signed-in member's name in Ajustes."
   },
-  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde su tarjeta del hogar, o escribe la frase de recuperación.",
+  "settingsMemberPartner": "en la casa",
+  "@settingsMemberPartner": {
+    "description": "Under the other member's name in Ajustes."
+  },
+  "settingsInvite": "Invitar a la casa",
+  "settingsInviteSomeone": "Invitar",
+  "@settingsInviteSomeone": {
+    "description": "The empty second place in Ajustes while the household has one member."
+  },
+  "settingsShareKey": "Compartir la llave",
+  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.",
   "settingsPasteCodeToUnlock": "Pegar código para desbloquear montos",
   "settingsUseRecoveryPhrase": "Usar frase de recuperación",
-  "settingsStorageWarning": "Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes de la cuenta.",
-  "settingsMemberCount": "{count, plural, =1{1 miembro} other{{count} miembros}}",
-  "@settingsMemberCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "settingsTapToInvite": "toca para invitar",
-  "settingsTapToShareKey": "toca para compartir la llave",
-  "settingsFinancialSettings": "Ajustes financieros",
-  "settingsFinancialSettingsSubtitle": "Moneda, año y categorías",
-  "settingsAccountSettings": "Ajustes de la cuenta",
-  "settingsAccountSettingsSubtitle": "Hogar y notificaciones",
-  "settingsExportReport": "Exportar reporte",
-  "settingsBackup": "Copia de seguridad",
+  "settingsStorageWarning": "Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes, en «Tu cuenta».",
+  "settingsFinancialSettings": "Moneda y año",
+  "settingsAccountSettings": "Tu cuenta",
+  "settingsExportReport": "Exportar",
+  "settingsBackup": "Copia y llave",
   "settingsInvestments": "Inversiones",
-  "settingsNotificationCenter": "Centro de notificaciones",
   "settingsSignOut": "Cerrar sesión",
   "settingsUnlockAmountsTitle": "Desbloquear montos",
-  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que tu pareja copió desde su tarjeta del hogar en Ajustes.",
+  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».",
   "settingsUnlockCodeLabel": "Código completo (CODIGO.llave)",
   "settingsUnlock": "Desbloquear",
   "settingsAmountsUnlockedTitle": "Montos desbloqueados",
@@ -403,7 +401,6 @@
   "settingsLeave": "Salir",
   "settingsMyName": "Mi nombre",
   "settingsHouseholdMembers": "Miembros del hogar",
-  "settingsNotifications": "Notificaciones",
   "settingsTheme": "Tema",
   "settingsRecoveryPhraseHint": "Recuperar montos si pierden la llave",
   "settingsDeleteAccount": "Eliminar mi cuenta",
@@ -425,8 +422,6 @@
   "settingsCurrency": "Moneda",
   "settingsActiveYear": "Año activo",
   "settingsWeekStartsOn": "La semana inicia en",
-  "settingsCategories": "Categorías",
-  "settingsAccounts": "Cuentas",
   "coreSheetErrorTitle": "Algo salió mal",
   "coreReauthTitle": "Confirma tu contraseña",
   "corePassword": "Contraseña",
@@ -875,7 +870,7 @@
   "transactionsEmptyDescription": "Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.",
   "transactionsEmptyDescriptionMonth": "No se registró ningún ingreso ni gasto este mes.",
   "transactionsEmptyAction": "+ Agregar el primero",
-  "transactionsRecurringBills": "Facturas recurrentes",
+  "transactionsRecurringBills": "Fijos",
   "transactionsNotes": "Notas",
   "transactionsSearchHint": "Buscar descripción, categoría, monto o #etiqueta",
   "transactionsFilters": "Filtros",
@@ -962,15 +957,20 @@
   },
   "accountsTypeDebit": "Débito",
   "categoriesTitle": "Categorías",
-  "categoriesActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
-  "@categoriesActiveCount": {
-    "description": "How many categories the household has.",
+  "categoriesRowUsage": "{count, plural, =0{Sin movimientos este año} =1{1 mov. este año} other{{count} mov. este año}}",
+  "@categoriesRowUsage": {
+    "description": "Under a category in the list: how many of this year's transactions are filed under it.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
+  "categoriesRowRollover": "Acumula",
+  "@categoriesRowRollover": {
+    "description": "Under a category in the list when what's left of its budget carries into next month."
+  },
+  "categoriesNoneOfType": "Aún no hay categorías de este tipo. Créala con el +.",
   "categoriesEmptyTitle": "Aún no hay categorías",
   "categoriesEmptyDescription": "Crea tu primera categoría para poder registrar movimientos.",
   "categoriesEmptyAction": "+ Nueva categoría",
@@ -981,7 +981,7 @@
   "categoriesIcon": "Ícono",
   "categoriesColor": "Color",
   "categoriesRolloverTitle": "Acumular de un mes a otro",
-  "categoriesRolloverSubtitle": "Lo que sobre del presupuesto pasa al mes siguiente, y lo que te pases se descuenta. Se reinicia cada enero.",
+  "categoriesRolloverSubtitle": "Lo que sobra o se pasa cuenta para el mes siguiente; se reinicia en enero.",
   "categoriesDeleteTitle": "Eliminar categoría",
   "categoriesDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
   "@categoriesDeleteMessage": {
@@ -1034,7 +1034,7 @@
       }
     }
   },
-  "categoriesUsageRecurringBills": "{count, plural, =1{1 factura recurrente} other{{count} facturas recurrentes}}",
+  "categoriesUsageRecurringBills": "{count, plural, =1{1 fijo} other{{count} fijos}}",
   "@categoriesUsageRecurringBills": {
     "placeholders": {
       "count": {
@@ -1084,50 +1084,41 @@
   "categoriesDefaultHomeCleaning": "Hogar y aseo",
   "categoriesDefaultEmergencyFund": "Fondo de emergencia",
   "categoriesDefaultTravel": "Viaje",
-  "recurringBillsTitle": "Facturas recurrentes",
-  "recurringBillsMonthlyTotal": "{amount} al mes",
-  "@recurringBillsMonthlyTotal": {
-    "description": "Header: the monthly total of active recurring bills, already formatted as money.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "recurringBillsAutoBadge": "Auto",
-  "@recurringBillsAutoBadge": {
-    "description": "Badge meaning the bills are logged automatically."
-  },
-  "recurringBillsEmptyTitle": "Aún no hay facturas recurrentes",
-  "recurringBillsEmptyDescription": "Programa el arriendo, servicios o el sueldo para que se registren solos cada mes.",
-  "recurringBillsEmptyAction": "+ Nueva factura recurrente",
-  "recurringBillsAutoLogged": "Se registran solas",
-  "recurringBillsActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
-  "@recurringBillsActiveCount": {
-    "description": "How many recurring bills are active (feminine: 'facturas').",
+  "recurringBillsTitle": "Fijos",
+  "recurringBillsCommittedLabel": "Comprometido cada mes",
+  "recurringBillsCommittedCount": "{count, plural, =0{Ningún fijo activo} =1{1 fijo} other{{count} fijos}}",
+  "@recurringBillsCommittedCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "recurringBillsStatusPaused": "en pausa",
-  "@recurringBillsStatusPaused": {
-    "description": "Row status, lowercase, after the type: 'Factura · en pausa'."
+  "recurringBillsAveragedNote": "los no mensuales, en promedio",
+  "@recurringBillsAveragedNote": {
+    "description": "Follows recurringBillsCommittedCount after ' · ', lowercase."
   },
-  "recurringBillsStatusEnded": "terminada",
+  "recurringBillsAutoNote": "Se anotan solos en Movimientos el día que les toca.",
+  "recurringBillsEmptyTitle": "Aún no hay fijos",
+  "recurringBillsEmptyDescription": "Programa el arriendo, los servicios o el sueldo para que se anoten solos el día que les toca.",
+  "recurringBillsEmptyAction": "+ Nuevo fijo",
+  "recurringBillsStatusPaused": "En pausa",
+  "@recurringBillsStatusPaused": {
+    "description": "Under a paused recurring item in the list, instead of its schedule."
+  },
+  "recurringBillsStatusEnded": "Ya terminó",
   "@recurringBillsStatusEnded": {
-    "description": "Row status, lowercase, after the type: 'Factura · terminada'."
+    "description": "Under a recurring item whose end date went by."
   },
   "recurringBillsTypeIncome": "Ingreso",
   "recurringBillsTypeBill": "Factura",
-  "recurringBillsNewTitle": "Nueva factura recurrente",
-  "recurringBillsEditTitle": "Editar factura recurrente",
+  "recurringBillsNewTitle": "Nuevo fijo",
+  "recurringBillsEditTitle": "Editar fijo",
   "recurringBillsMissingFields": "Completa el nombre, monto, categoría y cuenta.",
   "recurringBillsSemimonthlyDayTitle": "Elige un día hasta el 15",
   "recurringBillsSemimonthlyDayMessage": "Una quincenal se repite 15 días después de la primera fecha. Elige el primer pago entre el 1 y el 15 del mes - por ejemplo el 15 para cobrar el 15 y el 30.",
-  "recurringBillsDelete": "Eliminar factura recurrente",
-  "recurringBillsDeleteMessage": "Se eliminará \"{name}\" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.",
+  "recurringBillsDelete": "Eliminar fijo",
+  "recurringBillsDeleteMessage": "Se eliminará \"{name}\" y dejará de anotarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerlo un tiempo, ponlo en pausa.",
   "@recurringBillsDeleteMessage": {
     "placeholders": {
       "name": {
@@ -1138,23 +1129,10 @@
   "recurringBillsNoCategories": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
   "recurringBillsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
   "recurringBillsSelectAccount": "Selecciona una cuenta",
-  "recurringBillsRepeats": "Se repite",
+  "recurringBillsRepeats": "Cada cuánto",
   "recurringBillsFrom": "Desde",
   "@recurringBillsFrom": {
     "description": "Start date field label when editing an existing bill."
-  },
-  "recurringBillsFirstTime": "Primera vez",
-  "@recurringBillsFirstTime": {
-    "description": "Start date field label when creating a bill: its first occurrence."
-  },
-  "recurringBillsLoggedOn": "Se registra {schedule}.",
-  "@recurringBillsLoggedOn": {
-    "description": "Hint under the start date; {schedule} is a recurringBillsSchedule* text, e.g. 'cada lunes'.",
-    "placeholders": {
-      "schedule": {
-        "type": "String"
-      }
-    }
   },
   "recurringBillsUntil": "Hasta",
   "@recurringBillsUntil": {
@@ -1163,7 +1141,7 @@
   "recurringBillsNoEndDate": "Sin fecha de fin",
   "recurringBillsRemoveEndDate": "Quitar fecha de fin",
   "recurringBillsPaused": "En pausa",
-  "recurringBillsPausedHint": "No se registra mientras esté en pausa. Al reanudarla, las fechas que pasaron no se registran.",
+  "recurringBillsPausedHint": "No se anota mientras esté en pausa. Al reanudarlo, las fechas que pasaron no se anotan.",
   "recurringBillsFrequencyWeekly": "Semanal",
   "recurringBillsFrequencyBiweekly": "Cada 2 semanas",
   "recurringBillsFrequencySemimonthly": "Quincenal",
@@ -1172,24 +1150,25 @@
   },
   "recurringBillsFrequencyMonthly": "Mensual",
   "recurringBillsFrequencyYearly": "Anual",
-  "recurringBillsScheduleWeekly": "cada {weekday}",
+  "recurringBillsScheduleWeekly": "{weekday, select, monday{Cada lunes} tuesday{Cada martes} wednesday{Cada miércoles} thursday{Cada jueves} friday{Cada viernes} saturday{Cada sábado} other{Cada domingo}}",
   "@recurringBillsScheduleWeekly": {
-    "description": "Lowercase schedule fragment; {weekday} is the localized day name.",
+    "description": "A weekly item's schedule. {weekday} is monday, tuesday... sunday.",
     "placeholders": {
       "weekday": {
         "type": "String"
       }
     }
   },
-  "recurringBillsScheduleBiweekly": "cada 2 semanas, los {weekday}",
+  "recurringBillsScheduleBiweekly": "{weekday, select, monday{Cada 2 semanas, los lunes} tuesday{Cada 2 semanas, los martes} wednesday{Cada 2 semanas, los miércoles} thursday{Cada 2 semanas, los jueves} friday{Cada 2 semanas, los viernes} saturday{Cada 2 semanas, los sábados} other{Cada 2 semanas, los domingos}}",
   "@recurringBillsScheduleBiweekly": {
+    "description": "An every-2-weeks item's schedule. {weekday} is monday, tuesday... sunday.",
     "placeholders": {
       "weekday": {
         "type": "String"
       }
     }
   },
-  "recurringBillsScheduleSemimonthly": "días {day} y {secondDay}",
+  "recurringBillsScheduleSemimonthly": "Días {day} y {secondDay}",
   "@recurringBillsScheduleSemimonthly": {
     "placeholders": {
       "day": {
@@ -1200,16 +1179,15 @@
       }
     }
   },
-  "recurringBillsScheduleMonthly": "cada mes, día {day}",
+  "recurringBillsScheduleMonthly": "Cada mes, día {day}",
   "@recurringBillsScheduleMonthly": {
-    "description": "{day} is the day of the month, two digits.",
     "placeholders": {
       "day": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
-  "recurringBillsScheduleYearly": "cada año, {date}",
+  "recurringBillsScheduleYearly": "Cada año, {date}",
   "@recurringBillsScheduleYearly": {
     "description": "{date} is the localized month and day, e.g. '3 de marzo'.",
     "placeholders": {
@@ -1218,27 +1196,44 @@
       }
     }
   },
-  "monthlyNotesTitle": "Notas",
-  "monthlyNotesThisMonth": "Notas de este mes",
-  "monthlyNotesNextMonth": "Para el siguiente mes",
-  "monthlyNotesEmpty": "Toca para agregar notas.",
-  "notificationsTitle": "Notificaciones",
-  "notificationsNewCount": "{count, plural, =1{1 nueva} other{{count} nuevas}}",
-  "@notificationsNewCount": {
-    "description": "Unread notifications count (feminine: 'notificaciones').",
+  "recurringBillsScheduleUntil": "{schedule}, hasta el {date}",
+  "@recurringBillsScheduleUntil": {
+    "description": "{schedule} is a recurringBillsSchedule* text; {date} a short day and month, e.g. '15 dic'.",
     "placeholders": {
-      "count": {
-        "type": "int"
+      "schedule": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
       }
     }
   },
-  "notificationsUpToDate": "Al día",
-  "@notificationsUpToDate": {
-    "description": "Shown when there are no unread notifications."
+  "recurringBillsMonthlyCost": "{kind, select, average{Unos {amount} al mes} other{{amount} al mes}}",
+  "@recurringBillsMonthlyCost": {
+    "description": "Under the schedule in the edit form. {kind} is 'average' when the amount is a monthly average (weekly, yearly...), 'exact' otherwise.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   },
-  "notificationsMarkAllRead": "Marcar leídas",
-  "notificationsEmpty": "Aún no hay notificaciones. Aquí verás avisos de pagos, metas y presupuesto.",
-  "notificationsMinutesAgo": "Hace {minutes} min",
+  "monthlyNotesTitle": "Notas del mes",
+  "monthlyNotesThisMonth": "Notas de este mes",
+  "monthlyNotesNextMonth": "Para el mes siguiente",
+  "monthlyNotesEmpty": "Nada escrito todavía. Toca para escribir.",
+  "monthlyNotesWrite": "Escribir",
+  "monthlyNotesHint": "Lo que no cabe en números.",
+  "notificationsTitle": "Avisos",
+  "notificationsMarkAllRead": "Marcar todo como leído",
+  "notificationsUnread": "Sin leer",
+  "@notificationsUnread": {
+    "description": "Screen-reader label for the violet dot after an unread notification's title."
+  },
+  "notificationsEmpty": "Aún no hay avisos. Aquí llegan los pagos que se acercan, las metas y lo que se pasa del presupuesto.",
+  "notificationsMinutesAgo": "hace {minutes} min",
   "@notificationsMinutesAgo": {
     "placeholders": {
       "minutes": {
@@ -1246,7 +1241,7 @@
       }
     }
   },
-  "notificationsHoursAgo": "Hace {hours} h",
+  "notificationsHoursAgo": "hace {hours} h",
   "@notificationsHoursAgo": {
     "placeholders": {
       "hours": {
@@ -1254,16 +1249,7 @@
       }
     }
   },
-  "notificationsToday": "Hoy",
-  "notificationsYesterday": "Ayer",
-  "notificationsDaysAgo": "Hace {days} d",
-  "@notificationsDaysAgo": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
+  "notificationsYesterday": "ayer",
   "notificationsDebtDueTodayTitle": "Hoy pagas {name}",
   "@notificationsDebtDueTodayTitle": {
     "description": "Stored in-app notification, written in the language of the device that detects it; {name} is the debt's name.",
@@ -1341,27 +1327,67 @@
   "notificationsPartnerDebtTitle": "Nueva deuda",
   "notificationsPartnerAccountTitle": "Nueva cuenta",
   "notificationsPartnerInvestmentTitle": "Nueva inversión",
-  "notificationsPartnerBillTitle": "Nueva factura recurrente",
+  "notificationsPartnerBillTitle": "Nuevo fijo",
   "notificationsPartnerCategoryTitle": "Nueva categoría",
   "notificationsPartnerChallengeTitle": "Nuevo reto de ahorro",
   "notificationsPartnerGoalTitle": "Nueva meta de ahorro",
-  "notificationPrefsTitle": "Preferencias",
-  "notificationPrefsRemindersHeader": "RECORDATORIOS",
-  "notificationPrefsDailyReminder": "Recordatorio diario",
-  "notificationPrefsDebtPayments": "Pagos de deudas",
+  "notificationPrefsTitle": "Qué avisar",
+  "notificationPrefsIntro": "Solo para ti: {name} elige los suyos.",
+  "@notificationPrefsIntro": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationPrefsIntroSolo": "Solo para ti: cada quien elige los suyos.",
+  "notificationPrefsDailyReminder": "Recordatorio para anotar",
+  "notificationPrefsDailyReminderWhen": "Todos los días, a esta hora",
+  "notificationPrefsDailyReminderTimeTooltip": "Cambiar la hora",
+  "notificationPrefsDebtPayments": "Pagos que se acercan",
+  "notificationPrefsDebtPaymentsWhen": "3, 2 y 1 día antes, y el mismo día",
   "notificationPrefsGoalProgress": "Avance de metas",
-  "notificationPrefsAlertsHeader": "ALERTAS",
-  "notificationPrefsBudgetExceeded": "Exceso de presupuesto",
-  "notificationPrefsPartnerActivity": "Actividad de mi pareja",
+  "notificationPrefsGoalProgressWhen": "Una vez, cuando una meta pasa el 90%",
+  "notificationPrefsBudgetExceeded": "Categoría que se pasa",
+  "notificationPrefsBudgetExceededWhen": "Una vez por categoría y mes",
+  "notificationPrefsPartnerActivity": "Lo que anota tu pareja",
+  "notificationPrefsPartnerActivityNamed": "Lo que anota {name}",
+  "@notificationPrefsPartnerActivityNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationPrefsPartnerActivityWhen": "Cada movimiento, cuenta o meta nueva",
   "notificationPrefsWeeklySummary": "Resumen semanal",
-  "exportTitle": "Exportar reporte",
-  "exportSubtitle": "PDF o CSV",
-  "exportCsvHint": "Un archivo por sección, con montos sin formato y fechas AAAA-MM-DD, listo para una hoja de cálculo.",
+  "notificationPrefsWeeklySummaryWhen": "Los domingos, {time}",
+  "@notificationPrefsWeeklySummaryWhen": {
+    "description": "{time} is a localized time of day, e.g. '7:00 p. m.'.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "exportTitle": "Exportar",
   "exportPeriod": "Periodo",
+  "exportPeriodRange": "{from} – {to}",
+  "@exportPeriodRange": {
+    "description": "The months a report covers, e.g. 'Agosto – octubre 2026'.",
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
   "exportPeriodThisMonth": "Este mes",
-  "exportPeriodQuarter": "Trimestre",
-  "exportPeriodYear": "Año",
-  "exportInclude": "Incluir en el reporte",
+  "exportPeriodQuarter": "3 meses",
+  "exportPeriodYear": "12 meses",
+  "exportInclude": "Qué incluir",
   "exportTransactions": "Movimientos",
   "@exportTransactions": {
     "description": "Toggle and report section; also names its CSV file."
@@ -1370,7 +1396,13 @@
   "@exportBudget": {
     "description": "Toggle and report section; also names its CSV file."
   },
-  "exportDebtsAndSavings": "Deudas y ahorros",
+  "exportDebtsAndSavings": "Deudas y metas",
+  "exportPdfTitle": "PDF",
+  "exportPdfFor": "Para leer o imprimir, con los montos con formato.",
+  "exportCsvTitle": "CSV para hoja de cálculo",
+  "exportCsvFor": "Un archivo por sección, con números limpios y fechas AAAA-MM-DD.",
+  "exportOnDevice": "El archivo se arma en este teléfono con los datos ya descifrados: nada sale de aquí hasta que lo compartes.",
+  "exportAction": "Exportar",
   "exportDebts": "Deudas",
   "@exportDebts": {
     "description": "Report section; also names its CSV file."
@@ -1379,8 +1411,6 @@
   "@exportSavingsGoals": {
     "description": "Report section; also names its CSV file."
   },
-  "exportGeneratePdf": "Generar PDF",
-  "exportGenerateCsv": "Generar CSV",
   "exportPdfFileName": "finan2_reporte.pdf",
   "@exportPdfFileName": {
     "description": "File name of the shared PDF; keep it ASCII, no spaces."

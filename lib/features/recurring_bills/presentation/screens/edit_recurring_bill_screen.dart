@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
@@ -12,6 +13,10 @@ import '../../../../core/widgets/finan2_form_top.dart';
 import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../core/widgets/finan2_tap_field.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
+import '../../../../core/widgets/finan2_notice.dart';
+import '../../../../core/widgets/finan2_section_label.dart';
+import '../../../../core/widgets/finan2_set_row.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
@@ -20,6 +25,7 @@ import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../domain/entities/recurring_bill.dart';
+import '../../domain/recurring_schedule.dart';
 import '../recurring_schedule_label.dart';
 import '../viewmodels/recurring_bill_providers.dart';
 
@@ -50,7 +56,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
     text: widget.bill != null ? widget.bill!.amount.toString() : '',
   );
   late var _frequency = widget.bill?.frequency ?? RecurringFrequency.monthly;
-  late var _startDate = widget.bill == null ? _today() : scheduleAnchor(widget.bill!);
+  late var _startDate = widget.bill == null ? _today() : scheduleAnchor(widget.bill!, _today());
   late DateTime? _endDate = widget.bill?.endDate;
   late var _paused = widget.bill?.paused ?? false;
   late _Segment _segment = _segmentFor(widget.bill?.type ?? CategoryType.factura);
@@ -119,9 +125,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
     final categoryId = _categoryId;
     final accountId = _accountId;
     if (name.isEmpty || amount <= 0 || categoryId == null || accountId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.recurringBillsMissingFields)));
+      await showFinan2ErrorSheet(context, message: context.l10n.recurringBillsMissingFields);
       return;
     }
     if (_frequency == RecurringFrequency.semimonthly && _startDate.day > 15) {
@@ -196,13 +200,23 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
       selectedAccount = accounts.first;
     }
 
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    String dateLabel(DateTime date) =>
+        DateFormat.yMMMd(l10n.localeName).format(date).replaceAll('.', '');
+
     return Scaffold(
       appBar: Finan2FormTop(
         title: isEditing ? l10n.recurringBillsEditTitle : l10n.recurringBillsNewTitle,
         onSave: _save,
+        closeIcon: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(Finan2Space.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Finan2Space.lg,
+          Finan2Space.sm,
+          Finan2Space.lg,
+          Finan2Space.xxl,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -214,18 +228,11 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                 _categoryId = null;
               }),
             ),
-            const SizedBox(height: Finan2Space.lg),
+            const SizedBox(height: Finan2Space.md),
             Finan2Field(label: l10n.commonName, controller: _nameController),
-            const SizedBox(height: Finan2Space.lg),
-            Text(
-              l10n.commonAmount,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
             Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
-            const SizedBox(height: Finan2Space.lg),
-            Text(l10n.commonCategory, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
+            const SizedBox(height: Finan2Space.md),
+            Finan2SectionLabel(l10n.commonCategory),
             if (categoriesOfSegment.isEmpty)
               Text(
                 l10n.recurringBillsNoCategories,
@@ -240,12 +247,13 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                     Finan2Chip(
                       icon: Finan2Icons.categoria(category.iconSlug),
                       label: category.name,
+                      tone: Finan2Tone.of(context, Color(category.color)),
                       selected: _categoryId == category.id,
                       onTap: () => setState(() => _categoryId = category.id),
                     ),
                 ],
               ),
-            const SizedBox(height: Finan2Space.lg),
+            const SizedBox(height: Finan2Space.md),
             if (accounts.isEmpty)
               Text(
                 l10n.recurringBillsNoAccounts,
@@ -262,10 +270,8 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                 ),
                 onTap: () => _pickAccount(accounts),
               ),
-            const SizedBox(height: Finan2Space.md),
-            const SizedBox(height: Finan2Space.sm),
-            Text(l10n.recurringBillsRepeats, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
+            const SizedBox(height: Finan2Space.lg),
+            Finan2SectionLabel(l10n.recurringBillsRepeats),
             Wrap(
               spacing: 7,
               runSpacing: 7,
@@ -279,50 +285,73 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
               ],
             ),
             const SizedBox(height: Finan2Space.md),
-            Finan2TapField(
-              label: isEditing ? l10n.recurringBillsFrom : l10n.recurringBillsFirstTime,
-              value: DateFormat('dd MMM yyyy').format(_startDate),
-              onTap: _pickStart,
-            ),
-            const SizedBox(height: Finan2Space.xs),
-            Text(
-              l10n.recurringBillsLoggedOn(
-                describeSchedule(frequency: _frequency, start: _startDate, l10n: l10n),
-              ),
-              style: TextStyle(fontSize: 12, color: colors.inkSoft),
+            // Read aloud, to check it was understood: «Cada lunes», and
+            // what that comes to in a month.
+            // The monthly cost follows the amount as it's typed.
+            ListenableBuilder(
+              listenable: _amountController,
+              builder: (context, _) {
+                final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
+                return Finan2Notice(
+                  key: const Key('recurringBillReadAloud'),
+                  icon: Icons.autorenew,
+                  kind: Finan2NoticeKind.calm,
+                  title: describeSchedule(
+                    scheduleOf(_frequency, _startDate),
+                    l10n: l10n,
+                    withUntil: false,
+                  ),
+                  message: amount > 0
+                      ? describeMonthlyCost(amount, _frequency, formatMoney, l10n: l10n)
+                      : null,
+                );
+              },
             ),
             const SizedBox(height: Finan2Space.md),
             Row(
               children: [
                 Expanded(
                   child: Finan2TapField(
+                    label: l10n.recurringBillsFrom,
+                    value: dateLabel(_startDate),
+                    onTap: _pickStart,
+                  ),
+                ),
+                const SizedBox(width: Finan2Space.sm),
+                Expanded(
+                  child: Finan2TapField(
                     label: l10n.recurringBillsUntil,
-                    value: _endDate == null
-                        ? l10n.recurringBillsNoEndDate
-                        : DateFormat('dd MMM yyyy').format(_endDate!),
+                    value: _endDate == null ? l10n.recurringBillsNoEndDate : dateLabel(_endDate!),
                     onTap: _pickEnd,
                   ),
                 ),
-                if (_endDate != null)
-                  IconButton(
-                    tooltip: l10n.recurringBillsRemoveEndDate,
-                    onPressed: () => setState(() => _endDate = null),
-                    icon: Icon(Icons.close, color: colors.inkSoft),
-                  ),
               ],
             ),
+            if (_endDate != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => setState(() => _endDate = null),
+                  style: TextButton.styleFrom(foregroundColor: colors.inkSoft),
+                  child: Text(l10n.recurringBillsRemoveEndDate),
+                ),
+              ),
             if (isEditing) ...[
               const SizedBox(height: Finan2Space.md),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.recurringBillsPaused),
-                subtitle: Text(l10n.recurringBillsPausedHint),
-                value: _paused,
-                onChanged: (value) => setState(() => _paused = value),
+              Finan2Sheet(
+                children: [
+                  Finan2SetRow(
+                    icon: Icons.pause_rounded,
+                    label: l10n.recurringBillsPaused,
+                    detail: l10n.recurringBillsPausedHint,
+                    trailing: Switch(
+                      value: _paused,
+                      onChanged: (value) => setState(() => _paused = value),
+                    ),
+                  ),
+                ],
               ),
-            ],
-            if (isEditing) ...[
-              const SizedBox(height: Finan2Space.xxl),
+              const SizedBox(height: Finan2Space.xl),
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),

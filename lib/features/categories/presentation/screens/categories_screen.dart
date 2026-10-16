@@ -2,42 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
-import '../../../../core/widgets/finan2_list_row.dart';
+import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_segmented_control.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/category_model.dart';
+import '../../domain/category_use.dart';
 import '../viewmodels/category_providers.dart';
 import 'edit_category_screen.dart';
 
-class CategoriesScreen extends ConsumerWidget {
+/// The kinds as the segmented control offers them: spending first, income
+/// last.
+const _typeOrder = [
+  CategoryType.gasto,
+  CategoryType.factura,
+  CategoryType.ahorro,
+  CategoryType.ingreso,
+];
+
+/// Categorías: each in the color it carries everywhere - the list, the
+/// budget, the bar at Inicio - with how much it's used under it.
+class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
+  var _type = CategoryType.gasto;
+
+  void _open([Category? category]) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => EditCategoryScreen(category: category, initialType: _type),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoriesProvider);
-    final categories = categoriesAsync.value ?? const [];
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
     final l10n = context.l10n;
 
     return Scaffold(
-      floatingActionButton: categories.isEmpty
-          ? null
-          : FloatingActionButton(
-              heroTag: 'categoriesFab',
-              onPressed: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute<void>(builder: (_) => const EditCategoryScreen())),
-              child: const Icon(Icons.add),
-            ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2AppTop(
-              label: l10n.categoriesTitle,
-              title: l10n.categoriesActiveCount(categories.length),
-              showBackButton: true,
+            Finan2Head(
+              overLabel: l10n.settingsTitle,
+              title: l10n.categoriesTitle,
+              onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).pop() : null,
+              action: Finan2HeadAction(
+                icon: Finan2Icons.agregar,
+                tooltip: l10n.categoriesNewTitle,
+                filled: true,
+                onTap: _open,
+              ),
             ),
             Expanded(
               child: categoriesAsync.when(
@@ -46,55 +69,18 @@ class CategoriesScreen extends ConsumerWidget {
                 data: (categories) {
                   if (categories.isEmpty) {
                     return Finan2EmptyState(
-                      icon: Icons.sell_outlined,
+                      icon: Finan2Icons.categorias,
                       title: l10n.categoriesEmptyTitle,
                       description: l10n.categoriesEmptyDescription,
                       actionLabel: l10n.categoriesEmptyAction,
-                      onAction: () => Navigator.of(
-                        context,
-                      ).push(MaterialPageRoute<void>(builder: (_) => const EditCategoryScreen())),
+                      onAction: _open,
                     );
                   }
-                  final byType = <CategoryType, List<Category>>{};
-                  for (final category in categories) {
-                    byType.putIfAbsent(category.type, () => []).add(category);
-                  }
-                  return ListView(
-                    padding: const EdgeInsets.all(Finan2Space.xl),
-                    children: [
-                      for (final type in CategoryType.values)
-                        if (byType[type]?.isNotEmpty ?? false) ...[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: Text(
-                              type.plural.toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.7,
-                                color: colors.inkFaint,
-                              ),
-                            ),
-                          ),
-                          Finan2ListCard(
-                            children: [
-                              for (final category in byType[type]!)
-                                Finan2ListRow(
-                                  icon: Finan2Icons.categoria(category.iconSlug),
-                                  label: category.name,
-                                  iconBackground: Color(category.color).withValues(alpha: 0.14),
-                                  iconColor: Color(category.color),
-                                  onTap: () => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(
-                                      builder: (_) => EditCategoryScreen(category: category),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: Finan2Space.lg),
-                        ],
-                    ],
+                  return _CategoriesList(
+                    categories: categories.where((c) => c.type == _type).toList(),
+                    type: _type,
+                    onType: (type) => setState(() => _type = type),
+                    open: _open,
                   );
                 },
               ),
@@ -102,6 +88,78 @@ class CategoriesScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CategoriesList extends ConsumerWidget {
+  const _CategoriesList({
+    required this.categories,
+    required this.type,
+    required this.onType,
+    required this.open,
+  });
+
+  final List<Category> categories;
+  final CategoryType type;
+  final ValueChanged<CategoryType> onType;
+  final ValueChanged<Category> open;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final uses = ref.watch(categoryUsesProvider);
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
+
+    String usage(Category category) {
+      final use = uses[category.id] ?? CategoryUse.none;
+      return [
+        if (category.rollover && category.type != CategoryType.ingreso) l10n.categoriesRowRollover,
+        l10n.categoriesRowUsage(use.movements),
+        if (use.recurringBills > 0) l10n.categoriesUsageRecurringBills(use.recurringBills),
+      ].join(' · ');
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        Finan2Space.lg,
+        Finan2Space.xs,
+        Finan2Space.lg,
+        Finan2Space.xxl,
+      ),
+      children: [
+        Finan2SegmentedControl<CategoryType>(
+          options: {for (final t in _typeOrder) t: t.plural},
+          selected: type,
+          onChanged: onType,
+        ),
+        const SizedBox(height: Finan2Space.md),
+        if (categories.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: Finan2Space.xl),
+            child: Text(
+              l10n.categoriesNoneOfType,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: colors.inkSoft),
+            ),
+          )
+        else
+          Finan2Sheet(
+            children: [
+              for (final category in categories)
+                Finan2TransactionRow(
+                  key: ValueKey(category.id),
+                  icon: Finan2Icons.categoria(category.iconSlug),
+                  iconColor: Color(category.color),
+                  description: category.name,
+                  subLabel: usage(category),
+                  amountText: '',
+                  amountColor: colors.ink,
+                  onTap: () => open(category),
+                ),
+            ],
+          ),
+      ],
     );
   }
 }

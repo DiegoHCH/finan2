@@ -277,7 +277,9 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                               icon: Icons.sticky_note_2_outlined,
                               label: l10n.transactionsNotes,
                               onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute<void>(builder: (_) => const MonthlyNotesScreen()),
+                                MaterialPageRoute<void>(
+                                  builder: (_) => MonthlyNotesScreen(initialMonth: _month),
+                                ),
                               ),
                             ),
                           ],

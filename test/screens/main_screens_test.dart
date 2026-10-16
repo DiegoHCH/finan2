@@ -15,6 +15,7 @@ import 'package:finan2/features/transactions/presentation/screens/transactions_s
 import 'package:finan2/features/transactions/presentation/viewmodels/transaction_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/pump_screen.dart';
 import '../helpers/test_app_container.dart';
@@ -104,6 +105,8 @@ void main() {
   });
 
   testWidgets('Inicio and Ajustes open on an empty household', (tester) async {
+    // Ajustes shows the theme, which this device keeps in shared_preferences.
+    SharedPreferences.setMockInitialValues({});
     final app = (await tester.runAsync(TestApp.start))!;
     final household = app.container.read(currentHouseholdProvider).requireValue!;
 

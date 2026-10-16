@@ -28,7 +28,7 @@ void main() {
 
     expect(usage.movements, 2);
     expect(usage.recurringBills, 1);
-    expect(usage.describe(), '2 movimientos y 1 factura recurrente');
+    expect(usage.describe(), '2 movimientos y 1 fijo');
     expect((await repository.usage(householdId, 'salud')).isEmpty, isTrue);
   });
 
@@ -60,10 +60,7 @@ void main() {
 
   test('describe uses singular and plural', () {
     expect(const CategoryUsage(movements: 1, recurringBills: 0).describe(), '1 movimiento');
-    expect(
-      const CategoryUsage(movements: 0, recurringBills: 2).describe(),
-      '2 facturas recurrentes',
-    );
+    expect(const CategoryUsage(movements: 0, recurringBills: 2).describe(), '2 fijos');
   });
 
   test('describe follows the app language', () {
@@ -71,7 +68,7 @@ void main() {
     addTearDown(() => Intl.defaultLocale = 'es');
     expect(
       const CategoryUsage(movements: 2, recurringBills: 1).describe(),
-      '2 transactions and 1 recurring bill',
+      '2 transactions and 1 recurring item',
     );
   });
 }

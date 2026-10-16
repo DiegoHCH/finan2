@@ -20,8 +20,13 @@ class NotificationService {
 
   static const _dailyReminderId = 1;
   static const _weeklySummaryId = 2;
+
+  /// Qué avisar says «Los domingos» (notificationPrefsWeeklySummaryWhen):
+  /// change both together.
   static const _weeklySummaryWeekday = DateTime.sunday;
-  static const _weeklySummaryTime = TimeOfDay(hour: 19, minute: 0);
+
+  /// When the weekly summary arrives, as Qué avisar tells it.
+  static const weeklySummaryTime = TimeOfDay(hour: 19, minute: 0);
   static const _debtReminderTime = TimeOfDay(hour: 9, minute: 0);
 
   Future<void> initialize() async {
@@ -84,7 +89,7 @@ class NotificationService {
       id: _weeklySummaryId,
       title: l10n.reminderWeeklyTitle,
       body: l10n.reminderWeeklyBody,
-      scheduledDate: _nextInstanceOfWeekdayTime(_weeklySummaryWeekday, _weeklySummaryTime),
+      scheduledDate: _nextInstanceOfWeekdayTime(_weeklySummaryWeekday, weeklySummaryTime),
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails('weekly_summary', l10n.reminderWeeklyChannel),
         iOS: DarwinNotificationDetails(),
