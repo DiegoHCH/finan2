@@ -2521,4 +2521,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transfersSwap => 'Swap direction';
+
+  @override
+  String get demoSeed => 'Fill with test data';
+
+  @override
+  String get demoRemove => 'Remove test data';
+
+  @override
+  String get demoSeedTitle => 'Fill with test data?';
+
+  @override
+  String get demoSeedMessage =>
+      'Adds three months of made-up accounts, a card, a loan, goals, investments, recurring bills and movements. What you already have isn\'t touched, and nobody gets notified.';
+
+  @override
+  String get demoSeedConfirm => 'Fill';
+
+  @override
+  String get demoSeedDoneTitle => 'Done';
+
+  @override
+  String demoSeedDone(int count) {
+    return '$count test records written.';
+  }
+
+  @override
+  String get demoRemoveTitle => 'Remove the test data?';
+
+  @override
+  String get demoRemoveMessage => 'Only the made-up data is deleted. What you logged stays.';
+
+  @override
+  String get demoRemoveConfirm => 'Remove';
+
+  @override
+  String get demoRemoveDoneTitle => 'Removed';
+
+  @override
+  String demoRemoveDone(int count) {
+    return '$count test records deleted.';
+  }
+
+  @override
+  String get demoError =>
+      'Couldn\'t finish. Check the connection and try again: it can be repeated without duplicating anything.';
 }

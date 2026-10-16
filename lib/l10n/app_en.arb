@@ -680,5 +680,18 @@
   "transfersHas": "has {amount}",
   "transfersLeaves": "ends with {amount}",
   "transfersNotExpense": "Not an expense: it doesn't touch the budget.",
-  "transfersSwap": "Swap direction"
+  "transfersSwap": "Swap direction",
+  "demoSeed": "Fill with test data",
+  "demoRemove": "Remove test data",
+  "demoSeedTitle": "Fill with test data?",
+  "demoSeedMessage": "Adds three months of made-up accounts, a card, a loan, goals, investments, recurring bills and movements. What you already have isn't touched, and nobody gets notified.",
+  "demoSeedConfirm": "Fill",
+  "demoSeedDoneTitle": "Done",
+  "demoSeedDone": "{count} test records written.",
+  "demoRemoveTitle": "Remove the test data?",
+  "demoRemoveMessage": "Only the made-up data is deleted. What you logged stays.",
+  "demoRemoveConfirm": "Remove",
+  "demoRemoveDoneTitle": "Removed",
+  "demoRemoveDone": "{count} test records deleted.",
+  "demoError": "Couldn't finish. Check the connection and try again: it can be repeated without duplicating anything."
 }
