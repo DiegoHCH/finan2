@@ -82,4 +82,25 @@ void main() {
     expect(monthlyOnly.averaged, isFalse);
     expect(monthlyCommitment(const [], today).count, 0);
   });
+
+  test('billsInListOrder puts the active ones first, then paused, then ended', () {
+    RecurringBill named(String name, {bool paused = false, DateTime? end}) => RecurringBill(
+      id: name,
+      name: name,
+      type: CategoryType.factura,
+      categoryId: 'c',
+      accountId: 'a',
+      amount: 1,
+      dayOfMonth: 1,
+      paused: paused,
+      endDate: end,
+    );
+    final ordered = billsInListOrder([
+      named('parqueadero', paused: true),
+      named('gym', end: DateTime(2026, 1, 1)),
+      named('arriendo'),
+      named('internet'),
+    ], today);
+    expect([for (final b in ordered) b.id], ['arriendo', 'internet', 'parqueadero', 'gym']);
+  });
 }

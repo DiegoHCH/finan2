@@ -93,3 +93,11 @@ MonthlyCommitment monthlyCommitment(Iterable<RecurringBill> bills, DateTime toda
     averaged: counted.any((bill) => isAveraged(bill.frequency)),
   );
 }
+
+/// Fijos as the list shows them: the active ones first, then the paused,
+/// then the ones that ended, each group in its original order.
+List<RecurringBill> billsInListOrder(Iterable<RecurringBill> bills, DateTime today) => [
+  for (final status in RecurringBillStatus.values)
+    for (final bill in bills)
+      if (billStatus(bill, today) == status) bill,
+];
