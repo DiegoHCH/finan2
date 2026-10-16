@@ -8,6 +8,7 @@ import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../data/budget_repository.dart';
+import '../../domain/budget_line.dart';
 import '../../domain/budget_summary.dart';
 import '../../domain/carry_over.dart';
 
@@ -68,6 +69,7 @@ class BudgetMonthView {
     required this.summary,
     required this.carryOver,
     required this.rows,
+    required this.lines,
     required this.unbudgeted,
     required this.previousMonthCategories,
     required this.offerCopy,
@@ -82,6 +84,9 @@ class BudgetMonthView {
 
   /// Budgeted (or carrying) expense categories, biggest spend first.
   final List<Category> rows;
+
+  /// Where each of [rows] stands, in the same order.
+  final List<BudgetLine> lines;
 
   /// Expense categories with nothing planned or carried this month.
   final List<Category> unbudgeted;
@@ -112,13 +117,20 @@ final budgetMonthViewProvider = Provider.autoDispose.family<BudgetMonthView, Yea
   final visibleIds = {...summary.visibleCategoryIds, ...carryOver.keys};
   final budgetable = categories.where((c) => c.type != CategoryType.ingreso);
   final spend = summary.spendByCategory;
+  final rows = budgetable.where((c) => visibleIds.contains(c.id)).toList()
+    ..sort((a, b) => (spend[b.id] ?? 0).compareTo(spend[a.id] ?? 0));
 
   return BudgetMonthView(
     budget: budget,
     summary: summary,
     carryOver: carryOver,
-    rows: budgetable.where((c) => visibleIds.contains(c.id)).toList()
-      ..sort((a, b) => (spend[b.id] ?? 0).compareTo(spend[a.id] ?? 0)),
+    rows: rows,
+    lines: computeBudgetLines(
+      categoryIds: [for (final c in rows) c.id],
+      planned: budget,
+      carry: carryOver,
+      spent: spend,
+    ),
     unbudgeted: budgetable.where((c) => !visibleIds.contains(c.id)).toList(),
     previousMonthCategories: previousBudget.length,
     offerCopy: budgetAsync.hasValue && budget.isEmpty && previousBudget.isNotEmpty,
