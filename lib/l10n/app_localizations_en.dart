@@ -713,7 +713,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreOffline =>
-      'You\'re offline. You\'re seeing what last arrived; logging needs a connection.';
+      'You\'re offline. What you log is kept here and sent on its own once you\'re back online.';
 
   @override
   String get coreUnsynced => 'not sent yet';

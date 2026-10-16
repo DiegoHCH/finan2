@@ -202,7 +202,7 @@
   "coreMissingKeyUsePhrase": "Use the 12-word phrase",
   "coreMissingKeyAskPartner": "Ask {name} for the code",
   "coreMissingKeyPasteCode": "Paste the key code",
-  "coreOffline": "You're offline. You're seeing what last arrived; logging needs a connection.",
+  "coreOffline": "You're offline. What you log is kept here and sent on its own once you're back online.",
   "coreUnsynced": "not sent yet",
   "coreLoading": "Loading",
   "coreNotificationPrimerTitle": "Turn on notifications",

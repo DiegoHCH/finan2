@@ -713,7 +713,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get coreMissingKeyPasteCode => 'Pegar el código de la llave';
 
   @override
-  String get coreOffline => 'Sin conexión. Ves lo último que llegó; para anotar hace falta señal.';
+  String get coreOffline =>
+      'Sin conexión. Lo que anotes se guarda aquí y se envía solo cuando vuelva la señal.';
 
   @override
   String get coreUnsynced => 'por enviar';

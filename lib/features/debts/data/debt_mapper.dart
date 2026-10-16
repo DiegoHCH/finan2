@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/household_crypto.dart';
 import '../../../l10n/l10n.dart';
 import '../domain/entities/debt.dart';
@@ -33,7 +34,7 @@ Future<Debt> debtFromFirestore(
     id: doc.id,
     name: data['name'] as String? ?? '',
     type: DebtTypeLabel.fromName(data['type'] as String? ?? 'credito'),
-    balance: await amount('balance'),
+    balance: await storedBalance(data, crypto, householdId),
     rate: (data['rate'] as num?)?.toDouble() ?? 0,
     paymentDay: (data['paymentDay'] as num?)?.toInt() ?? 1,
     creditLimit: await amount('creditLimit'),

@@ -1308,7 +1308,7 @@ abstract class AppLocalizations {
   /// No description provided for @coreOffline.
   ///
   /// In es, this message translates to:
-  /// **'Sin conexión. Ves lo último que llegó; para anotar hace falta señal.'**
+  /// **'Sin conexión. Lo que anotes se guarda aquí y se envía solo cuando vuelva la señal.'**
   String get coreOffline;
 
   /// No description provided for @coreUnsynced.
