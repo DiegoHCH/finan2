@@ -6,6 +6,7 @@ import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_month_nav.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
 import '../viewmodels/monthly_notes_providers.dart';
 import 'edit_monthly_note_screen.dart';
@@ -85,7 +86,8 @@ class _MonthlyNotesScreenState extends ConsumerState<MonthlyNotesScreen> {
             ),
             Expanded(
               child: notesAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(rows: 2),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (notes) => ListView(
                   padding: const EdgeInsets.fromLTRB(

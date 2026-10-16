@@ -23,6 +23,7 @@ import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../export/presentation/screens/export_screen.dart';
 import '../../../household/data/household_model.dart';
+import '../../../household/presentation/key_recovery_actions.dart';
 import '../../../household/presentation/screens/invite_household_screen.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../household/presentation/viewmodels/member_providers.dart';
@@ -90,11 +91,11 @@ class SettingsScreen extends ConsumerWidget {
                       message: l10n.settingsMissingKeyBanner,
                       actions: [
                         FilledButton(
-                          onPressed: () => _importMissingKey(context, ref, household.id),
+                          onPressed: () => unlockWithCode(context, ref, household.id),
                           child: Text(l10n.settingsPasteCodeToUnlock),
                         ),
                         OutlinedButton(
-                          onPressed: () => _recoverWithPhrase(context, ref, household.id),
+                          onPressed: () => unlockWithPhrase(context, ref, household.id),
                           child: Text(l10n.settingsUseRecoveryPhrase),
                         ),
                       ],
@@ -320,63 +321,6 @@ class _MemberBlock extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-Future<void> _importMissingKey(BuildContext context, WidgetRef ref, String householdId) async {
-  final controller = TextEditingController();
-  final pasted = await showFinan2InputSheet(
-    context,
-    title: context.l10n.settingsUnlockAmountsTitle,
-    message: context.l10n.settingsUnlockAmountsMessage,
-    fieldLabel: context.l10n.settingsUnlockCodeLabel,
-    controller: controller,
-    confirmLabel: context.l10n.settingsUnlock,
-  );
-  if (pasted == null || pasted.trim().isEmpty) return;
-
-  final error = await ref
-      .read(householdControllerProvider.notifier)
-      .importMissingKey(householdId: householdId, pastedCode: pasted);
-  if (!context.mounted) return;
-
-  if (error != null) {
-    await showFinan2ErrorSheet(context, message: error);
-  } else {
-    await showFinan2InfoSheet(
-      context,
-      title: context.l10n.settingsAmountsUnlockedTitle,
-      message: context.l10n.settingsAmountsUnlockedMessage,
-    );
-  }
-}
-
-Future<void> _recoverWithPhrase(BuildContext context, WidgetRef ref, String householdId) async {
-  final controller = TextEditingController();
-  final input = await showFinan2InputSheet(
-    context,
-    title: context.l10n.householdRecoveryPhraseTitle,
-    message: context.l10n.settingsRecoveryPhraseMessage,
-    fieldLabel: context.l10n.settingsRecoveryPhraseLabel,
-    controller: controller,
-    keyboardType: TextInputType.text,
-    confirmLabel: context.l10n.settingsUnlock,
-  );
-  if (input == null || input.trim().isEmpty || !context.mounted) return;
-
-  final error = await ref
-      .read(householdControllerProvider.notifier)
-      .recoverKeyWithPhrase(householdId: householdId, input: input);
-  if (!context.mounted) return;
-
-  if (error != null) {
-    await showFinan2ErrorSheet(context, message: error);
-  } else {
-    await showFinan2InfoSheet(
-      context,
-      title: context.l10n.settingsAmountsUnlockedTitle,
-      message: context.l10n.settingsAmountsUnlockedMessage,
     );
   }
 }

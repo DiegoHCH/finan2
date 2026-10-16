@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
@@ -10,11 +11,13 @@ import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_month_nav.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../connection/presentation/widgets/offline_banner.dart';
 import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -94,6 +97,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final formatMoney = ref.watch(moneyFormatterProvider);
     final memberLabel = ref.watch(memberLabelProvider);
     final pending = ref.watch(pendingMovementDeletionsProvider);
+    final unsynced = ref.watch(unsyncedMovementIdsProvider(_month)).value ?? const <String>{};
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final l10n = context.l10n;
 
@@ -136,9 +140,14 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
         tags: tx.tags,
         amountText: tx.isIncome ? '+${formatMoney(tx.amount)}' : '−${formatMoney(tx.amount)}',
         amountColor: tx.isIncome ? colors.income : colors.ink,
+        pendingLabel: unsynced.contains(tx.id) ? l10n.coreUnsynced : null,
         onTap: () => openMovement(context, tx),
       );
     }
+
+    final now = DateTime.now();
+    final isPast = DateTime(_month.year, _month.month).isBefore(DateTime(now.year, now.month));
+    final previous = _month.plusMonths(-1);
 
     final hasChips = MovementFilterChips.hasChips(_filter);
 
@@ -167,6 +176,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 onTap: () => _openFilters(options, allTransactions),
               ),
             ),
+            const OfflineBanner(),
             Padding(
               padding: const EdgeInsets.fromLTRB(Finan2Space.lg, 0, Finan2Space.lg, Finan2Space.sm),
               child: MovementSearchField(
@@ -193,12 +203,14 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
               ),
             Expanded(
               child: transactionsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(heading: true),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (_) {
                   if (transactions.isEmpty && filtering) {
                     return Finan2EmptyState(
                       icon: Icons.search_off,
+                      tone: Finan2Tone(colors.inkSoft, colors.surfaceAlt),
                       title: l10n.transactionsNoMatchTitle,
                       description: searchingYear
                           ? l10n.transactionsNoMatchYear(_month.year)
@@ -209,15 +221,21 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   }
                   if (transactions.isEmpty) {
                     return Finan2EmptyState(
-                      icon: Icons.receipt_long_outlined,
-                      title: _month.isCurrent
-                          ? l10n.transactionsEmptyTitle
-                          : l10n.transactionsEmptyTitleMonth(monthLabelCap),
-                      description: _month.isCurrent
-                          ? l10n.transactionsEmptyDescription
-                          : l10n.transactionsEmptyDescriptionMonth,
+                      icon: Icons.edit_outlined,
+                      tone: Finan2Tone.of(context, Finan2Palette.mercado),
+                      title: l10n.transactionsEmptyTitle(
+                        _month.year == now.year ? _month.monthLabel : monthLabelCap,
+                      ),
+                      description: isPast
+                          ? l10n.transactionsEmptyDescriptionMonth
+                          : l10n.transactionsEmptyDescription,
                       actionLabel: l10n.transactionsEmptyAction,
                       onAction: _addMovement,
+                      // Who lands on an empty month is usually after the one before.
+                      secondaryLabel: l10n.transactionsSeeMonth(
+                        DateFormat.MMMM().format(DateTime(previous.year, previous.month)),
+                      ),
+                      onSecondary: () => setState(() => _month = previous),
                     );
                   }
                   return ListView(

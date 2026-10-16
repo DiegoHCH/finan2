@@ -22,6 +22,7 @@ import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../connection/presentation/widgets/offline_banner.dart';
 import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/debt_style.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
@@ -376,6 +377,8 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Saving needs the server: say so before the amount is typed.
+            const OfflineBanner(padding: EdgeInsets.only(bottom: Finan2Space.md)),
             Finan2SegmentedControl<_Kind>(
               options: {for (final k in kinds) k: k.label(l10n)},
               selected: _kind,

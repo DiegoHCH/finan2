@@ -36,7 +36,6 @@ import '../pwa/ios_install_detection.dart';
 import '../pwa/pwa_providers.dart';
 import '../theme/app_theme.dart';
 import 'finan2_list_icon.dart';
-import 'finan2_missing_key_sheet.dart';
 import 'finan2_nav_bar.dart';
 import '../observability/error_reporter.dart';
 
@@ -58,17 +57,6 @@ class Finan2HomeShell extends ConsumerStatefulWidget {
 class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   var _index = 0;
   var _installBannerDismissed = false;
-
-  /// Shown once per app launch if this device doesn't have the household's
-  /// data encryption key yet - awaited before the notification primer sheet
-  /// below so the two never fight over showing a bottom sheet at once.
-  Future<void> _maybeShowMissingKeySheet() async {
-    // Creating it right now: the key may not be stored yet, but it will be.
-    if (ref.read(householdSetupProvider).active) return;
-    final hasKey = await ref.read(householdCryptoProvider).hasKey(widget.household.id);
-    if (hasKey || !mounted) return;
-    await showMissingKeySheet(context, widget.household);
-  }
 
   Future<void> _runScan() async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
@@ -192,10 +180,9 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
+    Future.microtask(() {
       // Created a moment ago and the share code is already there.
       _openSetup();
-      await _maybeShowMissingKeySheet();
       _runScan();
       _rescheduleDebtReminders();
       _runRecurringBillScan();

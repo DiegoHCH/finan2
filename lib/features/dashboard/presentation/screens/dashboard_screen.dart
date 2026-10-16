@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_missing_key_state.dart';
 import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
+import '../../../budget/presentation/viewmodels/budget_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
+import '../../../connection/presentation/widgets/offline_banner.dart';
 import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../household/presentation/viewmodels/member_providers.dart';
@@ -21,6 +26,7 @@ import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../../../notifications/presentation/viewmodels/notification_providers.dart';
 import '../../../transactions/domain/entities/movement.dart';
 import '../../../transactions/presentation/movement_actions.dart';
+import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../domain/month_overview.dart';
 import '../viewmodels/dashboard_providers.dart';
 
@@ -39,6 +45,10 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final transactionsAsync = ref.watch(transactionsForMonthProvider);
+    final missingKey =
+        transactionsAsync.error is Finan2CryptoException ||
+        ref.watch(householdHasKeyProvider(household.id)).value == false;
     final overview = ref.watch(monthOverviewProvider);
     final recent = ref.watch(recentMovementsProvider);
     final categories = ref.watch(categoriesProvider).value ?? const <Category>[];
@@ -68,78 +78,118 @@ class DashboardScreen extends ConsumerWidget {
                 onTap: () => _openNotifications(context),
               ),
             ),
+            const OfflineBanner(),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  Finan2Space.lg,
-                  Finan2Space.xs,
-                  Finan2Space.lg,
-                  Finan2Space.xl,
-                ),
-                children: [
-                  _MonthFigure(overview: overview, month: month, formatMoney: formatMoney),
-                  gap,
-                  if (overview.slices.isEmpty && !overview.hasPlan)
-                    Text(
-                      l10n.dashboardNoCategorizedSpending,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  else
-                    _SpendBar(overview: overview, categoryById: categoryById),
-                  if (latestUnread != null) ...[
-                    gap,
-                    Finan2Notice(
-                      icon: _noticeIcon(latestUnread.type),
-                      title: latestUnread.title,
-                      message: latestUnread.body,
-                      actionLabel: l10n.dashboardNoticeSee,
-                      kind: latestUnread.type == NotificationType.budgetExceeded
-                          ? Finan2NoticeKind.over
-                          : Finan2NoticeKind.now,
-                      onTap: () => _openNotifications(context),
-                    ),
-                  ],
-                  // «Quién pagó» only says something with two people.
-                  if (household.members.length > 1) ...[
-                    gap,
-                    Text(l10n.dashboardWhoPaid, style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(height: Finan2Space.sm),
-                    Row(
+              child: missingKey
+                  ? const Finan2MissingKeyState()
+                  : transactionsAsync.isLoading && !transactionsAsync.hasValue
+                  ? _LoadingMonth(month: month)
+                  : ListView(
+                      padding: const EdgeInsets.fromLTRB(
+                        Finan2Space.lg,
+                        Finan2Space.xs,
+                        Finan2Space.lg,
+                        Finan2Space.xl,
+                      ),
                       children: [
-                        for (final (i, member) in household.members.take(2).indexed) ...[
-                          if (i > 0) const SizedBox(width: Finan2Space.sm),
-                          Expanded(
-                            child: _PayerColumn(
-                              label: memberLabel(member),
-                              total: overview.byPayer[member],
-                              formatMoney: formatMoney,
-                            ),
+                        _MonthFigure(overview: overview, month: month, formatMoney: formatMoney),
+                        gap,
+                        if (overview.slices.isEmpty && !overview.hasPlan)
+                          Text(
+                            l10n.dashboardNoCategorizedSpending,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          )
+                        else
+                          _SpendBar(overview: overview, categoryById: categoryById),
+                        if (latestUnread != null) ...[
+                          gap,
+                          Finan2Notice(
+                            icon: _noticeIcon(latestUnread.type),
+                            title: latestUnread.title,
+                            message: latestUnread.body,
+                            actionLabel: l10n.dashboardNoticeSee,
+                            kind: latestUnread.type == NotificationType.budgetExceeded
+                                ? Finan2NoticeKind.over
+                                : Finan2NoticeKind.now,
+                            onTap: () => _openNotifications(context),
+                          ),
+                        ],
+                        // «Quién pagó» only says something with two people.
+                        if (household.members.length > 1) ...[
+                          gap,
+                          Text(
+                            l10n.dashboardWhoPaid,
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: Finan2Space.sm),
+                          Row(
+                            children: [
+                              for (final (i, member) in household.members.take(2).indexed) ...[
+                                if (i > 0) const SizedBox(width: Finan2Space.sm),
+                                Expanded(
+                                  child: _PayerColumn(
+                                    label: memberLabel(member),
+                                    total: overview.byPayer[member],
+                                    formatMoney: formatMoney,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                        if (recent.isNotEmpty) ...[
+                          gap,
+                          Text(l10n.dashboardRecent, style: Theme.of(context).textTheme.titleSmall),
+                          const SizedBox(height: Finan2Space.sm),
+                          Finan2Sheet(
+                            children: [
+                              for (final tx in recent)
+                                _RecentRow(
+                                  tx: tx,
+                                  category: categoryById[tx.categoryId],
+                                  payer: memberLabel(tx.payer),
+                                  formatMoney: formatMoney,
+                                ),
+                            ],
                           ),
                         ],
                       ],
                     ),
-                  ],
-                  if (recent.isNotEmpty) ...[
-                    gap,
-                    Text(l10n.dashboardRecent, style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(height: Finan2Space.sm),
-                    Finan2Sheet(
-                      children: [
-                        for (final tx in recent)
-                          _RecentRow(
-                            tx: tx,
-                            category: categoryById[tx.categoryId],
-                            payer: memberLabel(tx.payer),
-                            formatMoney: formatMoney,
-                          ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Inicio before the month's movements are in: the screen's shape with
+/// its fixed words already there and only the figures waiting - saying
+/// why: the amounts are decrypted on the phone.
+class _LoadingMonth extends ConsumerWidget {
+  const _LoadingMonth({required this.month});
+
+  final String month;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    // «Les queda del plan» unless the budget is already known to be empty.
+    final budget = ref.watch(currentMonthBudgetProvider).value;
+    return Finan2SkeletonList(
+      rows: 3,
+      top: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Finan2SkeletonFigure(
+            label: budget != null && budget.isEmpty
+                ? l10n.dashboardSpentIn(month)
+                : l10n.dashboardLeftOfPlan(month),
+            note: l10n.dashboardDecrypting,
+          ),
+          const SizedBox(height: Finan2Space.lg),
+          const Finan2SkeletonBar(height: 12),
+        ],
       ),
     );
   }

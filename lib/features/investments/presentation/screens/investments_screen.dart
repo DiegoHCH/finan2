@@ -8,6 +8,7 @@ import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -60,12 +61,14 @@ class InvestmentsScreen extends ConsumerWidget {
             ),
             Expanded(
               child: investmentsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(top: Finan2SkeletonFigure()),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (investments) {
                   if (investments.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.trending_up,
+                      tone: Finan2Tone.of(context, Finan2Palette.ahorro),
                       title: l10n.investmentsEmptyTitle,
                       description: l10n.investmentsEmptyDescription,
                       actionLabel: l10n.investmentsEmptyAction,

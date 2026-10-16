@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../core/widgets/finan2_progress.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../domain/debt_plan.dart';
@@ -30,16 +31,17 @@ class DebtsSection extends ConsumerWidget {
     final l10n = context.l10n;
 
     return debtsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      skipLoadingOnReload: true,
+      loading: () => const Finan2SkeletonList(top: Finan2SkeletonFigure(), rows: 3),
       error: (error, _) => Finan2AsyncErrorView(error: error),
       data: (debts) {
         if (debts.isEmpty) {
           return Finan2EmptyState(
-            icon: Icons.celebration_outlined,
+            icon: Finan2Icons.check,
             title: l10n.debtsEmptyTitle,
             description: l10n.debtsEmptyDescription,
             actionLabel: l10n.debtsEmptyAction,
-            gold: true,
+            celebrates: true,
             onAction: () => Navigator.of(
               context,
             ).push(MaterialPageRoute<void>(builder: (_) => const EditDebtScreen())),

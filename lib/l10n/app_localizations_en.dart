@@ -66,9 +66,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetNextMonth => 'Next month';
 
   @override
-  String get budgetEmpty => 'You haven\'t budgeted any category yet.';
-
-  @override
   String get budgetAddCategory => '+ Budget another category';
 
   @override
@@ -92,6 +89,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get budgetCopying => 'Copying…';
+
+  @override
+  String budgetEmptyTitle(String month) {
+    return '$month has no plan yet.';
+  }
+
+  @override
+  String get budgetEmptyDescription =>
+      'Set how much you want to spend on each category and you\'ll see here what\'s left of each one.';
+
+  @override
+  String get budgetEmptyAction => 'Plan a category';
+
+  @override
+  String budgetEmptyCopy(String month) {
+    return 'Copy $month\'s plan';
+  }
 
   @override
   String budgetCarryIncluded(String amount) {
@@ -120,6 +134,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardNoCategorizedSpending => 'No categorized spending this month.';
+
+  @override
+  String get dashboardDecrypting => 'Decrypting the amounts on this phone…';
 
   @override
   String dashboardGreeting(String name) {
@@ -665,18 +682,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get corePeriodBackToToday => 'Back to today';
 
   @override
-  String get coreGoToSettings => 'Go to Settings';
-
-  @override
-  String get coreMissingKeyInline =>
-      'This household\'s key is missing, so amounts can\'t be shown.';
-
-  @override
-  String get coreMissingKeyTitle => 'This household\'s key is missing';
+  String get coreMissingKeyTitle => 'This phone doesn\'t have the household\'s key.';
 
   @override
   String get coreMissingKeyBody =>
-      'This device can\'t see or record amounts yet. Ask your partner for the full code (with the key after the dot) or use the household\'s recovery phrase in Settings to unlock them.';
+      'Amounts are encrypted with a key that only lives on your phones. Without it, this one can\'t open your movements or log new ones.';
+
+  @override
+  String get coreMissingKeyUsePhrase => 'Use the 12-word phrase';
+
+  @override
+  String coreMissingKeyAskPartner(String name) {
+    return 'Ask $name for the code';
+  }
+
+  @override
+  String get coreMissingKeyPasteCode => 'Paste the key code';
+
+  @override
+  String get coreOffline =>
+      'You\'re offline. You\'re seeing what last arrived; logging needs a connection.';
+
+  @override
+  String get coreUnsynced => 'not sent yet';
+
+  @override
+  String get coreLoading => 'Loading';
 
   @override
   String get coreNotificationPrimerTitle => 'Turn on notifications';
@@ -820,14 +851,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderActivityChannel => 'Household activity';
 
   @override
-  String get debtsEmptyTitle => 'Debt-free!';
+  String get debtsEmptyTitle => 'You owe nothing.';
 
   @override
   String get debtsEmptyDescription =>
-      'You have no debts on record. If you take one on, add it to track its payoff with the Avalanche strategy.';
+      'If a card or a loan comes along, add it here and the app will tell you when you\'ll be done with it.';
 
   @override
-  String get debtsEmptyAction => '+ Add a debt';
+  String get debtsEmptyAction => 'Add a debt';
 
   @override
   String get debtsFreeDateLabel => 'Debt-free in';
@@ -936,14 +967,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoalsTotalSaved => 'Total saved';
 
   @override
-  String get savingsGoalsEmptyTitle => 'No goals yet';
+  String get savingsGoalsEmptyTitle => 'No goals yet.';
 
   @override
   String get savingsGoalsEmptyDescription =>
-      'Create a savings goal and keep tabs on it with your partner.';
+      'A trip, a cushion, a car: give it an amount and a date, and you\'ll see here how much is left and how much to set aside each month.';
 
   @override
-  String get savingsGoalsEmptyAction => '+ New goal';
+  String get savingsGoalsEmptyAction => 'Create a goal';
 
   @override
   String get savingsGoalsChallengeLink => 'Savings challenge';
@@ -1025,14 +1056,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get investmentsTitle => 'Investments';
 
   @override
-  String get investmentsEmptyTitle => 'No investments yet';
+  String get investmentsEmptyTitle => 'No investments yet.';
 
   @override
   String get investmentsEmptyDescription =>
       'Add your CDs, funds or crypto to keep tabs on your portfolio.';
 
   @override
-  String get investmentsEmptyAction => '+ New investment';
+  String get investmentsEmptyAction => 'Add an investment';
 
   @override
   String get investmentsKindFixedIncome => 'Fixed income';
@@ -1204,22 +1235,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsClearSearch => 'Clear search';
 
   @override
-  String get transactionsEmptyTitle => 'No transactions yet';
-
-  @override
-  String transactionsEmptyTitleMonth(String month) {
-    return 'No transactions in $month';
+  String transactionsEmptyTitle(String month) {
+    return '$month is a blank page.';
   }
 
   @override
   String get transactionsEmptyDescription =>
-      'Log your first income or expense this month to see the household summary here.';
+      'The first thing you log shows up here, with who paid it. The month\'s recurring items log themselves on their day.';
 
   @override
-  String get transactionsEmptyDescriptionMonth => 'No income or expenses were logged this month.';
+  String get transactionsEmptyDescriptionMonth =>
+      'Nothing was logged that month. If something was left out, you can still log it with its date.';
 
   @override
-  String get transactionsEmptyAction => '+ Add the first one';
+  String get transactionsEmptyAction => 'Log the first one';
+
+  @override
+  String transactionsSeeMonth(String month) {
+    return 'See $month';
+  }
 
   @override
   String get transactionsRecurringBills => 'Recurring';
@@ -1287,27 +1321,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfersDeletedAccount => 'Deleted account';
 
   @override
-  String get transfersEmptyTitle => 'No transfers yet';
+  String get transfersEmptyTitle => 'No money moved yet.';
 
   @override
   String get transfersEmptyDescription =>
-      'Money moved between your own accounts will show up here.';
+      'When you move money from one account to another it\'s recorded here, without counting as spending.';
 
   @override
-  String get transfersEmptyAction => '+ Move money';
+  String get transfersEmptyAction => 'Move money';
 
   @override
   String get accountsTitle => 'Accounts';
 
   @override
-  String get accountsEmptyTitle => 'No accounts yet';
+  String get accountsEmptyTitle => 'No accounts yet.';
 
   @override
   String get accountsEmptyDescription =>
-      'Add your first account (cash, bank, wallet) to start logging transactions.';
+      'Add the cash, bank or wallet the money comes from, and you\'ll see here how much you have available.';
 
   @override
-  String get accountsEmptyAction => '+ New account';
+  String get accountsEmptyAction => 'Add an account';
 
   @override
   String get accountsTransferBetween => 'Move between accounts';
@@ -1383,14 +1417,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoriesNoneOfType => 'No categories of this kind yet. Add one with +.';
 
   @override
-  String get categoriesEmptyTitle => 'No categories yet';
+  String get categoriesEmptyTitle => 'No categories yet.';
 
   @override
   String get categoriesEmptyDescription =>
-      'Create your first category to start logging transactions.';
+      'Every movement goes in a category: create the first one to start logging.';
 
   @override
-  String get categoriesEmptyAction => '+ New category';
+  String get categoriesEmptyAction => 'Create a category';
 
   @override
   String get categoriesNewTitle => 'New category';
@@ -1562,14 +1596,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'They\'re logged in Transactions on their own, on the day they\'re due.';
 
   @override
-  String get recurringBillsEmptyTitle => 'Nothing recurring yet';
+  String get recurringBillsEmptyTitle => 'Nothing recurring yet.';
 
   @override
   String get recurringBillsEmptyDescription =>
       'Schedule rent, utilities or your salary so they\'re logged on their own on the day they\'re due.';
 
   @override
-  String get recurringBillsEmptyAction => '+ New recurring item';
+  String get recurringBillsEmptyAction => 'Add a recurring item';
 
   @override
   String get recurringBillsStatusPaused => 'Paused';
@@ -1740,7 +1774,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsEmpty =>
-      'No notifications yet. Payments coming up, goals and anything over budget will show up here.';
+      'Upcoming payments, goals on track, anything over budget and what your partner logs show up here.';
+
+  @override
+  String get notificationsEmptyTitle => 'All quiet.';
+
+  @override
+  String get notificationsEmptyAction => 'Choose what to be told';
 
   @override
   String notificationsMinutesAgo(int minutes) {

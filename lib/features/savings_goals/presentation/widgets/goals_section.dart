@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_figure.dart';
@@ -10,6 +11,7 @@ import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../core/widgets/finan2_progress.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../debts/domain/debt_plan.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
@@ -38,23 +40,30 @@ class GoalsSection extends ConsumerWidget {
     final l10n = context.l10n;
 
     return goalsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      skipLoadingOnReload: true,
+      loading: () => const Finan2SkeletonList(top: Finan2SkeletonFigure(), rows: 3),
       error: (error, _) => Finan2AsyncErrorView(error: error),
       data: (goals) {
         if (goals.isEmpty) {
-          return ListView(
-            padding: const EdgeInsets.all(Finan2Space.lg),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Finan2EmptyState(
-                icon: Icons.savings_outlined,
-                title: l10n.savingsGoalsEmptyTitle,
-                description: l10n.savingsGoalsEmptyDescription,
-                actionLabel: l10n.savingsGoalsEmptyAction,
-                onAction: () => Navigator.of(
-                  context,
-                ).push(MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen())),
+              Expanded(
+                child: Finan2EmptyState(
+                  icon: Finan2Icons.metas,
+                  tone: Finan2Tone.of(context, Finan2Palette.ahorro),
+                  title: l10n.savingsGoalsEmptyTitle,
+                  description: l10n.savingsGoalsEmptyDescription,
+                  actionLabel: l10n.savingsGoalsEmptyAction,
+                  onAction: () => Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute<void>(builder: (_) => const EditSavingsGoalScreen())),
+                ),
               ),
-              const _ChallengeLink(),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(Finan2Space.lg, 0, Finan2Space.lg, Finan2Space.lg),
+                child: _ChallengeLink(),
+              ),
             ],
           );
         }

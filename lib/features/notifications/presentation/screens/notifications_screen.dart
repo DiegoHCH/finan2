@@ -6,8 +6,10 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/utils/error_messages.dart';
+import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -31,6 +33,10 @@ class NotificationsScreen extends ConsumerWidget {
     }
   }
 
+  void _openPreferences(BuildContext context) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute<void>(builder: (_) => const NotificationPreferencesScreen()));
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
@@ -51,26 +57,24 @@ class NotificationsScreen extends ConsumerWidget {
               action: Finan2HeadAction(
                 icon: Icons.tune,
                 tooltip: l10n.notificationPrefsTitle,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => const NotificationPreferencesScreen()),
-                ),
+                onTap: () => _openPreferences(context),
               ),
             ),
             Expanded(
               child: notificationsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (notifications) {
                   if (notifications.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(Finan2Space.xl),
-                        child: Text(
-                          l10n.notificationsEmpty,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 13, height: 1.45, color: colors.inkSoft),
-                        ),
-                      ),
+                    // Nothing to be told is good news: no hurry to set anything.
+                    return Finan2EmptyState(
+                      icon: Finan2Icons.notificacion,
+                      title: l10n.notificationsEmptyTitle,
+                      description: l10n.notificationsEmpty,
+                      actionLabel: l10n.notificationsEmptyAction,
+                      onAction: () => _openPreferences(context),
+                      celebrates: true,
                     );
                   }
                   return ListView(

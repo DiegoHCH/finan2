@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
+import '../theme/finan2_tone.dart';
 import 'finan2_field.dart';
+import 'finan2_tile.dart';
 
 /// A confirm/cancel prompt as a bottom sheet - the app never shows a
 /// centered [AlertDialog] for these, always a sheet from the bottom.
@@ -115,15 +117,10 @@ Future<void> _showFinan2NoticeSheet(
             children: [
               if (isError) ...[
                 // .state .glyph in the over tone: an error reads as one at a glance.
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: colors.expenseTint,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(Finan2Icons.alerta, size: 22, color: colors.expense),
+                Finan2Tile(
+                  icon: Finan2Icons.alerta,
+                  tone: Finan2Tone(colors.expense, colors.expenseTint),
+                  size: 44,
                 ),
                 const SizedBox(height: Finan2Space.md),
               ],

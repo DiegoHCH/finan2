@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
@@ -69,12 +71,14 @@ class TransferHistoryScreen extends ConsumerWidget {
             ),
             Expanded(
               child: transfersAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(heading: true),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (transfers) {
                   if (transfers.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.swap_vert,
+                      tone: Finan2Tone.of(context, Finan2Palette.casa),
                       title: l10n.transfersEmptyTitle,
                       description: l10n.transfersEmptyDescription,
                       actionLabel: l10n.transfersEmptyAction,

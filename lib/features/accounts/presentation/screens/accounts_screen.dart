@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../debts/domain/entities/debt.dart';
@@ -53,12 +55,14 @@ class AccountsScreen extends ConsumerWidget {
             ),
             Expanded(
               child: accountsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(top: Finan2SkeletonFigure()),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (accounts) {
                   if (accounts.isEmpty) {
                     return Finan2EmptyState(
-                      icon: Finan2Icons.cuentas,
+                      icon: Finan2Icons.banco,
+                      tone: Finan2Tone.of(context, Finan2Palette.casa),
                       title: l10n.accountsEmptyTitle,
                       description: l10n.accountsEmptyDescription,
                       actionLabel: l10n.accountsEmptyAction,

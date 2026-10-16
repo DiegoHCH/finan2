@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/finan2_tone.dart';
@@ -7,16 +8,21 @@ import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
+import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
+import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../core/widgets/finan2_progress.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
+import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../domain/budget_line.dart';
 import '../../domain/budget_summary.dart';
 import '../viewmodels/budget_providers.dart';
@@ -47,6 +53,38 @@ class BudgetSection extends ConsumerWidget {
     final categoryById = {for (final c in view.rows) c.id: c};
     final over = overspentLines(view.lines);
     const gap = SizedBox(height: Finan2Space.lg);
+
+    final sources = [
+      ref.watch(budgetOfMonthProvider(month)),
+      ref.watch(transactionsOfMonthProvider(month)),
+      ref.watch(categoriesProvider),
+    ];
+    if (sources.map((s) => s.error).nonNulls.firstOrNull case final error?) {
+      return Finan2AsyncErrorView(error: error);
+    }
+    if (sources.any((s) => s.isLoading && !s.hasValue)) return const Finan2SkeletonList();
+    if (view.rows.isEmpty) {
+      final previous = month.plusMonths(-1);
+      return Finan2EmptyState(
+        icon: Icons.pie_chart_outline_rounded,
+        tone: Finan2Tone.of(context, Finan2Palette.casa),
+        title: l10n.budgetEmptyTitle(
+          month.year == currentYearMonth().year ? month.monthLabel : month.label,
+        ),
+        description: l10n.budgetEmptyDescription,
+        actionLabel: view.unbudgeted.isEmpty ? null : l10n.budgetEmptyAction,
+        onAction: () => _pickCategoryToBudget(context, ref, month, view.unbudgeted),
+        // Last month's plan, if there was one, is the usual way to start.
+        secondaryLabel: !view.offerCopy
+            ? null
+            : copying
+            ? l10n.budgetCopying
+            : l10n.budgetEmptyCopy(
+                DateFormat.MMMM().format(DateTime(previous.year, previous.month)),
+              ),
+        onSecondary: copying ? null : () => _copyPreviousMonth(context, ref),
+      );
+    }
 
     final planned = formatMoney(summary.totalPlanned);
     final summaryLine = switch (summary.bannerKind) {
@@ -88,24 +126,18 @@ class BudgetSection extends ConsumerWidget {
         ],
         Finan2Sheet(
           children: [
-            if (view.rows.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: Finan2Space.md),
-                child: Text(l10n.budgetEmpty, style: Theme.of(context).textTheme.bodyMedium),
-              )
-            else
-              for (final (i, line) in view.lines.indexed)
-                _BudgetLineRow(
-                  category: view.rows[i],
-                  line: line,
-                  onTap: () => _editCategoryBudget(
-                    context,
-                    ref,
-                    month,
-                    view.rows[i],
-                    view.budget[line.categoryId] ?? 0,
-                  ),
+            for (final (i, line) in view.lines.indexed)
+              _BudgetLineRow(
+                category: view.rows[i],
+                line: line,
+                onTap: () => _editCategoryBudget(
+                  context,
+                  ref,
+                  month,
+                  view.rows[i],
+                  view.budget[line.categoryId] ?? 0,
                 ),
+              ),
           ],
         ),
         const SizedBox(height: Finan2Space.md),

@@ -207,12 +207,6 @@ abstract class AppLocalizations {
   /// **'Mes siguiente'**
   String get budgetNextMonth;
 
-  /// No description provided for @budgetEmpty.
-  ///
-  /// In es, this message translates to:
-  /// **'Aún no has presupuestado ninguna categoría.'**
-  String get budgetEmpty;
-
   /// No description provided for @budgetAddCategory.
   ///
   /// In es, this message translates to:
@@ -242,6 +236,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Copiando…'**
   String get budgetCopying;
+
+  /// No description provided for @budgetEmptyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{month} todavía no tiene plan.'**
+  String budgetEmptyTitle(String month);
+
+  /// No description provided for @budgetEmptyDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Pongan cuánto quieren gastar en cada categoría y aquí verán lo que les queda de cada una.'**
+  String get budgetEmptyDescription;
+
+  /// No description provided for @budgetEmptyAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Planear una categoría'**
+  String get budgetEmptyAction;
+
+  /// No description provided for @budgetEmptyCopy.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar el plan de {month}'**
+  String budgetEmptyCopy(String month);
 
   /// Budget carried over from earlier months that went underspent.
   ///
@@ -290,6 +308,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No hay gastos categorizados este mes.'**
   String get dashboardNoCategorizedSpending;
+
+  /// No description provided for @dashboardDecrypting.
+  ///
+  /// In es, this message translates to:
+  /// **'Descifrando los montos en este teléfono…'**
+  String get dashboardDecrypting;
 
   /// Inicio's title: greets the signed-in member by first name.
   ///
@@ -1227,29 +1251,53 @@ abstract class AppLocalizations {
   /// **'Volver a hoy'**
   String get corePeriodBackToToday;
 
-  /// No description provided for @coreGoToSettings.
-  ///
-  /// In es, this message translates to:
-  /// **'Ir a Ajustes'**
-  String get coreGoToSettings;
-
-  /// The device lacks the household's encryption key.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta la llave de este hogar para ver estos montos.'**
-  String get coreMissingKeyInline;
-
   /// No description provided for @coreMissingKeyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Falta la llave de este hogar'**
+  /// **'Este teléfono no tiene la llave de la casa.'**
   String get coreMissingKeyTitle;
 
   /// No description provided for @coreMissingKeyBody.
   ///
   /// In es, this message translates to:
-  /// **'Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.'**
+  /// **'Los montos se cifran con una llave que solo vive en sus teléfonos. Sin ella, este no puede abrir los movimientos ni anotar nuevos.'**
   String get coreMissingKeyBody;
+
+  /// No description provided for @coreMissingKeyUsePhrase.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar la frase de 12 palabras'**
+  String get coreMissingKeyUsePhrase;
+
+  /// No description provided for @coreMissingKeyAskPartner.
+  ///
+  /// In es, this message translates to:
+  /// **'Pedirle el código a {name}'**
+  String coreMissingKeyAskPartner(String name);
+
+  /// No description provided for @coreMissingKeyPasteCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Pegar el código de la llave'**
+  String get coreMissingKeyPasteCode;
+
+  /// No description provided for @coreOffline.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión. Ves lo último que llegó; para anotar hace falta señal.'**
+  String get coreOffline;
+
+  /// No description provided for @coreUnsynced.
+  ///
+  /// In es, this message translates to:
+  /// **'por enviar'**
+  String get coreUnsynced;
+
+  /// No description provided for @coreLoading.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando'**
+  String get coreLoading;
 
   /// No description provided for @coreNotificationPrimerTitle.
   ///
@@ -1482,19 +1530,19 @@ abstract class AppLocalizations {
   /// No description provided for @debtsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'¡Libres de deudas!'**
+  /// **'No deben nada.'**
   String get debtsEmptyTitle;
 
   /// No description provided for @debtsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.'**
+  /// **'Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.'**
   String get debtsEmptyDescription;
 
   /// No description provided for @debtsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Agregar una deuda'**
+  /// **'Agregar una deuda'**
   String get debtsEmptyAction;
 
   /// Banner caption; the projected month is shown below it.
@@ -1704,19 +1752,19 @@ abstract class AppLocalizations {
   /// No description provided for @savingsGoalsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no tienes metas'**
+  /// **'Todavía no hay metas.'**
   String get savingsGoalsEmptyTitle;
 
   /// No description provided for @savingsGoalsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Crea una meta de ahorro para llevarle el pulso con tu pareja.'**
+  /// **'Un viaje, un colchón, un carro: pónganle cifra y fecha, y aquí verán cuánto les falta y cuánto apartar cada mes.'**
   String get savingsGoalsEmptyDescription;
 
   /// No description provided for @savingsGoalsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva meta'**
+  /// **'Crear una meta'**
   String get savingsGoalsEmptyAction;
 
   /// Link to the savings challenge screen.
@@ -1872,7 +1920,7 @@ abstract class AppLocalizations {
   /// No description provided for @investmentsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay inversiones'**
+  /// **'Todavía no hay inversiones.'**
   String get investmentsEmptyTitle;
 
   /// CDT = certificado de depósito a término (a CD).
@@ -1884,7 +1932,7 @@ abstract class AppLocalizations {
   /// No description provided for @investmentsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva inversión'**
+  /// **'Agregar una inversión'**
   String get investmentsEmptyAction;
 
   /// No description provided for @investmentsKindFixedIncome.
@@ -2172,32 +2220,32 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay movimientos'**
-  String get transactionsEmptyTitle;
-
-  /// No description provided for @transactionsEmptyTitleMonth.
-  ///
-  /// In es, this message translates to:
-  /// **'Sin movimientos en {month}'**
-  String transactionsEmptyTitleMonth(String month);
+  /// **'{month} está en blanco.'**
+  String transactionsEmptyTitle(String month);
 
   /// No description provided for @transactionsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.'**
+  /// **'Lo primero que anoten aparece aquí, con quién lo pagó. Los fijos del mes se anotan solos el día que toca.'**
   String get transactionsEmptyDescription;
 
   /// No description provided for @transactionsEmptyDescriptionMonth.
   ///
   /// In es, this message translates to:
-  /// **'No se registró ningún ingreso ni gasto este mes.'**
+  /// **'Ese mes no se anotó nada. Si algo quedó por fuera, todavía se puede anotar con su fecha.'**
   String get transactionsEmptyDescriptionMonth;
 
   /// No description provided for @transactionsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Agregar el primero'**
+  /// **'Anotar el primero'**
   String get transactionsEmptyAction;
+
+  /// No description provided for @transactionsSeeMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver {month}'**
+  String transactionsSeeMonth(String month);
 
   /// No description provided for @transactionsRecurringBills.
   ///
@@ -2322,19 +2370,19 @@ abstract class AppLocalizations {
   /// No description provided for @transfersEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay transferencias'**
+  /// **'Todavía no han pasado plata.'**
   String get transfersEmptyTitle;
 
   /// No description provided for @transfersEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Los movimientos de dinero entre tus propias cuentas aparecerán aquí.'**
+  /// **'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
   String get transfersEmptyDescription;
 
   /// No description provided for @transfersEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Pasar plata'**
+  /// **'Pasar plata'**
   String get transfersEmptyAction;
 
   /// No description provided for @accountsTitle.
@@ -2346,19 +2394,19 @@ abstract class AppLocalizations {
   /// No description provided for @accountsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay cuentas'**
+  /// **'Todavía no hay cuentas.'**
   String get accountsEmptyTitle;
 
   /// No description provided for @accountsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.'**
+  /// **'Agreguen el efectivo, el banco o la billetera de donde sale la plata, y aquí verán cuánto tienen disponible.'**
   String get accountsEmptyDescription;
 
   /// No description provided for @accountsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva cuenta'**
+  /// **'Agregar una cuenta'**
   String get accountsEmptyAction;
 
   /// No description provided for @accountsTransferBetween.
@@ -2472,19 +2520,19 @@ abstract class AppLocalizations {
   /// No description provided for @categoriesEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay categorías'**
+  /// **'Todavía no hay categorías.'**
   String get categoriesEmptyTitle;
 
   /// No description provided for @categoriesEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Crea tu primera categoría para poder registrar movimientos.'**
+  /// **'Cada movimiento va en una categoría: creen la primera para empezar a anotar.'**
   String get categoriesEmptyDescription;
 
   /// No description provided for @categoriesEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva categoría'**
+  /// **'Crear una categoría'**
   String get categoriesEmptyAction;
 
   /// No description provided for @categoriesNewTitle.
@@ -2754,7 +2802,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay fijos'**
+  /// **'Todavía no hay fijos.'**
   String get recurringBillsEmptyTitle;
 
   /// No description provided for @recurringBillsEmptyDescription.
@@ -2766,7 +2814,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nuevo fijo'**
+  /// **'Agregar un fijo'**
   String get recurringBillsEmptyAction;
 
   /// Under a paused recurring item in the list, instead of its schedule.
@@ -3024,8 +3072,20 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsEmpty.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay avisos. Aquí llegan los pagos que se acercan, las metas y lo que se pasa del presupuesto.'**
+  /// **'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.'**
   String get notificationsEmpty;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Todo tranquilo.'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptyAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir qué avisar'**
+  String get notificationsEmptyAction;
 
   /// No description provided for @notificationsMinutesAgo.
   ///

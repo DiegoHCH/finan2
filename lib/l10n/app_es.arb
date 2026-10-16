@@ -25,7 +25,6 @@
   },
   "budgetPreviousMonth": "Mes anterior",
   "budgetNextMonth": "Mes siguiente",
-  "budgetEmpty": "Aún no has presupuestado ninguna categoría.",
   "budgetAddCategory": "+ Presupuestar otra categoría",
   "budgetForCategory": "Presupuesto para {category}",
   "@budgetForCategory": {
@@ -48,6 +47,24 @@
     }
   },
   "budgetCopying": "Copiando…",
+  "budgetEmptyTitle": "{month} todavía no tiene plan.",
+  "@budgetEmptyTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetEmptyDescription": "Pongan cuánto quieren gastar en cada categoría y aquí verán lo que les queda de cada una.",
+  "budgetEmptyAction": "Planear una categoría",
+  "budgetEmptyCopy": "Copiar el plan de {month}",
+  "@budgetEmptyCopy": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
   "budgetCarryIncluded": "Incluye {amount} que sobró antes",
   "@budgetCarryIncluded": {
     "placeholders": {
@@ -72,6 +89,7 @@
   "annualSummarySaved": "Ahorrado",
   "annualSummarySpendByMonth": "Gasto por mes",
   "dashboardNoCategorizedSpending": "No hay gastos categorizados este mes.",
+  "dashboardDecrypting": "Descifrando los montos en este teléfono…",
   "dashboardGreeting": "Hola, {name}",
   "@dashboardGreeting": {
     "description": "Inicio's title: greets the signed-in member by first name.",
@@ -429,13 +447,21 @@
   "@corePeriodBackToToday": {
     "description": "Shown under the period label when browsing another period; tapping jumps back to the current one."
   },
-  "coreGoToSettings": "Ir a Ajustes",
-  "coreMissingKeyInline": "Falta la llave de este hogar para ver estos montos.",
-  "@coreMissingKeyInline": {
-    "description": "The device lacks the household's encryption key."
+  "coreMissingKeyTitle": "Este teléfono no tiene la llave de la casa.",
+  "coreMissingKeyBody": "Los montos se cifran con una llave que solo vive en sus teléfonos. Sin ella, este no puede abrir los movimientos ni anotar nuevos.",
+  "coreMissingKeyUsePhrase": "Usar la frase de 12 palabras",
+  "coreMissingKeyAskPartner": "Pedirle el código a {name}",
+  "@coreMissingKeyAskPartner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
-  "coreMissingKeyTitle": "Falta la llave de este hogar",
-  "coreMissingKeyBody": "Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.",
+  "coreMissingKeyPasteCode": "Pegar el código de la llave",
+  "coreOffline": "Sin conexión. Ves lo último que llegó; para anotar hace falta señal.",
+  "coreUnsynced": "por enviar",
+  "coreLoading": "Cargando",
   "coreNotificationPrimerTitle": "Activa las notificaciones",
   "coreNotificationPrimerBody": "Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.",
   "coreNotificationPrimerEnable": "Activar notificaciones",
@@ -548,9 +574,9 @@
     }
   },
   "reminderActivityChannel": "Actividad del hogar",
-  "debtsEmptyTitle": "¡Libres de deudas!",
-  "debtsEmptyDescription": "No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.",
-  "debtsEmptyAction": "+ Agregar una deuda",
+  "debtsEmptyTitle": "No deben nada.",
+  "debtsEmptyDescription": "Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.",
+  "debtsEmptyAction": "Agregar una deuda",
   "debtsFreeDateLabel": "Libres de deudas en",
   "@debtsFreeDateLabel": {
     "description": "Banner caption; the projected month is shown below it."
@@ -642,9 +668,9 @@
   },
   "debtsPaidInstallments": "Cuotas pagadas",
   "savingsGoalsTotalSaved": "Total ahorrado",
-  "savingsGoalsEmptyTitle": "Aún no tienes metas",
-  "savingsGoalsEmptyDescription": "Crea una meta de ahorro para llevarle el pulso con tu pareja.",
-  "savingsGoalsEmptyAction": "+ Nueva meta",
+  "savingsGoalsEmptyTitle": "Todavía no hay metas.",
+  "savingsGoalsEmptyDescription": "Un viaje, un colchón, un carro: pónganle cifra y fecha, y aquí verán cuánto les falta y cuánto apartar cada mes.",
+  "savingsGoalsEmptyAction": "Crear una meta",
   "savingsGoalsChallengeLink": "Reto de ahorro",
   "@savingsGoalsChallengeLink": {
     "description": "Link to the savings challenge screen."
@@ -699,12 +725,12 @@
     "description": "Effective annual interest rate."
   },
   "investmentsTitle": "Inversiones",
-  "investmentsEmptyTitle": "Aún no hay inversiones",
+  "investmentsEmptyTitle": "Todavía no hay inversiones.",
   "investmentsEmptyDescription": "Agrega tu CDT, fondo o cripto para llevarle el pulso a tu portafolio.",
   "@investmentsEmptyDescription": {
     "description": "CDT = certificado de depósito a término (a CD)."
   },
-  "investmentsEmptyAction": "+ Nueva inversión",
+  "investmentsEmptyAction": "Agregar una inversión",
   "investmentsKindFixedIncome": "Renta fija",
   "investmentsKindVariableIncome": "Renta variable",
   "investmentsKindHighRisk": "Alto riesgo",
@@ -858,18 +884,25 @@
     }
   },
   "transactionsClearSearch": "Limpiar búsqueda",
-  "transactionsEmptyTitle": "Aún no hay movimientos",
-  "transactionsEmptyTitleMonth": "Sin movimientos en {month}",
-  "@transactionsEmptyTitleMonth": {
+  "transactionsEmptyTitle": "{month} está en blanco.",
+  "@transactionsEmptyTitle": {
     "placeholders": {
       "month": {
         "type": "String"
       }
     }
   },
-  "transactionsEmptyDescription": "Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.",
-  "transactionsEmptyDescriptionMonth": "No se registró ningún ingreso ni gasto este mes.",
-  "transactionsEmptyAction": "+ Agregar el primero",
+  "transactionsEmptyDescription": "Lo primero que anoten aparece aquí, con quién lo pagó. Los fijos del mes se anotan solos el día que toca.",
+  "transactionsEmptyDescriptionMonth": "Ese mes no se anotó nada. Si algo quedó por fuera, todavía se puede anotar con su fecha.",
+  "transactionsEmptyAction": "Anotar el primero",
+  "transactionsSeeMonth": "Ver {month}",
+  "@transactionsSeeMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
   "transactionsRecurringBills": "Fijos",
   "transactionsNotes": "Notas",
   "transactionsSearchHint": "Buscar descripción, categoría, monto o #etiqueta",
@@ -912,13 +945,13 @@
   "@transfersDeletedAccount": {
     "description": "Shown in place of the name of an account that no longer exists."
   },
-  "transfersEmptyTitle": "Aún no hay transferencias",
-  "transfersEmptyDescription": "Los movimientos de dinero entre tus propias cuentas aparecerán aquí.",
-  "transfersEmptyAction": "+ Pasar plata",
+  "transfersEmptyTitle": "Todavía no han pasado plata.",
+  "transfersEmptyDescription": "Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.",
+  "transfersEmptyAction": "Pasar plata",
   "accountsTitle": "Cuentas",
-  "accountsEmptyTitle": "Aún no hay cuentas",
-  "accountsEmptyDescription": "Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.",
-  "accountsEmptyAction": "+ Nueva cuenta",
+  "accountsEmptyTitle": "Todavía no hay cuentas.",
+  "accountsEmptyDescription": "Agreguen el efectivo, el banco o la billetera de donde sale la plata, y aquí verán cuánto tienen disponible.",
+  "accountsEmptyAction": "Agregar una cuenta",
   "accountsTransferBetween": "Pasar entre cuentas",
   "accountsNewTitle": "Nueva cuenta",
   "accountsEditTitle": "Editar cuenta",
@@ -971,9 +1004,9 @@
     "description": "Under a category in the list when what's left of its budget carries into next month."
   },
   "categoriesNoneOfType": "Aún no hay categorías de este tipo. Créala con el +.",
-  "categoriesEmptyTitle": "Aún no hay categorías",
-  "categoriesEmptyDescription": "Crea tu primera categoría para poder registrar movimientos.",
-  "categoriesEmptyAction": "+ Nueva categoría",
+  "categoriesEmptyTitle": "Todavía no hay categorías.",
+  "categoriesEmptyDescription": "Cada movimiento va en una categoría: creen la primera para empezar a anotar.",
+  "categoriesEmptyAction": "Crear una categoría",
   "categoriesNewTitle": "Nueva categoría",
   "categoriesEditTitle": "Editar categoría",
   "categoriesPreview": "Vista previa",
@@ -1099,9 +1132,9 @@
     "description": "Follows recurringBillsCommittedCount after ' · ', lowercase."
   },
   "recurringBillsAutoNote": "Se anotan solos en Movimientos el día que les toca.",
-  "recurringBillsEmptyTitle": "Aún no hay fijos",
+  "recurringBillsEmptyTitle": "Todavía no hay fijos.",
   "recurringBillsEmptyDescription": "Programa el arriendo, los servicios o el sueldo para que se anoten solos el día que les toca.",
-  "recurringBillsEmptyAction": "+ Nuevo fijo",
+  "recurringBillsEmptyAction": "Agregar un fijo",
   "recurringBillsStatusPaused": "En pausa",
   "@recurringBillsStatusPaused": {
     "description": "Under a paused recurring item in the list, instead of its schedule."
@@ -1232,7 +1265,9 @@
   "@notificationsUnread": {
     "description": "Screen-reader label for the violet dot after an unread notification's title."
   },
-  "notificationsEmpty": "Aún no hay avisos. Aquí llegan los pagos que se acercan, las metas y lo que se pasa del presupuesto.",
+  "notificationsEmpty": "Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.",
+  "notificationsEmptyTitle": "Todo tranquilo.",
+  "notificationsEmptyAction": "Elegir qué avisar",
   "notificationsMinutesAgo": "hace {minutes} min",
   "@notificationsMinutesAgo": {
     "placeholders": {

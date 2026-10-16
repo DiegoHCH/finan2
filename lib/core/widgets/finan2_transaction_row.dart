@@ -18,6 +18,7 @@ class Finan2TransactionRow extends StatelessWidget {
     required this.amountText,
     required this.amountColor,
     this.tags = const [],
+    this.pendingLabel,
     this.onTap,
     super.key,
   });
@@ -33,6 +34,10 @@ class Finan2TransactionRow extends StatelessWidget {
 
   /// Shown after the sub-label as small `.tag` pills, without the «#».
   final List<String> tags;
+
+  /// The `.pend` mark - «por enviar» - while the movement is only on this
+  /// device and the server hasn't confirmed it yet.
+  final String? pendingLabel;
   final VoidCallback? onTap;
 
   @override
@@ -86,6 +91,10 @@ class Finan2TransactionRow extends StatelessWidget {
                         const SizedBox(width: 6),
                         Flexible(child: _Tag('#$tag')),
                       ],
+                      if (pendingLabel case final pending?) ...[
+                        const SizedBox(width: 6),
+                        Finan2PendingMark(pending),
+                      ],
                     ],
                   ),
                 ],
@@ -127,4 +136,53 @@ class _Tag extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The `.pend` mark: faint type in a dashed outline - not final yet.
+class Finan2PendingMark extends StatelessWidget {
+  const Finan2PendingMark(this.label, {super.key});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    return CustomPaint(
+      painter: _DashedOutline(colors.line),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+        child: Text(
+          label,
+          maxLines: 1,
+          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: colors.inkFaint),
+        ),
+      ),
+    );
+  }
+}
+
+class _DashedOutline extends CustomPainter {
+  _DashedOutline(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    final outline = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(6)).deflate(0.5),
+      );
+    for (final metric in outline.computeMetrics()) {
+      for (var at = 0.0; at < metric.length; at += 5) {
+        canvas.drawPath(metric.extractPath(at, at + 3), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedOutline oldDelegate) => oldDelegate.color != color;
 }

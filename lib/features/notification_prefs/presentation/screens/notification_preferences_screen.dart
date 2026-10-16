@@ -7,6 +7,7 @@ import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_set_row.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
@@ -55,7 +56,8 @@ class NotificationPreferencesScreen extends ConsumerWidget {
             ),
             Expanded(
               child: prefsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(rows: 5),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (prefs) {
                   Future<void> update(NotificationPrefs Function(NotificationPrefs) change) =>

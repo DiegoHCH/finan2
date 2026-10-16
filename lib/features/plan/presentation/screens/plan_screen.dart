@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_segmented_control.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../annual_summary/presentation/screens/annual_summary_screen.dart';
 import '../../../budget/presentation/widgets/budget_section.dart';
+import '../../../connection/presentation/widgets/offline_banner.dart';
 import '../../../debts/presentation/screens/edit_debt_screen.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../debts/presentation/widgets/debts_section.dart';
@@ -90,6 +91,7 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                 onTap: () => _open(const AnnualSummaryScreen()),
               ),
             ),
+            const OfflineBanner(),
             Padding(
               padding: const EdgeInsets.fromLTRB(Finan2Space.lg, 0, Finan2Space.lg, Finan2Space.md),
               child: Finan2SegmentedControl<PlanSection>(

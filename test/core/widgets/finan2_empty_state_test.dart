@@ -5,50 +5,76 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/pump_app.dart';
 
 void main() {
-  testWidgets('renders title, description, and action label', (tester) async {
-    await pumpFinan2(
-      tester,
-      Finan2EmptyState(
-        icon: Icons.receipt_long_outlined,
-        title: 'Aún no hay movimientos',
-        description: 'Registra tu primer ingreso o gasto del mes.',
-        actionLabel: '+ Agregar el primero',
-        onAction: () {},
-      ),
-    );
-    expect(find.text('Aún no hay movimientos'), findsOneWidget);
-    expect(find.text('Registra tu primer ingreso o gasto del mes.'), findsOneWidget);
-    expect(find.text('+ Agregar el primero'), findsOneWidget);
-  });
-
-  testWidgets('calls onAction when the button is tapped', (tester) async {
+  testWidgets('says what goes here and offers the action', (tester) async {
     var tapped = false;
     await pumpFinan2(
       tester,
       Finan2EmptyState(
-        icon: Icons.savings_outlined,
-        title: 'Aún no tienes metas',
-        description: 'Crea tu primera meta.',
-        actionLabel: '+ Nueva meta',
+        icon: Icons.edit_outlined,
+        title: 'Octubre está en blanco.',
+        description: 'Lo primero que anoten aparece aquí.',
+        actionLabel: 'Anotar el primero',
         onAction: () => tapped = true,
       ),
     );
-    await tester.tap(find.text('+ Nueva meta'));
+    expect(find.text('Octubre está en blanco.'), findsOneWidget);
+    expect(find.text('Lo primero que anoten aparece aquí.'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Anotar el primero'));
     expect(tapped, isTrue);
   });
 
-  testWidgets('renders fine in the celebratory gold variant too', (tester) async {
+  testWidgets('the second way out is a quiet link', (tester) async {
+    var tapped = false;
     await pumpFinan2(
       tester,
       Finan2EmptyState(
-        icon: Icons.celebration_outlined,
-        title: '¡Libres de deudas!',
-        description: 'No tienes deudas registradas.',
-        actionLabel: '+ Agregar una deuda',
-        gold: true,
+        icon: Icons.edit_outlined,
+        title: 'Octubre está en blanco.',
+        description: '…',
+        actionLabel: 'Anotar el primero',
+        onAction: () {},
+        secondaryLabel: 'Ver septiembre',
+        onSecondary: () => tapped = true,
+      ),
+    );
+    await tester.tap(find.widgetWithText(TextButton, 'Ver septiembre'));
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('an empty that celebrates has no hurry: a quiet button', (tester) async {
+    await pumpFinan2(
+      tester,
+      Finan2EmptyState(
+        icon: Icons.check_rounded,
+        title: 'No deben nada.',
+        description: 'Si llega una tarjeta o un crédito, agréguenlo aquí.',
+        actionLabel: 'Agregar una deuda',
+        celebrates: true,
         onAction: () {},
       ),
     );
-    expect(find.text('¡Libres de deudas!'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Agregar una deuda'), findsOneWidget);
+    expect(find.byType(FilledButton), findsNothing);
+  });
+
+  testWidgets('fits in a short space by scrolling', (tester) async {
+    await pumpFinan2(
+      tester,
+      SizedBox(
+        height: 160,
+        child: Finan2EmptyState(
+          icon: Icons.vpn_key_outlined,
+          title: 'Este teléfono no tiene la llave de la casa.',
+          description: 'Los montos se cifran con una llave que solo vive en sus teléfonos.',
+          actionLabel: 'Usar la frase de 12 palabras',
+          onAction: () {},
+          secondaryLabel: 'Pedirle el código a Vale',
+          secondaryAsButton: true,
+          onSecondary: () {},
+        ),
+      ),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.widgetWithText(OutlinedButton, 'Pedirle el código a Vale'), findsOneWidget);
   });
 }

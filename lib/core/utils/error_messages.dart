@@ -26,6 +26,10 @@ String friendlyErrorMessage(Object? error) {
         return l10n.errorUnknownWithCode(error.code);
     }
   }
+  // Firestore couldn't reach the server - a movement's write needs it.
+  if (error is FirebaseException && error.code == 'unavailable') {
+    return l10n.errorNetwork;
+  }
   if (error is HouseholdNotFoundException) {
     return l10n.errorInviteNotFound;
   }

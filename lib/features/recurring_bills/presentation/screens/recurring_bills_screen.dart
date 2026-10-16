@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
@@ -51,12 +53,14 @@ class RecurringBillsScreen extends ConsumerWidget {
             ),
             Expanded(
               child: billsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (bills) {
                   if (bills.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.autorenew,
+                      tone: Finan2Tone.of(context, Finan2Palette.servicios),
                       title: l10n.recurringBillsEmptyTitle,
                       description: l10n.recurringBillsEmptyDescription,
                       actionLabel: l10n.recurringBillsEmptyAction,

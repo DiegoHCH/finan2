@@ -66,9 +66,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get budgetNextMonth => 'Mes siguiente';
 
   @override
-  String get budgetEmpty => 'Aún no has presupuestado ninguna categoría.';
-
-  @override
   String get budgetAddCategory => '+ Presupuestar otra categoría';
 
   @override
@@ -92,6 +89,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get budgetCopying => 'Copiando…';
+
+  @override
+  String budgetEmptyTitle(String month) {
+    return '$month todavía no tiene plan.';
+  }
+
+  @override
+  String get budgetEmptyDescription =>
+      'Pongan cuánto quieren gastar en cada categoría y aquí verán lo que les queda de cada una.';
+
+  @override
+  String get budgetEmptyAction => 'Planear una categoría';
+
+  @override
+  String budgetEmptyCopy(String month) {
+    return 'Copiar el plan de $month';
+  }
 
   @override
   String budgetCarryIncluded(String amount) {
@@ -120,6 +134,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get dashboardNoCategorizedSpending => 'No hay gastos categorizados este mes.';
+
+  @override
+  String get dashboardDecrypting => 'Descifrando los montos en este teléfono…';
 
   @override
   String dashboardGreeting(String name) {
@@ -665,17 +682,31 @@ class AppLocalizationsEs extends AppLocalizations {
   String get corePeriodBackToToday => 'Volver a hoy';
 
   @override
-  String get coreGoToSettings => 'Ir a Ajustes';
-
-  @override
-  String get coreMissingKeyInline => 'Falta la llave de este hogar para ver estos montos.';
-
-  @override
-  String get coreMissingKeyTitle => 'Falta la llave de este hogar';
+  String get coreMissingKeyTitle => 'Este teléfono no tiene la llave de la casa.';
 
   @override
   String get coreMissingKeyBody =>
-      'Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.';
+      'Los montos se cifran con una llave que solo vive en sus teléfonos. Sin ella, este no puede abrir los movimientos ni anotar nuevos.';
+
+  @override
+  String get coreMissingKeyUsePhrase => 'Usar la frase de 12 palabras';
+
+  @override
+  String coreMissingKeyAskPartner(String name) {
+    return 'Pedirle el código a $name';
+  }
+
+  @override
+  String get coreMissingKeyPasteCode => 'Pegar el código de la llave';
+
+  @override
+  String get coreOffline => 'Sin conexión. Ves lo último que llegó; para anotar hace falta señal.';
+
+  @override
+  String get coreUnsynced => 'por enviar';
+
+  @override
+  String get coreLoading => 'Cargando';
 
   @override
   String get coreNotificationPrimerTitle => 'Activa las notificaciones';
@@ -818,14 +849,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reminderActivityChannel => 'Actividad del hogar';
 
   @override
-  String get debtsEmptyTitle => '¡Libres de deudas!';
+  String get debtsEmptyTitle => 'No deben nada.';
 
   @override
   String get debtsEmptyDescription =>
-      'No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.';
+      'Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.';
 
   @override
-  String get debtsEmptyAction => '+ Agregar una deuda';
+  String get debtsEmptyAction => 'Agregar una deuda';
 
   @override
   String get debtsFreeDateLabel => 'Libres de deudas en';
@@ -934,14 +965,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savingsGoalsTotalSaved => 'Total ahorrado';
 
   @override
-  String get savingsGoalsEmptyTitle => 'Aún no tienes metas';
+  String get savingsGoalsEmptyTitle => 'Todavía no hay metas.';
 
   @override
   String get savingsGoalsEmptyDescription =>
-      'Crea una meta de ahorro para llevarle el pulso con tu pareja.';
+      'Un viaje, un colchón, un carro: pónganle cifra y fecha, y aquí verán cuánto les falta y cuánto apartar cada mes.';
 
   @override
-  String get savingsGoalsEmptyAction => '+ Nueva meta';
+  String get savingsGoalsEmptyAction => 'Crear una meta';
 
   @override
   String get savingsGoalsChallengeLink => 'Reto de ahorro';
@@ -1023,14 +1054,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get investmentsTitle => 'Inversiones';
 
   @override
-  String get investmentsEmptyTitle => 'Aún no hay inversiones';
+  String get investmentsEmptyTitle => 'Todavía no hay inversiones.';
 
   @override
   String get investmentsEmptyDescription =>
       'Agrega tu CDT, fondo o cripto para llevarle el pulso a tu portafolio.';
 
   @override
-  String get investmentsEmptyAction => '+ Nueva inversión';
+  String get investmentsEmptyAction => 'Agregar una inversión';
 
   @override
   String get investmentsKindFixedIncome => 'Renta fija';
@@ -1202,23 +1233,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsClearSearch => 'Limpiar búsqueda';
 
   @override
-  String get transactionsEmptyTitle => 'Aún no hay movimientos';
-
-  @override
-  String transactionsEmptyTitleMonth(String month) {
-    return 'Sin movimientos en $month';
+  String transactionsEmptyTitle(String month) {
+    return '$month está en blanco.';
   }
 
   @override
   String get transactionsEmptyDescription =>
-      'Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.';
+      'Lo primero que anoten aparece aquí, con quién lo pagó. Los fijos del mes se anotan solos el día que toca.';
 
   @override
   String get transactionsEmptyDescriptionMonth =>
-      'No se registró ningún ingreso ni gasto este mes.';
+      'Ese mes no se anotó nada. Si algo quedó por fuera, todavía se puede anotar con su fecha.';
 
   @override
-  String get transactionsEmptyAction => '+ Agregar el primero';
+  String get transactionsEmptyAction => 'Anotar el primero';
+
+  @override
+  String transactionsSeeMonth(String month) {
+    return 'Ver $month';
+  }
 
   @override
   String get transactionsRecurringBills => 'Fijos';
@@ -1286,27 +1319,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transfersDeletedAccount => 'Cuenta eliminada';
 
   @override
-  String get transfersEmptyTitle => 'Aún no hay transferencias';
+  String get transfersEmptyTitle => 'Todavía no han pasado plata.';
 
   @override
   String get transfersEmptyDescription =>
-      'Los movimientos de dinero entre tus propias cuentas aparecerán aquí.';
+      'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.';
 
   @override
-  String get transfersEmptyAction => '+ Pasar plata';
+  String get transfersEmptyAction => 'Pasar plata';
 
   @override
   String get accountsTitle => 'Cuentas';
 
   @override
-  String get accountsEmptyTitle => 'Aún no hay cuentas';
+  String get accountsEmptyTitle => 'Todavía no hay cuentas.';
 
   @override
   String get accountsEmptyDescription =>
-      'Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.';
+      'Agreguen el efectivo, el banco o la billetera de donde sale la plata, y aquí verán cuánto tienen disponible.';
 
   @override
-  String get accountsEmptyAction => '+ Nueva cuenta';
+  String get accountsEmptyAction => 'Agregar una cuenta';
 
   @override
   String get accountsTransferBetween => 'Pasar entre cuentas';
@@ -1382,14 +1415,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get categoriesNoneOfType => 'Aún no hay categorías de este tipo. Créala con el +.';
 
   @override
-  String get categoriesEmptyTitle => 'Aún no hay categorías';
+  String get categoriesEmptyTitle => 'Todavía no hay categorías.';
 
   @override
   String get categoriesEmptyDescription =>
-      'Crea tu primera categoría para poder registrar movimientos.';
+      'Cada movimiento va en una categoría: creen la primera para empezar a anotar.';
 
   @override
-  String get categoriesEmptyAction => '+ Nueva categoría';
+  String get categoriesEmptyAction => 'Crear una categoría';
 
   @override
   String get categoriesNewTitle => 'Nueva categoría';
@@ -1560,14 +1593,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recurringBillsAutoNote => 'Se anotan solos en Movimientos el día que les toca.';
 
   @override
-  String get recurringBillsEmptyTitle => 'Aún no hay fijos';
+  String get recurringBillsEmptyTitle => 'Todavía no hay fijos.';
 
   @override
   String get recurringBillsEmptyDescription =>
       'Programa el arriendo, los servicios o el sueldo para que se anoten solos el día que les toca.';
 
   @override
-  String get recurringBillsEmptyAction => '+ Nuevo fijo';
+  String get recurringBillsEmptyAction => 'Agregar un fijo';
 
   @override
   String get recurringBillsStatusPaused => 'En pausa';
@@ -1738,7 +1771,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get notificationsEmpty =>
-      'Aún no hay avisos. Aquí llegan los pagos que se acercan, las metas y lo que se pasa del presupuesto.';
+      'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.';
+
+  @override
+  String get notificationsEmptyTitle => 'Todo tranquilo.';
+
+  @override
+  String get notificationsEmptyAction => 'Elegir qué avisar';
 
   @override
   String notificationsMinutesAgo(int minutes) {

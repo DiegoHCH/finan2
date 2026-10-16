@@ -30,7 +30,7 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
 
   // A movement from the Movimientos tab.
   await tap(tester, navTab('Movimientos'));
-  await tap(tester, find.text('+ Agregar el primero'));
+  await tap(tester, find.text('Anotar el primero'));
   await tester.enterText(find.byType(TextField).first, '120000');
   await tap(tester, find.text('Mercado'));
   await tap(tester, find.text('Guardar'));

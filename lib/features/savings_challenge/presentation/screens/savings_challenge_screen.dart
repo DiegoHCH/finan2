@@ -10,6 +10,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_figure.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_notice.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/savings_challenge_model.dart';
@@ -126,7 +127,8 @@ class _SavingsChallengeScreenState extends ConsumerState<SavingsChallengeScreen>
             ),
             Expanded(
               child: challengeAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(rows: 3),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (challenge) {
                   if (challenge == null) {

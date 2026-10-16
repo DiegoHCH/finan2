@@ -15,6 +15,7 @@ import 'package:finan2/features/transactions/presentation/screens/transactions_s
 import 'package:finan2/features/transactions/presentation/viewmodels/transaction_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/pump_screen.dart';
@@ -83,17 +84,20 @@ void main() {
     });
 
     await pumpScreen(tester, app, const PlanScreen());
-    expect(find.text('Este mes aún no tiene presupuesto'), findsOneWidget);
+    final previous = month.plusMonths(-1);
+    final previousName = DateFormat.MMMM('es').format(DateTime(previous.year, previous.month));
+    expect(find.text('${month.monthLabel} todavía no tiene plan.'), findsOneWidget);
+    expect(find.text('Copiar el plan de $previousName'), findsOneWidget);
   });
 
   testWidgets('Deudas and Metas show their empty states', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
 
     await pumpScreen(tester, app, const Scaffold(body: DebtsSection()));
-    expect(find.text('¡Libres de deudas!'), findsOneWidget);
+    expect(find.text('No deben nada.'), findsOneWidget);
 
     await pumpScreen(tester, app, const Scaffold(body: GoalsSection()));
-    expect(find.text('Aún no tienes metas'), findsOneWidget);
+    expect(find.text('Todavía no hay metas.'), findsOneWidget);
   });
 
   testWidgets('a phone in English gets the English texts', (tester) async {
@@ -101,7 +105,7 @@ void main() {
 
     await pumpScreen(tester, app, const Scaffold(body: DebtsSection()), locale: const Locale('en'));
 
-    expect(find.text('Debt-free!'), findsOneWidget);
+    expect(find.text('You owe nothing.'), findsOneWidget);
   });
 
   testWidgets('Inicio and Ajustes open on an empty household', (tester) async {
