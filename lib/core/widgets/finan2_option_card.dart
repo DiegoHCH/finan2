@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/finan2_tone.dart';
 
 /// One of a few big choices, the redesign's `.opt`: an icon tile, title and
 /// a line under it. The chosen one takes the violet border on the accent
@@ -12,6 +13,7 @@ class Finan2OptionCard extends StatelessWidget {
     required this.subtitle,
     required this.selected,
     required this.onTap,
+    this.tone,
     super.key,
   });
 
@@ -21,11 +23,15 @@ class Finan2OptionCard extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  /// The icon's color and tile; the accent's by default.
+  final Finan2Tone? tone;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final surface = Theme.of(context).colorScheme.surface;
     final accent = Theme.of(context).colorScheme.primary;
+    final tone = this.tone ?? Finan2Tone(accent, colors.brandTint);
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(18),
       side: BorderSide(color: selected ? accent : Colors.transparent, width: 1.5),
@@ -50,11 +56,11 @@ class Finan2OptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     // On the tint, the tile turns to the sheet so it still
                     // stands out.
-                    color: selected ? surface : colors.brandTint,
+                    color: selected ? surface : tone.tint,
                     borderRadius: BorderRadius.circular(13),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(icon, size: 20, color: accent),
+                  child: Icon(icon, size: 20, color: tone.color),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

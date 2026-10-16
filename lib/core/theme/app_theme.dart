@@ -103,6 +103,14 @@ abstract class Finan2Palette {
   /// Casa's teal: the year's bars are drawn in it (`.ybars b`).
   static const casa = Color(0xFF0F766E);
 
+  /// The other category hues of the mockup (`--c-*`), for things that
+  /// aren't a category but borrow one's color - Ajustes' rows.
+  static const mercado = Color(0xFF65A30D);
+  static const transporte = Color(0xFFB45309);
+  static const ocio = Color(0xFFDB2777);
+  static const servicios = Color(0xFF475569);
+  static const ahorro = Color(0xFF16A34A);
+
   /// Goals and debts store no color, so each takes one by its place in the
   /// list - for goals starting from ahorro's green, for debts from
   /// transporte's amber (never red: red only means «se pasó»).

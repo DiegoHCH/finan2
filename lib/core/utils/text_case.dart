@@ -11,3 +11,8 @@ String toTitleCase(String input) {
       .map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1).toLowerCase())
       .join(' ');
 }
+
+/// [input] with only its first letter up - «agosto – octubre 2026» ->
+/// «Agosto – octubre 2026».
+String capitalizeFirst(String input) =>
+    input.isEmpty ? input : '${input[0].toUpperCase()}${input.substring(1)}';
