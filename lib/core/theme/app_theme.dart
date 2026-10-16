@@ -122,6 +122,29 @@ abstract class Finan2Palette {
     Color(0xFF65A30D),
   ];
 
+  /// Accounts store no color either: each takes one from its ID, so it's
+  /// recognised in Anotar and in Pasar. The category hues, without the
+  /// violet of the action, the two members' blue and orange, or red.
+  static const accountSwatches = <Color>[
+    Color(0xFF0F766E),
+    Color(0xFF475569),
+    Color(0xFF65A30D),
+    Color(0xFF16A34A),
+    Color(0xFFDB2777),
+    Color(0xFFB45309),
+  ];
+
+  /// An investment's tile by kind: fixed income in casa's teal, variable in
+  /// ahorro's green, high risk in ocio's pink.
+  static const fixedIncome = casa;
+  static const variableIncome = Color(0xFF16A34A);
+  static const highRisk = Color(0xFFDB2777);
+
+  /// The card preview (`.cardvis`): the only «card» in the app, a violet
+  /// face with white type, a shade deeper in dark mode.
+  static const cardFaceLight = <Color>[Color(0xFFA78BFA), Color(0xFF8B5CF6), Color(0xFF6D28D9)];
+  static const cardFaceDark = <Color>[Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6)];
+
   /// Colores que se ofrecen al crear una categoría. Se guardan en Firestore
   /// tal cual, así que sirven en los dos temas: mercado, casa, transporte,
   /// ocio, servicios, ahorro, más el violeta, el azul y el naranja.

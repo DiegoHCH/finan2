@@ -90,6 +90,7 @@ class Finan2HeadAction extends StatelessWidget {
     required this.onTap,
     this.badge = 0,
     this.highlighted = false,
+    this.filled = false,
     super.key,
   });
 
@@ -101,10 +102,19 @@ class Finan2HeadAction extends StatelessWidget {
   /// Draws the icon in the accent - something behind it is on.
   final bool highlighted;
 
+  /// The accent tile with the icon on it - the screen's one action, like
+  /// the «+» of Cuentas.
+  final bool filled;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final accent = Theme.of(context).colorScheme.primary;
+    final (background, foreground) = filled
+        ? (accent, colors.onAccent)
+        : highlighted
+        ? (colors.brandTint, accent)
+        : (colors.surfaceAlt, colors.inkSoft);
     return Tooltip(
       message: tooltip,
       child: Semantics(
@@ -116,17 +126,14 @@ class Finan2HeadAction extends StatelessWidget {
           child: Ink(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(
-              color: highlighted ? colors.brandTint : colors.surfaceAlt,
-              borderRadius: BorderRadius.circular(12),
-            ),
+            decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(12)),
             child: Center(
               child: Badge(
                 isLabelVisible: badge > 0,
                 label: Text('$badge'),
                 backgroundColor: accent,
                 textColor: colors.onAccent,
-                child: Icon(icon, size: 20, color: highlighted ? accent : colors.inkSoft),
+                child: Icon(icon, size: 20, color: foreground),
               ),
             ),
           ),

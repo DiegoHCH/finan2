@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../theme/app_theme.dart';
+import 'finan2_amount_input.dart';
 
 /// A labeled text field matching the design mockup's `.field`: a bordered
 /// box with a small uppercase label above the value, instead of Material's
@@ -16,6 +18,7 @@ class Finan2Field extends StatefulWidget {
     this.validator,
     this.autofillHints,
     this.maxLines = 1,
+    this.moneySymbol,
     super.key,
   });
 
@@ -28,12 +31,30 @@ class Finan2Field extends StatefulWidget {
   final Iterable<String>? autofillHints;
   final int maxLines;
 
+  /// Makes it a money field: digits grouped as they're typed, after this
+  /// currency sign. Read it with [Finan2AmountInput.parse].
+  final String? moneySymbol;
+
   @override
   State<Finan2Field> createState() => _Finan2FieldState();
 }
 
 class _Finan2FieldState extends State<Finan2Field> {
   late bool _obscured = widget.obscureText;
+  late final _money = widget.moneySymbol == null
+      ? null
+      : Finan2GroupedDigitsFormatter(NumberFormat.decimalPattern(Intl.getCurrentLocale()));
+
+  @override
+  void initState() {
+    super.initState();
+    // A prefilled amount (editing) comes in as plain digits.
+    if (_money case final money?) {
+      final value = widget.controller.value;
+      final grouped = money.formatEditUpdate(value, value);
+      if (grouped.text != value.text) widget.controller.value = grouped;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +82,8 @@ class _Finan2FieldState extends State<Finan2Field> {
           TextFormField(
             controller: widget.controller,
             obscureText: _obscured,
-            keyboardType: widget.keyboardType,
+            keyboardType: _money != null ? TextInputType.number : widget.keyboardType,
+            inputFormatters: [?_money],
             textCapitalization: widget.textCapitalization,
             validator: widget.validator,
             autofillHints: widget.autofillHints,
@@ -76,6 +98,12 @@ class _Finan2FieldState extends State<Finan2Field> {
               errorBorder: InputBorder.none,
               focusedErrorBorder: InputBorder.none,
               contentPadding: const EdgeInsets.only(top: 3),
+              prefixText: widget.moneySymbol,
+              prefixStyle: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: colors.inkFaint,
+              ),
               suffixIconConstraints: const BoxConstraints(),
               suffixIcon: widget.obscureText
                   ? Padding(

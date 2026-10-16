@@ -33,7 +33,7 @@ class Finan2AmountInput extends StatefulWidget {
 }
 
 class _Finan2AmountInputState extends State<Finan2AmountInput> {
-  late final _formatter = _GroupedDigitsFormatter(
+  late final _formatter = Finan2GroupedDigitsFormatter(
     NumberFormat.decimalPattern(Intl.getCurrentLocale()),
   );
 
@@ -86,9 +86,10 @@ class _Finan2AmountInputState extends State<Finan2AmountInput> {
 }
 
 /// Keeps only digits and groups them with [format]'s separator, leaving the
-/// cursor after the same number of digits it was after.
-class _GroupedDigitsFormatter extends TextInputFormatter {
-  _GroupedDigitsFormatter(this.format);
+/// cursor after the same number of digits it was after. Shared with
+/// [Finan2Field]'s money fields.
+class Finan2GroupedDigitsFormatter extends TextInputFormatter {
+  Finan2GroupedDigitsFormatter(this.format);
 
   final NumberFormat format;
 
