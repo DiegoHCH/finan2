@@ -155,25 +155,83 @@ class AppLocalizationsEs extends AppLocalizations {
   String get annualSummarySpendByMonth => 'Gasto por mes';
 
   @override
-  String get dashboardHousehold => 'Hogar';
-
-  @override
-  String get dashboardNetWorth => 'Patrimonio neto';
-
-  @override
-  String get dashboardNetWorthFormula => 'Cuentas + ahorros + inversiones − deudas';
-
-  @override
-  String get dashboardIncome => 'Ingresos';
-
-  @override
-  String get dashboardExpenses => 'Gastos';
-
-  @override
-  String get dashboardWhereMoneyGoes => 'A dónde va el dinero';
-
-  @override
   String get dashboardNoCategorizedSpending => 'No hay gastos categorizados este mes.';
+
+  @override
+  String dashboardGreeting(String name) {
+    return 'Hola, $name';
+  }
+
+  @override
+  String dashboardLeftOfPlan(String month) {
+    return 'Les queda del plan de $month';
+  }
+
+  @override
+  String dashboardOverPlan(String month) {
+    return 'Se pasaron del plan de $month';
+  }
+
+  @override
+  String dashboardSpentIn(String month) {
+    return 'Gastado en $month';
+  }
+
+  @override
+  String dashboardOfPlan(String amount) {
+    return 'de $amount';
+  }
+
+  @override
+  String dashboardDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'faltan $count días',
+      one: 'falta 1 día',
+      zero: 'último día',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dashboardPerDay(String amount) {
+    return 'unos $amount al día';
+  }
+
+  @override
+  String get dashboardNoPlan => 'Sin plan este mes';
+
+  @override
+  String dashboardIncomeIn(String amount) {
+    return 'entraron $amount';
+  }
+
+  @override
+  String get dashboardLegendLeft => 'Queda';
+
+  @override
+  String get dashboardLegendOther => 'Otras';
+
+  @override
+  String get dashboardNoticeSee => 'Ver';
+
+  @override
+  String get dashboardWhoPaid => 'Quién pagó este mes';
+
+  @override
+  String dashboardMovementCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos',
+      one: '1 movimiento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboardRecent => 'Últimos movimientos';
 
   @override
   String get savingsChallengeTitle => 'Reto de ahorro';
@@ -1210,13 +1268,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsTitle => 'Movimientos';
 
   @override
-  String get transactionsNewTitle => 'Nuevo movimiento';
+  String get transactionsNewTitle => 'Anotar';
 
   @override
   String get transactionsEditTitle => 'Editar movimiento';
 
   @override
-  String get transactionsDelete => 'Eliminar movimiento';
+  String get transactionsDetailOver => 'Movimiento';
+
+  @override
+  String get transactionsEdit => 'Editar';
+
+  @override
+  String get transactionsDelete => 'Borrar movimiento';
 
   @override
   String get transactionsDeleted => 'Movimiento borrado';
@@ -1236,7 +1300,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsCreditCard => 'Tarjeta de crédito';
 
   @override
+  String get transactionsTypeTransfer => 'Pasar';
+
+  @override
+  String get transactionsTransferNeedsTwoAccounts =>
+      'Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.';
+
+  @override
   String get transactionsIncomplete => 'Completa el monto, la categoría y la cuenta.';
+
+  @override
+  String get transactionsIncompleteTitle => 'Falta un dato';
+
+  @override
+  String transactionsDateToday(String date) {
+    return 'Hoy, $date';
+  }
 
   @override
   String get transactionsNoCategoriesOfType =>
@@ -1264,22 +1343,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsPaidBy => 'Pagó';
 
   @override
-  String get transactionsLoggedBy => 'Registrado por';
-
-  @override
-  String transactionsNet(String amount) {
-    return '$amount neto';
-  }
-
-  @override
-  String transactionsNetInYear(String amount, int year) {
-    return '$amount neto en $year';
-  }
-
-  @override
-  String transactionsFiltered(String text) {
-    return '$text · filtrado';
-  }
+  String get transactionsLoggedBy => 'Lo anotó';
 
   @override
   String get transactionsPreviousMonth => 'Mes anterior';
@@ -1288,8 +1352,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsNextMonth => 'Mes siguiente';
 
   @override
+  String transactionsDayToday(String day) {
+    return 'Hoy · $day';
+  }
+
+  @override
+  String transactionsDayYesterday(String day) {
+    return 'Ayer · $day';
+  }
+
+  @override
+  String transactionsResultsTotal(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos',
+      one: '1 movimiento',
+    );
+    return '$_temp0 · $amount';
+  }
+
+  @override
   String transactionsSearchWholeYear(int year) {
-    return 'Buscar en todo $year';
+    return 'Todo $year';
   }
 
   @override
@@ -1334,13 +1419,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsNotes => 'Notas';
 
   @override
-  String get transactionsSearchHint => 'Buscar descripción, categoría o monto';
+  String get transactionsSearchHint => 'Buscar descripción, categoría, monto o #etiqueta';
 
   @override
   String get transactionsFilters => 'Filtros';
 
   @override
-  String get transactionsFilterTitle => 'Filtrar movimientos';
+  String get transactionsFilterTitle => 'Filtrar';
 
   @override
   String get transactionsFilterType => 'Tipo';
@@ -1352,19 +1437,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsFilterTag => 'Etiqueta';
 
   @override
+  String transactionsPaidByChip(String name) {
+    return 'Pagó $name';
+  }
+
+  @override
+  String get transactionsFilterBoth => 'Los dos';
+
+  @override
   String get transactionsFilterClear => 'Limpiar';
 
   @override
-  String get transactionsFilterApply => 'Aplicar';
-
-  @override
-  String get transfersTitle => 'Transferir';
+  String transactionsFilterSee(int count) {
+    return 'Ver $count';
+  }
 
   @override
   String get transfersInvalid => 'Elige un monto y dos cuentas distintas.';
-
-  @override
-  String get transfersAmountLabel => 'Monto a transferir';
 
   @override
   String get transfersFrom => 'Desde';

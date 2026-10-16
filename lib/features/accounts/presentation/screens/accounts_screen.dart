@@ -9,7 +9,7 @@ import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../transfers/presentation/screens/transfer_history_screen.dart';
-import '../../../transfers/presentation/screens/transfer_screen.dart';
+import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../data/account_model.dart';
 import '../viewmodels/account_providers.dart';
 import 'edit_account_screen.dart';
@@ -143,7 +143,10 @@ class AccountsScreen extends ConsumerWidget {
                             if (accounts.length >= 2)
                               TextButton.icon(
                                 onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(builder: (_) => const TransferScreen()),
+                                  MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        const EditTransactionScreen(startWithTransfer: true),
+                                  ),
                                 ),
                                 icon: const Icon(Icons.swap_horiz),
                                 label: Text(l10n.accountsTransferBetween),

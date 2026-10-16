@@ -155,25 +155,83 @@ class AppLocalizationsEn extends AppLocalizations {
   String get annualSummarySpendByMonth => 'Spending by month';
 
   @override
-  String get dashboardHousehold => 'Household';
-
-  @override
-  String get dashboardNetWorth => 'Net worth';
-
-  @override
-  String get dashboardNetWorthFormula => 'Accounts + savings + investments − debts';
-
-  @override
-  String get dashboardIncome => 'Income';
-
-  @override
-  String get dashboardExpenses => 'Expenses';
-
-  @override
-  String get dashboardWhereMoneyGoes => 'Where the money goes';
-
-  @override
   String get dashboardNoCategorizedSpending => 'No categorized spending this month.';
+
+  @override
+  String dashboardGreeting(String name) {
+    return 'Hi, $name';
+  }
+
+  @override
+  String dashboardLeftOfPlan(String month) {
+    return 'Left of the $month plan';
+  }
+
+  @override
+  String dashboardOverPlan(String month) {
+    return 'Over the $month plan by';
+  }
+
+  @override
+  String dashboardSpentIn(String month) {
+    return 'Spent in $month';
+  }
+
+  @override
+  String dashboardOfPlan(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String dashboardDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dashboardPerDay(String amount) {
+    return 'about $amount a day';
+  }
+
+  @override
+  String get dashboardNoPlan => 'No plan this month';
+
+  @override
+  String dashboardIncomeIn(String amount) {
+    return '$amount came in';
+  }
+
+  @override
+  String get dashboardLegendLeft => 'Left';
+
+  @override
+  String get dashboardLegendOther => 'Others';
+
+  @override
+  String get dashboardNoticeSee => 'See';
+
+  @override
+  String get dashboardWhoPaid => 'Who paid this month';
+
+  @override
+  String dashboardMovementCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboardRecent => 'Latest transactions';
 
   @override
   String get savingsChallengeTitle => 'Savings challenge';
@@ -1210,10 +1268,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsTitle => 'Transactions';
 
   @override
-  String get transactionsNewTitle => 'New transaction';
+  String get transactionsNewTitle => 'Add';
 
   @override
   String get transactionsEditTitle => 'Edit transaction';
+
+  @override
+  String get transactionsDetailOver => 'Transaction';
+
+  @override
+  String get transactionsEdit => 'Edit';
 
   @override
   String get transactionsDelete => 'Delete transaction';
@@ -1236,7 +1300,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsCreditCard => 'Credit card';
 
   @override
+  String get transactionsTypeTransfer => 'Move';
+
+  @override
+  String get transactionsTransferNeedsTwoAccounts =>
+      'Moving money needs two accounts. Create them in Settings.';
+
+  @override
   String get transactionsIncomplete => 'Fill in the amount, category and account.';
+
+  @override
+  String get transactionsIncompleteTitle => 'Something is missing';
+
+  @override
+  String transactionsDateToday(String date) {
+    return 'Today, $date';
+  }
 
   @override
   String get transactionsNoCategoriesOfType =>
@@ -1267,29 +1346,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsLoggedBy => 'Logged by';
 
   @override
-  String transactionsNet(String amount) {
-    return '$amount net';
-  }
-
-  @override
-  String transactionsNetInYear(String amount, int year) {
-    return '$amount net in $year';
-  }
-
-  @override
-  String transactionsFiltered(String text) {
-    return '$text · filtered';
-  }
-
-  @override
   String get transactionsPreviousMonth => 'Previous month';
 
   @override
   String get transactionsNextMonth => 'Next month';
 
   @override
+  String transactionsDayToday(String day) {
+    return 'Today · $day';
+  }
+
+  @override
+  String transactionsDayYesterday(String day) {
+    return 'Yesterday · $day';
+  }
+
+  @override
+  String transactionsResultsTotal(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+    );
+    return '$_temp0 · $amount';
+  }
+
+  @override
   String transactionsSearchWholeYear(int year) {
-    return 'Search all of $year';
+    return 'All of $year';
   }
 
   @override
@@ -1333,13 +1418,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsNotes => 'Notes';
 
   @override
-  String get transactionsSearchHint => 'Search description, category or amount';
+  String get transactionsSearchHint => 'Search description, category, amount or #tag';
 
   @override
   String get transactionsFilters => 'Filters';
 
   @override
-  String get transactionsFilterTitle => 'Filter transactions';
+  String get transactionsFilterTitle => 'Filter';
 
   @override
   String get transactionsFilterType => 'Type';
@@ -1351,19 +1436,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsFilterTag => 'Tag';
 
   @override
+  String transactionsPaidByChip(String name) {
+    return 'Paid by $name';
+  }
+
+  @override
+  String get transactionsFilterBoth => 'Both';
+
+  @override
   String get transactionsFilterClear => 'Clear';
 
   @override
-  String get transactionsFilterApply => 'Apply';
-
-  @override
-  String get transfersTitle => 'Transfer';
+  String transactionsFilterSee(int count) {
+    return 'See $count';
+  }
 
   @override
   String get transfersInvalid => 'Enter an amount and two different accounts.';
-
-  @override
-  String get transfersAmountLabel => 'Amount to transfer';
 
   @override
   String get transfersFrom => 'From';

@@ -3,31 +3,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/year_month.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
-import '../../../../core/widgets/finan2_bottom_sheet.dart';
-import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
-import '../../../../core/widgets/finan2_period_picker.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
+import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../debts/domain/entities/debt.dart';
 import '../../../debts/presentation/viewmodels/debt_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../household/presentation/viewmodels/member_providers.dart';
 import '../../../monthly_notes/presentation/screens/monthly_notes_screen.dart';
 import '../../../recurring_bills/presentation/screens/recurring_bills_screen.dart';
+import '../../domain/entities/movement.dart';
+import '../../domain/movement_days.dart';
 import '../../domain/movement_filter.dart';
 import '../../domain/tags.dart';
-import '../../domain/entities/movement.dart';
+import '../movement_actions.dart';
 import '../viewmodels/transaction_providers.dart';
-import '../widgets/movement_search_bar.dart';
+import '../widgets/movement_filters.dart';
 import 'edit_transaction_screen.dart';
 
+/// «Una libreta, por días»: the month's movements grouped by day with each
+/// day's net, the search always in sight and the filters as chips.
 class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
@@ -43,9 +46,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   /// A search looks through the browsed month's whole year when on.
   var _wholeYear = false;
 
-  /// Deleted on screen but not yet in Firestore, while "Deshacer" is offered.
-  final _pendingDeletion = <String>{};
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -55,48 +55,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   void _clearSearch() {
     _searchController.clear();
     setState(() => _filter = const MovementFilter());
-  }
-
-  Future<void> _openMovement(Movement tx) async {
-    final toDelete = await Navigator.of(context).push<Movement>(
-      MaterialPageRoute<Movement>(builder: (_) => EditTransactionScreen(transaction: tx)),
-    );
-    if (toDelete != null && mounted) await _deleteWithUndo(toDelete);
-  }
-
-  /// Hides [tx] and only deletes it once the "Deshacer" snackbar closes
-  /// without being tapped. Deleting later instead of recreating on undo
-  /// keeps the partner's movements restorable: the rules only let a member
-  /// create records attributed to themselves.
-  Future<void> _deleteWithUndo(Movement tx) async {
-    setState(() => _pendingDeletion.add(tx.id));
-    final messenger = ScaffoldMessenger.of(context);
-    // Outlives this screen, so the delete still happens after a tab switch.
-    final container = ProviderScope.containerOf(context);
-    final l10n = context.l10n;
-    messenger.hideCurrentSnackBar();
-    final reason = await messenger
-        .showSnackBar(
-          SnackBar(
-            content: Text(l10n.transactionsDeleted),
-            action: SnackBarAction(label: l10n.commonUndo, onPressed: () {}),
-            duration: const Duration(seconds: 5),
-          ),
-        )
-        .closed;
-    if (reason != SnackBarClosedReason.action) {
-      final controller = container.read(transactionControllerProvider.notifier);
-      await controller.delete(tx.id);
-      final result = container.read(transactionControllerProvider);
-      if (result.hasError && mounted) {
-        await showFinan2ErrorSheet(
-          context,
-          title: l10n.transactionsDeleteFailed,
-          message: friendlyErrorMessage(result.error!),
-        );
-      }
-    }
-    if (mounted) setState(() => _pendingDeletion.remove(tx.id));
   }
 
   /// Today's day of month, clamped to the browsed month - so a movement
@@ -114,93 +72,120 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     );
   }
 
+  Future<void> _openFilters(MovementFilterOptions options, List<Movement> movements) async {
+    final picked = await showMovementFilterSheet(
+      context,
+      initial: _filter,
+      options: options,
+      movements: movements,
+    );
+    if (picked != null) setState(() => _filter = picked);
+  }
+
   @override
   Widget build(BuildContext context) {
     final searchingYear = _wholeYear && _filter.hasQuery;
     final transactionsAsync = searchingYear
         ? ref.watch(transactionsForYearProvider(_month.year))
         : ref.watch(transactionsOfMonthProvider(_month));
-    final categories = ref.watch(categoriesProvider).value ?? const [];
+    final categories = ref.watch(categoriesProvider).value ?? const <Category>[];
     final household = ref.watch(currentHouseholdProvider).value;
     final formatMoney = ref.watch(moneyFormatterProvider);
+    final memberLabel = ref.watch(memberLabelProvider);
+    final pending = ref.watch(pendingMovementDeletionsProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
 
     final categoryById = {for (final c in categories) c.id: c};
     final monthLabelCap = _month.label;
 
-    final allTransactions = (transactionsAsync.value ?? const <Movement>[])
-        .where((tx) => !_pendingDeletion.contains(tx.id))
-        .toList();
-    final currentTransactions = _filter.apply(allTransactions, {
-      for (final c in categories) c.id: c.name,
-    });
-    final filtering = !_filter.isEmpty;
-    final net = currentTransactions.fold<int>(
-      0,
-      (sum, tx) => sum + (tx.isIncome ? tx.amount : -tx.amount),
+    final allTransactions = [
+      for (final tx in transactionsAsync.value ?? const <Movement>[])
+        if (!pending.contains(tx.id)) tx,
+    ];
+    final options = MovementFilterOptions(
+      categories: categories,
+      accounts: ref.watch(accountsProvider).value ?? const [],
+      cards: [
+        for (final d in ref.watch(debtsProvider).value ?? const <Debt>[])
+          if (d.type.isCard) d,
+      ],
+      tags: tagsByUse(allTransactions),
+      members: household?.members ?? const [],
+      memberLabel: memberLabel,
     );
-    final l10n = context.l10n;
-    final netLabel = searchingYear
-        ? l10n.transactionsNetInYear(formatMoney(net), _month.year)
-        : l10n.transactionsNet(formatMoney(net));
+    final transactions = _filter.apply(allTransactions, options.categoryNames)
+      ..sort((a, b) => b.date.compareTo(a.date));
+    final filtering = !_filter.isEmpty;
+
+    String signed(int amount) =>
+        amount < 0 ? '−${formatMoney(-amount)}' : '+${formatMoney(amount)}';
+
+    Widget row(Movement tx, {required bool withDate}) {
+      final category = categoryById[tx.categoryId];
+      // Who paid, not who logged it.
+      final payer = memberLabel(tx.payer);
+      return Finan2TransactionRow(
+        icon: category != null ? Finan2Icons.categoria(category.iconSlug) : Icons.label_outline,
+        iconColor: category != null ? Color(category.color) : colors.inkSoft,
+        description: tx.description.isEmpty ? (category?.name ?? '') : tx.description,
+        subLabel: '· ${withDate ? DateFormat('d MMM').format(tx.date) : (category?.name ?? '')}',
+        avatarLabel: payer.firstName,
+        avatarIndex: payer.index,
+        tags: tx.tags,
+        amountText: tx.isIncome ? '+${formatMoney(tx.amount)}' : '−${formatMoney(tx.amount)}',
+        amountColor: tx.isIncome ? colors.income : colors.ink,
+        onTap: () => openMovement(context, tx),
+      );
+    }
+
+    final hasChips = MovementFilterChips.hasChips(_filter);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2AppTop(
-              label: l10n.transactionsTitle,
-              title: currentTransactions.isEmpty
-                  ? monthLabelCap
-                  : (filtering ? l10n.transactionsFiltered(netLabel) : netLabel),
-              household: household,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.sm),
-              child: Finan2PeriodPicker(
+            Finan2Head(
+              title: l10n.transactionsTitle,
+              over: _MonthNav(
                 label: monthLabelCap,
-                previousTooltip: l10n.transactionsPreviousMonth,
-                nextTooltip: l10n.transactionsNextMonth,
                 onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
                 onNext: () => setState(() => _month = _month.plusMonths(1)),
                 onReset: _month.isCurrent
                     ? null
                     : () => setState(() => _month = currentYearMonth()),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Finan2Space.xl, 0, Finan2Space.xl, Finan2Space.sm),
-              child: MovementSearchBar(
-                controller: _searchController,
-                filter: _filter,
-                categories: categories,
-                accounts: ref.watch(accountsProvider).value ?? const [],
-                cards: [
-                  for (final d in ref.watch(debtsProvider).value ?? const <Debt>[])
-                    if (d.type.isCard) d,
-                ],
-                tags: tagsByUse(allTransactions),
-                household: household,
-                onQueryChanged: (q) => setState(() => _filter = _filter.copyWith(query: q)),
-                onFilterChanged: (f) => setState(() => _filter = f),
+              action: Finan2HeadAction(
+                icon: Icons.tune,
+                tooltip: l10n.transactionsFilters,
+                badge: _filter.activeFilterCount,
+                highlighted: _filter.activeFilterCount > 0,
+                onTap: () => _openFilters(options, allTransactions),
               ),
             ),
-            if (_filter.hasQuery)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Finan2Space.lg, 0, Finan2Space.lg, Finan2Space.sm),
+              child: MovementSearchField(
+                controller: _searchController,
+                onChanged: (q) => setState(() => _filter = _filter.copyWith(query: q)),
+              ),
+            ),
+            if (hasChips)
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  Finan2Space.xl,
+                  Finan2Space.lg,
                   0,
-                  Finan2Space.xl,
+                  Finan2Space.lg,
                   Finan2Space.sm,
                 ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Finan2Chip(
-                    icon: Icons.calendar_month_outlined,
-                    label: l10n.transactionsSearchWholeYear(_month.year),
-                    selected: _wholeYear,
-                    onTap: () => setState(() => _wholeYear = !_wholeYear),
-                  ),
+                child: MovementFilterChips(
+                  filter: _filter,
+                  options: options,
+                  onFilterChanged: (f) => setState(() => _filter = f),
+                  year: _month.year,
+                  wholeYear: _wholeYear,
+                  onWholeYearChanged: (on) => setState(() => _wholeYear = on),
                 ),
               ),
             Expanded(
@@ -208,7 +193,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (_) {
-                  final transactions = currentTransactions;
                   if (transactions.isEmpty && filtering) {
                     return Finan2EmptyState(
                       icon: Icons.search_off,
@@ -235,83 +219,67 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                   }
                   return ListView(
                     padding: const EdgeInsets.fromLTRB(
-                      Finan2Space.xl,
-                      0,
-                      Finan2Space.xl,
+                      Finan2Space.lg,
+                      Finan2Space.xxs,
+                      Finan2Space.lg,
                       Finan2Space.xl,
                     ),
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          border: Border.all(color: colors.line),
-                          borderRadius: BorderRadius.circular(Finan2Radius.card),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
+                      Finan2Sheet(
+                        children: filtering
+                            // Found movements read as one list, each with its date.
+                            ? [for (final tx in transactions) row(tx, withDate: true)]
+                            : [
+                                for (final day in groupByDay(transactions)) ...[
+                                  Finan2SheetHeading(
+                                    label: _dayLabel(context, day.date),
+                                    trailing: signed(day.net),
+                                  ),
+                                  for (final tx in day.movements) row(tx, withDate: false),
+                                ],
+                              ],
+                      ),
+                      if (filtering)
+                        Padding(
+                          padding: const EdgeInsets.only(top: Finan2Space.md),
+                          child: Text(
+                            l10n.transactionsResultsTotal(
+                              transactions.length,
+                              signed(netOf(transactions)),
+                            ),
+                            key: const Key('movementsResultsTotal'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: colors.inkSoft,
+                              fontFeatures: const [FontFeature.tabularFigures()],
+                            ),
+                          ),
+                        )
+                      else ...[
+                        const SizedBox(height: Finan2Space.lg),
+                        Finan2ListCard(
                           children: [
-                            for (var i = 0; i < transactions.length; i++) ...[
-                              if (i > 0) Divider(height: 1, color: colors.line),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Builder(
-                                  builder: (context) {
-                                    final tx = transactions[i];
-                                    final category = categoryById[tx.categoryId];
-                                    // Who paid, not who logged it.
-                                    final memberIndex = household?.members.indexOf(tx.payer) ?? 0;
-                                    final memberName = household?.memberInfo[tx.payer]?.name ?? '?';
-                                    return Finan2TransactionRow(
-                                      icon: category != null
-                                          ? Finan2Icons.categoria(category.iconSlug)
-                                          : Icons.label_outline,
-                                      iconColor: category != null
-                                          ? Color(category.color)
-                                          : colors.inkSoft,
-                                      description: tx.description.isEmpty
-                                          ? (category?.name ?? '')
-                                          : tx.description,
-                                      subLabel: [
-                                        category?.name ?? '',
-                                        DateFormat('dd MMM').format(tx.date),
-                                        ...tx.tags.map((t) => '#$t'),
-                                      ].join(' · '),
-                                      avatarLabel: memberName.isEmpty
-                                          ? '?'
-                                          : memberName.split(' ').first,
-                                      avatarIndex: memberIndex < 0 ? 0 : memberIndex,
-                                      amountText: tx.isIncome
-                                          ? '+${formatMoney(tx.amount)}'
-                                          : '−${formatMoney(tx.amount)}',
-                                      amountColor: tx.isIncome ? colors.income : colors.ink,
-                                      onTap: () => _openMovement(tx),
-                                    );
-                                  },
+                            Finan2ListRow(
+                              icon: Icons.autorenew,
+                              label: l10n.transactionsRecurringBills,
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const RecurringBillsScreen(),
                                 ),
                               ),
-                            ],
+                            ),
+                            Finan2ListRow(
+                              icon: Icons.sticky_note_2_outlined,
+                              label: l10n.transactionsNotes,
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(builder: (_) => const MonthlyNotesScreen()),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: Finan2Space.lg),
-                      Finan2ListCard(
-                        children: [
-                          Finan2ListRow(
-                            icon: Icons.autorenew,
-                            label: l10n.transactionsRecurringBills,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(builder: (_) => const RecurringBillsScreen()),
-                            ),
-                          ),
-                          Finan2ListRow(
-                            icon: Icons.sticky_note_2_outlined,
-                            label: l10n.transactionsNotes,
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(builder: (_) => const MonthlyNotesScreen()),
-                            ),
-                          ),
-                        ],
-                      ),
+                      ],
                     ],
                   );
                 },
@@ -320,6 +288,79 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// «Hoy · martes 14», «Ayer · lunes 13» or «domingo 12».
+String _dayLabel(BuildContext context, DateTime day) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final weekday = DateFormat('EEEE d').format(day);
+  final daysAgo = today.difference(day).inDays;
+  if (daysAgo == 0) return context.l10n.transactionsDayToday(weekday);
+  if (daysAgo == 1) return context.l10n.transactionsDayYesterday(weekday);
+  return weekday;
+}
+
+/// «‹ Octubre 2026 ›» as the head's over-line; the month comes back to today
+/// with a tap while browsing another.
+class _MonthNav extends StatelessWidget {
+  const _MonthNav({
+    required this.label,
+    required this.onPrevious,
+    required this.onNext,
+    required this.onReset,
+  });
+
+  final String label;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
+  final VoidCallback? onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final l10n = context.l10n;
+    Widget arrow(IconData icon, String tooltip, VoidCallback onTap) => Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        label: tooltip,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 16,
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: Icon(icon, size: 18, color: colors.inkFaint),
+          ),
+        ),
+      ),
+    );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        arrow(Icons.chevron_left, l10n.transactionsPreviousMonth, onPrevious),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onReset,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: label),
+                if (onReset != null)
+                  TextSpan(
+                    text: ' · ${l10n.corePeriodBackToToday}',
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+              ],
+            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.inkFaint),
+          ),
+        ),
+        arrow(Icons.chevron_right, l10n.transactionsNextMonth, onNext),
+      ],
     );
   }
 }

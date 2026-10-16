@@ -345,47 +345,101 @@ abstract class AppLocalizations {
   /// **'Gasto por mes'**
   String get annualSummarySpendByMonth;
 
-  /// No description provided for @dashboardHousehold.
-  ///
-  /// In es, this message translates to:
-  /// **'Hogar'**
-  String get dashboardHousehold;
-
-  /// No description provided for @dashboardNetWorth.
-  ///
-  /// In es, this message translates to:
-  /// **'Patrimonio neto'**
-  String get dashboardNetWorth;
-
-  /// No description provided for @dashboardNetWorthFormula.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuentas + ahorros + inversiones − deudas'**
-  String get dashboardNetWorthFormula;
-
-  /// No description provided for @dashboardIncome.
-  ///
-  /// In es, this message translates to:
-  /// **'Ingresos'**
-  String get dashboardIncome;
-
-  /// No description provided for @dashboardExpenses.
-  ///
-  /// In es, this message translates to:
-  /// **'Gastos'**
-  String get dashboardExpenses;
-
-  /// No description provided for @dashboardWhereMoneyGoes.
-  ///
-  /// In es, this message translates to:
-  /// **'A dónde va el dinero'**
-  String get dashboardWhereMoneyGoes;
-
   /// No description provided for @dashboardNoCategorizedSpending.
   ///
   /// In es, this message translates to:
   /// **'No hay gastos categorizados este mes.'**
   String get dashboardNoCategorizedSpending;
+
+  /// Inicio's title: greets the signed-in member by first name.
+  ///
+  /// In es, this message translates to:
+  /// **'Hola, {name}'**
+  String dashboardGreeting(String name);
+
+  /// Label over Inicio's big figure: what's left of the month's budget. {month} is the month name as DateFormat gives it (lowercase in Spanish).
+  ///
+  /// In es, this message translates to:
+  /// **'Les queda del plan de {month}'**
+  String dashboardLeftOfPlan(String month);
+
+  /// Label over Inicio's big figure when the month's spending went past the budget; the figure is by how much.
+  ///
+  /// In es, this message translates to:
+  /// **'Se pasaron del plan de {month}'**
+  String dashboardOverPlan(String month);
+
+  /// Label over Inicio's big figure when the month has no budget: what went out.
+  ///
+  /// In es, this message translates to:
+  /// **'Gastado en {month}'**
+  String dashboardSpentIn(String month);
+
+  /// Under Inicio's figure: the month's whole plan, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'de {amount}'**
+  String dashboardOfPlan(String amount);
+
+  /// Under Inicio's figure: whole days after today until the month ends.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{último día} =1{falta 1 día} other{faltan {count} días}}'**
+  String dashboardDaysLeft(int count);
+
+  /// Under Inicio's figure: what's left divided by the days left, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'unos {amount} al día'**
+  String dashboardPerDay(String amount);
+
+  /// Under Inicio's figure when the month has no budget.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin plan este mes'**
+  String get dashboardNoPlan;
+
+  /// Under Inicio's figure when there's no plan: the month's income, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'entraron {amount}'**
+  String dashboardIncomeIn(String amount);
+
+  /// Legend of Inicio's stacked bar: the part of the plan not spent yet.
+  ///
+  /// In es, this message translates to:
+  /// **'Queda'**
+  String get dashboardLegendLeft;
+
+  /// Legend of Inicio's stacked bar: every category past the four biggest.
+  ///
+  /// In es, this message translates to:
+  /// **'Otras'**
+  String get dashboardLegendOther;
+
+  /// Action word at the end of Inicio's notice; opens the notifications.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver'**
+  String get dashboardNoticeSee;
+
+  /// No description provided for @dashboardWhoPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Quién pagó este mes'**
+  String get dashboardWhoPaid;
+
+  /// No description provided for @dashboardMovementCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 movimiento} other{{count} movimientos}}'**
+  String dashboardMovementCount(int count);
+
+  /// No description provided for @dashboardRecent.
+  ///
+  /// In es, this message translates to:
+  /// **'Últimos movimientos'**
+  String get dashboardRecent;
 
   /// Screen title, and the default name of a new challenge.
   ///
@@ -2214,7 +2268,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsNewTitle.
   ///
   /// In es, this message translates to:
-  /// **'Nuevo movimiento'**
+  /// **'Anotar'**
   String get transactionsNewTitle;
 
   /// No description provided for @transactionsEditTitle.
@@ -2223,10 +2277,22 @@ abstract class AppLocalizations {
   /// **'Editar movimiento'**
   String get transactionsEditTitle;
 
+  /// Small line over a movement's detail title.
+  ///
+  /// In es, this message translates to:
+  /// **'Movimiento'**
+  String get transactionsDetailOver;
+
+  /// No description provided for @transactionsEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get transactionsEdit;
+
   /// No description provided for @transactionsDelete.
   ///
   /// In es, this message translates to:
-  /// **'Eliminar movimiento'**
+  /// **'Borrar movimiento'**
   String get transactionsDelete;
 
   /// No description provided for @transactionsDeleted.
@@ -2259,11 +2325,35 @@ abstract class AppLocalizations {
   /// **'Tarjeta de crédito'**
   String get transactionsCreditCard;
 
+  /// Anotar's fourth type: moving money between two of the household's own accounts.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasar'**
+  String get transactionsTypeTransfer;
+
+  /// No description provided for @transactionsTransferNeedsTwoAccounts.
+  ///
+  /// In es, this message translates to:
+  /// **'Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.'**
+  String get transactionsTransferNeedsTwoAccounts;
+
   /// No description provided for @transactionsIncomplete.
   ///
   /// In es, this message translates to:
   /// **'Completa el monto, la categoría y la cuenta.'**
   String get transactionsIncomplete;
+
+  /// Title of the sheet shown when Anotar can't save yet.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta un dato'**
+  String get transactionsIncompleteTitle;
+
+  /// Under Anotar's amount when the date is today; {date} is the weekday and day, e.g. «martes 14».
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy, {date}'**
+  String transactionsDateToday(String date);
 
   /// No description provided for @transactionsNoCategoriesOfType.
   ///
@@ -2316,26 +2406,8 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsLoggedBy.
   ///
   /// In es, this message translates to:
-  /// **'Registrado por'**
+  /// **'Lo anotó'**
   String get transactionsLoggedBy;
-
-  /// Header: the net of the listed movements, already formatted as money.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} neto'**
-  String transactionsNet(String amount);
-
-  /// No description provided for @transactionsNetInYear.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} neto en {year}'**
-  String transactionsNetInYear(String amount, int year);
-
-  /// Appended to the header's net when filters or a search are on.
-  ///
-  /// In es, this message translates to:
-  /// **'{text} · filtrado'**
-  String transactionsFiltered(String text);
 
   /// No description provided for @transactionsPreviousMonth.
   ///
@@ -2349,10 +2421,28 @@ abstract class AppLocalizations {
   /// **'Mes siguiente'**
   String get transactionsNextMonth;
 
+  /// Movimientos' day heading for today; {day} is the weekday and day, e.g. «martes 14». Shown in capitals.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy · {day}'**
+  String transactionsDayToday(String day);
+
+  /// Movimientos' day heading for yesterday.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayer · {day}'**
+  String transactionsDayYesterday(String day);
+
+  /// At the end of a search or filter: how many movements matched and their net, already formatted with its sign.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 movimiento} other{{count} movimientos}} · {amount}'**
+  String transactionsResultsTotal(int count, String amount);
+
   /// No description provided for @transactionsSearchWholeYear.
   ///
   /// In es, this message translates to:
-  /// **'Buscar en todo {year}'**
+  /// **'Todo {year}'**
   String transactionsSearchWholeYear(int year);
 
   /// No description provided for @transactionsNoMatchTitle.
@@ -2424,7 +2514,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsSearchHint.
   ///
   /// In es, this message translates to:
-  /// **'Buscar descripción, categoría o monto'**
+  /// **'Buscar descripción, categoría, monto o #etiqueta'**
   String get transactionsSearchHint;
 
   /// No description provided for @transactionsFilters.
@@ -2436,7 +2526,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsFilterTitle.
   ///
   /// In es, this message translates to:
-  /// **'Filtrar movimientos'**
+  /// **'Filtrar'**
   String get transactionsFilterTitle;
 
   /// No description provided for @transactionsFilterType.
@@ -2457,35 +2547,35 @@ abstract class AppLocalizations {
   /// **'Etiqueta'**
   String get transactionsFilterTag;
 
+  /// Active filter chip: only what this member paid.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagó {name}'**
+  String transactionsPaidByChip(String name);
+
+  /// Filter sheet, who paid: no filter.
+  ///
+  /// In es, this message translates to:
+  /// **'Los dos'**
+  String get transactionsFilterBoth;
+
   /// No description provided for @transactionsFilterClear.
   ///
   /// In es, this message translates to:
   /// **'Limpiar'**
   String get transactionsFilterClear;
 
-  /// No description provided for @transactionsFilterApply.
+  /// Filter sheet's main button: how many movements the chosen filters show.
   ///
   /// In es, this message translates to:
-  /// **'Aplicar'**
-  String get transactionsFilterApply;
-
-  /// No description provided for @transfersTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Transferir'**
-  String get transfersTitle;
+  /// **'Ver {count}'**
+  String transactionsFilterSee(int count);
 
   /// No description provided for @transfersInvalid.
   ///
   /// In es, this message translates to:
   /// **'Elige un monto y dos cuentas distintas.'**
   String get transfersInvalid;
-
-  /// No description provided for @transfersAmountLabel.
-  ///
-  /// In es, this message translates to:
-  /// **'Monto a transferir'**
-  String get transfersAmountLabel;
 
   /// No description provided for @transfersFrom.
   ///

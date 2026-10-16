@@ -11,10 +11,10 @@ import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
+import '../../../transactions/presentation/screens/edit_transaction_screen.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../data/transfer_model.dart';
 import '../viewmodels/transfer_providers.dart';
-import 'transfer_screen.dart';
 
 /// Read-only log of past transfers, reachable from Cuentas. Transfers have
 /// no edit screen - tapping one only offers to delete it, which reverses
@@ -65,9 +65,11 @@ class TransferHistoryScreen extends ConsumerWidget {
                       title: l10n.transfersEmptyTitle,
                       description: l10n.transfersEmptyDescription,
                       actionLabel: l10n.transfersEmptyAction,
-                      onAction: () => Navigator.of(
-                        context,
-                      ).push(MaterialPageRoute<void>(builder: (_) => const TransferScreen())),
+                      onAction: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const EditTransactionScreen(startWithTransfer: true),
+                        ),
+                      ),
                     );
                   }
                   return Container(

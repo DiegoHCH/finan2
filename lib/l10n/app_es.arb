@@ -107,13 +107,105 @@
   "annualSummarySpent": "Gastado",
   "annualSummarySaved": "Ahorrado",
   "annualSummarySpendByMonth": "Gasto por mes",
-  "dashboardHousehold": "Hogar",
-  "dashboardNetWorth": "Patrimonio neto",
-  "dashboardNetWorthFormula": "Cuentas + ahorros + inversiones − deudas",
-  "dashboardIncome": "Ingresos",
-  "dashboardExpenses": "Gastos",
-  "dashboardWhereMoneyGoes": "A dónde va el dinero",
   "dashboardNoCategorizedSpending": "No hay gastos categorizados este mes.",
+  "dashboardGreeting": "Hola, {name}",
+  "@dashboardGreeting": {
+    "description": "Inicio's title: greets the signed-in member by first name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardLeftOfPlan": "Les queda del plan de {month}",
+  "@dashboardLeftOfPlan": {
+    "description": "Label over Inicio's big figure: what's left of the month's budget. {month} is the month name as DateFormat gives it (lowercase in Spanish).",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardOverPlan": "Se pasaron del plan de {month}",
+  "@dashboardOverPlan": {
+    "description": "Label over Inicio's big figure when the month's spending went past the budget; the figure is by how much.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardSpentIn": "Gastado en {month}",
+  "@dashboardSpentIn": {
+    "description": "Label over Inicio's big figure when the month has no budget: what went out.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardOfPlan": "de {amount}",
+  "@dashboardOfPlan": {
+    "description": "Under Inicio's figure: the month's whole plan, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardDaysLeft": "{count, plural, =0{último día} =1{falta 1 día} other{faltan {count} días}}",
+  "@dashboardDaysLeft": {
+    "description": "Under Inicio's figure: whole days after today until the month ends.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardPerDay": "unos {amount} al día",
+  "@dashboardPerDay": {
+    "description": "Under Inicio's figure: what's left divided by the days left, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardNoPlan": "Sin plan este mes",
+  "@dashboardNoPlan": {
+    "description": "Under Inicio's figure when the month has no budget."
+  },
+  "dashboardIncomeIn": "entraron {amount}",
+  "@dashboardIncomeIn": {
+    "description": "Under Inicio's figure when there's no plan: the month's income, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardLegendLeft": "Queda",
+  "@dashboardLegendLeft": {
+    "description": "Legend of Inicio's stacked bar: the part of the plan not spent yet."
+  },
+  "dashboardLegendOther": "Otras",
+  "@dashboardLegendOther": {
+    "description": "Legend of Inicio's stacked bar: every category past the four biggest."
+  },
+  "dashboardNoticeSee": "Ver",
+  "@dashboardNoticeSee": {
+    "description": "Action word at the end of Inicio's notice; opens the notifications."
+  },
+  "dashboardWhoPaid": "Quién pagó este mes",
+  "dashboardMovementCount": "{count, plural, =1{1 movimiento} other{{count} movimientos}}",
+  "@dashboardMovementCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardRecent": "Últimos movimientos",
   "savingsChallengeTitle": "Reto de ahorro",
   "@savingsChallengeTitle": {
     "description": "Screen title, and the default name of a new challenge."
@@ -855,9 +947,14 @@
     "description": "Effective annual interest rate."
   },
   "transactionsTitle": "Movimientos",
-  "transactionsNewTitle": "Nuevo movimiento",
+  "transactionsNewTitle": "Anotar",
   "transactionsEditTitle": "Editar movimiento",
-  "transactionsDelete": "Eliminar movimiento",
+  "transactionsDetailOver": "Movimiento",
+  "@transactionsDetailOver": {
+    "description": "Small line over a movement's detail title."
+  },
+  "transactionsEdit": "Editar",
+  "transactionsDelete": "Borrar movimiento",
   "transactionsDeleted": "Movimiento borrado",
   "transactionsDeleteFailed": "No se pudo borrar",
   "transactionsMaxTagsTitle": "Máximo {max} etiquetas",
@@ -870,7 +967,25 @@
   },
   "transactionsMaxTagsMessage": "Quita una antes de añadir otra.",
   "transactionsCreditCard": "Tarjeta de crédito",
+  "transactionsTypeTransfer": "Pasar",
+  "@transactionsTypeTransfer": {
+    "description": "Anotar's fourth type: moving money between two of the household's own accounts."
+  },
+  "transactionsTransferNeedsTwoAccounts": "Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.",
   "transactionsIncomplete": "Completa el monto, la categoría y la cuenta.",
+  "transactionsIncompleteTitle": "Falta un dato",
+  "@transactionsIncompleteTitle": {
+    "description": "Title of the sheet shown when Anotar can't save yet."
+  },
+  "transactionsDateToday": "Hoy, {date}",
+  "@transactionsDateToday": {
+    "description": "Under Anotar's amount when the date is today; {date} is the weekday and day, e.g. «martes 14».",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "transactionsNoCategoriesOfType": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
   "transactionsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
   "transactionsSelectAccount": "Selecciona una cuenta",
@@ -888,39 +1003,40 @@
   "@transactionsPaidBy": {
     "description": "Label above the member chips: who paid the movement."
   },
-  "transactionsLoggedBy": "Registrado por",
-  "transactionsNet": "{amount} neto",
-  "@transactionsNet": {
-    "description": "Header: the net of the listed movements, already formatted as money.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "transactionsNetInYear": "{amount} neto en {year}",
-  "@transactionsNetInYear": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "year": {
-        "type": "int"
-      }
-    }
-  },
-  "transactionsFiltered": "{text} · filtrado",
-  "@transactionsFiltered": {
-    "description": "Appended to the header's net when filters or a search are on.",
-    "placeholders": {
-      "text": {
-        "type": "String"
-      }
-    }
-  },
+  "transactionsLoggedBy": "Lo anotó",
   "transactionsPreviousMonth": "Mes anterior",
   "transactionsNextMonth": "Mes siguiente",
-  "transactionsSearchWholeYear": "Buscar en todo {year}",
+  "transactionsDayToday": "Hoy · {day}",
+  "@transactionsDayToday": {
+    "description": "Movimientos' day heading for today; {day} is the weekday and day, e.g. «martes 14». Shown in capitals.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsDayYesterday": "Ayer · {day}",
+  "@transactionsDayYesterday": {
+    "description": "Movimientos' day heading for yesterday.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsResultsTotal": "{count, plural, =1{1 movimiento} other{{count} movimientos}} · {amount}",
+  "@transactionsResultsTotal": {
+    "description": "At the end of a search or filter: how many movements matched and their net, already formatted with its sign.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsSearchWholeYear": "Todo {year}",
   "@transactionsSearchWholeYear": {
     "placeholders": {
       "year": {
@@ -961,17 +1077,36 @@
   "transactionsEmptyAction": "+ Agregar el primero",
   "transactionsRecurringBills": "Facturas recurrentes",
   "transactionsNotes": "Notas",
-  "transactionsSearchHint": "Buscar descripción, categoría o monto",
+  "transactionsSearchHint": "Buscar descripción, categoría, monto o #etiqueta",
   "transactionsFilters": "Filtros",
-  "transactionsFilterTitle": "Filtrar movimientos",
+  "transactionsFilterTitle": "Filtrar",
   "transactionsFilterType": "Tipo",
   "transactionsFilterNoCategories": "No hay categorías de este tipo.",
   "transactionsFilterTag": "Etiqueta",
+  "transactionsPaidByChip": "Pagó {name}",
+  "@transactionsPaidByChip": {
+    "description": "Active filter chip: only what this member paid.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsFilterBoth": "Los dos",
+  "@transactionsFilterBoth": {
+    "description": "Filter sheet, who paid: no filter."
+  },
   "transactionsFilterClear": "Limpiar",
-  "transactionsFilterApply": "Aplicar",
-  "transfersTitle": "Transferir",
+  "transactionsFilterSee": "Ver {count}",
+  "@transactionsFilterSee": {
+    "description": "Filter sheet's main button: how many movements the chosen filters show.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "transfersInvalid": "Elige un monto y dos cuentas distintas.",
-  "transfersAmountLabel": "Monto a transferir",
   "transfersFrom": "Desde",
   "transfersTo": "Hacia",
   "transfersSelectAccount": "Selecciona una cuenta",

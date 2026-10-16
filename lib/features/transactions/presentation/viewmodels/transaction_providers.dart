@@ -75,3 +75,18 @@ class TransactionController extends AsyncNotifier<void> {
 final transactionControllerProvider = AsyncNotifierProvider<TransactionController, void>(
   TransactionController.new,
 );
+
+/// Movements deleted on screen but not yet in Firestore, while «Deshacer»
+/// is still offered - every list hides them in the meantime.
+class PendingMovementDeletions extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void hide(String id) => state = {...state, id};
+
+  void restore(String id) => state = {...state}..remove(id);
+}
+
+final pendingMovementDeletionsProvider = NotifierProvider<PendingMovementDeletions, Set<String>>(
+  PendingMovementDeletions.new,
+);
