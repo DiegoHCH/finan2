@@ -35,9 +35,11 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
     final summary = ref.watch(annualSummaryProvider(_year));
     final compact = ref.watch(compactMoneyFormatterProvider);
     final startYear = ref.watch(currentHouseholdProvider).value?.startYear ?? _currentYear;
-    // The three latest years the household has been around for.
+    // Three years at a time, ending one after the chosen year: picking the
+    // oldest shown slides the window back, down to the household's start.
+    final lastShown = (_year + 1).clamp(startYear, _currentYear);
     final years = [
-      for (var y = _currentYear - 2; y <= _currentYear; y++)
+      for (var y = lastShown - 2; y <= lastShown; y++)
         if (y >= startYear) y,
     ];
     final categories = ref.watch(categoriesProvider).value ?? const <Category>[];

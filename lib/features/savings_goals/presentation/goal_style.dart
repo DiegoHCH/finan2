@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/finan2_tone.dart';
+import '../../../core/utils/stable_index.dart';
 import '../data/savings_goal_model.dart';
 
 /// Icon per goal slug (the slug is what's stored).
@@ -16,12 +17,11 @@ const goalIcons = <String, IconData>{
 
 IconData goalIcon(String slug) => goalIcons[slug] ?? Icons.card_giftcard_outlined;
 
-/// A goal's own color - by its place in [goals], since goals store none -
-/// so the list and its detail agree.
-Finan2Tone goalTone(BuildContext context, List<SavingsGoal> goals, String goalId) {
-  final index = goals.indexWhere((g) => g.id == goalId);
-  return Finan2Tone.swatch(context, Finan2Palette.goalSwatches, index < 0 ? 0 : index);
-}
+/// A goal's own color, picked from its ID since goals store none: the
+/// same goal keeps its color when the list is reordered or another one is
+/// deleted. [goals] is unused and kept so the call sites read the same.
+Finan2Tone goalTone(BuildContext context, List<SavingsGoal> goals, String goalId) =>
+    Finan2Tone.swatch(context, Finan2Palette.goalSwatches, stableIndex(goalId));
 
 /// «diciembre» within this year, «jun 2027» beyond it - «junio 2027» when
 /// [long], for a sentence rather than a row.
