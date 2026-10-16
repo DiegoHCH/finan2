@@ -96,7 +96,7 @@ class _EditDebtScreenState extends ConsumerState<EditDebtScreen> {
       id: widget.debt?.id ?? '',
       name: name,
       type: _type,
-      balance: int.tryParse(_balanceController.text) ?? 0,
+      balance: Finan2AmountInput.parse(_balanceController.text) ?? 0,
       rate: double.tryParse(_rateController.text.replaceAll(',', '.')) ?? 0,
       paymentDay: int.tryParse(_paymentDayController.text) ?? 1,
       creditLimit: int.tryParse(_creditLimitController.text) ?? 0,

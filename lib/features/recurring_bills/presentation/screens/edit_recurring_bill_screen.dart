@@ -115,7 +115,7 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
 
   Future<void> _save() async {
     final name = toTitleCase(_nameController.text);
-    final amount = int.tryParse(_amountController.text) ?? 0;
+    final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
     final categoryId = _categoryId;
     final accountId = _accountId;
     if (name.isEmpty || amount <= 0 || categoryId == null || accountId == null) {

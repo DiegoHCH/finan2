@@ -295,7 +295,7 @@ Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDe
                 onPressed: submitting
                     ? null
                     : () async {
-                        final amount = int.tryParse(controller.text) ?? 0;
+                        final amount = Finan2AmountInput.parse(controller.text) ?? 0;
                         if (amount > 0) {
                           setSheetState(() => submitting = true);
                           await ref

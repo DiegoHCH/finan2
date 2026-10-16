@@ -102,7 +102,7 @@ class _EditSavingsGoalScreenState extends ConsumerState<EditSavingsGoalScreen> {
       id: widget.goal?.id ?? '',
       name: name,
       iconSlug: _iconSlug,
-      targetAmount: int.tryParse(_targetController.text) ?? 0,
+      targetAmount: Finan2AmountInput.parse(_targetController.text) ?? 0,
       targetDate: _targetDate,
       monthlyContribution: int.tryParse(_monthlyController.text) ?? 0,
       interestRate: double.tryParse(_rateController.text.replaceAll(',', '.')) ?? 0,

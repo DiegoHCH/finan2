@@ -43,7 +43,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   Future<void> _save() async {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
-    final balance = int.tryParse(_balanceController.text) ?? 0;
+    final balance = Finan2AmountInput.parse(_balanceController.text) ?? 0;
     await ref
         .read(accountControllerProvider.notifier)
         .save(

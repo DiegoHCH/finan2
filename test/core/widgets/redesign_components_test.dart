@@ -1,4 +1,5 @@
 import 'package:finan2/core/theme/app_theme.dart';
+import 'package:finan2/core/widgets/finan2_amount_input.dart';
 import 'package:finan2/core/widgets/finan2_figure.dart';
 import 'package:finan2/core/widgets/finan2_nav_bar.dart';
 import 'package:finan2/core/widgets/finan2_person_tag.dart';
@@ -120,5 +121,17 @@ void main() {
     expect(selected, 2);
     await tester.tap(find.byTooltip('Anotar'));
     expect(added, 1);
+  });
+
+  testWidgets('the amount groups digits as typed and parses back', (tester) async {
+    final controller = TextEditingController(text: '1250000');
+    addTearDown(controller.dispose);
+    await _pump(tester, Finan2AmountInput(controller: controller));
+    expect(controller.text, '1.250.000'); // a prefilled amount is grouped too
+
+    await tester.enterText(find.byType(TextField), '98765');
+    expect(controller.text, '98.765');
+    expect(Finan2AmountInput.parse(controller.text), 98765);
+    expect(Finan2AmountInput.parse(''), isNull);
   });
 }

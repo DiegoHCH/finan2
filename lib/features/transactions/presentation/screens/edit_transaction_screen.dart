@@ -224,7 +224,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
 
   Future<void> _saveMovement() async {
     final l10n = context.l10n;
-    final amount = int.tryParse(_amountController.text) ?? 0;
+    final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
     final user = ref.read(authStateChangesProvider).value;
     final categories = ref.read(categoriesProvider).value ?? const [];
     final category = categories.where((c) => c.id == _categoryId).firstOrNull;
@@ -261,7 +261,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
 
   Future<void> _saveTransfer() async {
     final l10n = context.l10n;
-    final amount = int.tryParse(_amountController.text) ?? 0;
+    final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
     final from = _fromAccountId;
     final to = _toAccountId;
     final user = ref.read(authStateChangesProvider).value;
@@ -488,7 +488,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final l10n = context.l10n;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final formatMoney = ref.watch(moneyFormatterProvider);
-    final amount = int.tryParse(_amountController.text) ?? 0;
+    final amount = Finan2AmountInput.parse(_amountController.text) ?? 0;
     final from = accounts.where((a) => a.id == _fromAccountId).firstOrNull;
     final to = accounts.where((a) => a.id == _toAccountId).firstOrNull;
 

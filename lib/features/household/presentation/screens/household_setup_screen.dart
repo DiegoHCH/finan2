@@ -106,7 +106,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
           id: '',
           name: name,
           type: _accountType,
-          balance: int.tryParse(_balanceController.text) ?? 0,
+          balance: Finan2AmountInput.parse(_balanceController.text) ?? 0,
           includeInAvailable: true,
           createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
         ),
