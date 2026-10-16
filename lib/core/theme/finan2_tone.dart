@@ -24,6 +24,11 @@ class Finan2Tone {
     return Finan2Tone(color, Color.alphaBlend(base.withValues(alpha: dark ? 0.22 : 0.13), surface));
   }
 
+  /// The [index]th of [swatches] (wrapping around), for things that store
+  /// no color of their own - goals, debts.
+  factory Finan2Tone.swatch(BuildContext context, List<Color> swatches, int index) =>
+      Finan2Tone.of(context, swatches[index % swatches.length]);
+
   /// The tone of household member [memberIndex]: 0 is the first member,
   /// anything else the second (fixed colors, R5).
   factory Finan2Tone.member(BuildContext context, int memberIndex) {

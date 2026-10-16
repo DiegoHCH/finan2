@@ -100,6 +100,28 @@ abstract class Finan2Palette {
   static const inkFaintDark = Color(0xFF71717A);
   static const lineDark = Color(0xFF29293B);
 
+  /// Casa's teal: the year's bars are drawn in it (`.ybars b`).
+  static const casa = Color(0xFF0F766E);
+
+  /// Goals and debts store no color, so each takes one by its place in the
+  /// list - for goals starting from ahorro's green, for debts from
+  /// transporte's amber (never red: red only means «se pasó»).
+  static const goalSwatches = <Color>[
+    Color(0xFF16A34A),
+    Color(0xFF475569),
+    Color(0xFFDB2777),
+    Color(0xFF0F766E),
+    Color(0xFFB45309),
+    Color(0xFF65A30D),
+  ];
+  static const debtSwatches = <Color>[
+    Color(0xFFB45309),
+    Color(0xFF0F766E),
+    Color(0xFFDB2777),
+    Color(0xFF475569),
+    Color(0xFF65A30D),
+  ];
+
   /// Colores que se ofrecen al crear una categoría. Se guardan en Firestore
   /// tal cual, así que sirven en los dos temas: mercado, casa, transporte,
   /// ocio, servicios, ahorro, más el violeta, el azul y el naranja.

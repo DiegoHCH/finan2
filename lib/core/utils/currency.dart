@@ -32,3 +32,23 @@ String formatMoney(num amount, [String currencyCode = defaultCurrency]) {
   final formatted = NumberFormat.decimalPattern(config.locale).format(amount);
   return '${config.symbol}$formatted';
 }
+
+/// A short amount for tight places - a badge, a goal's line, a year's
+/// totals: `$7M`, `$1,9M`, `$60k`, `$800`. Millions keep one decimal when
+/// it isn't zero; thousands round to the nearest one.
+String formatMoneyCompact(num amount, [String currencyCode = defaultCurrency]) {
+  final config = _configFor(currencyCode);
+  final sign = amount < 0 ? '−' : '';
+  final value = amount.abs();
+  final String digits;
+  // 999.500 would round to «1000k»: it's already a million.
+  if (value >= 999500) {
+    final millions = (value / 100000).round() / 10;
+    digits = '${NumberFormat('#,##0.#', config.locale).format(millions)}M';
+  } else if (value >= 1000) {
+    digits = '${(value / 1000).round()}k';
+  } else {
+    digits = NumberFormat.decimalPattern(config.locale).format(value);
+  }
+  return '$sign${config.symbol}$digits';
+}

@@ -11,6 +11,9 @@ class Finan2Figure extends StatelessWidget {
     required this.amountText,
     this.subtitle,
     this.amountColor,
+    this.fontSize,
+    this.centered = false,
+    this.money = true,
     super.key,
   });
 
@@ -22,16 +25,27 @@ class Finan2Figure extends StatelessWidget {
   final Widget? subtitle;
   final Color? amountColor;
 
+  /// Overrides displayMedium's 46 - the Plan screens use a smaller figure.
+  final double? fontSize;
+
+  /// Centers everything, as on a detail screen.
+  final bool centered;
+
+  /// When false, [amountText] is words («marzo 2027»): no small sign.
+  final bool money;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final figure = Theme.of(context).textTheme.displayMedium!.copyWith(color: amountColor);
-    final split = amountText.indexOf(RegExp(r'\d'));
+    final figure = Theme.of(
+      context,
+    ).textTheme.displayMedium!.copyWith(color: amountColor, fontSize: fontSize);
+    final split = money ? amountText.indexOf(RegExp(r'\d')) : -1;
     final sign = split > 0 ? amountText.substring(0, split) : '';
     final digits = split > 0 ? amountText.substring(split) : amountText;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         if (label case final label?) ...[
           Text(
@@ -49,11 +63,13 @@ class Finan2Figure extends StatelessWidget {
             ],
           ),
           maxLines: 1,
+          textAlign: centered ? TextAlign.center : null,
         ),
         if (subtitle case final subtitle?) ...[
           const SizedBox(height: 6),
           DefaultTextStyle.merge(
             style: TextStyle(fontSize: 12.5, color: colors.inkSoft),
+            textAlign: centered ? TextAlign.center : null,
             child: subtitle,
           ),
         ],

@@ -7,6 +7,7 @@ import '../../../../core/utils/year_month.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_month_nav.dart';
 import '../../../../core/widgets/finan2_list_row.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
@@ -148,8 +149,10 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
           children: [
             Finan2Head(
               title: l10n.transactionsTitle,
-              over: _MonthNav(
+              over: Finan2MonthNav(
                 label: monthLabelCap,
+                previousTooltip: l10n.transactionsPreviousMonth,
+                nextTooltip: l10n.transactionsNextMonth,
                 onPrevious: () => setState(() => _month = _month.plusMonths(-1)),
                 onNext: () => setState(() => _month = _month.plusMonths(1)),
                 onReset: _month.isCurrent
@@ -301,66 +304,4 @@ String _dayLabel(BuildContext context, DateTime day) {
   if (daysAgo == 0) return context.l10n.transactionsDayToday(weekday);
   if (daysAgo == 1) return context.l10n.transactionsDayYesterday(weekday);
   return weekday;
-}
-
-/// «‹ Octubre 2026 ›» as the head's over-line; the month comes back to today
-/// with a tap while browsing another.
-class _MonthNav extends StatelessWidget {
-  const _MonthNav({
-    required this.label,
-    required this.onPrevious,
-    required this.onNext,
-    required this.onReset,
-  });
-
-  final String label;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
-  final VoidCallback? onReset;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final l10n = context.l10n;
-    Widget arrow(IconData icon, String tooltip, VoidCallback onTap) => Tooltip(
-      message: tooltip,
-      child: Semantics(
-        button: true,
-        label: tooltip,
-        child: InkResponse(
-          onTap: onTap,
-          radius: 16,
-          child: Padding(
-            padding: const EdgeInsets.all(3),
-            child: Icon(icon, size: 18, color: colors.inkFaint),
-          ),
-        ),
-      ),
-    );
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        arrow(Icons.chevron_left, l10n.transactionsPreviousMonth, onPrevious),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: onReset,
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(text: label),
-                if (onReset != null)
-                  TextSpan(
-                    text: ' · ${l10n.corePeriodBackToToday}',
-                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                  ),
-              ],
-            ),
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.inkFaint),
-          ),
-        ),
-        arrow(Icons.chevron_right, l10n.transactionsNextMonth, onNext),
-      ],
-    );
-  }
 }

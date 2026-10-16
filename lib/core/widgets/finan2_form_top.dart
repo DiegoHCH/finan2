@@ -11,6 +11,8 @@ class Finan2FormTop extends StatefulWidget implements PreferredSizeWidget {
     required this.onSave,
     this.onCancel,
     this.closeIcon = false,
+    this.backIcon = false,
+    this.saveLabel,
     super.key,
   });
 
@@ -20,6 +22,12 @@ class Finan2FormTop extends StatefulWidget implements PreferredSizeWidget {
 
   /// The redesign's `.ftop`: a ✕ instead of the word «Cancelar».
   final bool closeIcon;
+
+  /// A back chevron instead, for a detail screen whose action is «Editar».
+  final bool backIcon;
+
+  /// The action's word; «Guardar» by default.
+  final String? saveLabel;
 
   @override
   Size get preferredSize => const Size.fromHeight(48);
@@ -59,12 +67,18 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _saving ? null : (widget.onCancel ?? () => Navigator.of(context).pop()),
-                child: widget.closeIcon
+                child: widget.closeIcon || widget.backIcon
                     ? Align(
                         alignment: Alignment.centerLeft,
                         child: Tooltip(
-                          message: MaterialLocalizations.of(context).closeButtonTooltip,
-                          child: Icon(Icons.close, size: 22, color: colors.inkSoft),
+                          message: widget.backIcon
+                              ? MaterialLocalizations.of(context).backButtonTooltip
+                              : MaterialLocalizations.of(context).closeButtonTooltip,
+                          child: Icon(
+                            widget.backIcon ? Icons.chevron_left : Icons.close,
+                            size: widget.backIcon ? 28 : 22,
+                            color: colors.inkSoft,
+                          ),
                         ),
                       )
                     : Text(
@@ -77,12 +91,19 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                       ),
               ),
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                fontSize: widget.closeIcon ? 15 : 14,
-                fontWeight: FontWeight.w700,
-                color: colors.ink,
+            ConstrainedBox(
+              // Long names (a goal's, a debt's) ellipsize instead of
+              // pushing the actions out.
+              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
+              child: Text(
+                widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: widget.closeIcon || widget.backIcon ? 15 : 14,
+                  fontWeight: FontWeight.w700,
+                  color: colors.ink,
+                ),
               ),
             ),
             Expanded(
@@ -102,10 +123,10 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                           ),
                         )
                       : Text(
-                          context.l10n.commonSave,
+                          widget.saveLabel ?? context.l10n.commonSave,
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            fontSize: widget.closeIcon ? 14.5 : 13,
+                            fontSize: widget.closeIcon || widget.backIcon ? 14.5 : 13,
                             fontWeight: FontWeight.w800,
                             color: brand,
                           ),
