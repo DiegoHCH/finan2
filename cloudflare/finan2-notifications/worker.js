@@ -602,7 +602,7 @@ async function getBudgetOverCategoryIds(accessToken, projectId, householdId, yea
   const doc = await res.json();
   return (doc.fields?.overCategoryIds?.arrayValue?.values ?? [])
     .map((v) => v.stringValue)
-    .filter(Boolean);
+    .filter((id) => id && !isDemoId(id));
 }
 
 /// Goal IDs with `households/{hid}/goalAlerts/{goalId}`.near == true -
@@ -733,10 +733,17 @@ async function getPartnerCreatedSources(accessToken, projectId, householdId, yea
 }
 
 async function getRawDocs(accessToken, projectId, householdId, collectionName) {
-  return listAllDocuments(
+  const docs = await listAllDocuments(
     accessToken,
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/households/${householdId}/${collectionName}`,
   );
+  return docs.filter((doc) => !isDemoId(docId(doc)));
+}
+
+/// Test data (lib/features/demo/domain/demo_ids.dart) never notifies: its
+/// IDs, and those derived from them, carry `demo_`.
+function isDemoId(id) {
+  return id.includes('demo_');
 }
 
 /// Every page of a collection - a single list call stops at 1000 documents.
@@ -773,7 +780,9 @@ async function getMonthTransactions(accessToken, projectId, householdId, year, m
     },
   );
   const rows = await res.json();
-  return Array.isArray(rows) ? rows.map((r) => r.document).filter(Boolean) : [];
+  return Array.isArray(rows)
+    ? rows.map((r) => r.document).filter((doc) => doc && !isDemoId(docId(doc)))
+    : [];
 }
 
 /// Same as [getRawDocs] but keyed by document ID, for lookups (category/goal

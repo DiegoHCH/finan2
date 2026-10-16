@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../demo/domain/demo_ids.dart';
+import '../../../demo/presentation/demo_data_actions.dart';
 import '../../../../core/locale/app_language.dart';
 import '../../../../core/pwa/pwa_providers.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -222,6 +224,25 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  if (demoDataEnabled) ...[
+                    const SizedBox(height: Finan2Space.md),
+                    Finan2Sheet(
+                      children: [
+                        Finan2SetRow(
+                          icon: Icons.science_outlined,
+                          tone: neutral,
+                          label: l10n.demoSeed,
+                          onTap: () => seedDemoData(context, ref, household),
+                        ),
+                        Finan2SetRow(
+                          icon: Icons.delete_sweep_outlined,
+                          tone: neutral,
+                          label: l10n.demoRemove,
+                          onTap: () => removeDemoData(context, ref, household),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: Finan2Space.lg),
                   OutlinedButton(
                     onPressed: () => ref.read(authControllerProvider.notifier).signOut(),

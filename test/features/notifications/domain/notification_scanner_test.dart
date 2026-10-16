@@ -614,4 +614,31 @@ void main() {
       expect(await readAll(), hasLength(1));
     });
   });
+
+  test('test data never notifies, from either member', () async {
+    final returned = await scanner.scan(
+      householdId: _householdId,
+      currentUid: 'u1',
+      debts: [_debt(id: 'demo_debt_visa', paymentDay: _now.day + 2, createdBy: 'u2')],
+      goals: [_goal(id: 'demo_goal_viaje', createdBy: 'u2')],
+      budget: const {},
+      transactionsThisMonth: [
+        Movement(
+          id: 'demo_tx_1',
+          amount: 50000,
+          type: CategoryType.gasto,
+          categoryId: 'c',
+          accountId: 'a',
+          description: 'Mercado',
+          date: _now,
+          createdBy: 'u2',
+        ),
+      ],
+      categories: const [],
+      prefs: NotificationPrefs.defaults,
+      now: _now,
+    );
+    expect(returned, isEmpty);
+    expect(await readAll(), isEmpty);
+  });
 }
