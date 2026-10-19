@@ -4256,6 +4256,54 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.'**
   String get demoError;
+
+  /// No description provided for @householdInviteValidUntil.
+  ///
+  /// In es, this message translates to:
+  /// **'Sirve una vez y vence el {date}.'**
+  String householdInviteValidUntil(String date);
+
+  /// No description provided for @householdInviteNewCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Generar otro código'**
+  String get householdInviteNewCode;
+
+  /// No description provided for @householdInviteNewCodeTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Generar otro código?'**
+  String get householdInviteNewCodeTitle;
+
+  /// No description provided for @householdInviteNewCodeMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'El código que ya mandaste dejará de funcionar. Hazlo si llegó a quien no era o si se perdió.'**
+  String get householdInviteNewCodeMessage;
+
+  /// No description provided for @householdJoinConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Entrar a {household}?'**
+  String householdJoinConfirmTitle(String household);
+
+  /// No description provided for @householdJoinConfirmTitleUnnamed.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Entrar a esta casa?'**
+  String get householdJoinConfirmTitleUnnamed;
+
+  /// No description provided for @householdJoinConfirmMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Te invitó {name}. Desde ahora los dos van a ver y anotar el dinero de esta casa.'**
+  String householdJoinConfirmMessage(String name);
+
+  /// No description provided for @householdJoinConfirmMessageUnnamed.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde ahora los dos van a ver y anotar el dinero de esta casa.'**
+  String get householdJoinConfirmMessageUnnamed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

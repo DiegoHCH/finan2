@@ -362,15 +362,23 @@ class _MemberBlock extends StatelessWidget {
 Future<void> _shareHousehold(BuildContext context, WidgetRef ref, Household household) async {
   final controller = ref.read(householdControllerProvider.notifier);
   if (household.members.length < 2) {
-    final shareCode = await controller.createInvite(household.id);
+    // The invite already sent, while it lasts: opening this again must not
+    // break the code the partner has.
+    final invite = await controller.invite(household.id);
     if (!context.mounted) return;
-    if (shareCode == null) {
+    if (invite == null) {
       await showFinan2ErrorSheet(context, message: context.l10n.settingsNoKeyToInvite);
       return;
     }
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: shareCode)));
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => InviteHouseholdScreen(
+          shareCode: invite.shareCode,
+          expiresAt: invite.expiresAt,
+          onNewCode: () => controller.invite(household.id, fresh: true),
+        ),
+      ),
+    );
     return;
   }
 

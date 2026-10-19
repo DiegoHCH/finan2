@@ -9,6 +9,7 @@ import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
 import '../../../../core/widgets/finan2_prompt_page.dart';
 import '../../../../l10n/l10n.dart';
+import '../../data/household_repository.dart';
 import '../viewmodels/household_providers.dart';
 
 enum _HouseholdChoice { create, join }
@@ -53,6 +54,7 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
       // The home screen takes over from here - see householdSetupProvider.
       await controller.createHousehold(householdName: toTitleCase(_householdNameController.text));
     } else {
+      if (!await _confirmHousehold(controller)) return;
       await controller.joinHousehold(code: _codeController.text.trim());
       if (controller.joinedWithoutKey && mounted) {
         await showFinan2InfoSheet(
@@ -62,6 +64,36 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
         );
       }
     }
+  }
+
+  var _checking = false;
+
+  /// Says whose household the code opens and asks before joining it.
+  Future<bool> _confirmHousehold(HouseholdController controller) async {
+    setState(() => _checking = true);
+    final InvitePreview invite;
+    try {
+      invite = await controller.previewInvite(_codeController.text);
+    } catch (e) {
+      if (mounted) await showFinan2ErrorSheet(context, message: friendlyErrorMessage(e));
+      return false;
+    } finally {
+      if (mounted) setState(() => _checking = false);
+    }
+    if (!mounted) return false;
+    final l10n = context.l10n;
+    final household = invite.householdName;
+    final inviter = invite.inviterName;
+    return showFinan2ConfirmSheet(
+      context,
+      title: household == null
+          ? l10n.householdJoinConfirmTitleUnnamed
+          : l10n.householdJoinConfirmTitle(household),
+      message: inviter == null
+          ? l10n.householdJoinConfirmMessageUnnamed
+          : l10n.householdJoinConfirmMessage(inviter),
+      confirmLabel: l10n.householdJoinButton,
+    );
   }
 
   @override
@@ -83,8 +115,8 @@ class _CreateJoinHouseholdScreenState extends ConsumerState<CreateJoinHouseholdS
           message: l10n.householdCreateJoinSubtitle,
           actions: [
             FilledButton(
-              onPressed: state.isLoading ? null : _submit,
-              child: state.isLoading
+              onPressed: state.isLoading || _checking ? null : _submit,
+              child: state.isLoading || _checking
                   ? const SizedBox(
                       width: 18,
                       height: 18,

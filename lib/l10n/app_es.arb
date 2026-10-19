@@ -2125,5 +2125,28 @@
       "count": { "type": "int" }
     }
   },
-  "demoError": "No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada."
+  "demoError": "No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.",
+  "householdInviteValidUntil": "Sirve una vez y vence el {date}.",
+  "@householdInviteValidUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "householdInviteNewCode": "Generar otro código",
+  "householdInviteNewCodeTitle": "¿Generar otro código?",
+  "householdInviteNewCodeMessage": "El código que ya mandaste dejará de funcionar. Hazlo si llegó a quien no era o si se perdió.",
+  "householdJoinConfirmTitle": "¿Entrar a {household}?",
+  "@householdJoinConfirmTitle": {
+    "placeholders": {
+      "household": { "type": "String" }
+    }
+  },
+  "householdJoinConfirmTitleUnnamed": "¿Entrar a esta casa?",
+  "householdJoinConfirmMessage": "Te invitó {name}. Desde ahora los dos van a ver y anotar el dinero de esta casa.",
+  "@householdJoinConfirmMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa."
 }
