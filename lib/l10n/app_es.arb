@@ -2102,5 +2102,28 @@
     }
   },
   "transfersNotExpense": "No es un gasto: no toca el presupuesto.",
-  "transfersSwap": "Invertir el sentido"
+  "transfersSwap": "Invertir el sentido",
+  "demoSeed": "Llenar con datos de prueba",
+  "demoRemove": "Quitar datos de prueba",
+  "demoSeedTitle": "¿Llenar con datos de prueba?",
+  "demoSeedMessage": "Se añaden tres meses de cuentas, una tarjeta, un crédito, metas, inversiones, fijos y movimientos inventados. Lo que ya tienen no se toca, y no avisan a nadie.",
+  "demoSeedConfirm": "Llenar",
+  "demoSeedDoneTitle": "Listo",
+  "demoSeedDone": "Se escribieron {count} registros de prueba.",
+  "@demoSeedDone": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "demoRemoveTitle": "¿Quitar los datos de prueba?",
+  "demoRemoveMessage": "Se borra solo lo inventado. Lo que anotaron ustedes se queda.",
+  "demoRemoveConfirm": "Quitar",
+  "demoRemoveDoneTitle": "Quitados",
+  "demoRemoveDone": "Se borraron {count} registros de prueba.",
+  "@demoRemoveDone": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "demoError": "No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada."
 }

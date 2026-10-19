@@ -4178,6 +4178,84 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Invertir el sentido'**
   String get transfersSwap;
+
+  /// No description provided for @demoSeed.
+  ///
+  /// In es, this message translates to:
+  /// **'Llenar con datos de prueba'**
+  String get demoSeed;
+
+  /// No description provided for @demoRemove.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar datos de prueba'**
+  String get demoRemove;
+
+  /// No description provided for @demoSeedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Llenar con datos de prueba?'**
+  String get demoSeedTitle;
+
+  /// No description provided for @demoSeedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se añaden tres meses de cuentas, una tarjeta, un crédito, metas, inversiones, fijos y movimientos inventados. Lo que ya tienen no se toca, y no avisan a nadie.'**
+  String get demoSeedMessage;
+
+  /// No description provided for @demoSeedConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Llenar'**
+  String get demoSeedConfirm;
+
+  /// No description provided for @demoSeedDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo'**
+  String get demoSeedDoneTitle;
+
+  /// No description provided for @demoSeedDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Se escribieron {count} registros de prueba.'**
+  String demoSeedDone(int count);
+
+  /// No description provided for @demoRemoveTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Quitar los datos de prueba?'**
+  String get demoRemoveTitle;
+
+  /// No description provided for @demoRemoveMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se borra solo lo inventado. Lo que anotaron ustedes se queda.'**
+  String get demoRemoveMessage;
+
+  /// No description provided for @demoRemoveConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar'**
+  String get demoRemoveConfirm;
+
+  /// No description provided for @demoRemoveDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitados'**
+  String get demoRemoveDoneTitle;
+
+  /// No description provided for @demoRemoveDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Se borraron {count} registros de prueba.'**
+  String demoRemoveDone(int count);
+
+  /// No description provided for @demoError.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.'**
+  String get demoError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

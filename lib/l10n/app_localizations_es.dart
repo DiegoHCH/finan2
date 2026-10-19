@@ -2520,4 +2520,49 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get transfersSwap => 'Invertir el sentido';
+
+  @override
+  String get demoSeed => 'Llenar con datos de prueba';
+
+  @override
+  String get demoRemove => 'Quitar datos de prueba';
+
+  @override
+  String get demoSeedTitle => '¿Llenar con datos de prueba?';
+
+  @override
+  String get demoSeedMessage =>
+      'Se añaden tres meses de cuentas, una tarjeta, un crédito, metas, inversiones, fijos y movimientos inventados. Lo que ya tienen no se toca, y no avisan a nadie.';
+
+  @override
+  String get demoSeedConfirm => 'Llenar';
+
+  @override
+  String get demoSeedDoneTitle => 'Listo';
+
+  @override
+  String demoSeedDone(int count) {
+    return 'Se escribieron $count registros de prueba.';
+  }
+
+  @override
+  String get demoRemoveTitle => '¿Quitar los datos de prueba?';
+
+  @override
+  String get demoRemoveMessage => 'Se borra solo lo inventado. Lo que anotaron ustedes se queda.';
+
+  @override
+  String get demoRemoveConfirm => 'Quitar';
+
+  @override
+  String get demoRemoveDoneTitle => 'Quitados';
+
+  @override
+  String demoRemoveDone(int count) {
+    return 'Se borraron $count registros de prueba.';
+  }
+
+  @override
+  String get demoError =>
+      'No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.';
 }
