@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eliminar tu cuenta — Finan2</title>
+  <meta name="description" content="Cómo eliminar tu cuenta de Finan2 y qué datos se borran.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/site.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem('finan2-theme');
+      var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    })();
+  </script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="./" aria-label="Finan2">
+        <img src="assets/icon.png" alt="" width="34" height="34">
+        Finan2
+      </a>
+      <nav aria-label="Principal" data-i18n-attr="aria-label:navLabel">
+        <button class="pill-btn" id="lang" type="button" aria-label="English">EN</button>
+        <button class="pill-btn" id="theme" type="button" aria-label="Cambiar tema" data-i18n-attr="aria-label:themeLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="plain">
+    <span class="eyebrow" data-i18n="delEyebrow">Tu cuenta</span>
+    <h1 data-i18n="delTitle">Eliminar tu cuenta</h1>
+    <p data-i18n="delLead">Puedes eliminar tu cuenta de Finan2 cuando quieras, desde la app. Es inmediato y no se puede deshacer.</p>
+
+    <h2 data-i18n="delHowTitle">Cómo hacerlo</h2>
+    <ol>
+      <li data-i18n="delStep1">Abre Finan2 y ve a <span class="path">Ajustes › Tu cuenta</span>.</li>
+      <li data-i18n="delStep2">Toca <strong>Eliminar mi cuenta</strong>.</li>
+      <li data-i18n="delStep3">Confirma con tu contraseña o con Google, según cómo entres.</li>
+    </ol>
+
+    <h2 data-i18n="delWhatTitle">Qué se borra</h2>
+    <ul>
+      <li data-i18n="delWhat1">Tu usuario: correo, nombre y foto.</li>
+      <li data-i18n="delWhat2">Tus preferencias de avisos y el registro de tus teléfonos para las notificaciones.</li>
+      <li data-i18n="delWhat3">La llave del hogar guardada en ese teléfono.</li>
+      <li data-i18n="delWhat4"><strong>Si eres la única persona del hogar</strong>, también todo lo del hogar: movimientos, cuentas, presupuestos, deudas, metas y lo demás.</li>
+    </ul>
+
+    <h2 data-i18n="delKeepTitle">Qué se queda</h2>
+    <p data-i18n="delKeep">Si la otra persona sigue en el hogar, los datos del hogar se quedan para ella: son de los dos. Lo que anotaste sigue ahí.</p>
+
+    <h2 data-i18n="delHelpTitle">Si no puedes entrar a la app</h2>
+    <p data-i18n="delHelp">Escríbenos a <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a> desde el correo de tu cuenta y la eliminamos por ti. Si ninguno de los dos usa ya el hogar, también podemos borrar todos sus datos.</p>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span data-i18n="footer">Finan2 · finanzas del hogar para dos</span>
+      <nav aria-label="Legal">
+        <a href="./" data-i18n="home">Inicio</a>
+        <a href="privacy.html" data-i18n="privacy">Política de privacidad</a>
+        <a href="terms.html" data-i18n="terms">Términos y condiciones</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>
