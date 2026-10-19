@@ -11,7 +11,7 @@
     skip: 'Skip to content',
     navLabel: 'Main',
     navTour: 'Inside',
-    navVault: 'Privacy',
+    navPrivacy: 'Privacy',
     navFaq: 'Questions',
     themeLabel: 'Change theme',
     eyebrow: 'Household money, for two',
@@ -83,30 +83,13 @@
     q5: 'Can I take my data out?',
     a5q: 'Yes. From Settings you can export a report as CSV or PDF, and keep a backup of the household encrypted with your key.',
     q6: 'How do I delete my account?',
-    a6q: 'In <b>Settings › Your account › Delete my account</b>. <a href="delete-account.html">What’s deleted and what isn’t</a>.',
+    a6q: 'In <b>Settings › Your account › Delete my account</b>. <a href="eliminar-cuenta/">What’s deleted and what isn’t</a>.',
     closeTitle: 'One place for the money you share.',
     closeLead: 'Coming soon to Android and iPhone, in English and Spanish.',
     footer: 'Finan2 · household money for two',
     privacy: 'Privacy policy',
     terms: 'Terms and conditions',
     deleteAccount: 'Delete your account',
-    home: 'Home',
-    delEyebrow: 'Your account',
-    delTitle: 'Delete your account',
-    delLead: 'You can delete your Finan2 account whenever you want, from the app. It’s immediate and can’t be undone.',
-    delHowTitle: 'How to do it',
-    delStep1: 'Open Finan2 and go to <span class="path">Settings › Your account</span>.',
-    delStep2: 'Tap <strong>Delete my account</strong>.',
-    delStep3: 'Confirm with your password or with Google, depending on how you sign in.',
-    delWhatTitle: 'What’s deleted',
-    delWhat1: 'Your user: email, name and photo.',
-    delWhat2: 'Your notice preferences and your phones’ registration for notifications.',
-    delWhat3: 'The household key stored on that phone.',
-    delWhat4: '<strong>If you’re the only person in the household</strong>, everything in it as well: movements, accounts, budgets, debts, goals and the rest.',
-    delKeepTitle: 'What stays',
-    delKeep: 'If the other person stays in the household, its data stays with them: it belongs to both of you. What you logged is still there.',
-    delHelpTitle: 'If you can’t get into the app',
-    delHelp: 'Write to us at <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a> from your account’s email and we’ll delete it for you. If neither of you uses the household anymore, we can also delete all of its data.',
   };
 
   var spanish = {};
@@ -119,8 +102,8 @@
     spanishAttrs.push([el, parts[0], parts[1], el.getAttribute(parts[0])]);
   });
 
-  var lang = localStorage.getItem('finan2-lang') ||
-    (/^es\b/i.test(navigator.language || 'es') ? 'es' : 'en');
+  // Chosen in the page's head, before paint.
+  var lang = root.lang === 'en' ? 'en' : 'es';
 
   function applyLanguage() {
     root.lang = lang;
@@ -257,6 +240,22 @@
       });
     }, { rootMargin: '-45% 0px -45% 0px' });
     steps.forEach(function (s) { observer.observe(s); });
+  }
+
+  // ── Documents: the contents follow the section being read ─────────
+  if ('IntersectionObserver' in window) {
+    var tocObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var id = entry.target.id;
+        document.querySelectorAll('.toc a').forEach(function (a) {
+          a.classList.toggle('on', a.getAttribute('href') === '#' + id);
+        });
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('.prose section[id], .prose .summary[id]').forEach(function (section) {
+      tocObserver.observe(section);
+    });
   }
 
   // ── Header rule once the page moves ───────────────────────────────

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>No existe — Finan2</title>
+  <meta name="description" content="Esta página no existe.">
+  <link rel="canonical" href="https://diegohch.github.io/finan2/">
+  <meta name="theme-color" content="#F3F1F9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0F0C17" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="/finan2/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/finan2/assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/finan2/assets/site.css">
+  <script>
+    (function () {
+      var asked = new URLSearchParams(location.search).get('theme');
+      var saved = asked || localStorage.getItem('finan2-theme');
+      var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      var lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('finan2-lang') ||
+        (/^es\b/i.test(navigator.language || 'es') ? 'es' : 'en');
+      document.documentElement.lang = lang;
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#contenido" data-i18n="skip">Ir al contenido</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="/finan2/" aria-label="Finan2">
+        <img src="/finan2/assets/icon.png" alt="" width="34" height="34">
+        Finan2
+      </a>
+      <nav aria-label="Principal" data-i18n-attr="aria-label:navLabel">
+        <a href="/finan2/#funciones" data-i18n="navTour">Cómo es</a>
+        <a href="/finan2/privacidad/" data-i18n="navPrivacy">Privacidad</a>
+        <a href="/finan2/#preguntas" data-i18n="navFaq">Preguntas</a>
+        <button class="pill-btn" id="lang" type="button" aria-label="English">EN</button>
+        <button class="pill-btn" id="theme" type="button" aria-label="Cambiar tema" data-i18n-attr="aria-label:themeLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lost" id="contenido">
+    <div>
+      <span class="eyebrow"><span class="lang-es">Error 404</span><span class="lang-en">Error 404</span></span>
+      <h1 class="lang-es">Esta página no existe.</h1>
+      <h1 class="lang-en">This page doesn’t exist.</h1>
+      <p class="lang-es" style="color:var(--ink-soft);font-size:19px;margin:18px 0 28px">O la guardamos cifrada y no tenemos la llave.</p>
+      <p class="lang-en" style="color:var(--ink-soft);font-size:19px;margin:18px 0 28px">Or we stored it encrypted and don’t have the key.</p>
+      <a class="store" href="/finan2/"><span><b class="lang-es">Volver al inicio</b><b class="lang-en">Back to the home page</b></span></a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span data-i18n="footer">Finan2 · finanzas del hogar para dos</span>
+      <nav aria-label="Legal">
+        <a href="/finan2/privacidad/" data-i18n="privacy">Política de privacidad</a>
+        <a href="/finan2/terminos/" data-i18n="terms">Términos y condiciones</a>
+        <a href="/finan2/eliminar-cuenta/" data-i18n="deleteAccount">Eliminar tu cuenta</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/finan2/assets/site.js"></script>
+</body>
+</html>

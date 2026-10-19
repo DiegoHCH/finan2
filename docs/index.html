@@ -24,6 +24,9 @@
       var saved = asked || localStorage.getItem('finan2-theme');
       var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      var lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('finan2-lang') ||
+        (/^es\b/i.test(navigator.language || 'es') ? 'es' : 'en');
+      document.documentElement.lang = lang;
     })();
   </script>
 </head>
@@ -38,7 +41,7 @@
       </a>
       <nav aria-label="Principal" data-i18n-attr="aria-label:navLabel">
         <a href="#funciones" data-i18n="navTour">Cómo es</a>
-        <a href="#privacidad" data-i18n="navVault">Privacidad</a>
+        <a href="privacidad/" data-i18n="navPrivacy">Privacidad</a>
         <a href="#preguntas" data-i18n="navFaq">Preguntas</a>
         <button class="pill-btn" id="lang" type="button" aria-label="English">EN</button>
         <button class="pill-btn" id="theme" type="button" aria-label="Cambiar tema" data-i18n-attr="aria-label:themeLabel">
@@ -164,7 +167,7 @@
     </section>
 
     <!-- The vault: one movement, as each side sees it -->
-    <section class="section vault" id="privacidad">
+    <section class="section vault" id="cifrado">
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow" data-i18n="vaultEyebrow">Privacidad</span>
@@ -251,7 +254,7 @@
           </details>
           <details>
             <summary data-i18n="q6">¿Cómo borro mi cuenta?</summary>
-            <p data-i18n="a6q">En <b>Ajustes › Tu cuenta › Eliminar mi cuenta</b>. <a href="delete-account.html">Qué se borra y qué no</a>.</p>
+            <p data-i18n="a6q">En <b>Ajustes › Tu cuenta › Eliminar mi cuenta</b>. <a href="eliminar-cuenta/">Qué se borra y qué no</a>.</p>
           </details>
         </div>
       </div>
@@ -270,9 +273,9 @@
     <div class="wrap">
       <span data-i18n="footer">Finan2 · finanzas del hogar para dos</span>
       <nav aria-label="Legal">
-        <a href="privacy.html" data-i18n="privacy">Política de privacidad</a>
-        <a href="terms.html" data-i18n="terms">Términos y condiciones</a>
-        <a href="delete-account.html" data-i18n="deleteAccount">Eliminar tu cuenta</a>
+        <a href="privacidad/" data-i18n="privacy">Política de privacidad</a>
+        <a href="terminos/" data-i18n="terms">Términos y condiciones</a>
+        <a href="eliminar-cuenta/" data-i18n="deleteAccount">Eliminar tu cuenta</a>
       </nav>
     </div>
   </footer>

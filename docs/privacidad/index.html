@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de privacidad — Finan2</title>
+  <meta name="description" content="Qué datos guarda Finan2, qué se cifra, con quién se comparten y cómo pedir que se borren.">
+  <link rel="canonical" href="https://diegohch.github.io/finan2/privacidad/">
+  <meta name="theme-color" content="#F3F1F9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0F0C17" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>
+    (function () {
+      var asked = new URLSearchParams(location.search).get('theme');
+      var saved = asked || localStorage.getItem('finan2-theme');
+      var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      var lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('finan2-lang') ||
+        (/^es\b/i.test(navigator.language || 'es') ? 'es' : 'en');
+      document.documentElement.lang = lang;
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#contenido" data-i18n="skip">Ir al contenido</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Finan2">
+        <img src="../assets/icon.png" alt="" width="34" height="34">
+        Finan2
+      </a>
+      <nav aria-label="Principal" data-i18n-attr="aria-label:navLabel">
+        <a href="../#funciones" data-i18n="navTour">Cómo es</a>
+        <a href="../privacidad/" data-i18n="navPrivacy">Privacidad</a>
+        <a href="../#preguntas" data-i18n="navFaq">Preguntas</a>
+        <button class="pill-btn" id="lang" type="button" aria-label="English">EN</button>
+        <button class="pill-btn" id="theme" type="button" aria-label="Cambiar tema" data-i18n-attr="aria-label:themeLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc-page lang-es" id="contenido">
+    <div class="doc-hero">
+      <span class="eyebrow">Política de privacidad</span>
+      <h1>Qué guardamos, y qué no podemos leer.</h1>
+      <p>Finan2 es una app para que dos personas lleven juntas el dinero de su casa. Esta página explica qué datos guarda, para qué, con quién se comparten y cómo pedir que se borren.</p>
+      <div class="meta"><span>Responsable: <b>Katanalabs</b></span><span>Contacto: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Vigente desde: <b>19 de octubre de 2026</b></span></div>
+    </div>
+
+    <div class="legal">
+      <nav class="toc" aria-label="En esta página">
+        <p>En esta página</p>
+        <ol>
+          <li><a href="#resumen">En corto</a></li>
+          <li><a href="#responsable">Quién es responsable</a></li>
+          <li><a href="#datos">Qué datos guardamos</a></li>
+          <li><a href="#cifrado">Qué se cifra y qué no</a></li>
+          <li><a href="#uso">Para qué los usamos</a></li>
+          <li><a href="#proveedores">Con quién se comparten</a></li>
+          <li><a href="#avisos">Los avisos</a></li>
+          <li><a href="#plazos">Cuánto tiempo se guardan</a></li>
+          <li><a href="#derechos">Tus derechos</a></li>
+          <li><a href="#seguridad">Seguridad</a></li>
+          <li><a href="#menores">Menores de edad</a></li>
+          <li><a href="#cambios">Cambios</a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+        <div class="summary" id="resumen">
+          <h2>En corto</h2>
+          <ul>
+            <li><p>Los montos se cifran en tu teléfono. <span>Ni nosotros, con acceso total a la base de datos, podemos leerlos.</span></p></li>
+            <li><p>Tus datos solo los ve la otra persona de tu hogar. <span>Un hogar es de dos personas como máximo.</span></p></li>
+            <li><p>No vendemos datos ni mostramos anuncios. <span>Tampoco usamos analítica publicitaria ni rastreo entre apps.</span></p></li>
+            <li><p>No pedimos acceso a tu banco. <span>Lo que ves en Finan2 es lo que ustedes escriben.</span></p></li>
+            <li><p>Puedes borrar tu cuenta desde la app. <span><a href="../eliminar-cuenta/">Cómo y qué se borra</a>.</span></p></li>
+          </ul>
+        </div>
+
+        <section id="responsable">
+          <h2>Quién es responsable</h2>
+          <p>El responsable del tratamiento de tus datos es <b>Katanalabs</b>, que desarrolla Finan2. Para cualquier pregunta o solicitud sobre tus datos, escribe a <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a>.</p>
+        </section>
+
+        <section id="datos">
+          <h2>Qué datos guardamos</h2>
+          <h3>Tu cuenta</h3>
+          <ul>
+            <li>Tu correo electrónico, para que puedas entrar.</li>
+            <li>Tu nombre y, si entras con Google, tu foto de perfil, para que la otra persona del hogar sepa quién anotó cada cosa.</li>
+          </ul>
+          <h3>Lo que anotan en el hogar</h3>
+          <ul>
+            <li>Movimientos, cuentas, tarjetas, presupuestos, deudas, metas de ahorro, inversiones, fijos, pases entre cuentas y notas del mes.</li>
+            <li>Quién creó cada registro y quién pagó cada movimiento.</li>
+          </ul>
+          <h3>Tus teléfonos</h3>
+          <ul>
+            <li>Un identificador para enviar notificaciones a cada teléfono (el token de Firebase Cloud Messaging) y qué avisos quieres recibir.</li>
+            <li>Si la app falla, un <b>informe del fallo</b>: qué parte del código falló, el modelo del teléfono, la versión del sistema y de la app. No les añadimos tu nombre, tu correo ni tus montos.</li>
+          </ul>
+          <h3>Lo que se queda solo en tu teléfono</h3>
+          <ul>
+            <li>La llave que cifra los montos, en el almacenamiento seguro del teléfono.</li>
+            <li>Una copia de lo último que llegó, para que la app funcione sin conexión. Los montos siguen cifrados en esa copia.</li>
+            <li>Tu idioma y tema elegidos.</li>
+            <li>Los informes y copias de seguridad que exportes: se crean en tu teléfono y tú decides dónde guardarlos o a quién enviarlos. Las copias de seguridad van cifradas con la llave del hogar.</li>
+          </ul>
+          <div class="callout"><p>Finan2 <b>no</b> recoge tu ubicación, tus contactos, tus fotos ni datos de tarjetas o cuentas bancarias.</p></div>
+        </section>
+
+        <section id="cifrado">
+          <h2>Qué se cifra y qué no</h2>
+          <p>Cada monto se cifra en tu teléfono con AES-256-GCM antes de subirse. La llave se crea al crear el hogar, pasa al teléfono de la otra persona con el código de invitación y nunca se sube sin cifrar. Si generan la frase de recuperación de 12 palabras, se guarda una copia de la llave <b>cifrada con esa frase</b>; la frase no se guarda en ningún lado.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Dato</th><th>Cómo se guarda</th></tr></thead>
+              <tbody>
+                <tr><td>Montos y saldos</td><td><span class="tag yes">cifrado</span> Movimientos, saldos de cuentas y tarjetas, deudas, metas y aportes, inversiones, fijos y presupuestos.</td></tr>
+                <tr><td>Textos</td><td><span class="tag no">legible</span> Descripciones, etiquetas, notas y nombres de categorías, cuentas, deudas y metas.</td></tr>
+                <tr><td>Fechas y tipos</td><td><span class="tag no">legible</span> La fecha de cada movimiento, si es ingreso, gasto o ahorro, y quién lo registró.</td></tr>
+                <tr><td>Indicadores</td><td><span class="tag no">legible</span> Si una deuda tiene saldo pendiente, si una categoría se pasó del presupuesto y si una meta está por cumplirse. Sirven para enviar avisos sin descifrar nada.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Lo legible está protegido para que solo lo lean las dos personas del hogar, pero alguien con acceso administrativo a la base de datos podría verlo. Los montos, no.</p>
+          <div class="callout"><p>Si pierden la llave en los dos teléfonos y no tienen la frase de recuperación, <b>nadie puede recuperar los montos</b>, tampoco nosotros.</p></div>
+        </section>
+
+        <section id="uso">
+          <h2>Para qué los usamos</h2>
+          <ul>
+            <li>Mostrar el hogar a sus dos integrantes y mantenerlo igual en los dos teléfonos.</li>
+            <li>Enviar los avisos que cada persona elige: pagos que se acercan, presupuestos superados, metas por cumplir y lo que anota la otra persona.</li>
+            <li>Encontrar y arreglar fallos de la app.</li>
+          </ul>
+          <p>No usamos tus datos para publicidad, no hacemos perfiles y no los vendemos.</p>
+        </section>
+
+        <section id="proveedores">
+          <h2>Con quién se comparten</h2>
+          <p>Con nadie fuera de tu hogar. Para funcionar, Finan2 usa estos servicios, que tratan los datos por encargo nuestro y no para sus propios fines:</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Servicio</th><th>Para qué</th></tr></thead>
+              <tbody>
+                <tr><td>Firebase Authentication</td><td>Tu cuenta y el inicio de sesión, con correo o con Google.</td></tr>
+                <tr><td>Cloud Firestore</td><td>Guarda los datos del hogar.</td></tr>
+                <tr><td>Firebase Cloud Messaging</td><td>Entrega las notificaciones a tus teléfonos.</td></tr>
+                <tr><td>Firebase Crashlytics</td><td>Recibe los informes de fallos.</td></tr>
+                <tr><td>Cloudflare Workers</td><td>Envía los avisos programados. Ve los títulos de los avisos al enviarlos, nunca montos, y no los guarda.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Firebase es de Google, y estos servicios pueden guardar o procesar los datos en servidores fuera de Colombia. Al usar Finan2 autorizas esa transferencia, que se hace con las garantías de esos proveedores.</p>
+          <p>Solo entregaríamos datos a una autoridad si una ley o una orden judicial nos obliga. Aun así, no podríamos entregar los montos descifrados: no tenemos la llave.</p>
+        </section>
+
+        <section id="avisos">
+          <h2>Los avisos</h2>
+          <p>Algunos avisos llegan aunque nadie abra la app, por ejemplo el día de pago de una deuda. Los envía un pequeño servicio nuestro en Cloudflare que lee, sin descifrar nada, los nombres de deudas y metas, los indicadores de la tabla anterior y los tokens de notificación. Los avisos nunca incluyen montos. Cada persona elige cuáles recibe desde <b>Ajustes › Avisos</b>.</p>
+        </section>
+
+        <section id="plazos">
+          <h2>Cuánto tiempo se guardan</h2>
+          <ul>
+            <li><b>Los datos del hogar</b>, mientras el hogar exista.</li>
+            <li><b>Si sales del hogar</b>, se borran tu membresía, tus preferencias de avisos y los tokens de tus teléfonos. Lo anotado se queda para la otra persona, porque es de los dos.</li>
+            <li><b>Si eres la última persona del hogar y sales</b>, se borra todo el hogar en ese momento.</li>
+            <li><b>Si eliminas tu cuenta</b>, además se borra tu usuario. <a href="../eliminar-cuenta/">Más detalle</a>.</li>
+            <li><b>Los informes de fallos</b> se borran solos a los 90 días.</li>
+          </ul>
+        </section>
+
+        <section id="derechos">
+          <h2>Tus derechos</h2>
+          <p>Según la Ley 1581 de 2012 de Colombia y sus normas reglamentarias, puedes:</p>
+          <ul>
+            <li>Conocer, actualizar y corregir tus datos. Casi todo lo puedes hacer tú desde la app.</li>
+            <li>Pedir que se borren o revocar tu autorización. Desde la app, eliminando tu cuenta, o escribiéndonos.</li>
+            <li>Pedir prueba de la autorización que nos diste y saber qué uso le hemos dado a tus datos.</li>
+            <li>Presentar quejas ante la Superintendencia de Industria y Comercio, después de haber hecho la solicitud con nosotros.</li>
+          </ul>
+          <p>Para ejercerlos, escribe a <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a> desde el correo de tu cuenta. Respondemos las consultas en un máximo de 10 días hábiles y los reclamos en un máximo de 15. Si ninguno de los dos usa ya el hogar, también podemos borrar todos sus datos.</p>
+        </section>
+
+        <section id="seguridad">
+          <h2>Seguridad</h2>
+          <p>Los datos viajan cifrados (HTTPS) y la base de datos tiene reglas que solo dejan entrar a las dos personas de cada hogar. Los montos, además, se cifran en el teléfono antes de salir. Ningún sistema es infalible: si notas algo extraño en tu cuenta, cámbiale la contraseña y escríbenos.</p>
+        </section>
+
+        <section id="menores">
+          <h2>Menores de edad</h2>
+          <p>Finan2 no está dirigida a menores de 13 años y no recogemos a sabiendas datos de menores de esa edad. Si crees que un menor nos dio sus datos, escríbenos y los borramos.</p>
+        </section>
+
+        <section id="cambios">
+          <h2>Cambios</h2>
+          <p>Si cambia algo importante en cómo tratamos tus datos, actualizaremos esta página y su fecha.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <main class="doc-page lang-en" id="contenido-en">
+    <div class="doc-hero">
+      <span class="eyebrow">Privacy policy</span>
+      <h1>What we keep, and what we can’t read.</h1>
+      <p>Finan2 is an app for two people to manage their household’s money together. This page explains what data it keeps, what for, who it’s shared with and how to have it deleted.</p>
+      <div class="meta"><span>Controller: <b>Katanalabs</b></span><span>Contact: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Effective: <b>October 19, 2026</b></span></div>
+    </div>
+
+    <div class="legal">
+      <nav class="toc" aria-label="On this page">
+        <p>On this page</p>
+        <ol>
+          <li><a href="#summary">In short</a></li>
+          <li><a href="#controller">Who is responsible</a></li>
+          <li><a href="#data">What we keep</a></li>
+          <li><a href="#encryption">What’s encrypted and what isn’t</a></li>
+          <li><a href="#use">What we use it for</a></li>
+          <li><a href="#providers">Who it’s shared with</a></li>
+          <li><a href="#notices">Notices</a></li>
+          <li><a href="#retention">How long it’s kept</a></li>
+          <li><a href="#rights">Your rights</a></li>
+          <li><a href="#security">Security</a></li>
+          <li><a href="#children">Children</a></li>
+          <li><a href="#changes">Changes</a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+        <div class="summary" id="summary">
+          <h2>In short</h2>
+          <ul>
+            <li><p>Amounts are encrypted on your phone. <span>Not even we, with full access to the database, can read them.</span></p></li>
+            <li><p>Only the other person in your household sees your data. <span>A household has two people at most.</span></p></li>
+            <li><p>We don’t sell data or show ads. <span>No advertising analytics or cross-app tracking either.</span></p></li>
+            <li><p>We never ask for access to your bank. <span>What you see in Finan2 is what you type in.</span></p></li>
+            <li><p>You can delete your account from the app. <span><a href="../eliminar-cuenta/">How, and what’s deleted</a>.</span></p></li>
+          </ul>
+        </div>
+
+        <section id="controller">
+          <h2>Who is responsible</h2>
+          <p>Your data is controlled by <b>Katanalabs</b>, which develops Finan2. For any question or request about your data, write to <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a>.</p>
+        </section>
+
+        <section id="data">
+          <h2>What we keep</h2>
+          <h3>Your account</h3>
+          <ul>
+            <li>Your email address, so you can sign in.</li>
+            <li>Your name and, if you sign in with Google, your profile photo, so the other person in the household knows who logged what.</li>
+          </ul>
+          <h3>What you log in the household</h3>
+          <ul>
+            <li>Movements, accounts, cards, budgets, debts, savings goals, investments, recurring bills, transfers between accounts and monthly notes.</li>
+            <li>Who created each record and who paid each movement.</li>
+          </ul>
+          <h3>Your phones</h3>
+          <ul>
+            <li>An identifier to send notifications to each phone (the Firebase Cloud Messaging token) and which notices you want.</li>
+            <li>If the app crashes, a <b>crash report</b>: which part of the code failed, the phone model, and the system and app versions. We don’t add your name, email or amounts to them.</li>
+          </ul>
+          <h3>What stays only on your phone</h3>
+          <ul>
+            <li>The key that encrypts amounts, in the phone’s secure storage.</li>
+            <li>A copy of what last arrived, so the app works offline. Amounts stay encrypted in that copy.</li>
+            <li>Your chosen language and theme.</li>
+            <li>Reports and backups you export: they’re created on your phone and you decide where to keep them or who to send them to. Backups are encrypted with the household key.</li>
+          </ul>
+          <div class="callout"><p>Finan2 does <b>not</b> collect your location, contacts, photos, or card or bank account details.</p></div>
+        </section>
+
+        <section id="encryption">
+          <h2>What’s encrypted and what isn’t</h2>
+          <p>Every amount is encrypted on your phone with AES-256-GCM before it’s uploaded. The key is created with the household, goes to the other person’s phone with the invite code and is never uploaded unencrypted. If you generate the 12-word recovery phrase, a copy of the key <b>encrypted with that phrase</b> is stored; the phrase itself is stored nowhere.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Data</th><th>How it’s stored</th></tr></thead>
+              <tbody>
+                <tr><td>Amounts and balances</td><td><span class="tag yes">encrypted</span> Movements, account and card balances, debts, goals and contributions, investments, recurring bills and budgets.</td></tr>
+                <tr><td>Text</td><td><span class="tag no">readable</span> Descriptions, tags, notes and the names of categories, accounts, debts and goals.</td></tr>
+                <tr><td>Dates and types</td><td><span class="tag no">readable</span> Each movement’s date, whether it’s income, an expense or savings, and who logged it.</td></tr>
+                <tr><td>Flags</td><td><span class="tag no">readable</span> Whether a debt has a balance left, whether a category went over budget and whether a goal is nearly reached. They let notices be sent without decrypting anything.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Readable data is protected so only the two people in the household can read it, but someone with administrative access to the database could see it. Amounts, no.</p>
+          <div class="callout"><p>If you lose the key on both phones and don’t have the recovery phrase, <b>nobody can recover the amounts</b>, us included.</p></div>
+        </section>
+
+        <section id="use">
+          <h2>What we use it for</h2>
+          <ul>
+            <li>Showing the household to its two members and keeping it the same on both phones.</li>
+            <li>Sending the notices each person chooses: upcoming payments, budgets gone over, goals nearly reached and what the other person logs.</li>
+            <li>Finding and fixing bugs in the app.</li>
+          </ul>
+          <p>We don’t use your data for advertising, we don’t build profiles and we don’t sell it.</p>
+        </section>
+
+        <section id="providers">
+          <h2>Who it’s shared with</h2>
+          <p>Nobody outside your household. To work, Finan2 uses these services, which process data on our behalf and not for their own purposes:</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Service</th><th>What for</th></tr></thead>
+              <tbody>
+                <tr><td>Firebase Authentication</td><td>Your account and sign-in, with email or Google.</td></tr>
+                <tr><td>Cloud Firestore</td><td>Stores the household’s data.</td></tr>
+                <tr><td>Firebase Cloud Messaging</td><td>Delivers notifications to your phones.</td></tr>
+                <tr><td>Firebase Crashlytics</td><td>Receives crash reports.</td></tr>
+                <tr><td>Cloudflare Workers</td><td>Sends scheduled notices. It sees notice titles while sending them, never amounts, and doesn’t keep them.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Firebase belongs to Google, and these services may store or process data on servers outside Colombia. By using Finan2 you authorize that transfer, made under those providers’ safeguards.</p>
+          <p>We would only hand data to an authority if a law or a court order requires it. Even then, we couldn’t hand over decrypted amounts: we don’t have the key.</p>
+        </section>
+
+        <section id="notices">
+          <h2>Notices</h2>
+          <p>Some notices arrive even if nobody opens the app, such as a debt’s payment day. They’re sent by a small service of ours on Cloudflare that reads, without decrypting anything, the names of debts and goals, the flags in the table above and notification tokens. Notices never include amounts. Each person chooses which ones to get in <b>Settings › Notices</b>.</p>
+        </section>
+
+        <section id="retention">
+          <h2>How long it’s kept</h2>
+          <ul>
+            <li><b>Household data</b>, for as long as the household exists.</li>
+            <li><b>If you leave the household</b>, your membership, notice preferences and your phones’ tokens are deleted. What was logged stays for the other person, since it belongs to both of you.</li>
+            <li><b>If you’re the last person in the household and you leave</b>, the whole household is deleted right then.</li>
+            <li><b>If you delete your account</b>, your user is deleted as well. <a href="../eliminar-cuenta/">More detail</a>.</li>
+            <li><b>Crash reports</b> are deleted automatically after 90 days.</li>
+          </ul>
+        </section>
+
+        <section id="rights">
+          <h2>Your rights</h2>
+          <p>Under Colombian Law 1581 of 2012 and its regulations, you can:</p>
+          <ul>
+            <li>Access, update and correct your data. You can do almost all of it yourself in the app.</li>
+            <li>Ask for it to be deleted or withdraw your authorization, from the app by deleting your account, or by writing to us.</li>
+            <li>Ask for proof of the authorization you gave us and how we’ve used your data.</li>
+            <li>File complaints with the Superintendence of Industry and Commerce, after making the request with us.</li>
+          </ul>
+          <p>To exercise them, write to <a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a> from your account’s email. We answer queries within 10 business days and claims within 15. If neither of you uses the household anymore, we can also delete all of its data.</p>
+        </section>
+
+        <section id="security">
+          <h2>Security</h2>
+          <p>Data travels encrypted (HTTPS) and the database has rules that only let in the two people of each household. Amounts are also encrypted on the phone before leaving it. No system is infallible: if you notice anything odd in your account, change your password and write to us.</p>
+        </section>
+
+        <section id="children">
+          <h2>Children</h2>
+          <p>Finan2 isn’t meant for children under 13 and we don’t knowingly collect their data. If you think a child gave us their data, write to us and we’ll delete it.</p>
+        </section>
+
+        <section id="changes">
+          <h2>Changes</h2>
+          <p>If anything important changes in how we handle your data, we’ll update this page and its date.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span data-i18n="footer">Finan2 · finanzas del hogar para dos</span>
+      <nav aria-label="Legal">
+        <a href="../privacidad/" data-i18n="privacy">Política de privacidad</a>
+        <a href="../terminos/" data-i18n="terms">Términos y condiciones</a>
+        <a href="../eliminar-cuenta/" data-i18n="deleteAccount">Eliminar tu cuenta</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>
