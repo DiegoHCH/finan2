@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../demo/domain/demo_ids.dart';
 import '../../../demo/presentation/demo_data_actions.dart';
 import '../../../../core/locale/app_language.dart';
 import '../../../../core/pwa/pwa_providers.dart';

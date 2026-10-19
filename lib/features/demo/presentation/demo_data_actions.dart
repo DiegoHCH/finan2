@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +8,11 @@ import '../../../l10n/l10n.dart';
 import '../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../household/data/household_model.dart';
 import '../data/demo_data_repository.dart';
+
+/// Whether test data can be written from Ajustes: in a debug build, or one
+/// made for it (`--dart-define=FINAN2_DEMO=true`) - never in the one people
+/// install.
+const demoDataEnabled = kDebugMode || bool.fromEnvironment('FINAN2_DEMO');
 
 final demoDataRepositoryProvider = Provider<DemoDataRepository>((ref) => DemoDataRepository());
 
