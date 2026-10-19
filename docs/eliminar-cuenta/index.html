@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eliminar tu cuenta — Finan2</title>
+  <meta name="description" content="Cómo eliminar tu cuenta de Finan2 y qué datos se borran.">
+  <link rel="canonical" href="https://diegohch.github.io/finan2/eliminar-cuenta/">
+  <meta name="theme-color" content="#F3F1F9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0F0C17" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script>
+    (function () {
+      var asked = new URLSearchParams(location.search).get('theme');
+      var saved = asked || localStorage.getItem('finan2-theme');
+      var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      var lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('finan2-lang') ||
+        (/^es\b/i.test(navigator.language || 'es') ? 'es' : 'en');
+      document.documentElement.lang = lang;
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#contenido" data-i18n="skip">Ir al contenido</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="../" aria-label="Finan2">
+        <img src="../assets/icon.png" alt="" width="34" height="34">
+        Finan2
+      </a>
+      <nav aria-label="Principal" data-i18n-attr="aria-label:navLabel">
+        <a href="../#funciones" data-i18n="navTour">Cómo es</a>
+        <a href="../privacidad/" data-i18n="navPrivacy">Privacidad</a>
+        <a href="../#preguntas" data-i18n="navFaq">Preguntas</a>
+        <button class="pill-btn" id="lang" type="button" aria-label="English">EN</button>
+        <button class="pill-btn" id="theme" type="button" aria-label="Cambiar tema" data-i18n-attr="aria-label:themeLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="doc-page lang-es" id="contenido">
+    <div class="doc-hero">
+      <span class="eyebrow">Tu cuenta</span>
+      <h1>Eliminar tu cuenta de Finan2.</h1>
+      <p>Puedes eliminar tu cuenta cuando quieras, desde la app. Es inmediato y no se puede deshacer.</p>
+      <div class="meta"><span>App: <b>Finan2</b>, de <b>Katanalabs</b></span><span>Ayuda: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span></div>
+    </div>
+    <div class="prose">
+      <section>
+        <h2>Desde la app</h2>
+        <ol class="steps-list">
+          <li><p>Abre Finan2 y ve a <b>Ajustes › Tu cuenta</b>.</p></li>
+          <li><p>Toca <b>Eliminar mi cuenta</b>.</p></li>
+          <li><p>Confirma con tu contraseña o con Google, según cómo entres.</p></li>
+        </ol>
+      </section>
+      <section>
+        <h2>Qué se borra</h2>
+        <ul>
+          <li>Tu usuario: correo, nombre y foto.</li>
+          <li>Tu lugar en el hogar, tus preferencias de avisos y los tokens de notificación de tus teléfonos.</li>
+          <li>La llave del hogar guardada en ese teléfono.</li>
+          <li><b>Si eres la única persona del hogar</b>, también todo lo del hogar: movimientos, cuentas, presupuestos, deudas, metas, inversiones, fijos y notas.</li>
+        </ul>
+        <p>Todo se borra en el momento; no guardamos copias. Los informes de fallos que haya enviado la app, que no llevan tu nombre ni tu correo, se borran solos a los 90 días.</p>
+      </section>
+      <section>
+        <h2>Qué se queda</h2>
+        <p>Si la otra persona sigue en el hogar, los datos del hogar se quedan para ella, porque son de los dos. Lo que anotaste sigue ahí.</p>
+      </section>
+      <section>
+        <h2>Si no puedes entrar a la app</h2>
+        <p>Escríbenos a <a href="mailto:katanalabs.6002@gmail.com?subject=Eliminar%20mi%20cuenta%20de%20Finan2">katanalabs.6002@gmail.com</a> desde el correo de tu cuenta, con el asunto «Eliminar mi cuenta de Finan2». La eliminamos en un máximo de 15 días hábiles y te confirmamos por correo. Si ninguno de los dos usa ya el hogar, también podemos borrar todos sus datos.</p>
+        <p>Más detalle en la <a href="../privacidad/#plazos">política de privacidad</a>.</p>
+      </section>
+    </div>
+  </main>
+
+  <main class="doc-page lang-en" id="contenido-en">
+    <div class="doc-hero">
+      <span class="eyebrow">Your account</span>
+      <h1>Delete your Finan2 account.</h1>
+      <p>You can delete your account whenever you want, from the app. It’s immediate and can’t be undone.</p>
+      <div class="meta"><span>App: <b>Finan2</b>, by <b>Katanalabs</b></span><span>Help: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span></div>
+    </div>
+    <div class="prose">
+      <section>
+        <h2>From the app</h2>
+        <ol class="steps-list">
+          <li><p>Open Finan2 and go to <b>Settings › Your account</b>.</p></li>
+          <li><p>Tap <b>Delete my account</b>.</p></li>
+          <li><p>Confirm with your password or with Google, depending on how you sign in.</p></li>
+        </ol>
+      </section>
+      <section>
+        <h2>What’s deleted</h2>
+        <ul>
+          <li>Your user: email, name and photo.</li>
+          <li>Your place in the household, your notice preferences and your phones’ notification tokens.</li>
+          <li>The household key stored on that phone.</li>
+          <li><b>If you’re the only person in the household</b>, everything in it as well: movements, accounts, budgets, debts, goals, investments, recurring bills and notes.</li>
+        </ul>
+        <p>Everything is deleted right away; we keep no copies. Crash reports the app may have sent, which don’t carry your name or email, are deleted automatically after 90 days.</p>
+      </section>
+      <section>
+        <h2>What stays</h2>
+        <p>If the other person stays in the household, its data stays with them, since it belongs to both of you. What you logged is still there.</p>
+      </section>
+      <section>
+        <h2>If you can’t get into the app</h2>
+        <p>Write to us at <a href="mailto:katanalabs.6002@gmail.com?subject=Delete%20my%20Finan2%20account">katanalabs.6002@gmail.com</a> from your account’s email, with the subject “Delete my Finan2 account”. We delete it within 15 business days and confirm by email. If neither of you uses the household anymore, we can also delete all of its data.</p>
+        <p>More detail in the <a href="../privacidad/#retention">privacy policy</a>.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span data-i18n="footer">Finan2 · finanzas del hogar para dos</span>
+      <nav aria-label="Legal">
+        <a href="../privacidad/" data-i18n="privacy">Política de privacidad</a>
+        <a href="../terminos/" data-i18n="terms">Términos y condiciones</a>
+        <a href="../eliminar-cuenta/" data-i18n="deleteAccount">Eliminar tu cuenta</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>
