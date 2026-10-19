@@ -89,6 +89,9 @@ class HouseholdController extends AsyncNotifier<Household?> {
             householdName: householdName,
           );
       final key = await ref.read(householdCryptoProvider).generateKey(household.id);
+      // The household is on screen as soon as it's stored - before its key
+      // exists - so «does this phone have the key?» was already answered no.
+      ref.invalidate(householdHasKeyProvider(household.id));
       lastShareCode = '$inviteCode.$key';
       setup.ready(lastShareCode!);
       // Separate write: the category rules check membership against the
@@ -123,6 +126,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
           );
       if (key != null && HouseholdCrypto.isWellFormedKey(key)) {
         await ref.read(householdCryptoProvider).importKey(household.id, key);
+        ref.invalidate(householdHasKeyProvider(household.id)); // as in createHousehold
         joinedWithoutKey = false;
       } else {
         joinedWithoutKey = !await ref.read(householdCryptoProvider).hasKey(household.id);
