@@ -2,148 +2,72 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
+import '../../../../core/widgets/finan2_figure.dart';
+import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_skeleton.dart';
 import '../../../../core/widgets/finan2_transaction_row.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../domain/entities/recurring_bill.dart';
+import '../../domain/recurring_schedule.dart';
 import '../recurring_schedule_label.dart';
 import '../viewmodels/recurring_bill_providers.dart';
 import 'edit_recurring_bill_screen.dart';
 
+/// Fijos: what the household has committed each month, and each fijo with
+/// its calendar in words. A paused one fades instead of hiding, so it's
+/// there to switch back on.
 class RecurringBillsScreen extends ConsumerWidget {
   const RecurringBillsScreen({super.key});
 
+  void _open(BuildContext context, [RecurringBill? bill]) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute<void>(builder: (_) => EditRecurringBillScreen(bill: bill)));
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
     final billsAsync = ref.watch(recurringBillsProvider);
-    final categories = ref.watch(categoriesProvider).value ?? const [];
-    final categoryById = {for (final c in categories) c.id: c};
-    final formatMoney = ref.watch(moneyFormatterProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
-      floatingActionButton: billsAsync.value?.isEmpty ?? true
-          ? null
-          : FloatingActionButton(
-              heroTag: 'recurringBillsFab',
-              onPressed: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen())),
-              child: const Icon(Icons.add),
-            ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Builder(
-              builder: (context) {
-                final bills = billsAsync.value ?? const <RecurringBill>[];
-                final now = DateTime.now();
-                // Weekly and yearly ones counted as their monthly average.
-                final totalFactura = bills
-                    .where((b) => b.type != CategoryType.ingreso && b.isActiveOn(now))
-                    .fold(0, (sum, b) => sum + b.monthlyAmount);
-                return Finan2AppTop(
-                  label: context.l10n.recurringBillsTitle,
-                  title: context.l10n.recurringBillsMonthlyTotal(formatMoney(totalFactura)),
-                  trailing: bills.isEmpty ? null : const _AutoBadge(),
-                  showBackButton: true,
-                );
-              },
+            Finan2Head(
+              overLabel: l10n.settingsTitle,
+              title: l10n.recurringBillsTitle,
+              onBack: Navigator.of(context).canPop() ? () => Navigator.of(context).pop() : null,
+              action: Finan2HeadAction(
+                icon: Finan2Icons.agregar,
+                tooltip: l10n.recurringBillsNewTitle,
+                filled: true,
+                onTap: () => _open(context),
+              ),
             ),
             Expanded(
               child: billsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                skipLoadingOnReload: true,
+                loading: () => const Finan2SkeletonList(),
                 error: (error, _) => Finan2AsyncErrorView(error: error),
                 data: (bills) {
                   if (bills.isEmpty) {
                     return Finan2EmptyState(
                       icon: Icons.autorenew,
-                      title: context.l10n.recurringBillsEmptyTitle,
-                      description: context.l10n.recurringBillsEmptyDescription,
-                      actionLabel: context.l10n.recurringBillsEmptyAction,
-                      onAction: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(builder: (_) => const EditRecurringBillScreen()),
-                      ),
+                      tone: Finan2Tone.of(context, Finan2Palette.servicios),
+                      title: l10n.recurringBillsEmptyTitle,
+                      description: l10n.recurringBillsEmptyDescription,
+                      actionLabel: l10n.recurringBillsEmptyAction,
+                      onAction: () => _open(context),
                     );
                   }
-
-                  return ListView(
-                    padding: const EdgeInsets.all(Finan2Space.xl),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Theme.of(context).colorScheme.primary, colors.brandDeep],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.l10n.recurringBillsAutoLogged,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Builder(
-                              builder: (context) {
-                                final active = bills
-                                    .where((b) => b.isActiveOn(DateTime.now()))
-                                    .length;
-                                return Text(
-                                  context.l10n.recurringBillsActiveCount(active),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.2,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: Finan2Space.lg),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          border: Border.all(color: colors.line),
-                          borderRadius: BorderRadius.circular(Finan2Radius.card),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: [
-                            for (var i = 0; i < bills.length; i++) ...[
-                              if (i > 0) Divider(height: 1, color: colors.line),
-                              _BillRow(
-                                bill: bills[i],
-                                category: categoryById[bills[i].categoryId],
-                                formatMoney: formatMoney,
-                                onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => EditRecurringBillScreen(bill: bills[i]),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
+                  return _BillsList(bills: bills, open: (bill) => _open(context, bill));
                 },
               ),
             ),
@@ -154,24 +78,60 @@ class RecurringBillsScreen extends ConsumerWidget {
   }
 }
 
-class _AutoBadge extends StatelessWidget {
-  const _AutoBadge();
+class _BillsList extends ConsumerWidget {
+  const _BillsList({required this.bills, required this.open});
+
+  final List<RecurringBill> bills;
+  final ValueChanged<RecurringBill> open;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categories = ref.watch(categoriesProvider).value ?? const <Category>[];
+    final categoryById = {for (final c in categories) c.id: c};
+    final formatMoney = ref.watch(moneyFormatterProvider);
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(color: colors.brandTint, borderRadius: BorderRadius.circular(999)),
-      child: Text(
-        context.l10n.recurringBillsAutoBadge,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.2,
-          color: colors.brandDeep,
-        ),
+    final l10n = context.l10n;
+    final today = DateTime.now();
+    final commitment = monthlyCommitment(bills, today);
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        Finan2Space.lg,
+        Finan2Space.xs,
+        Finan2Space.lg,
+        Finan2Space.xxl,
       ),
+      children: [
+        Finan2Figure(
+          label: l10n.recurringBillsCommittedLabel,
+          amountText: formatMoney(commitment.amount),
+          fontSize: 36,
+          subtitle: Text(
+            [
+              l10n.recurringBillsCommittedCount(commitment.count),
+              if (commitment.averaged) l10n.recurringBillsAveragedNote,
+            ].join(' · '),
+          ),
+        ),
+        const SizedBox(height: Finan2Space.lg),
+        Finan2Sheet(
+          children: [
+            for (final bill in billsInListOrder(bills, today))
+              _BillRow(
+                bill: bill,
+                category: categoryById[bill.categoryId],
+                formatMoney: formatMoney,
+                today: today,
+                onTap: () => open(bill),
+              ),
+          ],
+        ),
+        const SizedBox(height: Finan2Space.md),
+        Text(
+          l10n.recurringBillsAutoNote,
+          style: TextStyle(fontSize: 12, height: 1.5, color: colors.inkFaint),
+        ),
+      ],
     );
   }
 }
@@ -181,41 +141,41 @@ class _BillRow extends StatelessWidget {
     required this.bill,
     required this.category,
     required this.formatMoney,
+    required this.today,
     required this.onTap,
   });
 
   final RecurringBill bill;
   final Category? category;
   final String Function(num) formatMoney;
+  final DateTime today;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final isIncome = bill.type == CategoryType.ingreso;
-    final schedule = describeSchedule(
-      frequency: bill.frequency,
-      start: scheduleAnchor(bill),
-      l10n: context.l10n,
-    );
-    final status = bill.paused
-        ? context.l10n.recurringBillsStatusPaused
-        : bill.hasEndedBy(DateTime.now())
-        ? context.l10n.recurringBillsStatusEnded
-        : schedule;
+    final l10n = context.l10n;
+    final status = billStatus(bill, today);
+    final subLabel = switch (status) {
+      RecurringBillStatus.paused => l10n.recurringBillsStatusPaused,
+      RecurringBillStatus.ended => l10n.recurringBillsStatusEnded,
+      RecurringBillStatus.active => describeSchedule(
+        scheduleOf(bill.frequency, scheduleAnchor(bill, today), until: bill.endDate),
+        l10n: l10n,
+        today: today,
+      ),
+    };
+    final category = this.category;
 
-    return Finan2TransactionRow(
-      icon: category != null ? Finan2Icons.categoria(category!.iconSlug) : Icons.autorenew,
-      iconColor: category != null ? Color(category!.color) : colors.inkSoft,
+    final row = Finan2TransactionRow(
+      icon: category != null ? Finan2Icons.categoria(category.iconSlug) : Icons.autorenew,
+      iconColor: category != null ? Color(category.color) : colors.inkSoft,
       description: bill.name,
-      subLabel: '${bill.type.label} · $status',
-      amountText: isIncome ? '+${formatMoney(bill.amount)}' : '−${formatMoney(bill.amount)}',
-      amountColor: !bill.isActiveOn(DateTime.now())
-          ? colors.inkFaint
-          : isIncome
-          ? colors.income
-          : colors.ink,
+      subLabel: subLabel,
+      amountText: bill.isIncome ? '+${formatMoney(bill.amount)}' : formatMoney(bill.amount),
+      amountColor: bill.isIncome ? colors.income : colors.ink,
       onTap: onTap,
     );
+    return status == RecurringBillStatus.active ? row : Opacity(opacity: 0.55, child: row);
   }
 }

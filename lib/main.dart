@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'core/locale/app_language.dart';
 import 'core/notifications/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_providers.dart';
@@ -40,6 +41,9 @@ class MainApp extends ConsumerWidget {
     // Falls back to system while the saved preference is still loading (the
     // very first frame only) - ThemeModeRepository persists it on-device.
     final themeMode = ref.watch(themeModeControllerProvider).value ?? ThemeMode.system;
+    // Null follows the phone; a language chosen in Ajustes overrides it. Either
+    // way localeListResolutionCallback runs and sets Intl's default.
+    final language = ref.watch(appLanguageControllerProvider).value ?? AppLanguage.system;
     return MaterialApp(
       onGenerateTitle: (context) => context.l10n.appTitle,
       localizationsDelegates: const [
@@ -48,6 +52,7 @@ class MainApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      locale: language.locale,
       supportedLocales: supportedAppLocales,
       localeListResolutionCallback: (locales, _) => resolveAppLocale(locales),
       debugShowCheckedModeBanner: false,

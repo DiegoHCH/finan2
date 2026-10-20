@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'finan2_bars_icon.dart';
 
-/// The full app icon mark: gradient squircle, white bars, gold "2" badge in
+/// The full app icon mark: violet squircle, white bars, amber "2" badge in
 /// the corner — matches the mockup's `.appicon` (finan2-icono-splash.html).
 /// Uses the fixed light-mode brand colors regardless of theme, since app
 /// icons don't switch with in-app dark mode.
@@ -43,8 +43,8 @@ class Finan2AppIcon extends StatelessWidget {
                           center: const Alignment(-0.44, -0.76),
                           radius: 0.9,
                           colors: [
-                            Colors.white.withValues(alpha: 0.28),
-                            Colors.white.withValues(alpha: 0),
+                            Finan2Palette.onHero.withValues(alpha: 0.28),
+                            Finan2Palette.onHero.withValues(alpha: 0),
                           ],
                           stops: const [0.0, 0.55],
                         ),
@@ -63,7 +63,7 @@ class Finan2AppIcon extends StatelessWidget {
               width: em * 0.34,
               height: em * 0.34,
               decoration: BoxDecoration(
-                color: Finan2Palette.gold,
+                color: Finan2Palette.logoAccent,
                 borderRadius: BorderRadius.circular(em * 0.105),
                 boxShadow: [
                   BoxShadow(
@@ -78,7 +78,7 @@ class Finan2AppIcon extends StatelessWidget {
                 '2',
                 style: TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
-                  color: Colors.white,
+                  color: Finan2Palette.onHero,
                   fontWeight: FontWeight.w800,
                   fontSize: em * 0.22,
                   height: 1,

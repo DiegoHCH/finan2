@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import 'transfer_model.dart';
 
 class TransferRepository {
-  TransferRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
+  TransferRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto, BalanceLedger? ledger})
     : _db = firestore ?? FirebaseFirestore.instance,
-      _crypto = crypto ?? HouseholdCrypto();
+      _crypto = crypto ?? HouseholdCrypto(),
+      _ledger = ledger ?? BalanceLedger(firestore: firestore, crypto: crypto);
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
+  final BalanceLedger _ledger;
 
   DocumentReference<Map<String, dynamic>> _household(String householdId) =>
       _db.collection('households').doc(householdId);
@@ -23,69 +26,32 @@ class TransferRepository {
         .decryptEach((doc) => Transfer.fromFirestore(doc, _crypto, householdId));
   }
 
-  /// Decrypts an already-fetched account snapshot's `balance` field. Takes
-  /// the snapshot (not a ref+get) so a transaction never reads the same
-  /// document twice.
-  Future<int> _decryptBalance(
-    DocumentSnapshot<Map<String, dynamic>> snap,
-    String householdId,
-  ) async {
-    final packed = snap.data()?['balance'] as String?;
-    if (packed == null) return 0;
-    return _crypto.decryptAmount(householdId, packed);
-  }
-
-  /// Atomically: debits [Transfer.fromAccountId], credits
-  /// [Transfer.toAccountId], and logs the transfer - all 3 writes commit
-  /// together or not at all.
-  Future<void> createTransfer(String householdId, Transfer transfer) {
+  /// In one write: debits [Transfer.fromAccountId], credits
+  /// [Transfer.toAccountId] and logs the transfer. Works offline.
+  Future<void> createTransfer(String householdId, Transfer transfer) async {
     final household = _household(householdId);
-    final fromRef = household.collection('accounts').doc(transfer.fromAccountId);
-    final toRef = household.collection('accounts').doc(transfer.toAccountId);
-    final transferRef = household.collection('transfers').doc();
-
-    return _db.runTransaction((tx) async {
-      final fromSnap = await tx.get(fromRef);
-      final toSnap = await tx.get(toRef);
-      final fromBalance = await _decryptBalance(fromSnap, householdId);
-      final toBalance = await _decryptBalance(toSnap, householdId);
-
-      tx.update(fromRef, {
-        'balance': await _crypto.encryptAmount(householdId, fromBalance - transfer.amount),
-      });
-      tx.update(toRef, {
-        'balance': await _crypto.encryptAmount(householdId, toBalance + transfer.amount),
-      });
-      tx.set(transferRef, await transfer.toFirestore(_crypto, householdId));
-    });
+    final accounts = household.collection('accounts');
+    final batch = _db.batch()
+      ..set(
+        household.collection('transfers').doc(),
+        await transfer.toFirestore(_crypto, householdId),
+      );
+    await _ledger.commit(householdId, [
+      (accounts.doc(transfer.fromAccountId), -transfer.amount),
+      (accounts.doc(transfer.toAccountId), transfer.amount),
+    ], batch: batch);
   }
 
   /// Reverses the balance change from [createTransfer] and removes the
   /// record. If either account was deleted since the transfer happened,
   /// its balance is simply left alone (nothing to reverse it on).
-  Future<void> deleteTransfer(String householdId, Transfer transfer) {
+  Future<void> deleteTransfer(String householdId, Transfer transfer) async {
     final household = _household(householdId);
-    final fromRef = household.collection('accounts').doc(transfer.fromAccountId);
-    final toRef = household.collection('accounts').doc(transfer.toAccountId);
-    final transferRef = household.collection('transfers').doc(transfer.id);
-
-    return _db.runTransaction((tx) async {
-      final fromSnap = await tx.get(fromRef);
-      final toSnap = await tx.get(toRef);
-
-      if (fromSnap.exists) {
-        final fromBalance = await _decryptBalance(fromSnap, householdId);
-        tx.update(fromRef, {
-          'balance': await _crypto.encryptAmount(householdId, fromBalance + transfer.amount),
-        });
-      }
-      if (toSnap.exists) {
-        final toBalance = await _decryptBalance(toSnap, householdId);
-        tx.update(toRef, {
-          'balance': await _crypto.encryptAmount(householdId, toBalance - transfer.amount),
-        });
-      }
-      tx.delete(transferRef);
-    });
+    final accounts = household.collection('accounts');
+    final batch = _db.batch()..delete(household.collection('transfers').doc(transfer.id));
+    await _ledger.commit(householdId, [
+      (accounts.doc(transfer.fromAccountId), transfer.amount),
+      (accounts.doc(transfer.toAccountId), -transfer.amount),
+    ], batch: batch);
   }
 }

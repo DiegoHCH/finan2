@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonNext => 'Next';
 
   @override
-  String get commonSkip => 'Skip';
-
-  @override
   String get commonUndo => 'Undo';
 
   @override
@@ -63,40 +60,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonAccount => 'Account';
 
   @override
-  String budgetTitle(String month) {
-    return 'Budget · $month';
-  }
-
-  @override
-  String budgetPlannedTotal(String amount) {
-    return '$amount planned';
-  }
-
-  @override
-  String budgetAssignedPct(int pct) {
-    return '$pct% assigned';
-  }
-
-  @override
   String get budgetPreviousMonth => 'Previous month';
 
   @override
   String get budgetNextMonth => 'Next month';
-
-  @override
-  String get budgetLeftToBudget => 'Left to budget';
-
-  @override
-  String get budgetNoIncomeYet => 'Log this month\'s income';
-
-  @override
-  String get budgetOverBudgeted => 'Over-budgeted';
-
-  @override
-  String get budgetVsActual => 'Budget vs. actual';
-
-  @override
-  String get budgetEmpty => 'You haven\'t budgeted any category yet.';
 
   @override
   String get budgetAddCategory => '+ Budget another category';
@@ -124,6 +91,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetCopying => 'Copying…';
 
   @override
+  String budgetEmptyTitle(String month) {
+    return '$month has no plan yet.';
+  }
+
+  @override
+  String get budgetEmptyDescription =>
+      'Set how much you want to spend on each category and you\'ll see here what\'s left of each one.';
+
+  @override
+  String get budgetEmptyAction => 'Plan a category';
+
+  @override
+  String budgetEmptyCopy(String month) {
+    return 'Copy $month\'s plan';
+  }
+
+  @override
   String budgetCarryIncluded(String amount) {
     return 'Includes $amount left over from before';
   }
@@ -137,16 +121,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get annualSummaryTitle => 'Annual summary';
 
   @override
-  String get annualSummaryPreviousYear => 'Previous year';
+  String get annualSummaryEarned => 'In';
 
   @override
-  String get annualSummaryNextYear => 'Next year';
-
-  @override
-  String get annualSummaryEarned => 'Earned';
-
-  @override
-  String get annualSummarySpent => 'Spent';
+  String get annualSummarySpent => 'Out';
 
   @override
   String get annualSummarySaved => 'Saved';
@@ -155,25 +133,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get annualSummarySpendByMonth => 'Spending by month';
 
   @override
-  String get dashboardHousehold => 'Household';
-
-  @override
-  String get dashboardNetWorth => 'Net worth';
-
-  @override
-  String get dashboardNetWorthFormula => 'Accounts + savings + investments − debts';
-
-  @override
-  String get dashboardIncome => 'Income';
-
-  @override
-  String get dashboardExpenses => 'Expenses';
-
-  @override
-  String get dashboardWhereMoneyGoes => 'Where the money goes';
-
-  @override
   String get dashboardNoCategorizedSpending => 'No categorized spending this month.';
+
+  @override
+  String get dashboardDecrypting => 'Decrypting the amounts on this phone…';
+
+  @override
+  String dashboardGreeting(String name) {
+    return 'Hi, $name';
+  }
+
+  @override
+  String dashboardLeftOfPlan(String month) {
+    return 'Left of the $month plan';
+  }
+
+  @override
+  String dashboardOverPlan(String month) {
+    return 'Over the $month plan by';
+  }
+
+  @override
+  String dashboardSpentIn(String month) {
+    return 'Spent in $month';
+  }
+
+  @override
+  String dashboardOfPlan(String amount) {
+    return 'of $amount';
+  }
+
+  @override
+  String dashboardDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String dashboardPerDay(String amount) {
+    return 'about $amount a day';
+  }
+
+  @override
+  String get dashboardNoPlan => 'No plan this month';
+
+  @override
+  String dashboardIncomeIn(String amount) {
+    return '$amount came in';
+  }
+
+  @override
+  String get dashboardLegendLeft => 'Left';
+
+  @override
+  String get dashboardLegendOther => 'Others';
+
+  @override
+  String get dashboardNoticeSee => 'See';
+
+  @override
+  String get dashboardWhoPaid => 'Who paid this month';
+
+  @override
+  String dashboardMovementCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dashboardRecent => 'Latest transactions';
 
   @override
   String get savingsChallengeTitle => 'Savings challenge';
@@ -217,20 +256,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsChallengeCreate => 'Create challenge';
 
   @override
-  String get savingsChallengeGoal => 'You\'ve got this! Challenge goal';
-
-  @override
-  String get savingsChallengeProgress => 'Progress';
-
-  @override
-  String get savingsChallengeMarkHint => 'Check off each box as you save';
-
-  @override
-  String get authLoginWelcome => 'Welcome to Finan';
-
-  @override
   String get authLoginSubtitle =>
-      'Sign in with your account. You each have your own; the household\'s finances are shared.';
+      'Each of you signs in with your own account; what you write down belongs to both.';
+
+  @override
+  String get authLoginHeadline => 'The household notebook,\nfor the two of you.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -249,9 +279,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authSignIn => 'Sign in';
-
-  @override
-  String get authOr => 'or';
 
   @override
   String get authContinueWithGoogle => 'Continue with Google';
@@ -280,10 +307,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get authSignupTitle => 'Create your account';
+  String get authSignupTitle => 'Your account';
 
   @override
-  String get authSignupSubtitle => 'Sign up to start organizing your household\'s finances.';
+  String get authSignupSubtitle =>
+      'It\'s yours alone. You\'ll set up or join the household in the next step.';
 
   @override
   String get authNameRequired => 'Enter your name';
@@ -298,32 +326,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authCreateAccount => 'Create account';
 
   @override
-  String get authHaveAccount => 'Already have an account? ';
-
-  @override
-  String get authSignInLink => 'Sign in';
+  String get authHaveAccountLink => 'I already have an account';
 
   @override
   String get householdDefaultName => 'Our home';
 
   @override
-  String get householdCreateJoinTitle => 'One last step';
+  String get householdCreateJoinTitle => 'Setting up the household, or joining one?';
 
   @override
-  String get householdCreateJoinSubtitle =>
-      'Start a new household or join the one your partner already has.';
+  String get householdCreateJoinSubtitle => 'One of you creates it; the other joins with a code.';
 
   @override
-  String get householdCreateOptionTitle => 'Create a new household';
+  String get householdCreateOptionTitle => 'Create the household';
 
   @override
-  String get householdCreateOptionSubtitle => 'Start fresh and invite your partner.';
+  String get householdCreateOptionSubtitle => 'I\'ll start and invite my partner.';
 
   @override
-  String get householdJoinOptionTitle => 'Join with a code';
+  String get householdJoinOptionTitle => 'I have a code';
 
   @override
-  String get householdJoinOptionSubtitle => 'Your partner already created the household.';
+  String get householdJoinOptionSubtitle => 'My partner already created it.';
 
   @override
   String get householdNameLabel => 'Household name';
@@ -332,23 +356,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdNameRequired => 'Give your household a name';
 
   @override
-  String get householdCodeLabel => 'Household code (paste the full code)';
+  String get householdCodeLabel => 'Code';
+
+  @override
+  String get householdCodeHint => 'Paste it whole, just as it came: it carries the household key.';
 
   @override
   String get householdCodeRequired => 'Enter the code you were sent';
 
   @override
-  String get householdCreateButton => 'Create household';
+  String get householdCreateButton => 'Set up the household';
 
   @override
-  String get householdJoinButton => 'Join household';
+  String get householdJoinButton => 'Join the household';
 
   @override
   String get householdJoinedWithoutKeyTitle => 'You joined the household';
 
   @override
   String get householdJoinedWithoutKeyMessage =>
-      'This code didn\'t include the key to see amounts. Ask your partner to share the full code from the household card in Settings.';
+      'This code didn\'t include the key to see amounts. Ask your partner to share it from Settings, under \"Share the key\".';
 
   @override
   String householdSetupStep(int step, int total) {
@@ -356,11 +383,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get householdSetupCurrencyTitle => 'Household currency';
+  String get householdSetupCurrencyTitle => 'Which currency do you keep accounts in?';
 
   @override
   String get householdSetupCurrencyDescription =>
-      'The one you keep your books in. You can change it in Settings.';
+      'The one for every amount in the household. You can change it later in Settings.';
 
   @override
   String get householdCurrencyCop => 'Colombian peso';
@@ -369,18 +396,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdCurrencyUsd => 'US dollar';
 
   @override
-  String get householdSetupAccountTitle => 'Your first account';
+  String get householdSetupAccountTitle => 'Where\'s the money today?';
 
   @override
   String get householdSetupAccountDescription =>
-      'Where money comes in and goes out: a bank, a wallet or cash. Enter today\'s balance to start from the real figure.';
+      'One account to start: the bank, a wallet or cash. With the real balance, what you write down adds up from day one.';
 
   @override
   String get householdSetupAccountNameMissingTitle => 'Give it a name';
 
   @override
   String get householdSetupAccountNameMissingMessage =>
-      'Such as the bank or “Cash”. Or skip this step.';
+      'Such as the bank or “Cash”. Or leave it for later with “Not now”.';
 
   @override
   String get householdSetupBalanceToday => 'Today\'s balance';
@@ -393,33 +420,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdSetupRecoveryDescription =>
-      'Amounts are encrypted with a key that lives only on your phones. If you both lose it, these 12 words bring it back. They\'re shown only once: write them down on paper and keep them with your partner.';
+      'Amounts are encrypted with a key that lives only on your phones. If you both lose it, 12 words bring it back. They\'re shown only once: write them down on paper and keep them with your partner. You can also do it later, from Settings.';
+
+  @override
+  String get householdSetupRecoveryTitle => 'What if you lose the key?';
 
   @override
   String get householdGeneratePhrase => 'Generate phrase';
 
   @override
-  String get householdSetupLater => 'Later, from Settings';
+  String get householdSetupLater => 'Not now';
 
   @override
-  String get householdInviteTitle => 'Invite your partner';
+  String get householdInviteTitle => 'Now your partner.';
 
   @override
   String get householdInviteMessage =>
-      'Share this code so they can join the same household with their own account. It works once and expires in 7 days.';
+      'Send them this code with the share button. It carries the household key, which you can\'t see here: share it only with your partner and don\'t post it anywhere.';
 
   @override
-  String get householdInviteWarning =>
-      'Use the share button and send it by WhatsApp or text - don\'t read it out loud, it carries a longer key you can\'t see here. Without the full code, your partner won\'t be able to see amounts.';
+  String get householdInviteFootnote =>
+      'Works once and expires in 7 days · you can make another in Settings';
+
+  @override
+  String get householdInviteMissingPartner => 'Your partner isn\'t here yet';
 
   @override
   String get householdInviteShareSubject => 'Invitation to our household on Finan2';
 
   @override
-  String get householdInviteShare => 'Share invite';
+  String get householdInviteShare => 'Share';
 
   @override
-  String get householdInviteSkip => 'Skip for now';
+  String get householdInviteSkip => 'Later';
 
   @override
   String get householdRecoveryConfirmMessage =>
@@ -449,7 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdKeyIncomplete =>
-      'That code doesn\'t include the full key. Ask your partner to share it again from the household card in Settings.';
+      'That code doesn\'t include the full key. Ask your partner to share it again from Settings, under \"Share the key\".';
 
   @override
   String get householdKeyWrongHousehold =>
@@ -466,11 +499,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsHeading => 'Preferences';
+  String get settingsAccountsAndCards => 'Accounts and cards';
+
+  @override
+  String get settingsMemberYou => 'you';
+
+  @override
+  String get settingsMemberPartner => 'in the household';
+
+  @override
+  String get settingsInvite => 'Invite to the household';
+
+  @override
+  String get settingsInviteSomeone => 'Invite';
+
+  @override
+  String get settingsShareKey => 'Share the key';
 
   @override
   String get settingsMissingKeyBanner =>
-      'This device doesn\'t have the key to see this household\'s amounts. Paste the code your partner shared from their household card, or type the recovery phrase.';
+      'This device doesn\'t have the key to see this household\'s amounts. Paste the code your partner shared from Settings, under \"Share the key\", or type the recovery phrase.';
 
   @override
   String get settingsPasteCodeToUnlock => 'Paste code to unlock amounts';
@@ -480,59 +528,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsStorageWarning =>
-      'Your browser didn\'t guarantee that Finan2\'s data will be kept. If you don\'t open the app for several days, you could lose access to this device\'s encrypted amounts. Make sure you have a recovery phrase in Account settings.';
+      'Your browser didn\'t guarantee that Finan2\'s data will be kept. If you don\'t open the app for several days, you could lose access to this device\'s encrypted amounts. Make sure you have a recovery phrase in Settings, under \"Your account\".';
 
   @override
-  String settingsMemberCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count members',
-      one: '1 member',
-    );
-    return '$_temp0';
-  }
+  String get settingsFinancialSettings => 'Currency and year';
 
   @override
-  String get settingsTapToInvite => 'tap to invite';
+  String get settingsAccountSettings => 'Your account';
 
   @override
-  String get settingsTapToShareKey => 'tap to share the key';
+  String get settingsExportReport => 'Export';
 
   @override
-  String get settingsFinancialSettings => 'Financial settings';
-
-  @override
-  String get settingsFinancialSettingsSubtitle => 'Currency, year and categories';
-
-  @override
-  String get settingsAccountSettings => 'Account settings';
-
-  @override
-  String get settingsAccountSettingsSubtitle => 'Household and notifications';
-
-  @override
-  String get settingsExportReport => 'Export report';
-
-  @override
-  String get settingsBackup => 'Backup';
-
-  @override
-  String get settingsBudget => 'Budget';
-
-  @override
-  String settingsBudgetPlanned(String amount) {
-    return '$amount planned';
-  }
-
-  @override
-  String get settingsAnnualSummary => 'Annual summary';
+  String get settingsBackup => 'Backup and key';
 
   @override
   String get settingsInvestments => 'Investments';
-
-  @override
-  String get settingsNotificationCenter => 'Notification center';
 
   @override
   String get settingsSignOut => 'Sign out';
@@ -542,7 +553,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsUnlockAmountsMessage =>
-      'Paste the full code (with the key after the dot) your partner copied from their household card in Settings.';
+      'Paste the full code (with the key after the dot) your partner shared from Settings, under \"Share the key\".';
 
   @override
   String get settingsUnlockCodeLabel => 'Full code (CODE.key)';
@@ -617,7 +628,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHouseholdMembers => 'Household members';
 
   @override
-  String get settingsNotifications => 'Notifications';
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsLanguageSystem => 'Same as the phone';
+
+  @override
+  String get settingsLanguageSystemSubtitle => 'Follows your phone’s language.';
+
+  @override
+  String get settingsLanguageFixedSubtitle => 'Always in this language, whatever the phone uses.';
 
   @override
   String get settingsTheme => 'Theme';
@@ -662,12 +682,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsWeekStartsOn => 'Week starts on';
 
   @override
-  String get settingsCategories => 'Categories';
-
-  @override
-  String get settingsAccounts => 'Accounts';
-
-  @override
   String get coreSheetErrorTitle => 'Something went wrong';
 
   @override
@@ -677,24 +691,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get corePassword => 'Password';
 
   @override
-  String get corePeriodPrevious => 'Previous';
-
-  @override
   String get corePeriodBackToToday => 'Back to today';
 
   @override
-  String get coreGoToSettings => 'Go to Settings';
-
-  @override
-  String get coreMissingKeyInline =>
-      'This household\'s key is missing, so amounts can\'t be shown.';
-
-  @override
-  String get coreMissingKeyTitle => 'This household\'s key is missing';
+  String get coreMissingKeyTitle => 'This phone doesn\'t have the household\'s key.';
 
   @override
   String get coreMissingKeyBody =>
-      'This device can\'t see or record amounts yet. Ask your partner for the full code (with the key after the dot) or use the household\'s recovery phrase in Settings to unlock them.';
+      'Amounts are encrypted with a key that only lives on your phones. Without it, this one can\'t open your movements or log new ones.';
+
+  @override
+  String get coreMissingKeyUsePhrase => 'Use the 12-word phrase';
+
+  @override
+  String coreMissingKeyAskPartner(String name) {
+    return 'Ask $name for the code';
+  }
+
+  @override
+  String get coreMissingKeyPasteCode => 'Paste the key code';
+
+  @override
+  String get coreOffline =>
+      'You\'re offline. What you log is kept here and sent on its own once you\'re back online.';
+
+  @override
+  String get coreUnsynced => 'not sent yet';
+
+  @override
+  String get coreLoading => 'Loading';
 
   @override
   String get coreNotificationPrimerTitle => 'Turn on notifications';
@@ -721,6 +746,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreHomeTabGoals => 'Goals';
+
+  @override
+  String get coreHomeTabPlan => 'Plan';
+
+  @override
+  String get coreHomeAdd => 'Add';
 
   @override
   String get coreHomeTabSettings => 'Settings';
@@ -832,44 +863,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderActivityChannel => 'Household activity';
 
   @override
-  String get debtsTitle => 'Debts';
-
-  @override
-  String get debtsAvalancheStrategy => 'Avalanche strategy';
-
-  @override
-  String get debtsEmptyTitle => 'Debt-free!';
+  String get debtsEmptyTitle => 'You owe nothing.';
 
   @override
   String get debtsEmptyDescription =>
-      'You have no debts on record. If you take one on, add it to track its payoff with the Avalanche strategy.';
+      'If a card or a loan comes along, add it here and the app will tell you when you\'ll be done with it.';
 
   @override
-  String get debtsEmptyAction => '+ Add a debt';
+  String get debtsEmptyAction => 'Add a debt';
 
   @override
-  String get debtsFreeDateLabel => 'Debt-free by';
+  String get debtsFreeDateLabel => 'Debt-free in';
 
   @override
   String get debtsCurrentPaymentsLabel => 'At current payments';
 
   @override
   String get debtsCannotPayOff => 'Not enough to pay off';
-
-  @override
-  String debtsCardSubtitle(String rate, String minPayment) {
-    return '$rate% rate · min. $minPayment/mo';
-  }
-
-  @override
-  String debtsPaidAmount(String amount) {
-    return 'Paid $amount';
-  }
-
-  @override
-  String debtsBalanceAmount(String amount) {
-    return 'Balance $amount';
-  }
 
   @override
   String get debtsTypeCard => 'Card';
@@ -895,27 +905,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsStatusCannotPayOff => 'current payments won\'t pay it off';
 
   @override
-  String debtsRateWithStatus(String rate, String status) {
-    return '$rate% APR · $status';
-  }
-
-  @override
-  String get debtsCurrentBalance => 'Current balance';
-
-  @override
-  String get debtsMinPaymentShort => 'Min. payment';
+  String get debtsCurrentBalance => 'Outstanding balance';
 
   @override
   String get debtsExtraPayment => 'Extra payment';
 
   @override
-  String get debtsPaid => 'Paid';
-
-  @override
   String get debtsMonthlyInstallment => 'Monthly payment';
-
-  @override
-  String get debtsInstallmentsLeft => 'Payments left';
 
   @override
   String get debtsPaymentSchedule => 'Payment schedule';
@@ -927,15 +923,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsNoProjection => 'No projection available.';
 
   @override
-  String get debtsNextPayment => 'Next payment';
-
-  @override
-  String get debtsScheduledPayment => 'Scheduled';
-
-  @override
-  String debtsScheduleBalance(String amount) {
-    return 'Balance → $amount';
-  }
+  String get debtsScheduledPayment => 'Planned';
 
   @override
   String get debtsNeedAccountFirst => 'Create an account first to record the payment.';
@@ -945,15 +933,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtsPaymentFrom => 'From';
-
-  @override
-  String get debtsRecordedPayments => 'Recorded payments';
-
-  @override
-  String get debtsNoCardPayments => 'No payments recorded for this card yet.';
-
-  @override
-  String get debtsDeletedAccount => 'Deleted account';
 
   @override
   String get debtsDeletePayment => 'Delete payment';
@@ -973,10 +952,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get debtsTypeField => 'Debt type';
-
-  @override
-  String get debtsCreditLimit => 'Credit limit';
+  String get debtsCreditLimit => 'Limit';
 
   @override
   String get debtsRatePercent => 'APR %';
@@ -1000,25 +976,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debtsPaidInstallments => 'Payments made';
 
   @override
-  String get savingsGoalsTitle => 'Savings goals';
-
-  @override
   String get savingsGoalsTotalSaved => 'Total saved';
 
   @override
-  String savingsGoalsTotalSavedRemaining(String amount) {
-    return 'Total saved · $amount to go';
-  }
-
-  @override
-  String get savingsGoalsEmptyTitle => 'No goals yet';
+  String get savingsGoalsEmptyTitle => 'No goals yet.';
 
   @override
   String get savingsGoalsEmptyDescription =>
-      'Create a savings goal and keep tabs on it with your partner.';
+      'A trip, a cushion, a car: give it an amount and a date, and you\'ll see here how much is left and how much to set aside each month.';
 
   @override
-  String get savingsGoalsEmptyAction => '+ New goal';
+  String get savingsGoalsEmptyAction => 'Create a goal';
 
   @override
   String get savingsGoalsChallengeLink => 'Savings challenge';
@@ -1027,49 +995,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoalsNoDate => 'no date';
 
   @override
-  String savingsGoalsCardSubtitle(String amount, String date) {
-    return 'Goal $amount · $date';
-  }
-
-  @override
   String savingsGoalsPerMonth(String amount) {
     return '$amount/mo';
   }
-
-  @override
-  String savingsGoalsSavedAmount(String amount) {
-    return 'Saved $amount';
-  }
-
-  @override
-  String savingsGoalsSavedRemaining(String amount) {
-    return 'Saved · $amount to go';
-  }
-
-  @override
-  String get savingsGoalsSavedReached => 'Saved · goal reached';
-
-  @override
-  String get savingsGoalsContribution => 'Contribution';
-
-  @override
-  String get savingsGoalsInterestEarned => 'Interest earned';
-
-  @override
-  String get savingsGoalsRemaining => 'To go';
-
-  @override
-  String savingsGoalsProgressOf(int percent, String amount) {
-    return '$percent% of $amount';
-  }
-
-  @override
-  String savingsGoalsTargetBy(String date) {
-    return 'goal $date';
-  }
-
-  @override
-  String get savingsGoalsOnTrack => 'on track ✓';
 
   @override
   String get savingsGoalsBehind => 'behind';
@@ -1082,11 +1010,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savingsGoalsNewContribution => 'New contribution';
-
-  @override
-  String savingsGoalsRunningTotal(String amount) {
-    return 'Total → $amount';
-  }
 
   @override
   String get savingsGoalsIconTrip => 'Trip';
@@ -1121,13 +1044,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsGoalsIconField => 'Icon';
 
   @override
-  String get savingsGoalsTarget => 'Target';
+  String get savingsGoalsTarget => 'How much you need';
 
   @override
   String get savingsGoalsMonthlyContribution => 'Monthly contribution';
 
   @override
-  String get savingsGoalsTargetDate => 'Target date';
+  String get savingsGoalsTargetDate => 'By when';
 
   @override
   String get savingsGoalsNoDateValue => 'No date';
@@ -1145,20 +1068,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get investmentsTitle => 'Investments';
 
   @override
-  String get investmentsEmptyTitle => 'No investments yet';
+  String get investmentsEmptyTitle => 'No investments yet.';
 
   @override
   String get investmentsEmptyDescription =>
       'Add your CDs, funds or crypto to keep tabs on your portfolio.';
 
   @override
-  String get investmentsEmptyAction => '+ New investment';
-
-  @override
-  String get investmentsPortfolioValue => 'Portfolio value';
-
-  @override
-  String get investmentsTotalReturnSuffix => ' total return';
+  String get investmentsEmptyAction => 'Add an investment';
 
   @override
   String get investmentsKindFixedIncome => 'Fixed income';
@@ -1204,10 +1121,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsTitle => 'Transactions';
 
   @override
-  String get transactionsNewTitle => 'New transaction';
+  String get transactionsNewTitle => 'Add';
 
   @override
   String get transactionsEditTitle => 'Edit transaction';
+
+  @override
+  String get transactionsDetailOver => 'Transaction';
+
+  @override
+  String get transactionsEdit => 'Edit';
 
   @override
   String get transactionsDelete => 'Delete transaction';
@@ -1230,7 +1153,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsCreditCard => 'Credit card';
 
   @override
+  String get transactionsTypeTransfer => 'Move';
+
+  @override
+  String get transactionsTransferNeedsTwoAccounts =>
+      'Moving money needs two accounts. Create them in Settings.';
+
+  @override
   String get transactionsIncomplete => 'Fill in the amount, category and account.';
+
+  @override
+  String get transactionsIncompleteTitle => 'Something is missing';
+
+  @override
+  String transactionsDateToday(String date) {
+    return 'Today, $date';
+  }
 
   @override
   String get transactionsNoCategoriesOfType =>
@@ -1261,29 +1199,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsLoggedBy => 'Logged by';
 
   @override
-  String transactionsNet(String amount) {
-    return '$amount net';
-  }
-
-  @override
-  String transactionsNetInYear(String amount, int year) {
-    return '$amount net in $year';
-  }
-
-  @override
-  String transactionsFiltered(String text) {
-    return '$text · filtered';
-  }
-
-  @override
   String get transactionsPreviousMonth => 'Previous month';
 
   @override
   String get transactionsNextMonth => 'Next month';
 
   @override
+  String transactionsDayToday(String day) {
+    return 'Today · $day';
+  }
+
+  @override
+  String transactionsDayYesterday(String day) {
+    return 'Yesterday · $day';
+  }
+
+  @override
+  String transactionsResultsTotal(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+    );
+    return '$_temp0 · $amount';
+  }
+
+  @override
   String transactionsSearchWholeYear(int year) {
-    return 'Search all of $year';
+    return 'All of $year';
   }
 
   @override
@@ -1303,37 +1247,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsClearSearch => 'Clear search';
 
   @override
-  String get transactionsEmptyTitle => 'No transactions yet';
-
-  @override
-  String transactionsEmptyTitleMonth(String month) {
-    return 'No transactions in $month';
+  String transactionsEmptyTitle(String month) {
+    return '$month is a blank page.';
   }
 
   @override
   String get transactionsEmptyDescription =>
-      'Log your first income or expense this month to see the household summary here.';
+      'The first thing you log shows up here, with who paid it. The month\'s recurring items log themselves on their day.';
 
   @override
-  String get transactionsEmptyDescriptionMonth => 'No income or expenses were logged this month.';
+  String get transactionsEmptyDescriptionMonth =>
+      'Nothing was logged that month. If something was left out, you can still log it with its date.';
 
   @override
-  String get transactionsEmptyAction => '+ Add the first one';
+  String get transactionsEmptyAction => 'Log the first one';
 
   @override
-  String get transactionsRecurringBills => 'Recurring bills';
+  String transactionsSeeMonth(String month) {
+    return 'See $month';
+  }
+
+  @override
+  String get transactionsRecurringBills => 'Recurring';
 
   @override
   String get transactionsNotes => 'Notes';
 
   @override
-  String get transactionsSearchHint => 'Search description, category or amount';
+  String get transactionsSearchHint => 'Search description, category, amount or #tag';
 
   @override
   String get transactionsFilters => 'Filters';
 
   @override
-  String get transactionsFilterTitle => 'Filter transactions';
+  String get transactionsFilterTitle => 'Filter';
 
   @override
   String get transactionsFilterType => 'Type';
@@ -1345,19 +1292,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsFilterTag => 'Tag';
 
   @override
+  String transactionsPaidByChip(String name) {
+    return 'Paid by $name';
+  }
+
+  @override
+  String get transactionsFilterBoth => 'Both';
+
+  @override
   String get transactionsFilterClear => 'Clear';
 
   @override
-  String get transactionsFilterApply => 'Apply';
-
-  @override
-  String get transfersTitle => 'Transfer';
+  String transactionsFilterSee(int count) {
+    return 'See $count';
+  }
 
   @override
   String get transfersInvalid => 'Enter an amount and two different accounts.';
-
-  @override
-  String get transfersAmountLabel => 'Amount to transfer';
 
   @override
   String get transfersFrom => 'From';
@@ -1369,7 +1320,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfersSelectAccount => 'Select an account';
 
   @override
-  String get transfersHistoryTitle => 'Transfers';
+  String get transfersHistoryTitle => 'Moves between accounts';
 
   @override
   String get transfersDeleteTitle => 'Delete transfer';
@@ -1382,50 +1333,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfersDeletedAccount => 'Deleted account';
 
   @override
-  String get transfersEmptyTitle => 'No transfers yet';
+  String get transfersEmptyTitle => 'No money moved yet.';
 
   @override
   String get transfersEmptyDescription =>
-      'Money moved between your own accounts will show up here.';
+      'When you move money from one account to another it\'s recorded here, without counting as spending.';
 
   @override
-  String get transfersEmptyAction => '+ Transfer';
+  String get transfersEmptyAction => 'Move money';
 
   @override
   String get accountsTitle => 'Accounts';
 
   @override
-  String get accountsAvailableMoney => 'Available money';
-
-  @override
-  String get accountsTotalAvailable => 'Total available';
-
-  @override
-  String accountsCountInHousehold(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'across $count household accounts',
-      one: 'across 1 household account',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get accountsEmptyTitle => 'No accounts yet';
+  String get accountsEmptyTitle => 'No accounts yet.';
 
   @override
   String get accountsEmptyDescription =>
-      'Add your first account (cash, bank, wallet) to start logging transactions.';
+      'Add the cash, bank or wallet the money comes from, and you\'ll see here how much you have available.';
 
   @override
-  String get accountsEmptyAction => '+ New account';
+  String get accountsEmptyAction => 'Add an account';
 
   @override
-  String get accountsTransferBetween => 'Transfer between accounts';
-
-  @override
-  String get accountsHistory => 'History';
+  String get accountsTransferBetween => 'Move between accounts';
 
   @override
   String get accountsNewTitle => 'New account';
@@ -1434,13 +1365,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsEditTitle => 'Edit account';
 
   @override
-  String get accountsTypeLabel => 'Account type';
+  String get accountsTypeLabel => 'Type';
 
   @override
-  String get accountsCurrentBalance => 'Current balance';
+  String get accountsCurrentBalance => 'Today\'s balance';
 
   @override
-  String get accountsIncludeInAvailable => 'Include in available money';
+  String get accountsIncludeInAvailable => 'Counts in «Available»';
 
   @override
   String get accountsDeleteTitle => 'Delete account';
@@ -1461,7 +1392,7 @@ class AppLocalizationsEn extends AppLocalizations {
       other: '$count records',
       one: '1 record',
     );
-    return '\"$name\" has $_temp0 (transactions, transfers, card payments or recurring bills). Delete them or move them to another account first. To just leave it out of the total, turn off \"Include in available money\".';
+    return '\"$name\" has $_temp0 (transactions, transfers, card payments or recurring bills). Delete them or move them to another account first. To just leave it out of the total, turn off «Counts in Available».';
   }
 
   @override
@@ -1480,25 +1411,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoriesTitle => 'Categories';
 
   @override
-  String categoriesActiveCount(int count) {
+  String categoriesRowUsage(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count active',
-      one: '1 active',
+      other: '$count transactions this year',
+      one: '1 transaction this year',
+      zero: 'No transactions this year',
     );
     return '$_temp0';
   }
 
   @override
-  String get categoriesEmptyTitle => 'No categories yet';
+  String get categoriesRowRollover => 'Carries over';
+
+  @override
+  String get categoriesNoneOfType => 'No categories of this kind yet. Add one with +.';
+
+  @override
+  String get categoriesEmptyTitle => 'No categories yet.';
 
   @override
   String get categoriesEmptyDescription =>
-      'Create your first category to start logging transactions.';
+      'Every movement goes in a category: create the first one to start logging.';
 
   @override
-  String get categoriesEmptyAction => '+ New category';
+  String get categoriesEmptyAction => 'Create a category';
 
   @override
   String get categoriesNewTitle => 'New category';
@@ -1523,7 +1461,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoriesRolloverSubtitle =>
-      'What\'s left of the budget carries into next month, and overspending is deducted. Resets every January.';
+      'What\'s left or overspent counts toward next month; it resets in January.';
 
   @override
   String get categoriesDeleteTitle => 'Delete category';
@@ -1567,8 +1505,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count recurring bills',
-      one: '1 recurring bill',
+      other: '$count recurring items',
+      one: '1 recurring item',
     );
     return '$_temp0';
   }
@@ -1645,39 +1583,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoriesDefaultTravel => 'Travel';
 
   @override
-  String get recurringBillsTitle => 'Recurring bills';
+  String get recurringBillsTitle => 'Recurring';
 
   @override
-  String recurringBillsMonthlyTotal(String amount) {
-    return '$amount a month';
+  String get recurringBillsCommittedLabel => 'Committed each month';
+
+  @override
+  String recurringBillsCommittedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recurring items',
+      one: '1 recurring item',
+      zero: 'Nothing active',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get recurringBillsAutoBadge => 'Auto';
+  String get recurringBillsAveragedNote => 'non-monthly ones averaged';
 
   @override
-  String get recurringBillsEmptyTitle => 'No recurring bills yet';
+  String get recurringBillsAutoNote =>
+      'They\'re logged in Transactions on their own, on the day they\'re due.';
+
+  @override
+  String get recurringBillsEmptyTitle => 'Nothing recurring yet.';
 
   @override
   String get recurringBillsEmptyDescription =>
-      'Schedule rent, utilities or your salary so they\'re logged on their own every month.';
+      'Schedule rent, utilities or your salary so they\'re logged on their own on the day they\'re due.';
 
   @override
-  String get recurringBillsEmptyAction => '+ New recurring bill';
+  String get recurringBillsEmptyAction => 'Add a recurring item';
 
   @override
-  String get recurringBillsAutoLogged => 'Logged automatically';
+  String get recurringBillsStatusPaused => 'Paused';
 
   @override
-  String recurringBillsActiveCount(int count) {
-    return '$count active';
-  }
-
-  @override
-  String get recurringBillsStatusPaused => 'paused';
-
-  @override
-  String get recurringBillsStatusEnded => 'ended';
+  String get recurringBillsStatusEnded => 'Ended';
 
   @override
   String get recurringBillsTypeIncome => 'Income';
@@ -1686,10 +1630,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recurringBillsTypeBill => 'Bill';
 
   @override
-  String get recurringBillsNewTitle => 'New recurring bill';
+  String get recurringBillsNewTitle => 'New recurring item';
 
   @override
-  String get recurringBillsEditTitle => 'Edit recurring bill';
+  String get recurringBillsEditTitle => 'Edit recurring item';
 
   @override
   String get recurringBillsMissingFields => 'Fill in the name, amount, category and account.';
@@ -1702,7 +1646,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'A twice-a-month bill repeats 15 days after the first date. Pick a first payment between the 1st and the 15th - for example the 15th to get paid on the 15th and the 30th.';
 
   @override
-  String get recurringBillsDelete => 'Delete recurring bill';
+  String get recurringBillsDelete => 'Delete recurring item';
 
   @override
   String recurringBillsDeleteMessage(String name) {
@@ -1720,18 +1664,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recurringBillsSelectAccount => 'Select an account';
 
   @override
-  String get recurringBillsRepeats => 'Repeats';
+  String get recurringBillsRepeats => 'How often';
 
   @override
   String get recurringBillsFrom => 'From';
-
-  @override
-  String get recurringBillsFirstTime => 'First time';
-
-  @override
-  String recurringBillsLoggedOn(String schedule) {
-    return 'Logged $schedule.';
-  }
 
   @override
   String get recurringBillsUntil => 'Until';
@@ -1766,31 +1702,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recurringBillsScheduleWeekly(String weekday) {
-    return 'every $weekday';
+    String _temp0 = intl.Intl.selectLogic(weekday, {
+      'monday': 'Every Monday',
+      'tuesday': 'Every Tuesday',
+      'wednesday': 'Every Wednesday',
+      'thursday': 'Every Thursday',
+      'friday': 'Every Friday',
+      'saturday': 'Every Saturday',
+      'other': 'Every Sunday',
+    });
+    return '$_temp0';
   }
 
   @override
   String recurringBillsScheduleBiweekly(String weekday) {
-    return 'every 2 weeks, on $weekday';
+    String _temp0 = intl.Intl.selectLogic(weekday, {
+      'monday': 'Every other Monday',
+      'tuesday': 'Every other Tuesday',
+      'wednesday': 'Every other Wednesday',
+      'thursday': 'Every other Thursday',
+      'friday': 'Every other Friday',
+      'saturday': 'Every other Saturday',
+      'other': 'Every other Sunday',
+    });
+    return '$_temp0';
   }
 
   @override
   String recurringBillsScheduleSemimonthly(int day, int secondDay) {
-    return 'on days $day and $secondDay';
+    return 'Days $day and $secondDay';
   }
 
   @override
-  String recurringBillsScheduleMonthly(String day) {
-    return 'monthly, on day $day';
+  String recurringBillsScheduleMonthly(int day) {
+    return 'Monthly, on day $day';
   }
 
   @override
   String recurringBillsScheduleYearly(String date) {
-    return 'every year, $date';
+    return 'Every year, $date';
   }
 
   @override
-  String get monthlyNotesTitle => 'Notes';
+  String recurringBillsScheduleUntil(String schedule, String date) {
+    return '$schedule, until $date';
+  }
+
+  @override
+  String recurringBillsMonthlyCost(String kind, String amount) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'average': 'About $amount a month',
+      'other': '$amount a month',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get monthlyNotesTitle => 'Notes for the month';
 
   @override
   String get monthlyNotesThisMonth => 'This month\'s notes';
@@ -1799,25 +1767,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthlyNotesNextMonth => 'For next month';
 
   @override
-  String get monthlyNotesEmpty => 'Tap to add notes.';
+  String get monthlyNotesEmpty => 'Nothing written yet. Tap to write.';
+
+  @override
+  String get monthlyNotesWrite => 'Write';
+
+  @override
+  String get monthlyNotesHint => 'What doesn\'t fit in numbers.';
 
   @override
   String get notificationsTitle => 'Notifications';
 
   @override
-  String notificationsNewCount(int count) {
-    return '$count new';
-  }
+  String get notificationsMarkAllRead => 'Mark all as read';
 
   @override
-  String get notificationsUpToDate => 'All caught up';
-
-  @override
-  String get notificationsMarkAllRead => 'Mark all read';
+  String get notificationsUnread => 'Unread';
 
   @override
   String get notificationsEmpty =>
-      'No notifications yet. Payment, goal and budget alerts will show up here.';
+      'Upcoming payments, goals on track, anything over budget and what your partner logs show up here.';
+
+  @override
+  String get notificationsEmptyTitle => 'All quiet.';
+
+  @override
+  String get notificationsEmptyAction => 'Choose what to be told';
 
   @override
   String notificationsMinutesAgo(int minutes) {
@@ -1830,15 +1805,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get notificationsToday => 'Today';
-
-  @override
-  String get notificationsYesterday => 'Yesterday';
-
-  @override
-  String notificationsDaysAgo(int days) {
-    return '$days d ago';
-  }
+  String get notificationsYesterday => 'yesterday';
 
   @override
   String notificationsDebtDueTodayTitle(String name) {
@@ -1915,7 +1882,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsPartnerInvestmentTitle => 'New investment';
 
   @override
-  String get notificationsPartnerBillTitle => 'New recurring bill';
+  String get notificationsPartnerBillTitle => 'New recurring item';
 
   @override
   String get notificationsPartnerCategoryTitle => 'New category';
@@ -1927,56 +1894,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsPartnerGoalTitle => 'New savings goal';
 
   @override
-  String get notificationPrefsTitle => 'Preferences';
+  String get notificationPrefsTitle => 'What to notify';
 
   @override
-  String get notificationPrefsRemindersHeader => 'REMINDERS';
+  String notificationPrefsIntro(String name) {
+    return 'Just for you: $name picks their own.';
+  }
 
   @override
-  String get notificationPrefsDailyReminder => 'Daily reminder';
+  String get notificationPrefsIntroSolo => 'Just for you: everyone picks their own.';
 
   @override
-  String get notificationPrefsDebtPayments => 'Debt payments';
+  String get notificationPrefsDailyReminder => 'Reminder to log';
+
+  @override
+  String get notificationPrefsDailyReminderWhen => 'Every day, at this time';
+
+  @override
+  String get notificationPrefsDailyReminderTimeTooltip => 'Change the time';
+
+  @override
+  String get notificationPrefsDebtPayments => 'Payments coming up';
+
+  @override
+  String get notificationPrefsDebtPaymentsWhen => '3, 2 and 1 day before, and on the day';
 
   @override
   String get notificationPrefsGoalProgress => 'Goal progress';
 
   @override
-  String get notificationPrefsAlertsHeader => 'ALERTS';
+  String get notificationPrefsGoalProgressWhen => 'Once, when a goal passes 90%';
 
   @override
-  String get notificationPrefsBudgetExceeded => 'Over budget';
+  String get notificationPrefsBudgetExceeded => 'A category going over';
 
   @override
-  String get notificationPrefsPartnerActivity => 'My partner\'s activity';
+  String get notificationPrefsBudgetExceededWhen => 'Once per category and month';
+
+  @override
+  String get notificationPrefsPartnerActivity => 'What your partner adds';
+
+  @override
+  String notificationPrefsPartnerActivityNamed(String name) {
+    return 'What $name adds';
+  }
+
+  @override
+  String get notificationPrefsPartnerActivityWhen => 'Each new transaction, account or goal';
 
   @override
   String get notificationPrefsWeeklySummary => 'Weekly summary';
 
   @override
-  String get exportTitle => 'Export report';
+  String notificationPrefsWeeklySummaryWhen(String time) {
+    return 'Sundays, $time';
+  }
 
   @override
-  String get exportSubtitle => 'PDF or CSV';
-
-  @override
-  String get exportCsvHint =>
-      'One file per section, with unformatted amounts and YYYY-MM-DD dates, ready for a spreadsheet.';
+  String get exportTitle => 'Export';
 
   @override
   String get exportPeriod => 'Period';
 
   @override
+  String exportPeriodRange(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
   String get exportPeriodThisMonth => 'This month';
 
   @override
-  String get exportPeriodQuarter => 'Quarter';
+  String get exportPeriodQuarter => '3 months';
 
   @override
-  String get exportPeriodYear => 'Year';
+  String get exportPeriodYear => '12 months';
 
   @override
-  String get exportInclude => 'Include in the report';
+  String get exportInclude => 'What to include';
 
   @override
   String get exportTransactions => 'Transactions';
@@ -1985,19 +1980,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportBudget => 'Budget';
 
   @override
-  String get exportDebtsAndSavings => 'Debts and savings';
+  String get exportDebtsAndSavings => 'Debts and goals';
+
+  @override
+  String get exportPdfTitle => 'PDF';
+
+  @override
+  String get exportPdfFor => 'To read or print, with the amounts formatted.';
+
+  @override
+  String get exportCsvTitle => 'CSV for a spreadsheet';
+
+  @override
+  String get exportCsvFor => 'One file per section, with plain numbers and YYYY-MM-DD dates.';
+
+  @override
+  String get exportOnDevice =>
+      'The file is put together on this phone from the data it already decrypted: nothing leaves until you share it.';
+
+  @override
+  String get exportAction => 'Export';
 
   @override
   String get exportDebts => 'Debts';
 
   @override
   String get exportSavingsGoals => 'Savings goals';
-
-  @override
-  String get exportGeneratePdf => 'Create PDF';
-
-  @override
-  String get exportGenerateCsv => 'Create CSV';
 
   @override
   String get exportPdfFileName => 'finan2_report.pdf';
@@ -2045,20 +2053,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupTitle => 'Backup';
 
   @override
-  String get backupSubtitle => 'Your whole household, encrypted';
-
-  @override
   String get backupDescription =>
-      'The backup keeps accounts, transactions, budgets, debts, goals, recurring bills and notes in a file encrypted with the household key. Without that key no one can read it, so you can keep it in your email or in the cloud.';
+      'The whole household in a file encrypted with the household key. Without the key no one can read it: you can keep it in your email or in the cloud.';
 
   @override
-  String get backupSameHouseholdOnly => 'It can only be restored to this same household.';
-
-  @override
-  String get backupCreate => 'Create backup';
+  String get backupCreate => 'Back up now';
 
   @override
   String get backupRestoreAction => 'Restore a backup';
+
+  @override
+  String get backupRestoreLead => 'When restoring';
+
+  @override
+  String get backupRestoreNote =>
+      ', the household goes back to how it was that day, for both of you: anything created since is deleted. It only works in this same household.';
 
   @override
   String get backupErrorTitle => 'Couldn\'t finish';
@@ -2141,4 +2150,452 @@ class AppLocalizationsEn extends AppLocalizations {
   String backupErrorUnsupportedType(String type) {
     return 'Unsupported data type in the backup: $type';
   }
+
+  @override
+  String get planBudget => 'Budget';
+
+  @override
+  String budgetLeft(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String get budgetComplete => 'Complete';
+
+  @override
+  String get budgetUnplanned => 'no plan';
+
+  @override
+  String budgetSpentOf(String spent, String limit) {
+    return '$spent of $limit';
+  }
+
+  @override
+  String budgetSpentNoPlan(String spent) {
+    return '$spent spent';
+  }
+
+  @override
+  String budgetOverTitle(String category, String amount) {
+    return '$category went $amount over';
+  }
+
+  @override
+  String budgetOverManyTitle(int count) {
+    return '$count categories went over';
+  }
+
+  @override
+  String get budgetOverMessage => 'It comes out of what\'s left of the plan.';
+
+  @override
+  String budgetOverManyMessage(String category, String amount) {
+    return '$category the most: $amount.';
+  }
+
+  @override
+  String budgetPlannedRemaining(String planned, String amount) {
+    return '$planned planned · $amount left to assign';
+  }
+
+  @override
+  String budgetPlannedOver(String planned, String amount) {
+    return '$planned planned · $amount more than came in';
+  }
+
+  @override
+  String budgetPlannedNoIncome(String planned) {
+    return '$planned planned · nothing has come in this month yet';
+  }
+
+  @override
+  String get goalsSavedTogether => 'Saved between you two';
+
+  @override
+  String goalsOnTime(int onTime, int dated) {
+    return 'on time in $onTime of $dated goals';
+  }
+
+  @override
+  String goalsToGo(String amount) {
+    return '$amount to go to complete them';
+  }
+
+  @override
+  String goalRowLine(String saved, String target, String when) {
+    return '$saved of $target · $when';
+  }
+
+  @override
+  String goalFor(String date) {
+    return 'by $date';
+  }
+
+  @override
+  String goalsDebtsFree(String date) {
+    return 'Debts: free by $date';
+  }
+
+  @override
+  String get goalsDebtsStuck => 'Debts: current payments don\'t pay them off';
+
+  @override
+  String goalsDebtsOrder(String first, String second) {
+    return 'First $first, then $second.';
+  }
+
+  @override
+  String goalsDebtsOnly(String name) {
+    return 'Only $name is left.';
+  }
+
+  @override
+  String goalOnTimePace(String amount) {
+    return 'On time: $amount a month';
+  }
+
+  @override
+  String goalBehindPace(String amount) {
+    return 'Behind: it takes $amount a month';
+  }
+
+  @override
+  String get goalReached => 'Goal reached!';
+
+  @override
+  String goalOfFor(String target, String when) {
+    return 'of $target · $when';
+  }
+
+  @override
+  String goalInterest(String amount) {
+    return 'Includes $amount in interest';
+  }
+
+  @override
+  String goalContributionOf(String month) {
+    return '$month contribution';
+  }
+
+  @override
+  String get goalCreate => 'Create';
+
+  @override
+  String goalNeededTitle(String amount) {
+    return '$amount a month';
+  }
+
+  @override
+  String goalNeededMessage(String date) {
+    return 'That\'s what it takes to get there by $date.';
+  }
+
+  @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String debtsLeftAvalanche(String amount) {
+    return '$amount to go · Avalanche order (highest rate first)';
+  }
+
+  @override
+  String debtsRowCard(String rate, String amount, int day) {
+    return '$rate% · min. $amount · day $day';
+  }
+
+  @override
+  String debtsRowLoan(String rate, String amount, int day) {
+    return '$rate% · $amount installment · day $day';
+  }
+
+  @override
+  String get debtsFirst => '1st';
+
+  @override
+  String debtsNextTitle(String name, String date) {
+    return 'Next payment: $name, $date';
+  }
+
+  @override
+  String debtsNextMinSuggested(String min, String suggested) {
+    return '$min minimum · suggested $suggested';
+  }
+
+  @override
+  String debtsNextMin(String min) {
+    return '$min minimum';
+  }
+
+  @override
+  String debtsDetailSub(String reference, int pct, String status) {
+    return 'of $reference · $pct% paid · $status';
+  }
+
+  @override
+  String debtsRateOnly(String rate) {
+    return '$rate% APR';
+  }
+
+  @override
+  String debtsRateExtra(String rate, String amount) {
+    return '$rate% APR · extra payment $amount';
+  }
+
+  @override
+  String get debtsPaidBy => 'Paid by';
+
+  @override
+  String debtsInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'tomorrow',
+      zero: 'today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String debtsDeletePaymentMessage(String amount, String date) {
+    return 'The $amount payment of $date will be removed.';
+  }
+
+  @override
+  String get challengeSavedIn => 'Saved in the challenge';
+
+  @override
+  String challengeCells(int done, int total, String target) {
+    return '$done of $total cells · goal $target';
+  }
+
+  @override
+  String challengeNextTitle(String amount) {
+    return 'Next: $amount';
+  }
+
+  @override
+  String get challengeNextMessage => 'Mark it once you\'ve put it aside.';
+
+  @override
+  String get challengeMark => 'Mark';
+
+  @override
+  String get challengeDoneTitle => 'Challenge complete';
+
+  @override
+  String challengeDoneMessage(String amount) {
+    return 'You saved $amount.';
+  }
+
+  @override
+  String annualTitleYear(int year) {
+    return '$year summary';
+  }
+
+  @override
+  String annualAverage(String amount) {
+    return 'avg. $amount';
+  }
+
+  @override
+  String annualHighestTitle(String month) {
+    return '$month was the highest month';
+  }
+
+  @override
+  String annualHighestReason(String category, String amount) {
+    return '$category: $amount more than in a usual month.';
+  }
+
+  @override
+  String get accountsAvailableLabel => 'Available across accounts';
+
+  @override
+  String get accountsAvailableNote => 'cards and loans don\'t count here';
+
+  @override
+  String get accountsCards => 'Cards';
+
+  @override
+  String accountsRowExcluded(String type) {
+    return '$type · not in «Available»';
+  }
+
+  @override
+  String get accountsIncludeHint =>
+      'Turn it off for accounts you don\'t touch, like separate savings.';
+
+  @override
+  String get accountsAdd => 'New account';
+
+  @override
+  String get commonCreate => 'Create';
+
+  @override
+  String debtsFormTitle(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'tarjeta': 'Credit card',
+      'credito': 'Loan',
+      'hipoteca': 'Mortgage',
+      'vehiculo': 'Car loan',
+      'other': 'Debt',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String debtsCardDays(int cutoff, int day) {
+    return 'Closes on day $cutoff · due on day $day';
+  }
+
+  @override
+  String debtsCardPayDay(int day) {
+    return 'Due on day $day';
+  }
+
+  @override
+  String get debtsCardPlaceholder => 'Your card';
+
+  @override
+  String get debtsOwedToday => 'Owed today';
+
+  @override
+  String debtsEndsIn(String date) {
+    return 'Paid off in $date';
+  }
+
+  @override
+  String debtsEndsSooner(String amount, String date) {
+    return 'Paying $amount more a month: $date.';
+  }
+
+  @override
+  String get debtsNeverEnds => 'That payment never pays it off';
+
+  @override
+  String get debtsNeverEndsHint => 'The interest eats the payment: raise it or pay extra.';
+
+  @override
+  String get investmentsWorthToday => 'Worth today';
+
+  @override
+  String investmentsPutIn(String amount) {
+    return 'put in $amount';
+  }
+
+  @override
+  String get investmentsGaining => 'gaining';
+
+  @override
+  String get investmentsLosing => 'losing';
+
+  @override
+  String get investmentsManualNote => 'Updated by hand: the app doesn\'t connect to any bank.';
+
+  @override
+  String get investmentsAdd => 'New investment';
+
+  @override
+  String transfersRowTo(String name) {
+    return 'To $name';
+  }
+
+  @override
+  String transfersRowFrom(String name, String date) {
+    return 'from $name · $date';
+  }
+
+  @override
+  String transfersHas(String amount) {
+    return 'has $amount';
+  }
+
+  @override
+  String transfersLeaves(String amount) {
+    return 'ends with $amount';
+  }
+
+  @override
+  String get transfersNotExpense => 'Not an expense: it doesn\'t touch the budget.';
+
+  @override
+  String get transfersSwap => 'Swap direction';
+
+  @override
+  String get demoSeed => 'Fill with test data';
+
+  @override
+  String get demoRemove => 'Remove test data';
+
+  @override
+  String get demoSeedTitle => 'Fill with test data?';
+
+  @override
+  String get demoSeedMessage =>
+      'Adds three months of made-up accounts, a card, a loan, goals, investments, recurring bills and movements. What you already have isn\'t touched, and nobody gets notified.';
+
+  @override
+  String get demoSeedConfirm => 'Fill';
+
+  @override
+  String get demoSeedDoneTitle => 'Done';
+
+  @override
+  String demoSeedDone(int count) {
+    return '$count test records written.';
+  }
+
+  @override
+  String get demoRemoveTitle => 'Remove the test data?';
+
+  @override
+  String get demoRemoveMessage => 'Only the made-up data is deleted. What you logged stays.';
+
+  @override
+  String get demoRemoveConfirm => 'Remove';
+
+  @override
+  String get demoRemoveDoneTitle => 'Removed';
+
+  @override
+  String demoRemoveDone(int count) {
+    return '$count test records deleted.';
+  }
+
+  @override
+  String get demoError =>
+      'Couldn\'t finish. Check the connection and try again: it can be repeated without duplicating anything.';
+
+  @override
+  String householdInviteValidUntil(String date) {
+    return 'Works once and expires on $date.';
+  }
+
+  @override
+  String get householdInviteNewCode => 'Make a new code';
+
+  @override
+  String get householdInviteNewCodeTitle => 'Make a new code?';
+
+  @override
+  String get householdInviteNewCodeMessage =>
+      'The code you already sent will stop working. Do it if it reached the wrong person or got lost.';
+
+  @override
+  String householdJoinConfirmTitle(String household) {
+    return 'Join $household?';
+  }
+
+  @override
+  String get householdJoinConfirmTitleUnnamed => 'Join this household?';
+
+  @override
+  String householdJoinConfirmMessage(String name) {
+    return '$name invited you. From now on you’ll both see and log this household’s money.';
+  }
+
+  @override
+  String get householdJoinConfirmMessageUnnamed =>
+      'From now on you’ll both see and log this household’s money.';
 }

@@ -10,8 +10,9 @@ import '../../debts/data/debt_mapper.dart';
 import '../../debts/data/debt_repository.dart';
 import '../../savings_goals/data/savings_goal_repository.dart';
 import '../../transactions/data/transaction_repository.dart';
+import '../domain/export_period.dart';
 
-enum ExportPeriod { thisMonth, quarter, year }
+export '../domain/export_period.dart';
 
 extension ExportPeriodLabel on ExportPeriod {
   String get label => switch (this) {
@@ -57,18 +58,6 @@ class ReportBuilder {
   final DebtRepository debtRepository;
   final SavingsGoalRepository savingsGoalRepository;
 
-  List<(int, int)> _monthsFor(ExportPeriod period, DateTime now) {
-    final count = switch (period) {
-      ExportPeriod.thisMonth => 1,
-      ExportPeriod.quarter => 3,
-      ExportPeriod.year => 12,
-    };
-    return [
-      for (var i = count - 1; i >= 0; i--)
-        (DateTime(now.year, now.month - i).year, DateTime(now.year, now.month - i).month),
-    ];
-  }
-
   Future<Report> build({
     required String householdId,
     required String householdName,
@@ -89,7 +78,7 @@ class ReportBuilder {
     final money = plainValues ? (num v) => v.round().toString() : formatMoney;
     final dateFormat = plainValues ? DateFormat('yyyy-MM-dd') : DateFormat.yMd();
     final now = DateTime.now();
-    final months = _monthsFor(period, now);
+    final months = exportMonths(period, now);
     final sections = <ReportSection>[];
 
     final categories = await categoryRepository.watchCategories(householdId).first;
@@ -103,7 +92,7 @@ class ReportBuilder {
 
     if (includeTransactions) {
       final transactions = [
-        for (final (year, month) in months)
+        for (final (:year, :month) in months)
           ...await transactionRepository
               .watchTransactions(householdId, year: year, month: month)
               .first,
@@ -142,7 +131,7 @@ class ReportBuilder {
     if (includeBudget) {
       final plannedTotals = <String, int>{};
       final realTotals = <String, int>{};
-      for (final (year, month) in months) {
+      for (final (:year, :month) in months) {
         final budget = await budgetRepository
             .watchBudget(householdId, year: year, month: month)
             .first;

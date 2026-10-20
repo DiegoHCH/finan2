@@ -89,12 +89,53 @@ void main() {
       householdName: 'Casa',
     );
 
-    final second = await repository.createInvite(household.id, 'u1');
+    final second = (await repository.createInvite(household.id, 'u1', inviterName: 'Diego')).code;
 
     expect(second, isNot(first));
     expect((await firestore.collection('invites').doc(first).get()).exists, isFalse);
     expect((await firestore.collection('invites').doc(second).get()).exists, isTrue);
     expect((await householdDoc(household.id).get()).data()!['activeInvite'], second);
+  });
+
+  test('opening the invite again shows the one already sent while it lasts', () async {
+    final (household, sent) = await repository.createHousehold(
+      uid: 'u1',
+      displayName: 'Diego',
+      householdName: 'Casa Hoyos',
+    );
+
+    final again = await repository.currentInvite(household.id, 'u1', inviterName: 'Diego');
+    expect(again.code, sent);
+    expect((await firestore.collection('invites').doc(sent).get()).exists, isTrue);
+
+    // With under a day left it's replaced instead of sent again.
+    await firestore.collection('invites').doc(sent).update({
+      'expiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(hours: 5))),
+    });
+    final renewed = await repository.currentInvite(household.id, 'u1', inviterName: 'Diego');
+    expect(renewed.code, isNot(sent));
+    expect((await firestore.collection('invites').doc(sent).get()).exists, isFalse);
+  });
+
+  test('an invite says whose household it opens before joining', () async {
+    final (household, code) = await repository.createHousehold(
+      uid: 'u1',
+      displayName: 'Diego',
+      householdName: 'Casa Hoyos',
+    );
+
+    final preview = await repository.previewInvite(code.toLowerCase());
+    expect(preview.householdName, 'Casa Hoyos');
+    expect(preview.inviterName, 'Diego');
+    // Looking doesn't join or use it up.
+    expect((await householdDoc(household.id).get()).data()!['members'], ['u1']);
+    expect((await firestore.collection('invites').doc(code).get()).exists, isTrue);
+
+    await firestore.collection('invites').doc(code).update({
+      'expiresAt': Timestamp.fromDate(DateTime.now().subtract(const Duration(minutes: 1))),
+    });
+    expect(() => repository.previewInvite(code), throwsA(isA<HouseholdNotFoundException>()));
+    expect(() => repository.previewInvite('NOPE'), throwsA(isA<HouseholdNotFoundException>()));
   });
 
   test('updateMemberName only changes that member\'s name, not others', () async {

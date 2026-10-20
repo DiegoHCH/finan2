@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/balance/balance_ledger.dart';
 import '../../../core/crypto/decrypted_snapshots.dart';
 import '../../../core/crypto/household_crypto.dart';
 import '../domain/entities/movement.dart';
@@ -8,12 +11,17 @@ import 'movement_mapper.dart';
 import '../../../core/observability/error_reporter.dart';
 
 class TransactionRepository implements MovementWriter {
-  TransactionRepository({FirebaseFirestore? firestore, HouseholdCrypto? crypto})
-    : _db = firestore ?? FirebaseFirestore.instance,
-      _crypto = crypto ?? HouseholdCrypto();
+  TransactionRepository({
+    FirebaseFirestore? firestore,
+    HouseholdCrypto? crypto,
+    BalanceLedger? ledger,
+  }) : _db = firestore ?? FirebaseFirestore.instance,
+       _crypto = crypto ?? HouseholdCrypto(),
+       _ledger = ledger ?? BalanceLedger(firestore: firestore, crypto: crypto);
 
   final FirebaseFirestore _db;
   final HouseholdCrypto _crypto;
+  final BalanceLedger _ledger;
 
   CollectionReference<Map<String, dynamic>> _transactions(String householdId) =>
       _db.collection('households').doc(householdId).collection('transactions');
@@ -29,18 +37,6 @@ class TransactionRepository implements MovementWriter {
 
   CollectionReference<Map<String, dynamic>> _budgetAlerts(String householdId) =>
       _db.collection('households').doc(householdId).collection('budgetAlerts');
-
-  /// Decrypts an already-fetched account/debt snapshot's `balance` field.
-  /// Takes the snapshot (not a ref+get) so a Firestore transaction never
-  /// reads the same document twice.
-  Future<int> _decryptBalance(
-    DocumentSnapshot<Map<String, dynamic>> snap,
-    String householdId,
-  ) async {
-    final packed = snap.data()?['balance'] as String?;
-    if (packed == null) return 0;
-    return _crypto.decryptAmount(householdId, packed);
-  }
 
   /// The account or card-debt [tx] pays from/into, or null if neither is set
   /// (e.g. the account it pointed to was deleted and the movement was left
@@ -120,6 +116,31 @@ class TransactionRepository implements MovementWriter {
         .decryptEach((doc) => movementFromFirestore(doc, _crypto, householdId));
   }
 
+  /// The IDs of [year]/[month]'s movements written on this device that the
+  /// server hasn't confirmed yet - Firestore's `hasPendingWrites`, kept out
+  /// of [Movement] so the domain never sees snapshot metadata. The same
+  /// query as [watchTransactions], so Firestore serves both from one listen.
+  Stream<Set<String>> watchUnsyncedIds(
+    String householdId, {
+    required int year,
+    required int month,
+  }) {
+    return _transactions(householdId)
+        .where('year', isEqualTo: year)
+        .where('month', isEqualTo: month)
+        .orderBy('date', descending: true)
+        .snapshots(includeMetadataChanges: true)
+        .map(
+          (snap) => {
+            for (final doc in snap.docs)
+              if (doc.metadata.hasPendingWrites) doc.id,
+          },
+        )
+        .distinct(_sameIds);
+  }
+
+  static bool _sameIds(Set<String> a, Set<String> b) => a.length == b.length && a.containsAll(b);
+
   Stream<List<Movement>> watchTransactionsForYear(String householdId, {required int year}) {
     return _transactions(householdId)
         .where('year', isEqualTo: year)
@@ -128,26 +149,30 @@ class TransactionRepository implements MovementWriter {
         .decryptEach((doc) => movementFromFirestore(doc, _crypto, householdId));
   }
 
-  /// Creates [tx] and, atomically, applies its effect on its account's or
-  /// card-debt's balance. If the source no longer exists, the transaction is
-  /// still recorded but the balance step is skipped - nothing to adjust.
+  /// [tx]'s source and the signed change it makes to its balance, if any.
+  List<(DocumentReference<Map<String, dynamic>>, int)> _effect(String householdId, Movement tx) {
+    final source = _sourceRef(householdId, tx);
+    return source == null ? const [] : [(source, _sourceDelta(tx))];
+  }
+
+  /// The alert flag is best-effort and offline its write would wait for the
+  /// server: never hold the save for it.
+  Future<void> _refreshBudgetAlertLater(String householdId, Movement tx) {
+    final refresh = _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
+    if (_ledger.waitForServer) return refresh;
+    unawaited(refresh);
+    return Future.value();
+  }
+
+  /// Creates [tx] and, in the same write, applies its effect on its
+  /// account's or card-debt's balance. Works offline: it's queued on this
+  /// device and sent when the connection is back. If the source no longer
+  /// exists, the movement is still recorded - nothing to adjust.
   Future<void> createTransaction(String householdId, Movement tx) async {
     final txRef = _transactions(householdId).doc();
-    final sourceRef = _sourceRef(householdId, tx);
-    final data = await tx.toFirestore(_crypto, householdId);
-
-    await _db.runTransaction((transaction) async {
-      final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
-
-      transaction.set(txRef, data);
-      if (sourceSnap != null && sourceSnap.exists) {
-        final balance = await _decryptBalance(sourceSnap, householdId);
-        transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(householdId, balance + _sourceDelta(tx)),
-        });
-      }
-    });
-    await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
+    final batch = _db.batch()..set(txRef, await tx.toFirestore(_crypto, householdId));
+    await _ledger.commit(householdId, _effect(householdId, tx), batch: batch);
+    await _refreshBudgetAlertLater(householdId, tx);
   }
 
   /// Writes [tx] under the deterministic [id] only if no document with that
@@ -160,6 +185,9 @@ class TransactionRepository implements MovementWriter {
   /// once ever - a `recurringDone` marker outlives the movement, so deleting
   /// it doesn't bring it back - and the Worker's `pendingBills` marker for
   /// it, if any, is cleared.
+  ///
+  /// «Only if absent» needs the server, so unlike a movement recorded by
+  /// hand this one waits for a connection; the balance follows once it's in.
   @override
   Future<void> createIfAbsent(
     String householdId,
@@ -171,16 +199,12 @@ class TransactionRepository implements MovementWriter {
     final household = _db.collection('households').doc(householdId);
     final doneRef = household.collection('recurringDone').doc(id);
     final pendingRef = household.collection('pendingBills').doc(id);
-    final sourceRef = _sourceRef(householdId, tx);
     final data = await tx.toFirestore(_crypto, householdId);
     var wasCreated = false;
 
     await _db.runTransaction((transaction) async {
       final snap = await transaction.get(ref);
       final done = recurring && (await transaction.get(doneRef)).exists;
-      final sourceSnap = snap.exists || done || sourceRef == null
-          ? null
-          : await transaction.get(sourceRef);
       if (recurring) {
         transaction.delete(pendingRef);
         if (!done) transaction.set(doneRef, {'doneAt': FieldValue.serverTimestamp()});
@@ -189,110 +213,54 @@ class TransactionRepository implements MovementWriter {
 
       transaction.set(ref, data);
       wasCreated = true;
-      if (sourceSnap != null && sourceSnap.exists) {
-        final balance = await _decryptBalance(sourceSnap, householdId);
-        transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(householdId, balance + _sourceDelta(tx)),
-        });
-      }
     });
     if (wasCreated) {
-      await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
+      await _ledger.commit(householdId, _effect(householdId, tx));
+      await _refreshBudgetAlertLater(householdId, tx);
     }
   }
 
-  /// Updates [tx] and, atomically, corrects the balance(s) it affects:
-  /// reverses the previous amount/type/source's effect and applies the new
-  /// one - a single net adjustment when the source didn't change, or a
-  /// debit+credit across both sources when it did (including switching
-  /// between an account and a card, or vice versa).
+  /// Updates [tx] and, in the same write, corrects the balance(s) it
+  /// affects: reverses the previous amount/type/source's effect and applies
+  /// the new one - a single net adjustment when the source didn't change, or
+  /// a debit+credit across both sources when it did (including switching
+  /// between an account and a card, or vice versa). Works offline.
   Future<void> updateTransaction(String householdId, Movement tx) async {
     final txRef = _transactions(householdId).doc(tx.id);
-    final newRef = _sourceRef(householdId, tx);
-    final data = await tx.toFirestore(_crypto, householdId);
-    final newDelta = _sourceDelta(tx);
-    Movement? capturedOldTx;
+    final oldSnap = await BalanceLedger.cacheFirst(txRef);
+    final oldTx = oldSnap.exists
+        ? await movementFromFirestore(oldSnap, _crypto, householdId)
+        : null;
 
-    await _db.runTransaction((transaction) async {
-      final oldSnap = await transaction.get(txRef);
-      final oldTx = oldSnap.exists
-          ? await movementFromFirestore(oldSnap, _crypto, householdId)
-          : null;
-      capturedOldTx = oldTx;
-      final oldRef = oldTx == null ? null : _sourceRef(householdId, oldTx);
-      final oldDelta = oldTx == null ? 0 : _sourceDelta(oldTx);
-      final samePath = oldRef?.path == newRef?.path;
+    final batch = _db.batch()..update(txRef, await tx.toFirestore(_crypto, householdId));
+    await _ledger.commit(householdId, [
+      if (oldTx != null)
+        for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
+      ..._effect(householdId, tx),
+    ], batch: batch);
 
-      // All reads must happen before any writes in a Firestore transaction.
-      final newSnap = newRef == null ? null : await transaction.get(newRef);
-      final oldSourceSnap = (samePath || oldRef == null) ? null : await transaction.get(oldRef);
-
-      transaction.update(txRef, data);
-
-      if (samePath) {
-        if (newRef != null && newSnap != null && newSnap.exists) {
-          final balance = await _decryptBalance(newSnap, householdId);
-          transaction.update(newRef, {
-            'balance': await _crypto.encryptAmount(householdId, balance - oldDelta + newDelta),
-          });
-        }
-      } else {
-        if (oldRef != null && oldSourceSnap != null && oldSourceSnap.exists) {
-          final oldBalance = await _decryptBalance(oldSourceSnap, householdId);
-          transaction.update(oldRef, {
-            'balance': await _crypto.encryptAmount(householdId, oldBalance - oldDelta),
-          });
-        }
-        if (newRef != null && newSnap != null && newSnap.exists) {
-          final newBalance = await _decryptBalance(newSnap, householdId);
-          transaction.update(newRef, {
-            'balance': await _crypto.encryptAmount(householdId, newBalance + newDelta),
-          });
-        }
-      }
-    });
-
-    await _refreshBudgetAlert(householdId, tx.categoryId, tx.date.year, tx.date.month);
-    final oldTx = capturedOldTx;
+    await _refreshBudgetAlertLater(householdId, tx);
     if (oldTx != null &&
         (oldTx.categoryId != tx.categoryId ||
             oldTx.date.year != tx.date.year ||
             oldTx.date.month != tx.date.month)) {
-      await _refreshBudgetAlert(householdId, oldTx.categoryId, oldTx.date.year, oldTx.date.month);
+      await _refreshBudgetAlertLater(householdId, oldTx);
     }
   }
 
-  /// Deletes the transaction with [txId] and, atomically, reverses its
-  /// effect on its source's balance. If the account/card was deleted since,
-  /// the balance step is simply skipped - nothing to reverse it on.
+  /// Deletes the transaction with [txId] and, in the same write, reverses
+  /// its effect on its source's balance. If the account/card was deleted
+  /// since, the balance step is simply skipped. Works offline.
   Future<void> deleteTransaction(String householdId, String txId) async {
     final txRef = _transactions(householdId).doc(txId);
-    Movement? deletedTx;
+    final snap = await BalanceLedger.cacheFirst(txRef);
+    final oldTx = snap.exists ? await movementFromFirestore(snap, _crypto, householdId) : null;
 
-    await _db.runTransaction((transaction) async {
-      final snap = await transaction.get(txRef);
-      if (!snap.exists) {
-        transaction.delete(txRef);
-        return;
-      }
-      final oldTx = await movementFromFirestore(snap, _crypto, householdId);
-      deletedTx = oldTx;
-      final sourceRef = _sourceRef(householdId, oldTx);
-      final sourceSnap = sourceRef == null ? null : await transaction.get(sourceRef);
-
-      transaction.delete(txRef);
-
-      if (sourceSnap != null && sourceSnap.exists) {
-        final balance = await _decryptBalance(sourceSnap, householdId);
-        transaction.update(sourceRef!, {
-          'balance': await _crypto.encryptAmount(householdId, balance - _sourceDelta(oldTx)),
-        });
-      }
-    });
-
-    final oldTx = deletedTx;
-    if (oldTx != null) {
-      await _refreshBudgetAlert(householdId, oldTx.categoryId, oldTx.date.year, oldTx.date.month);
-    }
+    final batch = _db.batch()..delete(txRef);
+    await _ledger.commit(householdId, [
+      if (oldTx != null)
+        for (final (ref, delta) in _effect(householdId, oldTx)) (ref, -delta),
+    ], batch: batch);
+    if (oldTx != null) await _refreshBudgetAlertLater(householdId, oldTx);
   }
 }

@@ -1,11 +1,15 @@
 import 'package:finan2/core/theme/app_theme.dart';
+import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
 import 'package:finan2/features/household/data/household_model.dart';
 import 'package:finan2/features/household/presentation/screens/household_setup_screen.dart';
 import 'package:finan2/features/household/presentation/viewmodels/household_providers.dart';
 import 'package:finan2/l10n/l10n.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../helpers/test_app_container.dart';
 
 void main() {
   Future<ProviderContainer> pumpSetup(WidgetTester tester) async {
@@ -13,6 +17,8 @@ void main() {
       overrides: [
         // No household yet: the currency step has nothing to write.
         currentHouseholdProvider.overrideWith((ref) => Stream<Household?>.value(null)),
+        // The invitation puts the member's initial in their circle.
+        authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),
       ],
     );
     addTearDown(container.dispose);
@@ -48,26 +54,30 @@ void main() {
   testWidgets('walks currency, account and recovery, then invites', (tester) async {
     final container = await pumpSetup(tester);
     expect(find.text('Paso 1 de 3'), findsOneWidget);
-    expect(find.text('Moneda del hogar'), findsOneWidget);
-    expect(find.text('Omitir'), findsNothing);
+    expect(find.text('¿En qué moneda llevan las cuentas?'), findsOneWidget);
+    expect(find.text('Ahora no'), findsNothing);
 
     await tester.tap(find.text('Dólar estadounidense'));
     await tester.tap(find.text('Siguiente'));
     await tester.pumpAndSettle();
-    expect(find.text('Tu primera cuenta'), findsOneWidget);
+    expect(find.text('¿Dónde está la plata hoy?'), findsOneWidget);
     expect(find.textContaining('US\$', findRichText: true), findsWidgets);
 
-    await tester.tap(find.text('Omitir'));
+    await tester.tap(find.text('Ahora no'));
     await tester.pumpAndSettle();
     expect(find.text('Paso 3 de 3'), findsOneWidget);
 
-    await tester.tap(find.text('Más tarde, desde Ajustes'));
+    expect(find.text('¿Y si pierden la llave?'), findsOneWidget);
+    await tester.tap(find.text('Ahora no'));
     await tester.pumpAndSettle();
-    expect(find.text('Invita a tu pareja'), findsOneWidget);
+    expect(find.text('Ahora tu pareja.'), findsOneWidget);
     expect(find.text('ABC'), findsOneWidget);
+    // Diego's circle, and the partner's still empty.
+    expect(find.text('D'), findsOneWidget);
+    expect(find.bySemanticsLabel('Falta tu pareja'), findsOneWidget);
     expect(container.read(householdSetupProvider).active, isTrue);
 
-    await tester.tap(find.text('Omitir por ahora'));
+    await tester.tap(find.text('Más tarde'));
     await tester.pumpAndSettle();
     expect(find.text('open'), findsOneWidget);
     expect(container.read(householdSetupProvider).active, isFalse);
@@ -87,6 +97,6 @@ void main() {
     final navigator = tester.state<NavigatorState>(find.byType(Navigator));
     await navigator.maybePop();
     await tester.pumpAndSettle();
-    expect(find.text('Moneda del hogar'), findsOneWidget);
+    expect(find.text('¿En qué moneda llevan las cuentas?'), findsOneWidget);
   });
 }

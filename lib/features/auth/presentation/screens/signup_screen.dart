@@ -8,7 +8,6 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_centered_form.dart';
 import '../../../../core/widgets/finan2_field.dart';
-import '../../../../core/widgets/finan2_logo_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../viewmodels/auth_providers.dart';
 import 'login_screen.dart';
@@ -69,20 +68,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     });
 
     final l10n = context.l10n;
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Finan2Space.lg),
           child: Form(
             key: _formKey,
             child: Finan2CenteredForm(
               children: [
-                const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
                 Text(l10n.authSignupTitle, style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: Finan2Space.xs),
-                Text(l10n.authSignupSubtitle, style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: Finan2Space.xl),
+                const SizedBox(height: Finan2Space.sm),
+                // The account is personal and the household shared: said
+                // up front, it's the hardest part of the model to get.
+                Text(
+                  l10n.authSignupSubtitle,
+                  style: TextStyle(fontSize: 14, height: 1.5, color: colors.inkSoft),
+                ),
+                const SizedBox(height: Finan2Space.lg),
                 Finan2Field(
                   label: l10n.commonName,
                   controller: _nameController,
@@ -90,7 +94,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   validator: (value) =>
                       (value == null || value.trim().isEmpty) ? l10n.authNameRequired : null,
                 ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.sm),
                 Finan2Field(
                   label: l10n.authEmailLabel,
                   controller: _emailController,
@@ -99,15 +103,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   validator: (value) =>
                       (value == null || !value.contains('@')) ? l10n.authEmailInvalid : null,
                 ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.sm),
+                // The rule is written before getting it wrong, not after.
                 Finan2Field(
                   label: l10n.authPasswordLabel,
                   controller: _passwordController,
                   obscureText: true,
                   autofillHints: const [AutofillHints.newPassword],
                   validator: validateNewPassword,
+                  hint: l10n.validationPasswordPolicy,
                 ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.sm),
                 Finan2Field(
                   label: l10n.authConfirmPasswordLabel,
                   controller: _confirmController,
@@ -126,34 +132,38 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         )
                       : Text(l10n.authCreateAccount),
                 ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.xs),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.of(
-                      context,
-                    ).pushReplacement(MaterialPageRoute<void>(builder: (_) => const LoginScreen())),
-                    child: Text.rich(
-                      TextSpan(
-                        style: Theme.of(context).textTheme.bodySmall,
-                        children: [
-                          TextSpan(text: l10n.authHaveAccount),
-                          TextSpan(
-                            text: l10n.authSignInLink,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                    onPressed: _toLogin,
+                    style: TextButton.styleFrom(
+                      foregroundColor: colors.inkSoft,
+                      textStyle: const TextStyle(
+                        fontFamily: Finan2Type.fontFamily,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                    child: Text(l10n.authHaveAccountLink),
                   ),
                 ),
+                const SizedBox(height: Finan2Space.lg),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// Back to the login it was opened from; replaced by one if there's
+  /// nothing under it.
+  void _toLogin() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      navigator.pushReplacement(MaterialPageRoute<void>(builder: (_) => const LoginScreen()));
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/recurring_bills/domain/entities/recurring_bill.dart';
+import 'package:finan2/features/recurring_bills/domain/recurring_schedule.dart';
 import 'package:finan2/features/recurring_bills/presentation/recurring_schedule_label.dart';
 import 'package:finan2/l10n/l10n.dart';
 import 'package:flutter/widgets.dart';
@@ -116,34 +117,44 @@ void main() {
     expect(_bill(frequency: RecurringFrequency.yearly, amount: 1200000).monthlyAmount, 100000);
   });
 
-  test('describeSchedule reads naturally', () {
+  test('describeSchedule says the calendar as it would be out loud', () {
     final monday = DateTime(2026, 10, 5);
-    expect(describeSchedule(frequency: RecurringFrequency.weekly, start: monday), 'cada lunes');
+    final saturday = DateTime(2026, 10, 10);
+    String say(RecurringFrequency f, DateTime start, {DateTime? until}) =>
+        describeSchedule(scheduleOf(f, start, until: until), today: DateTime(2026, 10, 14));
+    expect(say(RecurringFrequency.weekly, monday), 'Cada lunes');
+    expect(say(RecurringFrequency.weekly, saturday), 'Cada sábado');
+    expect(say(RecurringFrequency.biweekly, saturday), 'Cada 2 semanas, los sábados');
+    expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 15)), 'Días 15 y 30');
+    expect(say(RecurringFrequency.monthly, monday), 'Cada mes, día 5');
+    expect(say(RecurringFrequency.yearly, DateTime(2026, 3, 3)), 'Cada año, 3 de marzo');
     expect(
-      describeSchedule(frequency: RecurringFrequency.semimonthly, start: DateTime(2026, 10, 15)),
-      'días 15 y 30',
+      say(RecurringFrequency.weekly, monday, until: DateTime(2026, 12, 15)),
+      'Cada lunes, hasta el 15 dic',
     );
     expect(
-      describeSchedule(frequency: RecurringFrequency.monthly, start: monday),
-      'cada mes, día 05',
-    );
-    expect(
-      describeSchedule(frequency: RecurringFrequency.yearly, start: DateTime(2026, 3, 3)),
-      'cada año, 3 de marzo',
+      say(RecurringFrequency.weekly, monday, until: DateTime(2027, 1, 15)),
+      'Cada lunes, hasta el 15 ene 2027',
     );
   });
 
-  test('describeSchedule and frequencyLabel follow the language', () {
+  test('describeSchedule, the monthly cost and frequencyLabel follow the language', () {
     final en = lookupAppLocalizations(const Locale('en'));
-    expect(
-      describeSchedule(
-        frequency: RecurringFrequency.semimonthly,
-        start: DateTime(2026, 10, 15),
-        l10n: en,
-      ),
-      'on days 15 and 30',
-    );
+    String say(RecurringFrequency f, DateTime start) =>
+        describeSchedule(scheduleOf(f, start), l10n: en);
+    expect(say(RecurringFrequency.weekly, DateTime(2026, 10, 5)), 'Every Monday');
+    expect(say(RecurringFrequency.biweekly, DateTime(2026, 10, 10)), 'Every other Saturday');
+    expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 15)), 'Days 15 and 30');
+    expect(say(RecurringFrequency.yearly, DateTime(2026, 3, 3)), 'Every year, March 3');
     expect(frequencyLabel(RecurringFrequency.semimonthly, l10n: en), 'Twice a month');
     expect(frequencyLabel(RecurringFrequency.semimonthly), 'Quincenal');
+
+    String money(num v) => '\$${v.round()}';
+    expect(describeMonthlyCost(60000, RecurringFrequency.weekly, money), 'Unos \$260000 al mes');
+    expect(describeMonthlyCost(94000, RecurringFrequency.monthly, money), '\$94000 al mes');
+    expect(
+      describeMonthlyCost(60000, RecurringFrequency.weekly, money, l10n: en),
+      'About \$260000 a month',
+    );
   });
 }

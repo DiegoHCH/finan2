@@ -6,11 +6,28 @@ import '../theme/app_theme.dart';
 /// The form header matching the mockup's `.form-top`: "Cancelar" / title /
 /// "Guardar", instead of a default AppBar.
 class Finan2FormTop extends StatefulWidget implements PreferredSizeWidget {
-  const Finan2FormTop({required this.title, required this.onSave, this.onCancel, super.key});
+  const Finan2FormTop({
+    required this.title,
+    required this.onSave,
+    this.onCancel,
+    this.closeIcon = false,
+    this.backIcon = false,
+    this.saveLabel,
+    super.key,
+  });
 
   final String title;
   final Future<void> Function() onSave;
   final VoidCallback? onCancel;
+
+  /// The redesign's `.ftop`: a ✕ instead of the word «Cancelar».
+  final bool closeIcon;
+
+  /// A back chevron instead, for a detail screen whose action is «Editar».
+  final bool backIcon;
+
+  /// The action's word; «Guardar» by default.
+  final String? saveLabel;
 
   @override
   Size get preferredSize => const Size.fromHeight(48);
@@ -50,17 +67,45 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _saving ? null : (widget.onCancel ?? () => Navigator.of(context).pop()),
-                child: Text(
-                  context.l10n.commonCancel,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: colors.inkFaint,
-                  ),
+                child: widget.closeIcon || widget.backIcon
+                    ? Align(
+                        alignment: Alignment.centerLeft,
+                        child: Tooltip(
+                          message: widget.backIcon
+                              ? MaterialLocalizations.of(context).backButtonTooltip
+                              : MaterialLocalizations.of(context).closeButtonTooltip,
+                          child: Icon(
+                            widget.backIcon ? Icons.chevron_left : Icons.close,
+                            size: widget.backIcon ? 28 : 22,
+                            color: colors.inkSoft,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        context.l10n.commonCancel,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.inkFaint,
+                        ),
+                      ),
+              ),
+            ),
+            ConstrainedBox(
+              // Long names (a goal's, a debt's) ellipsize instead of
+              // pushing the actions out.
+              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
+              child: Text(
+                widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: widget.closeIcon || widget.backIcon ? 15 : 14,
+                  fontWeight: FontWeight.w700,
+                  color: colors.ink,
                 ),
               ),
             ),
-            Text(widget.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
             Expanded(
               child: GestureDetector(
                 key: const Key('finan2FormTopSave'),
@@ -78,9 +123,13 @@ class _Finan2FormTopState extends State<Finan2FormTop> {
                           ),
                         )
                       : Text(
-                          context.l10n.commonSave,
+                          widget.saveLabel ?? context.l10n.commonSave,
                           textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: brand),
+                          style: TextStyle(
+                            fontSize: widget.closeIcon || widget.backIcon ? 14.5 : 13,
+                            fontWeight: FontWeight.w800,
+                            color: brand,
+                          ),
                         ),
                 ),
               ),

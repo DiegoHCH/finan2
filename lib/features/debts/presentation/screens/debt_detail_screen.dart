@@ -3,25 +3,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/currency.dart';
-import '../../../../core/widgets/finan2_with_text_controller.dart';
+import '../../../../core/utils/error_messages.dart';
 import '../../../../core/widgets/finan2_amount_input.dart';
-import '../../../../core/widgets/finan2_back_head.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
-import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../core/widgets/finan2_figure.dart';
+import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_person_tag.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
+import '../../../../core/widgets/finan2_tile.dart';
+import '../../../../core/widgets/finan2_with_text_controller.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
-import '../../domain/avalanche_calculator.dart';
+import '../../../household/presentation/viewmodels/member_providers.dart';
+import '../../domain/debt_plan.dart';
 import '../../domain/entities/card_payment.dart';
 import '../../domain/entities/debt.dart';
-import '../debt_status_color.dart';
+import '../debt_style.dart';
 import '../viewmodels/card_payment_providers.dart';
 import '../viewmodels/debt_providers.dart';
 import 'edit_debt_screen.dart';
 
+/// Deudas · detalle: what's left to pay, and the calendar - payments made
+/// dimmed with a check, the next one the only one in the action color
+/// saying in how many days, the rest as planned.
 class DebtDetailScreen extends ConsumerWidget {
   const DebtDetailScreen({required this.debt, super.key});
 
@@ -35,198 +45,201 @@ class DebtDetailScreen extends ConsumerWidget {
     final current = debts.firstWhere((d) => d.id == debt.id, orElse: () => debt);
     final avalanche = ref.watch(avalancheResultProvider);
     final schedule = avalanche.scheduleByDebtId[current.id] ?? const [];
-    final accent = current.type.isCard ? colors.expense : colors.saving;
+    final payments = current.type.isCard
+        ? (ref.watch(cardPaymentsProvider(current.id)).value ?? const <CardPayment>[])
+        : const <CardPayment>[];
+    final today = DateTime.now();
+    final calendar = debtCalendar(
+      payments: payments,
+      schedule: current.balance > 0 ? schedule : const [],
+      paymentDay: current.paymentDay,
+      today: today,
+    );
     final l10n = context.l10n;
+    final rate = ratePercent(current.rate);
 
-    final ratePct = current.rate == current.rate.roundToDouble()
-        ? current.rate.toStringAsFixed(0)
-        : current.rate.toStringAsFixed(1);
-
-    final String statusText;
+    final String status;
     if (current.balance <= 0) {
-      statusText = l10n.debtsStatusPaidOff;
+      status = l10n.debtsStatusPaidOff;
     } else if (schedule.isNotEmpty && schedule.last.endingBalance <= 0) {
-      final formatted = DateFormat.yMMMM().format(schedule.last.month);
-      statusText = l10n.debtsStatusFreeBy('${formatted[0].toUpperCase()}${formatted.substring(1)}');
+      status = l10n.debtsStatusFreeBy(DateFormat('MMMM y').format(schedule.last.month));
     } else {
-      statusText = l10n.debtsStatusCannotPayOff;
+      status = l10n.debtsStatusCannotPayOff;
     }
 
     return Scaffold(
-      floatingActionButton: current.type.isCard
-          ? FloatingActionButton(
-              heroTag: 'debtDetailFab',
-              backgroundColor: colors.expense,
-              onPressed: () => _registerPayment(context, ref, current.id),
-              child: const Icon(Icons.add),
-            )
-          : null,
+      appBar: Finan2FormTop(
+        title: current.name,
+        backIcon: true,
+        saveLabel: l10n.commonEdit,
+        onSave: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => EditDebtScreen(debt: current))),
+      ),
       body: SafeArea(
+        top: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2BackHead(
-              title: current.name,
-              trailing: IconButton(
-                icon: Icon(Icons.edit_outlined, size: 20, color: colors.inkSoft),
-                onPressed: () => Navigator.of(
-                  context,
-                ).push(MaterialPageRoute<void>(builder: (_) => EditDebtScreen(debt: current))),
-              ),
-            ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(Finan2Space.xl),
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.lg,
+                  Finan2Space.md,
+                  Finan2Space.lg,
+                  Finan2Space.xl,
+                ),
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(color: colors.line),
-                      borderRadius: BorderRadius.circular(Finan2Radius.card),
-                    ),
-                    child: Column(
+                  Finan2Figure(
+                    centered: true,
+                    label: l10n.debtsCurrentBalance,
+                    amountText: formatMoney(current.balance),
+                    subtitle: Column(
                       children: [
                         Text(
-                          l10n.debtsCurrentBalance,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: colors.inkFaint,
+                          l10n.debtsDetailSub(
+                            formatMoney(current.referenceAmount),
+                            (current.paidFraction * 100).round(),
+                            status,
                           ),
                         ),
-                        const SizedBox(height: 3),
                         Text(
-                          formatMoney(current.balance),
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.3,
-                            color: colors.expense,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          l10n.debtsRateWithStatus(ratePct, statusText),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 11.5, color: colors.inkSoft),
+                          current.extraPayment > 0
+                              ? l10n.debtsRateExtra(rate, formatMoney(current.extraPayment))
+                              : l10n.debtsRateOnly(rate),
+                          style: TextStyle(fontSize: 12, color: colors.inkFaint),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: Finan2Space.lg),
-                  Row(
-                    children: current.type.isCard
-                        ? [
-                            Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: l10n.debtsMinPaymentShort,
-                                value: formatMoney(current.minPayment),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: l10n.debtsExtraPayment,
-                                value: formatMoney(current.extraPayment),
-                                valueColor: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: l10n.debtsPaid,
-                                value: '${(current.paidFraction * 100).round()}%',
-                                valueColor: current.status.of(colors),
-                              ),
-                            ),
-                          ]
-                        : [
-                            Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: l10n.debtsMonthlyInstallment,
-                                value: formatMoney(current.monthlyPayment),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: current.extraPayment > 0
-                                  ? Finan2StatBox(
-                                      dense: true,
-                                      label: l10n.debtsExtraPayment,
-                                      value: formatMoney(current.extraPayment),
-                                      valueColor: Theme.of(context).colorScheme.primary,
-                                    )
-                                  : Finan2StatBox(
-                                      dense: true,
-                                      label: l10n.debtsInstallmentsLeft,
-                                      value:
-                                          '${(current.termMonths - current.paidInstallments).clamp(0, current.termMonths)}',
-                                    ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Finan2StatBox(
-                                dense: true,
-                                label: l10n.debtsPaid,
-                                value: '${(current.paidFraction * 100).round()}%',
-                                valueColor: current.status.of(colors),
-                              ),
-                            ),
-                          ],
-                  ),
-                  const SizedBox(height: Finan2Space.lg),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(color: colors.line),
-                      borderRadius: BorderRadius.circular(Finan2Radius.card),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  const SizedBox(height: Finan2Space.xl),
+                  Text(l10n.debtsPaymentSchedule, style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: Finan2Space.sm),
+                  Finan2Sheet(
+                    children: [
+                      if (calendar.isEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          padding: const EdgeInsets.symmetric(vertical: Finan2Space.md),
                           child: Text(
-                            l10n.debtsPaymentSchedule,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: colors.ink,
-                            ),
+                            current.balance <= 0
+                                ? l10n.debtsAlreadyPaidOff
+                                : l10n.debtsNoProjection,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                        ),
-                        if (schedule.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Text(
-                              current.balance <= 0
-                                  ? l10n.debtsAlreadyPaidOff
-                                  : l10n.debtsNoProjection,
-                              style: TextStyle(fontSize: 12, color: colors.inkSoft),
-                            ),
-                          )
-                        else
-                          for (var i = 0; i < schedule.length.clamp(0, 6); i++)
-                            _ScheduleRow(
-                              entry: schedule[i],
-                              paymentDay: current.paymentDay,
-                              label: i == 0 ? l10n.debtsNextPayment : l10n.debtsScheduledPayment,
-                              accent: accent,
-                              showDivider: i < schedule.length.clamp(0, 6) - 1,
-                            ),
-                      ],
+                        )
+                      else
+                        for (final entry in calendar)
+                          _CalendarRow(
+                            entry: entry,
+                            today: today,
+                            onTap: entry.payment == null
+                                ? null
+                                : () => _deletePayment(context, ref, entry.payment!),
+                          ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            if (current.type.isCard)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.lg,
+                  Finan2Space.sm,
+                  Finan2Space.lg,
+                  Finan2Space.lg,
+                ),
+                child: FilledButton(
+                  onPressed: () => _registerPayment(context, ref, current.id),
+                  child: Text(l10n.debtsRecordPayment),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A line of the calendar. Made: faint, with a check and who paid. Next:
+/// the action color and how soon. Planned: the sunken tone.
+class _CalendarRow extends ConsumerWidget {
+  const _CalendarRow({required this.entry, required this.today, this.onTap});
+
+  final DebtCalendarEntry entry;
+  final DateTime today;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final accent = Theme.of(context).colorScheme.primary;
+    final l10n = context.l10n;
+    final formatMoney = ref.watch(moneyFormatterProvider);
+    final memberLabel = ref.watch(memberLabelProvider);
+    final paid = entry.kind == DebtCalendarKind.paid;
+
+    final (IconData icon, Finan2Tone tone) = switch (entry.kind) {
+      DebtCalendarKind.paid => (Icons.check_rounded, Finan2Tone(colors.saving, colors.savingTint)),
+      DebtCalendarKind.next => (Icons.schedule_rounded, Finan2Tone(accent, colors.brandTint)),
+      DebtCalendarKind.planned => (
+        Icons.calendar_today_outlined,
+        Finan2Tone(colors.inkFaint, colors.surfaceAlt),
+      ),
+    };
+    final faint = TextStyle(fontSize: 11.5, color: colors.inkFaint);
+    final Widget sub = switch (entry.kind) {
+      DebtCalendarKind.paid => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('${l10n.debtsPaidBy} ', style: faint),
+          Flexible(
+            child: Finan2PersonTag(
+              label: memberLabel(entry.payment!.createdBy).firstName,
+              memberIndex: memberLabel(entry.payment!.createdBy).index,
+            ),
+          ),
+        ],
+      ),
+      DebtCalendarKind.next => Text(
+        l10n.debtsInDays(daysUntil(entry.date, today)),
+        style: faint.copyWith(color: accent, fontWeight: FontWeight.w600),
+      ),
+      DebtCalendarKind.planned => Text(l10n.debtsScheduledPayment, style: faint),
+    };
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        child: Row(
+          children: [
+            Finan2Tile(icon: icon, tone: tone),
+            const SizedBox(width: 11),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.MMMMd().format(entry.date),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: paid ? colors.inkFaint : colors.ink,
                     ),
                   ),
-                  if (current.type.isCard) ...[
-                    const SizedBox(height: Finan2Space.lg),
-                    _CardPaymentsSection(cardDebtId: current.id),
-                  ],
+                  const SizedBox(height: 2),
+                  sub,
                 ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              formatMoney(entry.amount),
+              style: Finan2Type.money.copyWith(
+                fontSize: 15,
+                letterSpacing: -0.15,
+                color: paid ? colors.inkFaint : colors.ink,
               ),
             ),
           ],
@@ -236,12 +249,30 @@ class DebtDetailScreen extends ConsumerWidget {
   }
 }
 
+Future<void> _deletePayment(BuildContext context, WidgetRef ref, CardPayment payment) async {
+  final l10n = context.l10n;
+  final confirmed = await showFinan2ConfirmSheet(
+    context,
+    title: l10n.debtsDeletePayment,
+    message: l10n.debtsDeletePaymentMessage(
+      ref.read(moneyFormatterProvider)(payment.amount),
+      DateFormat.MMMMd().format(payment.date),
+    ),
+    confirmLabel: l10n.commonDelete,
+    destructive: true,
+  );
+  if (!confirmed) return;
+  await ref.read(cardPaymentControllerProvider.notifier).deletePayment(payment);
+  final result = ref.read(cardPaymentControllerProvider);
+  if (result.hasError && context.mounted) {
+    await showFinan2ErrorSheet(context, message: friendlyErrorMessage(result.error!));
+  }
+}
+
 Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDebtId) async {
   final accounts = ref.read(accountsProvider).value ?? const <Account>[];
   if (accounts.isEmpty) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(context.l10n.debtsNeedAccountFirst)));
+    await showFinan2ErrorSheet(context, message: context.l10n.debtsNeedAccountFirst);
     return;
   }
   final currencySymbol = currencySymbolFor(ref.read(currentCurrencyProvider));
@@ -296,7 +327,7 @@ Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDe
                 onPressed: submitting
                     ? null
                     : () async {
-                        final amount = int.tryParse(controller.text) ?? 0;
+                        final amount = Finan2AmountInput.parse(controller.text) ?? 0;
                         if (amount > 0) {
                           setSheetState(() => submitting = true);
                           await ref
@@ -328,187 +359,4 @@ Future<void> _registerPayment(BuildContext context, WidgetRef ref, String cardDe
       ),
     ),
   );
-}
-
-class _CardPaymentsSection extends ConsumerWidget {
-  const _CardPaymentsSection({required this.cardDebtId});
-
-  final String cardDebtId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final payments = ref.watch(cardPaymentsProvider(cardDebtId)).value ?? const [];
-    final accounts = ref.watch(accountsProvider).value ?? const [];
-    final accountById = {for (final a in accounts) a.id: a};
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: colors.line),
-        borderRadius: BorderRadius.circular(Finan2Radius.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 9),
-            child: Text(
-              context.l10n.debtsRecordedPayments,
-              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: colors.ink),
-            ),
-          ),
-          if (payments.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                context.l10n.debtsNoCardPayments,
-                style: TextStyle(fontSize: 12, color: colors.inkSoft),
-              ),
-            )
-          else
-            for (var i = 0; i < payments.length; i++)
-              _CardPaymentRow(
-                payment: payments[i],
-                accountName:
-                    accountById[payments[i].fromAccountId]?.name ??
-                    context.l10n.debtsDeletedAccount,
-                showDivider: i < payments.length - 1,
-              ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CardPaymentRow extends ConsumerWidget {
-  const _CardPaymentRow({
-    required this.payment,
-    required this.accountName,
-    required this.showDivider,
-  });
-
-  final CardPayment payment;
-  final String accountName;
-  final bool showDivider;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final formatMoney = ref.watch(moneyFormatterProvider);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      decoration: showDivider
-          ? BoxDecoration(
-              border: Border(bottom: BorderSide(color: colors.line)),
-            )
-          : null,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  accountName,
-                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  DateFormat('dd MMM yyyy').format(payment.date),
-                  style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            '−${formatMoney(payment.amount)}',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: colors.expense),
-          ),
-          IconButton(
-            icon: Icon(Icons.close, size: 16, color: colors.inkFaint),
-            onPressed: () =>
-                ref.read(cardPaymentControllerProvider.notifier).deletePayment(payment),
-            tooltip: context.l10n.debtsDeletePayment,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScheduleRow extends ConsumerWidget {
-  const _ScheduleRow({
-    required this.entry,
-    required this.paymentDay,
-    required this.label,
-    required this.accent,
-    required this.showDivider,
-  });
-
-  final DebtScheduleEntry entry;
-  final int paymentDay;
-  final String label;
-  final Color accent;
-  final bool showDivider;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final formatMoney = ref.watch(moneyFormatterProvider);
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      decoration: showDivider
-          ? BoxDecoration(
-              border: Border(bottom: BorderSide(color: colors.line)),
-            )
-          : null,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 40,
-            child: Column(
-              children: [
-                Text(
-                  _monthAbbrev(entry.month),
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
-                    color: colors.inkFaint,
-                  ),
-                ),
-                Text(
-                  paymentDay.toString().padLeft(2, '0'),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600)),
-                Text(
-                  context.l10n.debtsScheduleBalance(formatMoney(entry.endingBalance)),
-                  style: TextStyle(fontSize: 10.5, color: colors.inkFaint),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            formatMoney(entry.payment),
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: accent),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String _monthAbbrev(DateTime date) {
-  final raw = DateFormat('MMM').format(date).replaceAll('.', '');
-  return raw.isEmpty ? raw : '${raw[0].toUpperCase()}${raw.substring(1)}';
 }

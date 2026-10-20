@@ -1,6 +1,7 @@
 import '../../debts/domain/entities/debt.dart';
 import '../../transactions/domain/entities/movement.dart';
 import 'entities/household_notification.dart';
+import 'notification_subject.dart';
 import 'notification_texts.dart';
 import 'repositories/notification_writer.dart';
 
@@ -155,7 +156,7 @@ class NotificationScanner {
       // One notification per day of the countdown (day included in the ID),
       // not one per month - re-scanning the same day never duplicates it,
       // but each new day of the 4-day window (3, 2, 1, 0 días) gets its own.
-      final id = 'debt_due_${debt.id}_${now.year}_${now.month}_${now.day}';
+      final id = NotificationIds.debtDue(debt.id, now);
       final isToday = daysUntil == 0;
       final notification = await _repository.createIfAbsent(
         householdId,
@@ -187,7 +188,7 @@ class NotificationScanner {
     for (final goal in goals) {
       final fraction = goal.progressFraction;
       if (fraction < 0.9 || fraction >= 1.0) continue;
-      final id = 'goal_near_${goal.id}';
+      final id = NotificationIds.goalNear(goal.id);
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
@@ -226,7 +227,7 @@ class NotificationScanner {
       if (planned <= 0) continue;
       final real = spendByCategory[entry.key] ?? 0;
       if (real <= planned) continue;
-      final id = 'budget_exceeded_${entry.key}_${now.year}_${now.month}';
+      final id = NotificationIds.budgetExceeded(entry.key, now);
       final categoryName = categoryNames[entry.key] ?? _texts.unknownCategory;
       final notification = await _repository.createIfAbsent(
         householdId,
@@ -257,7 +258,7 @@ class NotificationScanner {
         if (contribution.createdBy.isEmpty || contribution.createdBy == currentUid) {
           continue;
         }
-        final id = 'contribution_${goal.id}_${contribution.date.millisecondsSinceEpoch}';
+        final id = NotificationIds.contribution(goal.id, contribution.date);
         final notification = await _repository.createIfAbsent(
           householdId,
           id,
@@ -290,7 +291,7 @@ class NotificationScanner {
   ) async {
     for (final record in records) {
       if (record.createdBy.isEmpty || record.createdBy == currentUid) continue;
-      final id = 'partner_${_partnerIdPrefix(record.kind)}_${record.id}';
+      final id = NotificationIds.partner(record.kind, record.id);
       final notification = await _repository.createIfAbsent(
         householdId,
         id,
@@ -318,17 +319,6 @@ class NotificationScanner {
 }
 
 /// Part of the stored notification IDs - changing one would notify again.
-String _partnerIdPrefix(PartnerRecordKind kind) => switch (kind) {
-  PartnerRecordKind.movement => 'tx',
-  PartnerRecordKind.transfer => 'transfer',
-  PartnerRecordKind.debt => 'debt',
-  PartnerRecordKind.account => 'account',
-  PartnerRecordKind.investment => 'investment',
-  PartnerRecordKind.bill => 'bill',
-  PartnerRecordKind.category => 'category',
-  PartnerRecordKind.challenge => 'challenge',
-  PartnerRecordKind.goal => 'goal',
-};
 
 /// Days from today until the next occurrence of [dayOfMonth] (0 = today).
 int _daysUntilDayOfMonth(int dayOfMonth, DateTime now) {

@@ -64,7 +64,7 @@ Otras carpetas en la raíz del repo:
 
 ```
 docs/              # sitio público (GitHub Pages): landing, política de privacidad, términos
-design-archive/    # mockups/exploraciones de diseño archivados (no públicos)
+design-archive/    # mockups de diseño (no públicos): rediseno-app.html es la referencia; diseno-app.html, el diseño anterior archivado
 cloudflare/        # Worker de notificaciones push + recordatorios programados
 store/             # metadata de tienda (política de privacidad, ficha de App Store)
 android/fastlane/  # metadata de Play Store

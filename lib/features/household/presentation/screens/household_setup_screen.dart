@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
@@ -10,8 +11,11 @@ import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_option_card.dart';
+import '../../../../core/widgets/finan2_prompt_page.dart';
+import '../../../../core/widgets/finan2_steps.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
+import '../../../accounts/presentation/account_style.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../viewmodels/household_providers.dart';
@@ -71,7 +75,10 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => InviteHouseholdScreen(shareCode: widget.shareCode)),
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            InviteHouseholdScreen(shareCode: widget.shareCode, setupSteps: _Step.values.length),
+      ),
     );
     if (!mounted) return;
     ref.read(householdSetupProvider.notifier).finish();
@@ -106,7 +113,7 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
           id: '',
           name: name,
           type: _accountType,
-          balance: int.tryParse(_balanceController.text) ?? 0,
+          balance: Finan2AmountInput.parse(_balanceController.text) ?? 0,
           includeInAvailable: true,
           createdBy: ref.read(authStateChangesProvider).value?.uid ?? '',
         ),
@@ -127,74 +134,72 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final textTheme = Theme.of(context).textTheme;
     final l10n = context.l10n;
+    // One question per screen, answered and moved on from. The button is
+    // the screen's only violet: the account types take casa's tone.
     final (title, description, body, primaryLabel, onPrimary) = switch (_step) {
       _Step.currency => (
         l10n.householdSetupCurrencyTitle,
         l10n.householdSetupCurrencyDescription,
-        Column(
-          children: [
-            Finan2OptionCard(
-              icon: Icons.payments_outlined,
-              title: l10n.householdCurrencyCop,
-              subtitle: 'COP · \$',
-              selected: _currency == 'COP',
-              onTap: () => setState(() => _currency = 'COP'),
-            ),
-            const SizedBox(height: Finan2Space.sm),
-            Finan2OptionCard(
-              icon: Icons.attach_money,
-              title: l10n.householdCurrencyUsd,
-              subtitle: 'USD · US\$',
-              selected: _currency == 'USD',
-              onTap: () => setState(() => _currency = 'USD'),
-            ),
-          ],
-        ),
+        <Widget>[
+          Finan2OptionCard(
+            icon: Icons.payments_outlined,
+            title: l10n.householdCurrencyCop,
+            subtitle: 'COP · \$',
+            selected: _currency == 'COP',
+            onTap: () => setState(() => _currency = 'COP'),
+          ),
+          const SizedBox(height: Finan2Space.sm),
+          Finan2OptionCard(
+            icon: Icons.attach_money,
+            title: l10n.householdCurrencyUsd,
+            subtitle: 'USD · US\$',
+            selected: _currency == 'USD',
+            onTap: () => setState(() => _currency = 'USD'),
+          ),
+        ],
         l10n.commonNext,
         _saveCurrency,
       ),
       _Step.account => (
         l10n.householdSetupAccountTitle,
         l10n.householdSetupAccountDescription,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Finan2Field(label: l10n.commonName, controller: _accountNameController),
-            const SizedBox(height: Finan2Space.md),
-            Wrap(
-              spacing: 7,
-              runSpacing: 7,
-              children: [
-                for (final type in AccountType.values)
-                  Finan2Chip(
-                    icon: Finan2Icons.cuenta(type.name),
-                    label: type.label,
-                    selected: _accountType == type,
-                    onTap: () => setState(() => _accountType = type),
-                  ),
-              ],
-            ),
-            const SizedBox(height: Finan2Space.md),
-            Text(
-              l10n.householdSetupBalanceToday,
-              textAlign: TextAlign.center,
-              style: textTheme.labelMedium,
-            ),
-            Finan2AmountInput(
-              controller: _balanceController,
-              currencySymbol: currencySymbolFor(_currency),
-            ),
-          ],
-        ),
+        <Widget>[
+          Finan2Field(label: l10n.commonName, controller: _accountNameController),
+          const SizedBox(height: Finan2Space.md),
+          Wrap(
+            spacing: 7,
+            runSpacing: 7,
+            children: [
+              for (final type in accountTypeOrder)
+                Finan2Chip(
+                  icon: accountIcon(type),
+                  label: type.label,
+                  tone: Finan2Tone.of(context, Finan2Palette.casa),
+                  selected: _accountType == type,
+                  onTap: () => setState(() => _accountType = type),
+                ),
+            ],
+          ),
+          const SizedBox(height: Finan2Space.lg),
+          Text(
+            l10n.householdSetupBalanceToday,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: colors.inkFaint),
+          ),
+          const SizedBox(height: Finan2Space.xxs),
+          Finan2AmountInput(
+            controller: _balanceController,
+            currencySymbol: currencySymbolFor(_currency),
+          ),
+        ],
         l10n.householdSetupCreateAccount,
         _saveAccount,
       ),
       _Step.recovery => (
-        l10n.householdRecoveryPhraseTitle,
+        l10n.householdSetupRecoveryTitle,
         l10n.householdSetupRecoveryDescription,
-        const SizedBox.shrink(),
+        const <Widget>[],
         l10n.householdGeneratePhrase,
         _createPhrase,
       ),
@@ -205,45 +210,39 @@ class _HouseholdSetupScreenState extends ConsumerState<HouseholdSetupScreen> {
       // create/join screen, which no longer applies.
       canPop: false,
       child: Scaffold(
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(Finan2Space.xl),
-            children: [
-              Text(
-                l10n.householdSetupStep(_step.index + 1, _Step.values.length),
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: colors.inkFaint),
-              ),
-              const SizedBox(height: Finan2Space.sm),
-              LinearProgressIndicator(
-                value: (_step.index + 1) / _Step.values.length,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              const SizedBox(height: Finan2Space.xl),
-              Text(title, style: textTheme.headlineSmall),
-              const SizedBox(height: Finan2Space.xs),
-              Text(description, style: textTheme.bodyMedium?.copyWith(color: colors.inkSoft)),
-              const SizedBox(height: Finan2Space.lg),
-              body,
-              const SizedBox(height: Finan2Space.xl),
-              FilledButton(
-                onPressed: _busy ? null : onPrimary,
-                child: _busy
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(primaryLabel),
-              ),
-              if (_step != _Step.currency) ...[
-                const SizedBox(height: Finan2Space.sm),
-                TextButton(
-                  onPressed: _busy ? null : _next,
-                  child: Text(_step == _Step.recovery ? l10n.householdSetupLater : l10n.commonSkip),
+        body: Finan2PromptPage(
+          top: Finan2Steps(reached: _step.index + 1, total: _Step.values.length),
+          over: l10n.householdSetupStep(_step.index + 1, _Step.values.length),
+          title: title,
+          message: description,
+          actions: [
+            FilledButton(
+              onPressed: _busy ? null : onPrimary,
+              child: _busy
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(primaryLabel),
+            ),
+            // «Ahora no», not «Omitir»: it doesn't sound like skipping
+            // something required.
+            if (_step != _Step.currency)
+              TextButton(
+                onPressed: _busy ? null : _next,
+                style: TextButton.styleFrom(
+                  foregroundColor: colors.inkSoft,
+                  textStyle: const TextStyle(
+                    fontFamily: Finan2Type.fontFamily,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ],
-            ],
-          ),
+                child: Text(l10n.householdSetupLater),
+              ),
+          ],
+          children: body,
         ),
       ),
     );

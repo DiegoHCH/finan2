@@ -35,6 +35,20 @@ final transactionsOfMonthProvider = StreamProvider.autoDispose.family<List<Movem
       .watchTransactions(householdId, year: month.year, month: month.month);
 });
 
+/// Which of [month]'s movements are still only on this device - written
+/// while offline and not yet confirmed by the server - for the «por enviar»
+/// mark.
+final unsyncedMovementIdsProvider = StreamProvider.autoDispose.family<Set<String>, YearMonth>((
+  ref,
+  month,
+) {
+  final householdId = ref.watch(currentHouseholdProvider).value?.id;
+  if (householdId == null) return Stream.value(const {});
+  return ref
+      .watch(transactionRepositoryProvider)
+      .watchUnsyncedIds(householdId, year: month.year, month: month.month);
+});
+
 /// All of a year's transactions - used by Resumen anual to compute yearly
 /// totals and the month-by-month spend chart.
 final transactionsForYearProvider = StreamProvider.autoDispose.family<List<Movement>, int>((
@@ -74,4 +88,19 @@ class TransactionController extends AsyncNotifier<void> {
 
 final transactionControllerProvider = AsyncNotifierProvider<TransactionController, void>(
   TransactionController.new,
+);
+
+/// Movements deleted on screen but not yet in Firestore, while «Deshacer»
+/// is still offered - every list hides them in the meantime.
+class PendingMovementDeletions extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  void hide(String id) => state = {...state, id};
+
+  void restore(String id) => state = {...state}..remove(id);
+}
+
+final pendingMovementDeletionsProvider = NotifierProvider<PendingMovementDeletions, Set<String>>(
+  PendingMovementDeletions.new,
 );

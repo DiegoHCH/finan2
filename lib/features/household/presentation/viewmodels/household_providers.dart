@@ -51,6 +51,13 @@ final moneyFormatterProvider = Provider<String Function(num)>((ref) {
   return (amount) => formatMoney(amount, currency);
 });
 
+/// [moneyFormatterProvider]'s short form: `$1,9M`, `$60k` - see
+/// [formatMoneyCompact].
+final compactMoneyFormatterProvider = Provider<String Function(num)>((ref) {
+  final currency = ref.watch(currentCurrencyProvider);
+  return (amount) => formatMoneyCompact(amount, currency);
+});
+
 class HouseholdController extends AsyncNotifier<Household?> {
   @override
   FutureOr<Household?> build() => null;
@@ -82,6 +89,9 @@ class HouseholdController extends AsyncNotifier<Household?> {
             householdName: householdName,
           );
       final key = await ref.read(householdCryptoProvider).generateKey(household.id);
+      // The household is on screen as soon as it's stored - before its key
+      // exists - so «does this phone have the key?» was already answered no.
+      ref.invalidate(householdHasKeyProvider(household.id));
       lastShareCode = '$inviteCode.$key';
       setup.ready(lastShareCode!);
       // Separate write: the category rules check membership against the
@@ -116,6 +126,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
           );
       if (key != null && HouseholdCrypto.isWellFormedKey(key)) {
         await ref.read(householdCryptoProvider).importKey(household.id, key);
+        ref.invalidate(householdHasKeyProvider(household.id)); // as in createHousehold
         joinedWithoutKey = false;
       } else {
         joinedWithoutKey = !await ref.read(householdCryptoProvider).hasKey(household.id);
@@ -147,15 +158,30 @@ class HouseholdController extends AsyncNotifier<Household?> {
     return null;
   }
 
-  /// A fresh invite for [householdId] as the full `<invite>.<key>` string to
-  /// share, or null if this device doesn't have the key to pass along.
-  Future<String?> createInvite(String householdId) async {
+  /// The invite for [householdId] as the full `<invite>.<key>` string to
+  /// share, and when it expires - the one already sent while it lasts, or a
+  /// new one with [fresh] (the old code stops working). Null if this device
+  /// doesn't have the key to pass along.
+  Future<({String shareCode, DateTime expiresAt})?> invite(
+    String householdId, {
+    bool fresh = false,
+  }) async {
     final user = ref.read(authStateChangesProvider).value;
     if (user == null) return null;
     final key = await ref.read(householdCryptoProvider).exportKey(householdId);
     if (key == null) return null;
-    final code = await ref.read(householdRepositoryProvider).createInvite(householdId, user.uid);
-    return '$code.$key';
+    final repository = ref.read(householdRepositoryProvider);
+    final inviterName = user.displayName ?? 'Yo';
+    final invite = fresh
+        ? await repository.createInvite(householdId, user.uid, inviterName: inviterName)
+        : await repository.currentInvite(householdId, user.uid, inviterName: inviterName);
+    return (shareCode: '${invite.code}.$key', expiresAt: invite.expiresAt);
+  }
+
+  /// Whose household the pasted [code] opens, before joining it. Throws
+  /// [HouseholdNotFoundException] if it doesn't exist or expired.
+  Future<InvitePreview> previewInvite(String code) {
+    return ref.read(householdRepositoryProvider).previewInvite(code.trim().split('.').first);
   }
 
   /// `<householdId>.<key>`, for a partner who's already a member but lost

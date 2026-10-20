@@ -98,33 +98,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     final l10n = context.l10n;
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final accent = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Finan2Space.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Finan2Space.lg),
           child: Form(
             key: _formKey,
             child: Finan2CenteredForm(
               children: [
-                const Finan2LogoTile(),
                 const SizedBox(height: Finan2Space.lg),
-                Text.rich(
-                  TextSpan(
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    children: [
-                      TextSpan(text: l10n.authLoginWelcome),
-                      TextSpan(
-                        text: '2',
-                        style: TextStyle(
-                          color: Theme.of(context).extension<Finan2Colors>()!.saving,
-                        ),
-                      ),
-                    ],
-                  ),
+                const Finan2LogoTile(),
+                const SizedBox(height: Finan2Space.md),
+                // Says what the app is, not «Bienvenido».
+                Text(l10n.authLoginHeadline, style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: Finan2Space.sm),
+                Text(
+                  l10n.authLoginSubtitle,
+                  style: TextStyle(fontSize: 14, height: 1.5, color: colors.inkSoft),
                 ),
-                const SizedBox(height: Finan2Space.xs),
-                Text(l10n.authLoginSubtitle, style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: Finan2Space.xl),
+                const SizedBox(height: Finan2Space.lg),
                 Finan2Field(
                   label: l10n.authEmailLabel,
                   controller: _emailController,
@@ -133,7 +127,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   validator: (value) =>
                       (value == null || !value.contains('@')) ? l10n.authEmailInvalid : null,
                 ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.sm),
                 Finan2Field(
                   label: l10n.authPasswordLabel,
                   controller: _passwordController,
@@ -146,10 +140,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: authState.isLoading ? null : _forgotPassword,
+                    style: TextButton.styleFrom(
+                      foregroundColor: colors.inkSoft,
+                      textStyle: const TextStyle(
+                        fontFamily: Finan2Type.fontFamily,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     child: Text(l10n.authForgotPassword),
                   ),
                 ),
-                const SizedBox(height: Finan2Space.sm),
                 FilledButton(
                   onPressed: authState.isLoading ? null : _submit,
                   child: authState.isLoading
@@ -160,24 +161,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         )
                       : Text(l10n.authSignIn),
                 ),
-                const SizedBox(height: Finan2Space.md),
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Finan2Space.sm),
-                      child: Text(l10n.authOr, style: Theme.of(context).textTheme.bodySmall),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: Finan2Space.md),
+                const SizedBox(height: Finan2Space.sm),
                 // Web can't reuse the same button: GoogleSignIn.authenticate()
                 // throws UnimplementedError there - GIS requires the user to
                 // interact with its own rendered button instead of a popup
                 // this app triggers imperatively.
                 if (kIsWeb)
-                  const GoogleSignInWebButton()
+                  const Center(child: GoogleSignInWebButton())
                 else
                   OutlinedButton.icon(
                     onPressed: authState.isLoading
@@ -186,7 +176,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     icon: const Finan2GoogleIcon(),
                     label: Text(l10n.authContinueWithGoogle),
                   ),
-                const SizedBox(height: Finan2Space.lg),
+                const SizedBox(height: Finan2Space.sm),
                 Center(
                   child: TextButton(
                     onPressed: () => Navigator.of(
@@ -194,21 +184,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ).push(MaterialPageRoute<void>(builder: (_) => const SignupScreen())),
                     child: Text.rich(
                       TextSpan(
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.inkSoft,
+                        ),
                         children: [
                           TextSpan(text: l10n.authNoAccount),
                           TextSpan(
                             text: l10n.authCreateAccountHere,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: TextStyle(color: accent, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(height: Finan2Space.lg),
               ],
             ),
           ),

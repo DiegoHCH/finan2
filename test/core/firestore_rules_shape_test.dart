@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:finan2/core/balance/balance_ledger.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
 import 'package:finan2/features/categories/data/category_model.dart';
 import 'package:finan2/features/debts/domain/entities/debt.dart';
@@ -36,13 +37,14 @@ void main() {
   Future<void> expectMatches(
     String function,
     Map<String, dynamic> written,
-    List<Enum> enumValues,
-  ) async {
+    List<Enum> enumValues, {
+    Set<String> writtenElsewhere = const {},
+  }) async {
     final body = ruleFunction(function);
     final allowed = body.contains('hasFields(')
         ? {...quotedList(body, 'hasFields('), ...quotedList(body, '],')}
         : quotedList(body, 'hasExactly(').toSet();
-    expect(allowed, written.keys.toSet(), reason: function);
+    expect(allowed, {...written.keys, ...writtenElsewhere}, reason: function);
     expect(
       quotedList(body, 'd.type in').toSet(),
       enumValues.map((e) => e.name).toSet(),
@@ -70,7 +72,13 @@ void main() {
       balance: 1000,
       includeInAvailable: true,
     ).toFirestore(crypto, householdId);
-    await expectMatches('validAccount', written, AccountType.values);
+    // Each device's share is written by BalanceLedger, not toFirestore.
+    await expectMatches(
+      'validAccount',
+      written,
+      AccountType.values,
+      writtenElsewhere: {deviceBalancesField},
+    );
   });
 
   test('transactions', () async {
@@ -102,7 +110,12 @@ void main() {
       rate: 28,
       paymentDay: 5,
     ).toFirestore(crypto, householdId);
-    await expectMatches('validDebt', written, DebtType.values);
+    await expectMatches(
+      'validDebt',
+      written,
+      DebtType.values,
+      writtenElsewhere: {deviceBalancesField},
+    );
   });
 
   test('savings goals', () async {

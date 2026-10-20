@@ -70,8 +70,7 @@ class Debt {
   /// Rojo→ámbar→verde según [paidFraction]: crítico = recién tomada o la
   /// tarjeta está al límite del cupo, verde = casi lista o completamente
   /// pagada. 3 pasos fijos (no un degradado continuo) para que sigan siendo
-  /// distinguibles con daltonismo rojo-verde - ver DebtStatusColor para el
-  /// mapeo a Color.
+  /// distinguibles con daltonismo rojo-verde.
   DebtStatus get status {
     if (paidFraction < 0.40) return DebtStatus.critical;
     if (paidFraction < 0.75) return DebtStatus.warning;

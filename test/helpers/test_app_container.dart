@@ -9,6 +9,8 @@ import 'package:finan2/features/budget/data/budget_repository.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
 import 'package:finan2/features/categories/data/category_repository.dart';
 import 'package:finan2/features/categories/presentation/viewmodels/category_providers.dart';
+import 'package:finan2/features/connection/data/connection_repository.dart';
+import 'package:finan2/features/connection/presentation/viewmodels/connection_providers.dart';
 import 'package:finan2/features/debts/data/card_payment_repository.dart';
 import 'package:finan2/features/debts/data/debt_repository.dart';
 import 'package:finan2/features/debts/presentation/viewmodels/card_payment_providers.dart';
@@ -39,6 +41,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
 
+import 'test_balance_ledger.dart';
 import 'test_household_crypto.dart';
 
 const testHouseholdId = 'h1';
@@ -86,6 +89,7 @@ class TestApp {
   static Future<TestApp> start({bool withHousehold = true}) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
+    final ledger = testBalanceLedger(firestore, crypto);
     final container = ProviderContainer(
       overrides: [
         authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),
@@ -107,6 +111,7 @@ class TestApp {
         pushServiceProvider.overrideWithValue(FakePushService()),
         foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
+        connectionRepositoryProvider.overrideWithValue(ConnectionRepository(firestore: firestore)),
         notificationRepositoryProvider.overrideWithValue(
           NotificationRepository(firestore: firestore),
         ),
@@ -114,17 +119,17 @@ class TestApp {
           NotificationPrefsRepository(firestore: firestore),
         ),
         accountRepositoryProvider.overrideWithValue(
-          AccountRepository(firestore: firestore, crypto: crypto),
+          AccountRepository(firestore: firestore, crypto: crypto, ledger: ledger),
         ),
         budgetRepositoryProvider.overrideWithValue(
           BudgetRepository(firestore: firestore, crypto: crypto),
         ),
         categoryRepositoryProvider.overrideWithValue(CategoryRepository(firestore: firestore)),
         cardPaymentRepositoryProvider.overrideWithValue(
-          CardPaymentRepository(firestore: firestore, crypto: crypto),
+          CardPaymentRepository(firestore: firestore, crypto: crypto, ledger: ledger),
         ),
         debtRepositoryProvider.overrideWithValue(
-          DebtRepository(firestore: firestore, crypto: crypto),
+          DebtRepository(firestore: firestore, crypto: crypto, ledger: ledger),
         ),
         investmentRepositoryProvider.overrideWithValue(
           InvestmentRepository(firestore: firestore, crypto: crypto),
@@ -142,10 +147,10 @@ class TestApp {
           SavingsGoalRepository(firestore: firestore, crypto: crypto),
         ),
         transactionRepositoryProvider.overrideWithValue(
-          TransactionRepository(firestore: firestore, crypto: crypto),
+          TransactionRepository(firestore: firestore, crypto: crypto, ledger: ledger),
         ),
         transferRepositoryProvider.overrideWithValue(
-          TransferRepository(firestore: firestore, crypto: crypto),
+          TransferRepository(firestore: firestore, crypto: crypto, ledger: ledger),
         ),
       ],
     );

@@ -10,7 +10,6 @@
   "commonConfirm": "Confirmar",
   "commonContinue": "Continuar",
   "commonNext": "Siguiente",
-  "commonSkip": "Omitir",
   "commonUndo": "Deshacer",
   "commonCopy": "Copiar",
   "commonGotIt": "Entendido",
@@ -24,42 +23,8 @@
   "@commonSave": {
     "description": "Shared labels (common*) are reused by every feature: buttons, field labels."
   },
-  "budgetTitle": "Presupuesto · {month}",
-  "@budgetTitle": {
-    "placeholders": {
-      "month": {
-        "type": "String"
-      }
-    }
-  },
-  "budgetPlannedTotal": "{amount} planeado",
-  "@budgetPlannedTotal": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    },
-    "description": "Header title: total amount budgeted for the month, already formatted."
-  },
-  "budgetAssignedPct": "{pct}% asignado",
-  "@budgetAssignedPct": {
-    "placeholders": {
-      "pct": {
-        "type": "int"
-      }
-    },
-    "description": "Badge: share of the month's income already budgeted."
-  },
   "budgetPreviousMonth": "Mes anterior",
   "budgetNextMonth": "Mes siguiente",
-  "budgetLeftToBudget": "Falta por presupuestar",
-  "budgetNoIncomeYet": "Registra ingresos este mes",
-  "@budgetNoIncomeYet": {
-    "description": "Shown instead of an amount when the month has no income to budget yet."
-  },
-  "budgetOverBudgeted": "Presupuestado de más",
-  "budgetVsActual": "Presupuesto vs. real",
-  "budgetEmpty": "Aún no has presupuestado ninguna categoría.",
   "budgetAddCategory": "+ Presupuestar otra categoría",
   "budgetForCategory": "Presupuesto para {category}",
   "@budgetForCategory": {
@@ -82,6 +47,24 @@
     }
   },
   "budgetCopying": "Copiando…",
+  "budgetEmptyTitle": "{month} todavía no tiene plan.",
+  "@budgetEmptyTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetEmptyDescription": "Pongan cuánto quieren gastar en cada categoría y aquí verán lo que les queda de cada una.",
+  "budgetEmptyAction": "Planear una categoría",
+  "budgetEmptyCopy": "Copiar el plan de {month}",
+  "@budgetEmptyCopy": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
   "budgetCarryIncluded": "Incluye {amount} que sobró antes",
   "@budgetCarryIncluded": {
     "placeholders": {
@@ -101,19 +84,110 @@
     "description": "Overspending from earlier months taken off this month's limit."
   },
   "annualSummaryTitle": "Resumen anual",
-  "annualSummaryPreviousYear": "Año anterior",
-  "annualSummaryNextYear": "Año siguiente",
-  "annualSummaryEarned": "Ganado",
-  "annualSummarySpent": "Gastado",
+  "annualSummaryEarned": "Entró",
+  "annualSummarySpent": "Salió",
   "annualSummarySaved": "Ahorrado",
   "annualSummarySpendByMonth": "Gasto por mes",
-  "dashboardHousehold": "Hogar",
-  "dashboardNetWorth": "Patrimonio neto",
-  "dashboardNetWorthFormula": "Cuentas + ahorros + inversiones − deudas",
-  "dashboardIncome": "Ingresos",
-  "dashboardExpenses": "Gastos",
-  "dashboardWhereMoneyGoes": "A dónde va el dinero",
   "dashboardNoCategorizedSpending": "No hay gastos categorizados este mes.",
+  "dashboardDecrypting": "Descifrando los montos en este teléfono…",
+  "dashboardGreeting": "Hola, {name}",
+  "@dashboardGreeting": {
+    "description": "Inicio's title: greets the signed-in member by first name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardLeftOfPlan": "Les queda del plan de {month}",
+  "@dashboardLeftOfPlan": {
+    "description": "Label over Inicio's big figure: what's left of the month's budget. {month} is the month name as DateFormat gives it (lowercase in Spanish).",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardOverPlan": "Se pasaron del plan de {month}",
+  "@dashboardOverPlan": {
+    "description": "Label over Inicio's big figure when the month's spending went past the budget; the figure is by how much.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardSpentIn": "Gastado en {month}",
+  "@dashboardSpentIn": {
+    "description": "Label over Inicio's big figure when the month has no budget: what went out.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardOfPlan": "de {amount}",
+  "@dashboardOfPlan": {
+    "description": "Under Inicio's figure: the month's whole plan, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardDaysLeft": "{count, plural, =0{último día} =1{falta 1 día} other{faltan {count} días}}",
+  "@dashboardDaysLeft": {
+    "description": "Under Inicio's figure: whole days after today until the month ends.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardPerDay": "unos {amount} al día",
+  "@dashboardPerDay": {
+    "description": "Under Inicio's figure: what's left divided by the days left, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardNoPlan": "Sin plan este mes",
+  "@dashboardNoPlan": {
+    "description": "Under Inicio's figure when the month has no budget."
+  },
+  "dashboardIncomeIn": "entraron {amount}",
+  "@dashboardIncomeIn": {
+    "description": "Under Inicio's figure when there's no plan: the month's income, already formatted as money.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardLegendLeft": "Queda",
+  "@dashboardLegendLeft": {
+    "description": "Legend of Inicio's stacked bar: the part of the plan not spent yet."
+  },
+  "dashboardLegendOther": "Otras",
+  "@dashboardLegendOther": {
+    "description": "Legend of Inicio's stacked bar: every category past the four biggest."
+  },
+  "dashboardNoticeSee": "Ver",
+  "@dashboardNoticeSee": {
+    "description": "Action word at the end of Inicio's notice; opens the notifications."
+  },
+  "dashboardWhoPaid": "Quién pagó este mes",
+  "dashboardMovementCount": "{count, plural, =1{1 movimiento} other{{count} movimientos}}",
+  "@dashboardMovementCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardRecent": "Últimos movimientos",
   "savingsChallengeTitle": "Reto de ahorro",
   "@savingsChallengeTitle": {
     "description": "Screen title, and the default name of a new challenge."
@@ -145,30 +219,23 @@
     "description": "Size chip: size name and how many boxes the challenge will have."
   },
   "savingsChallengeCreate": "Crear reto",
-  "savingsChallengeGoal": "¡Tú puedes! Meta del reto",
-  "savingsChallengeProgress": "Progreso",
-  "savingsChallengeMarkHint": "Marca cada casilla al ahorrar",
-  "authLoginWelcome": "Bienvenido a Finan",
-  "@authLoginWelcome": {
-    "description": "Login heading; a highlighted \"2\" follows it, completing the app name Finan2."
+  "authLoginSubtitle": "Cada quien entra con su cuenta; lo que anotan es de los dos.",
+  "authLoginHeadline": "La libreta de la casa,\npara los dos.",
+  "@authLoginHeadline": {
+    "description": "Login heading: says what the app is. The line break is intended."
   },
-  "authLoginSubtitle": "Entra con tu cuenta. Cada quien tiene la suya; las finanzas del hogar son compartidas.",
   "authEmailLabel": "Correo",
   "authEmailInvalid": "Ingresa un correo válido",
   "authPasswordLabel": "Contraseña",
   "authPasswordRequired": "Ingresa tu contraseña",
   "authForgotPassword": "¿Olvidaste tu contraseña?",
-  "authSignIn": "Iniciar sesión",
-  "authOr": "o",
-  "@authOr": {
-    "description": "Separator between email sign-in and Google sign-in."
-  },
-  "authContinueWithGoogle": "Continuar con Google",
+  "authSignIn": "Entrar",
+  "authContinueWithGoogle": "Seguir con Google",
   "authNoAccount": "¿No tienes cuenta? ",
   "@authNoAccount": {
     "description": "Followed by the authCreateAccountHere link; keep the trailing space."
   },
-  "authCreateAccountHere": "Créala aquí",
+  "authCreateAccountHere": "Créala",
   "authResetPasswordTitle": "Recuperar contraseña",
   "authResetPasswordMessage": "Te enviamos un enlace a tu correo para elegir una contraseña nueva.",
   "authResetPasswordSend": "Enviar",
@@ -181,38 +248,35 @@
       }
     }
   },
-  "authSignupTitle": "Crea tu cuenta",
-  "authSignupSubtitle": "Regístrate para empezar a organizar las finanzas del hogar.",
+  "authSignupTitle": "Tu cuenta",
+  "authSignupSubtitle": "Es solo tuya. La casa la armas o te unes en el paso siguiente.",
   "authNameRequired": "Ingresa tu nombre",
   "authConfirmPasswordLabel": "Confirmar contraseña",
   "authPasswordsDontMatch": "Las contraseñas no coinciden",
   "authCreateAccount": "Crear cuenta",
+  "authHaveAccountLink": "Ya tengo cuenta",
   "@authCreateAccount": {
     "description": "Sign-up button: creates the user's login account."
   },
-  "authHaveAccount": "¿Ya tienes cuenta? ",
-  "@authHaveAccount": {
-    "description": "Followed by the authSignInLink link; keep the trailing space."
-  },
-  "authSignInLink": "Inicia sesión",
   "householdDefaultName": "Nuestro hogar",
   "@householdDefaultName": {
     "description": "Prefilled, editable name when creating a household."
   },
-  "householdCreateJoinTitle": "Un último paso",
-  "householdCreateJoinSubtitle": "Crea el hogar desde cero o únete al que ya tiene tu pareja.",
-  "householdCreateOptionTitle": "Crear un hogar nuevo",
-  "householdCreateOptionSubtitle": "Empiezas de cero e invitas a tu pareja.",
-  "householdJoinOptionTitle": "Unirme con un código",
-  "householdJoinOptionSubtitle": "Tu pareja ya creó el hogar.",
-  "householdNameLabel": "Nombre del hogar",
-  "householdNameRequired": "Ponle un nombre a tu hogar",
-  "householdCodeLabel": "Código del hogar (pega el código completo)",
+  "householdCreateJoinTitle": "¿Arman la casa o ya existe?",
+  "householdCreateJoinSubtitle": "Uno de los dos la crea; el otro entra con un código.",
+  "householdCreateOptionTitle": "Crear la casa",
+  "householdCreateOptionSubtitle": "Empiezo yo e invito a mi pareja.",
+  "householdJoinOptionTitle": "Tengo un código",
+  "householdJoinOptionSubtitle": "Mi pareja ya la creó.",
+  "householdNameLabel": "Nombre de la casa",
+  "householdNameRequired": "Ponle un nombre a la casa",
+  "householdCodeLabel": "Código",
+  "householdCodeHint": "Pégalo completo, tal como te llegó: lleva la llave de la casa.",
   "householdCodeRequired": "Ingresa el código que te compartieron",
-  "householdCreateButton": "Crear hogar",
-  "householdJoinButton": "Entrar al hogar",
+  "householdCreateButton": "Armar la casa",
+  "householdJoinButton": "Entrar a la casa",
   "householdJoinedWithoutKeyTitle": "Te uniste al hogar",
-  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te comparta el código completo desde la tarjeta del hogar en Ajustes.",
+  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».",
   "householdSetupStep": "Paso {step} de {total}",
   "@householdSetupStep": {
     "placeholders": {
@@ -224,35 +288,40 @@
       }
     }
   },
-  "householdSetupCurrencyTitle": "Moneda del hogar",
-  "householdSetupCurrencyDescription": "En la que llevan las cuentas. Se puede cambiar en Ajustes.",
+  "householdSetupCurrencyTitle": "¿En qué moneda llevan las cuentas?",
+  "householdSetupCurrencyDescription": "La de todos los montos de la casa. Se puede cambiar después en Ajustes.",
   "householdCurrencyCop": "Peso colombiano",
   "householdCurrencyUsd": "Dólar estadounidense",
-  "householdSetupAccountTitle": "Tu primera cuenta",
+  "householdSetupAccountTitle": "¿Dónde está la plata hoy?",
   "@householdSetupAccountTitle": {
     "description": "A money account (bank, wallet, cash), not a login."
   },
-  "householdSetupAccountDescription": "De donde sale y a donde llega la plata: el banco, una billetera o el efectivo. Pon lo que tiene hoy para empezar con el saldo real.",
+  "householdSetupAccountDescription": "Una cuenta para empezar: el banco, una billetera o el efectivo. Con el saldo real, lo que anotes cuadra desde el primer día.",
   "householdSetupAccountNameMissingTitle": "Ponle un nombre",
-  "householdSetupAccountNameMissingMessage": "Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.",
+  "householdSetupAccountNameMissingMessage": "Por ejemplo el banco o «Efectivo». Si prefieres, déjala para después con «Ahora no».",
   "householdSetupBalanceToday": "Saldo de hoy",
   "householdSetupCreateAccount": "Crear cuenta",
   "@householdSetupCreateAccount": {
     "description": "Creates a money account (bank, wallet, cash), not a login."
   },
   "householdRecoveryPhraseTitle": "Frase de recuperación",
-  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, estas 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja.",
+  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.",
+  "householdSetupRecoveryTitle": "¿Y si pierden la llave?",
   "householdGeneratePhrase": "Generar frase",
-  "householdSetupLater": "Más tarde, desde Ajustes",
-  "householdInviteTitle": "Invita a tu pareja",
-  "householdInviteMessage": "Comparte este código para que entre con su propia cuenta al mismo hogar. Sirve una sola vez y vence en 7 días.",
-  "householdInviteWarning": "Usa el botón de compartir y envíalo por WhatsApp o mensaje - no lo dictes de viva voz, lleva pegada una llave más larga que no se ve aquí. Sin el código completo, tu pareja no podrá ver los montos.",
+  "householdSetupLater": "Ahora no",
+  "householdInviteTitle": "Ahora tu pareja.",
+  "householdInviteMessage": "Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.",
+  "householdInviteFootnote": "Sirve una vez y vence en 7 días · se puede generar otro en Ajustes",
+  "householdInviteMissingPartner": "Falta tu pareja",
+  "@householdInviteMissingPartner": {
+    "description": "Screen-reader label of the empty, dashed circle where the partner will be."
+  },
   "householdInviteShareSubject": "Invitación a nuestro hogar en Finan2",
   "@householdInviteShareSubject": {
     "description": "Title/subject of the OS share sheet when sharing the invite."
   },
-  "householdInviteShare": "Compartir invitación",
-  "householdInviteSkip": "Omitir por ahora",
+  "householdInviteShare": "Compartir",
+  "householdInviteSkip": "Más tarde",
   "householdRecoveryConfirmMessage": "Si algún día ninguno de los dos tiene la llave del hogar en su dispositivo, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas con tu pareja. Si ya había una frase o un PIN, dejarán de servir.",
   "householdRecoverySavedTitle": "Frase guardada",
   "householdRecoverySavedMessage": "Desde ahora esta frase permite recuperar los montos del hogar en cualquier dispositivo.",
@@ -268,51 +337,38 @@
   "householdRecoveryShowTitle": "Anota estas 12 palabras",
   "householdRecoveryShowMessage": "En este orden. No se vuelven a mostrar y Finan2 no las guarda.",
   "householdRecoveryShowDone": "Ya las anoté",
-  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a tu pareja que lo comparta de nuevo desde la tarjeta del hogar en Ajustes.",
+  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».",
   "householdKeyWrongHousehold": "Esa llave no es de este hogar. Revisa que el código sea el que tu pareja compartió desde este mismo hogar.",
   "householdRecoveryNotSet": "Este hogar no tiene una frase de recuperación configurada.",
   "householdRecoveryPhraseMismatch": "Esa frase no corresponde a este hogar. Si tu pareja generó una nueva, la anterior dejó de servir.",
   "settingsTitle": "Ajustes",
-  "settingsHeading": "Configuración",
-  "@settingsHeading": {
-    "description": "Large title under the small settingsTitle label."
+  "settingsAccountsAndCards": "Cuentas y tarjetas",
+  "settingsMemberYou": "tú",
+  "@settingsMemberYou": {
+    "description": "Under the signed-in member's name in Ajustes."
   },
-  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde su tarjeta del hogar, o escribe la frase de recuperación.",
+  "settingsMemberPartner": "en la casa",
+  "@settingsMemberPartner": {
+    "description": "Under the other member's name in Ajustes."
+  },
+  "settingsInvite": "Invitar a la casa",
+  "settingsInviteSomeone": "Invitar",
+  "@settingsInviteSomeone": {
+    "description": "The empty second place in Ajustes while the household has one member."
+  },
+  "settingsShareKey": "Compartir la llave",
+  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.",
   "settingsPasteCodeToUnlock": "Pegar código para desbloquear montos",
   "settingsUseRecoveryPhrase": "Usar frase de recuperación",
-  "settingsStorageWarning": "Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes de la cuenta.",
-  "settingsMemberCount": "{count, plural, =1{1 miembro} other{{count} miembros}}",
-  "@settingsMemberCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "settingsTapToInvite": "toca para invitar",
-  "settingsTapToShareKey": "toca para compartir la llave",
-  "settingsFinancialSettings": "Ajustes financieros",
-  "settingsFinancialSettingsSubtitle": "Moneda, año y categorías",
-  "settingsAccountSettings": "Ajustes de la cuenta",
-  "settingsAccountSettingsSubtitle": "Hogar y notificaciones",
-  "settingsExportReport": "Exportar reporte",
-  "settingsBackup": "Copia de seguridad",
-  "settingsBudget": "Presupuesto",
-  "settingsBudgetPlanned": "{amount} planeado",
-  "@settingsBudgetPlanned": {
-    "description": "{amount} is an already-formatted money amount.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "settingsAnnualSummary": "Resumen anual",
+  "settingsStorageWarning": "Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes, en «Tu cuenta».",
+  "settingsFinancialSettings": "Moneda y año",
+  "settingsAccountSettings": "Tu cuenta",
+  "settingsExportReport": "Exportar",
+  "settingsBackup": "Copia y llave",
   "settingsInvestments": "Inversiones",
-  "settingsNotificationCenter": "Centro de notificaciones",
   "settingsSignOut": "Cerrar sesión",
   "settingsUnlockAmountsTitle": "Desbloquear montos",
-  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que tu pareja copió desde su tarjeta del hogar en Ajustes.",
+  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».",
   "settingsUnlockCodeLabel": "Código completo (CODIGO.llave)",
   "settingsUnlock": "Desbloquear",
   "settingsAmountsUnlockedTitle": "Montos desbloqueados",
@@ -363,7 +419,13 @@
   "settingsLeave": "Salir",
   "settingsMyName": "Mi nombre",
   "settingsHouseholdMembers": "Miembros del hogar",
-  "settingsNotifications": "Notificaciones",
+  "settingsLanguage": "Idioma",
+  "settingsLanguageSystem": "Como el teléfono",
+  "settingsLanguageSystemSubtitle": "Sigue el idioma de tu teléfono.",
+  "settingsLanguageFixedSubtitle": "Siempre en este idioma, aunque el teléfono esté en otro.",
+  "@settingsLanguageFixedSubtitle": {
+    "description": "Under «Español» / «English» in the language sheet; those two names are never translated."
+  },
   "settingsTheme": "Tema",
   "settingsRecoveryPhraseHint": "Recuperar montos si pierden la llave",
   "settingsDeleteAccount": "Eliminar mi cuenta",
@@ -385,26 +447,28 @@
   "settingsCurrency": "Moneda",
   "settingsActiveYear": "Año activo",
   "settingsWeekStartsOn": "La semana inicia en",
-  "settingsCategories": "Categorías",
-  "settingsAccounts": "Cuentas",
   "coreSheetErrorTitle": "Algo salió mal",
   "coreReauthTitle": "Confirma tu contraseña",
   "corePassword": "Contraseña",
-  "corePeriodPrevious": "Anterior",
-  "@corePeriodPrevious": {
-    "description": "Default tooltip of the period picker's back arrow."
-  },
   "corePeriodBackToToday": "Volver a hoy",
   "@corePeriodBackToToday": {
     "description": "Shown under the period label when browsing another period; tapping jumps back to the current one."
   },
-  "coreGoToSettings": "Ir a Ajustes",
-  "coreMissingKeyInline": "Falta la llave de este hogar para ver estos montos.",
-  "@coreMissingKeyInline": {
-    "description": "The device lacks the household's encryption key."
+  "coreMissingKeyTitle": "Este teléfono no tiene la llave de la casa.",
+  "coreMissingKeyBody": "Los montos se cifran con una llave que solo vive en sus teléfonos. Sin ella, este no puede abrir los movimientos ni anotar nuevos.",
+  "coreMissingKeyUsePhrase": "Usar la frase de 12 palabras",
+  "coreMissingKeyAskPartner": "Pedirle el código a {name}",
+  "@coreMissingKeyAskPartner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
-  "coreMissingKeyTitle": "Falta la llave de este hogar",
-  "coreMissingKeyBody": "Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.",
+  "coreMissingKeyPasteCode": "Pegar el código de la llave",
+  "coreOffline": "Sin conexión. Lo que anotes se guarda aquí y se envía solo cuando vuelva la señal.",
+  "coreUnsynced": "por enviar",
+  "coreLoading": "Cargando",
   "coreNotificationPrimerTitle": "Activa las notificaciones",
   "coreNotificationPrimerBody": "Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.",
   "coreNotificationPrimerEnable": "Activar notificaciones",
@@ -421,6 +485,14 @@
   "coreHomeTabGoals": "Metas",
   "@coreHomeTabGoals": {
     "description": "Bottom nav tab for savings goals."
+  },
+  "coreHomeTabPlan": "Plan",
+  "@coreHomeTabPlan": {
+    "description": "Bottom nav tab that holds savings goals and debts."
+  },
+  "coreHomeAdd": "Anotar",
+  "@coreHomeAdd": {
+    "description": "The center button of the bottom nav: record a new movement."
   },
   "coreHomeTabSettings": "Ajustes",
   "coreSplashTagline": "Finanzas del hogar - para dos",
@@ -509,15 +581,10 @@
     }
   },
   "reminderActivityChannel": "Actividad del hogar",
-  "debtsTitle": "Deudas",
-  "debtsAvalancheStrategy": "Estrategia Avalancha",
-  "@debtsAvalancheStrategy": {
-    "description": "Badge naming the payoff strategy: highest interest rate first."
-  },
-  "debtsEmptyTitle": "¡Libres de deudas!",
-  "debtsEmptyDescription": "No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.",
-  "debtsEmptyAction": "+ Agregar una deuda",
-  "debtsFreeDateLabel": "¡Libre de deudas en!",
+  "debtsEmptyTitle": "No deben nada.",
+  "debtsEmptyDescription": "Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.",
+  "debtsEmptyAction": "Agregar una deuda",
+  "debtsFreeDateLabel": "Libres de deudas en",
   "@debtsFreeDateLabel": {
     "description": "Banner caption; the projected month is shown below it."
   },
@@ -526,34 +593,6 @@
     "description": "Banner caption when the projection never reaches zero."
   },
   "debtsCannotPayOff": "No alcanza a pagar",
-  "debtsCardSubtitle": "Tasa {rate}% · mín. {minPayment}/mes",
-  "@debtsCardSubtitle": {
-    "description": "Debt list row. rate is a pre-formatted number, minPayment a formatted amount.",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "minPayment": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsPaidAmount": "Pagado {amount}",
-  "@debtsPaidAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsBalanceAmount": "Saldo {amount}",
-  "@debtsBalanceAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "debtsTypeCard": "Tarjeta",
   "@debtsTypeCard": {
     "description": "Debt type: credit card."
@@ -587,50 +626,22 @@
   "@debtsStatusCannotPayOff": {
     "description": "Lower-case: follows \"Tasa X% E.A. · \"."
   },
-  "debtsRateWithStatus": "Tasa {rate}% E.A. · {status}",
-  "@debtsRateWithStatus": {
-    "description": "E.A. = effective annual rate. status is one of the debtsStatus* texts.",
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "status": {
-        "type": "String"
-      }
-    }
-  },
-  "debtsCurrentBalance": "Saldo actual",
-  "debtsMinPaymentShort": "Pago mín.",
+  "debtsCurrentBalance": "Saldo pendiente",
   "debtsExtraPayment": "Abono extra",
   "@debtsExtraPayment": {
     "description": "Amount paid on top of the minimum or the installment each month."
   },
-  "debtsPaid": "Pagado",
   "debtsMonthlyInstallment": "Cuota mensual",
-  "debtsInstallmentsLeft": "Cuotas restantes",
   "debtsPaymentSchedule": "Calendario de pagos",
   "debtsAlreadyPaidOff": "Esta deuda ya está pagada.",
   "debtsNoProjection": "No hay una proyección disponible.",
-  "debtsNextPayment": "Próximo pago",
-  "debtsScheduledPayment": "Programado",
-  "debtsScheduleBalance": "Saldo → {amount}",
-  "@debtsScheduleBalance": {
-    "description": "Balance left after this scheduled payment.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
+  "debtsScheduledPayment": "Previsto",
   "debtsNeedAccountFirst": "Crea una cuenta primero para poder registrar el pago.",
   "debtsRecordPayment": "Registrar pago",
   "debtsPaymentFrom": "Desde",
   "@debtsPaymentFrom": {
     "description": "Label above the account the card payment comes from."
   },
-  "debtsRecordedPayments": "Pagos registrados",
-  "debtsNoCardPayments": "Aún no registras pagos a esta tarjeta.",
-  "debtsDeletedAccount": "Cuenta eliminada",
   "debtsDeletePayment": "Eliminar pago",
   "debtsNewTitle": "Nueva deuda",
   "debtsEditTitle": "Editar deuda",
@@ -643,8 +654,7 @@
       }
     }
   },
-  "debtsTypeField": "Tipo de deuda",
-  "debtsCreditLimit": "Cupo total",
+  "debtsCreditLimit": "Cupo",
   "debtsRatePercent": "Tasa E.A. %",
   "@debtsRatePercent": {
     "description": "Effective annual interest rate, in percent."
@@ -664,19 +674,10 @@
     "description": "Loan term, as a number of monthly installments."
   },
   "debtsPaidInstallments": "Cuotas pagadas",
-  "savingsGoalsTitle": "Metas de ahorro",
   "savingsGoalsTotalSaved": "Total ahorrado",
-  "savingsGoalsTotalSavedRemaining": "Total ahorrado · falta {amount}",
-  "@savingsGoalsTotalSavedRemaining": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsEmptyTitle": "Aún no tienes metas",
-  "savingsGoalsEmptyDescription": "Crea una meta de ahorro para llevarle el pulso con tu pareja.",
-  "savingsGoalsEmptyAction": "+ Nueva meta",
+  "savingsGoalsEmptyTitle": "Todavía no hay metas.",
+  "savingsGoalsEmptyDescription": "Un viaje, un colchón, un carro: pónganle cifra y fecha, y aquí verán cuánto les falta y cuánto apartar cada mes.",
+  "savingsGoalsEmptyAction": "Crear una meta",
   "savingsGoalsChallengeLink": "Reto de ahorro",
   "@savingsGoalsChallengeLink": {
     "description": "Link to the savings challenge screen."
@@ -684,18 +685,6 @@
   "savingsGoalsNoDate": "sin fecha",
   "@savingsGoalsNoDate": {
     "description": "Lower-case: shown inline when a goal has no target date."
-  },
-  "savingsGoalsCardSubtitle": "Meta {amount} · {date}",
-  "@savingsGoalsCardSubtitle": {
-    "description": "date is a formatted month and year, or savingsGoalsNoDate.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "date": {
-        "type": "String"
-      }
-    }
   },
   "savingsGoalsPerMonth": "{amount}/mes",
   "@savingsGoalsPerMonth": {
@@ -705,66 +694,10 @@
       }
     }
   },
-  "savingsGoalsSavedAmount": "Ahorrado {amount}",
-  "@savingsGoalsSavedAmount": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsSavedRemaining": "Ahorrado · falta {amount}",
-  "@savingsGoalsSavedRemaining": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsSavedReached": "Ahorrado · meta cumplida",
-  "savingsGoalsContribution": "Aporte",
-  "@savingsGoalsContribution": {
-    "description": "One deposit toward a savings goal."
-  },
-  "savingsGoalsInterestEarned": "Interés ganado",
-  "savingsGoalsRemaining": "Falta",
-  "@savingsGoalsRemaining": {
-    "description": "Amount still missing to reach the goal."
-  },
-  "savingsGoalsProgressOf": "{percent}% de {amount}",
-  "@savingsGoalsProgressOf": {
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      },
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsTargetBy": "meta {date}",
-  "@savingsGoalsTargetBy": {
-    "description": "Lower-case. date is a formatted month and year.",
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "savingsGoalsOnTrack": "a tiempo ✓",
-  "savingsGoalsBehind": "atrasado",
+  "savingsGoalsBehind": "va atrasada",
   "savingsGoalsContributions": "Aportes",
   "savingsGoalsNoContributions": "Aún no registras aportes.",
   "savingsGoalsNewContribution": "Nuevo aporte",
-  "savingsGoalsRunningTotal": "Total → {amount}",
-  "@savingsGoalsRunningTotal": {
-    "description": "Goal total after this contribution.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "savingsGoalsIconTrip": "Viaje",
   "savingsGoalsIconEmergency": "Emergencia",
   "savingsGoalsIconHome": "Casa",
@@ -782,15 +715,15 @@
     }
   },
   "savingsGoalsIconField": "Ícono",
-  "savingsGoalsTarget": "Meta",
+  "savingsGoalsTarget": "Cuánto necesitan",
   "@savingsGoalsTarget": {
     "description": "Label above the goal amount."
   },
   "savingsGoalsMonthlyContribution": "Aporte mensual",
-  "savingsGoalsTargetDate": "Fecha meta",
+  "savingsGoalsTargetDate": "Para cuándo",
   "savingsGoalsNoDateValue": "Sin fecha",
   "savingsGoalsClearDate": "Quitar fecha",
-  "savingsGoalsAlreadySaved": "Ya tengo ahorrado",
+  "savingsGoalsAlreadySaved": "Ya tienen",
   "@savingsGoalsAlreadySaved": {
     "description": "Amount saved before creating the goal."
   },
@@ -799,17 +732,12 @@
     "description": "Effective annual interest rate."
   },
   "investmentsTitle": "Inversiones",
-  "investmentsEmptyTitle": "Aún no hay inversiones",
+  "investmentsEmptyTitle": "Todavía no hay inversiones.",
   "investmentsEmptyDescription": "Agrega tu CDT, fondo o cripto para llevarle el pulso a tu portafolio.",
   "@investmentsEmptyDescription": {
     "description": "CDT = certificado de depósito a término (a CD)."
   },
-  "investmentsEmptyAction": "+ Nueva inversión",
-  "investmentsPortfolioValue": "Valor del portafolio",
-  "investmentsTotalReturnSuffix": " de rendimiento total",
-  "@investmentsTotalReturnSuffix": {
-    "description": "Follows the bold total return amount; keep the leading space."
-  },
+  "investmentsEmptyAction": "Agregar una inversión",
   "investmentsKindFixedIncome": "Renta fija",
   "investmentsKindVariableIncome": "Renta variable",
   "investmentsKindHighRisk": "Alto riesgo",
@@ -847,9 +775,14 @@
     "description": "Effective annual interest rate."
   },
   "transactionsTitle": "Movimientos",
-  "transactionsNewTitle": "Nuevo movimiento",
+  "transactionsNewTitle": "Anotar",
   "transactionsEditTitle": "Editar movimiento",
-  "transactionsDelete": "Eliminar movimiento",
+  "transactionsDetailOver": "Movimiento",
+  "@transactionsDetailOver": {
+    "description": "Small line over a movement's detail title."
+  },
+  "transactionsEdit": "Editar",
+  "transactionsDelete": "Borrar movimiento",
   "transactionsDeleted": "Movimiento borrado",
   "transactionsDeleteFailed": "No se pudo borrar",
   "transactionsMaxTagsTitle": "Máximo {max} etiquetas",
@@ -862,7 +795,25 @@
   },
   "transactionsMaxTagsMessage": "Quita una antes de añadir otra.",
   "transactionsCreditCard": "Tarjeta de crédito",
+  "transactionsTypeTransfer": "Pasar",
+  "@transactionsTypeTransfer": {
+    "description": "Anotar's fourth type: moving money between two of the household's own accounts."
+  },
+  "transactionsTransferNeedsTwoAccounts": "Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.",
   "transactionsIncomplete": "Completa el monto, la categoría y la cuenta.",
+  "transactionsIncompleteTitle": "Falta un dato",
+  "@transactionsIncompleteTitle": {
+    "description": "Title of the sheet shown when Anotar can't save yet."
+  },
+  "transactionsDateToday": "Hoy, {date}",
+  "@transactionsDateToday": {
+    "description": "Under Anotar's amount when the date is today; {date} is the weekday and day, e.g. «martes 14».",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "transactionsNoCategoriesOfType": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
   "transactionsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
   "transactionsSelectAccount": "Selecciona una cuenta",
@@ -880,39 +831,40 @@
   "@transactionsPaidBy": {
     "description": "Label above the member chips: who paid the movement."
   },
-  "transactionsLoggedBy": "Registrado por",
-  "transactionsNet": "{amount} neto",
-  "@transactionsNet": {
-    "description": "Header: the net of the listed movements, already formatted as money.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "transactionsNetInYear": "{amount} neto en {year}",
-  "@transactionsNetInYear": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "year": {
-        "type": "int"
-      }
-    }
-  },
-  "transactionsFiltered": "{text} · filtrado",
-  "@transactionsFiltered": {
-    "description": "Appended to the header's net when filters or a search are on.",
-    "placeholders": {
-      "text": {
-        "type": "String"
-      }
-    }
-  },
+  "transactionsLoggedBy": "Lo anotó",
   "transactionsPreviousMonth": "Mes anterior",
   "transactionsNextMonth": "Mes siguiente",
-  "transactionsSearchWholeYear": "Buscar en todo {year}",
+  "transactionsDayToday": "Hoy · {day}",
+  "@transactionsDayToday": {
+    "description": "Movimientos' day heading for today; {day} is the weekday and day, e.g. «martes 14». Shown in capitals.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsDayYesterday": "Ayer · {day}",
+  "@transactionsDayYesterday": {
+    "description": "Movimientos' day heading for yesterday.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsResultsTotal": "{count, plural, =1{1 movimiento} other{{count} movimientos}} · {amount}",
+  "@transactionsResultsTotal": {
+    "description": "At the end of a search or filter: how many movements matched and their net, already formatted with its sign.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsSearchWholeYear": "Todo {year}",
   "@transactionsSearchWholeYear": {
     "placeholders": {
       "year": {
@@ -939,65 +891,80 @@
     }
   },
   "transactionsClearSearch": "Limpiar búsqueda",
-  "transactionsEmptyTitle": "Aún no hay movimientos",
-  "transactionsEmptyTitleMonth": "Sin movimientos en {month}",
-  "@transactionsEmptyTitleMonth": {
+  "transactionsEmptyTitle": "{month} está en blanco.",
+  "@transactionsEmptyTitle": {
     "placeholders": {
       "month": {
         "type": "String"
       }
     }
   },
-  "transactionsEmptyDescription": "Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.",
-  "transactionsEmptyDescriptionMonth": "No se registró ningún ingreso ni gasto este mes.",
-  "transactionsEmptyAction": "+ Agregar el primero",
-  "transactionsRecurringBills": "Facturas recurrentes",
+  "transactionsEmptyDescription": "Lo primero que anoten aparece aquí, con quién lo pagó. Los fijos del mes se anotan solos el día que toca.",
+  "transactionsEmptyDescriptionMonth": "Ese mes no se anotó nada. Si algo quedó por fuera, todavía se puede anotar con su fecha.",
+  "transactionsEmptyAction": "Anotar el primero",
+  "transactionsSeeMonth": "Ver {month}",
+  "@transactionsSeeMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionsRecurringBills": "Fijos",
   "transactionsNotes": "Notas",
-  "transactionsSearchHint": "Buscar descripción, categoría o monto",
+  "transactionsSearchHint": "Buscar descripción, categoría, monto o #etiqueta",
   "transactionsFilters": "Filtros",
-  "transactionsFilterTitle": "Filtrar movimientos",
+  "transactionsFilterTitle": "Filtrar",
   "transactionsFilterType": "Tipo",
   "transactionsFilterNoCategories": "No hay categorías de este tipo.",
   "transactionsFilterTag": "Etiqueta",
-  "transactionsFilterClear": "Limpiar",
-  "transactionsFilterApply": "Aplicar",
-  "transfersTitle": "Transferir",
-  "transfersInvalid": "Elige un monto y dos cuentas distintas.",
-  "transfersAmountLabel": "Monto a transferir",
-  "transfersFrom": "Desde",
-  "transfersTo": "Hacia",
-  "transfersSelectAccount": "Selecciona una cuenta",
-  "transfersHistoryTitle": "Transferencias",
-  "transfersDeleteTitle": "Eliminar transferencia",
-  "transfersDeleteMessage": "Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no se puede deshacer.",
-  "transfersDeletedAccount": "Cuenta eliminada",
-  "@transfersDeletedAccount": {
-    "description": "Shown in place of the name of an account that no longer exists."
+  "transactionsPaidByChip": "Pagó {name}",
+  "@transactionsPaidByChip": {
+    "description": "Active filter chip: only what this member paid.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
-  "transfersEmptyTitle": "Aún no hay transferencias",
-  "transfersEmptyDescription": "Los movimientos de dinero entre tus propias cuentas aparecerán aquí.",
-  "transfersEmptyAction": "+ Transferir",
-  "accountsTitle": "Cuentas",
-  "accountsAvailableMoney": "Dinero disponible",
-  "accountsTotalAvailable": "Total disponible",
-  "accountsCountInHousehold": "{count, plural, =1{en 1 cuenta del hogar} other{en {count} cuentas del hogar}}",
-  "@accountsCountInHousehold": {
+  "transactionsFilterBoth": "Los dos",
+  "@transactionsFilterBoth": {
+    "description": "Filter sheet, who paid: no filter."
+  },
+  "transactionsFilterClear": "Limpiar",
+  "transactionsFilterSee": "Ver {count}",
+  "@transactionsFilterSee": {
+    "description": "Filter sheet's main button: how many movements the chosen filters show.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "accountsEmptyTitle": "Aún no hay cuentas",
-  "accountsEmptyDescription": "Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.",
-  "accountsEmptyAction": "+ Nueva cuenta",
-  "accountsTransferBetween": "Transferir entre cuentas",
-  "accountsHistory": "Historial",
+  "transfersInvalid": "Elige un monto y dos cuentas distintas.",
+  "transfersFrom": "De",
+  "transfersTo": "A",
+  "transfersSelectAccount": "Selecciona una cuenta",
+  "transfersHistoryTitle": "Pasos entre cuentas",
+  "transfersDeleteTitle": "Eliminar transferencia",
+  "transfersDeleteMessage": "Se revertirá el ajuste de saldo en ambas cuentas. Esta acción no se puede deshacer.",
+  "transfersDeletedAccount": "Cuenta eliminada",
+  "@transfersDeletedAccount": {
+    "description": "Shown in place of the name of an account that no longer exists."
+  },
+  "transfersEmptyTitle": "Todavía no han pasado plata.",
+  "transfersEmptyDescription": "Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.",
+  "transfersEmptyAction": "Pasar plata",
+  "accountsTitle": "Cuentas",
+  "accountsEmptyTitle": "Todavía no hay cuentas.",
+  "accountsEmptyDescription": "Agreguen el efectivo, el banco o la billetera de donde sale la plata, y aquí verán cuánto tienen disponible.",
+  "accountsEmptyAction": "Agregar una cuenta",
+  "accountsTransferBetween": "Pasar entre cuentas",
   "accountsNewTitle": "Nueva cuenta",
   "accountsEditTitle": "Editar cuenta",
-  "accountsTypeLabel": "Tipo de cuenta",
-  "accountsCurrentBalance": "Saldo actual",
-  "accountsIncludeInAvailable": "Incluir en dinero disponible",
+  "accountsTypeLabel": "Tipo",
+  "accountsCurrentBalance": "Saldo de hoy",
+  "accountsIncludeInAvailable": "Cuenta en «Disponible»",
   "accountsDeleteTitle": "Eliminar cuenta",
   "accountsDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
   "@accountsDeleteMessage": {
@@ -1008,7 +975,7 @@
     }
   },
   "accountsCannotDeleteTitle": "No se puede eliminar",
-  "accountsCannotDeleteMessage": "\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".",
+  "accountsCannotDeleteMessage": "\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, apaga «Cuenta en Disponible».",
   "@accountsCannotDeleteMessage": {
     "placeholders": {
       "name": {
@@ -1030,18 +997,23 @@
   },
   "accountsTypeDebit": "Débito",
   "categoriesTitle": "Categorías",
-  "categoriesActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
-  "@categoriesActiveCount": {
-    "description": "How many categories the household has.",
+  "categoriesRowUsage": "{count, plural, =0{Sin movimientos este año} =1{1 mov. este año} other{{count} mov. este año}}",
+  "@categoriesRowUsage": {
+    "description": "Under a category in the list: how many of this year's transactions are filed under it.",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "categoriesEmptyTitle": "Aún no hay categorías",
-  "categoriesEmptyDescription": "Crea tu primera categoría para poder registrar movimientos.",
-  "categoriesEmptyAction": "+ Nueva categoría",
+  "categoriesRowRollover": "Acumula",
+  "@categoriesRowRollover": {
+    "description": "Under a category in the list when what's left of its budget carries into next month."
+  },
+  "categoriesNoneOfType": "Aún no hay categorías de este tipo. Créala con el +.",
+  "categoriesEmptyTitle": "Todavía no hay categorías.",
+  "categoriesEmptyDescription": "Cada movimiento va en una categoría: creen la primera para empezar a anotar.",
+  "categoriesEmptyAction": "Crear una categoría",
   "categoriesNewTitle": "Nueva categoría",
   "categoriesEditTitle": "Editar categoría",
   "categoriesPreview": "Vista previa",
@@ -1049,7 +1021,7 @@
   "categoriesIcon": "Ícono",
   "categoriesColor": "Color",
   "categoriesRolloverTitle": "Acumular de un mes a otro",
-  "categoriesRolloverSubtitle": "Lo que sobre del presupuesto pasa al mes siguiente, y lo que te pases se descuenta. Se reinicia cada enero.",
+  "categoriesRolloverSubtitle": "Lo que sobra o se pasa cuenta para el mes siguiente; se reinicia en enero.",
   "categoriesDeleteTitle": "Eliminar categoría",
   "categoriesDeleteMessage": "Se eliminará \"{name}\". Esta acción no se puede deshacer.",
   "@categoriesDeleteMessage": {
@@ -1102,7 +1074,7 @@
       }
     }
   },
-  "categoriesUsageRecurringBills": "{count, plural, =1{1 factura recurrente} other{{count} facturas recurrentes}}",
+  "categoriesUsageRecurringBills": "{count, plural, =1{1 fijo} other{{count} fijos}}",
   "@categoriesUsageRecurringBills": {
     "placeholders": {
       "count": {
@@ -1152,50 +1124,41 @@
   "categoriesDefaultHomeCleaning": "Hogar y aseo",
   "categoriesDefaultEmergencyFund": "Fondo de emergencia",
   "categoriesDefaultTravel": "Viaje",
-  "recurringBillsTitle": "Facturas recurrentes",
-  "recurringBillsMonthlyTotal": "{amount} al mes",
-  "@recurringBillsMonthlyTotal": {
-    "description": "Header: the monthly total of active recurring bills, already formatted as money.",
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "recurringBillsAutoBadge": "Auto",
-  "@recurringBillsAutoBadge": {
-    "description": "Badge meaning the bills are logged automatically."
-  },
-  "recurringBillsEmptyTitle": "Aún no hay facturas recurrentes",
-  "recurringBillsEmptyDescription": "Programa el arriendo, servicios o el sueldo para que se registren solos cada mes.",
-  "recurringBillsEmptyAction": "+ Nueva factura recurrente",
-  "recurringBillsAutoLogged": "Se registran solas",
-  "recurringBillsActiveCount": "{count, plural, =1{1 activa} other{{count} activas}}",
-  "@recurringBillsActiveCount": {
-    "description": "How many recurring bills are active (feminine: 'facturas').",
+  "recurringBillsTitle": "Fijos",
+  "recurringBillsCommittedLabel": "Comprometido cada mes",
+  "recurringBillsCommittedCount": "{count, plural, =0{Ningún fijo activo} =1{1 fijo} other{{count} fijos}}",
+  "@recurringBillsCommittedCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "recurringBillsStatusPaused": "en pausa",
-  "@recurringBillsStatusPaused": {
-    "description": "Row status, lowercase, after the type: 'Factura · en pausa'."
+  "recurringBillsAveragedNote": "los no mensuales, en promedio",
+  "@recurringBillsAveragedNote": {
+    "description": "Follows recurringBillsCommittedCount after ' · ', lowercase."
   },
-  "recurringBillsStatusEnded": "terminada",
+  "recurringBillsAutoNote": "Se anotan solos en Movimientos el día que les toca.",
+  "recurringBillsEmptyTitle": "Todavía no hay fijos.",
+  "recurringBillsEmptyDescription": "Programa el arriendo, los servicios o el sueldo para que se anoten solos el día que les toca.",
+  "recurringBillsEmptyAction": "Agregar un fijo",
+  "recurringBillsStatusPaused": "En pausa",
+  "@recurringBillsStatusPaused": {
+    "description": "Under a paused recurring item in the list, instead of its schedule."
+  },
+  "recurringBillsStatusEnded": "Ya terminó",
   "@recurringBillsStatusEnded": {
-    "description": "Row status, lowercase, after the type: 'Factura · terminada'."
+    "description": "Under a recurring item whose end date went by."
   },
   "recurringBillsTypeIncome": "Ingreso",
   "recurringBillsTypeBill": "Factura",
-  "recurringBillsNewTitle": "Nueva factura recurrente",
-  "recurringBillsEditTitle": "Editar factura recurrente",
+  "recurringBillsNewTitle": "Nuevo fijo",
+  "recurringBillsEditTitle": "Editar fijo",
   "recurringBillsMissingFields": "Completa el nombre, monto, categoría y cuenta.",
   "recurringBillsSemimonthlyDayTitle": "Elige un día hasta el 15",
   "recurringBillsSemimonthlyDayMessage": "Una quincenal se repite 15 días después de la primera fecha. Elige el primer pago entre el 1 y el 15 del mes - por ejemplo el 15 para cobrar el 15 y el 30.",
-  "recurringBillsDelete": "Eliminar factura recurrente",
-  "recurringBillsDeleteMessage": "Se eliminará \"{name}\" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.",
+  "recurringBillsDelete": "Eliminar fijo",
+  "recurringBillsDeleteMessage": "Se eliminará \"{name}\" y dejará de anotarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerlo un tiempo, ponlo en pausa.",
   "@recurringBillsDeleteMessage": {
     "placeholders": {
       "name": {
@@ -1206,23 +1169,10 @@
   "recurringBillsNoCategories": "No hay categorías de este tipo todavía. Créalas en Ajustes.",
   "recurringBillsNoAccounts": "No hay cuentas todavía. Créalas en Ajustes.",
   "recurringBillsSelectAccount": "Selecciona una cuenta",
-  "recurringBillsRepeats": "Se repite",
+  "recurringBillsRepeats": "Cada cuánto",
   "recurringBillsFrom": "Desde",
   "@recurringBillsFrom": {
     "description": "Start date field label when editing an existing bill."
-  },
-  "recurringBillsFirstTime": "Primera vez",
-  "@recurringBillsFirstTime": {
-    "description": "Start date field label when creating a bill: its first occurrence."
-  },
-  "recurringBillsLoggedOn": "Se registra {schedule}.",
-  "@recurringBillsLoggedOn": {
-    "description": "Hint under the start date; {schedule} is a recurringBillsSchedule* text, e.g. 'cada lunes'.",
-    "placeholders": {
-      "schedule": {
-        "type": "String"
-      }
-    }
   },
   "recurringBillsUntil": "Hasta",
   "@recurringBillsUntil": {
@@ -1231,7 +1181,7 @@
   "recurringBillsNoEndDate": "Sin fecha de fin",
   "recurringBillsRemoveEndDate": "Quitar fecha de fin",
   "recurringBillsPaused": "En pausa",
-  "recurringBillsPausedHint": "No se registra mientras esté en pausa. Al reanudarla, las fechas que pasaron no se registran.",
+  "recurringBillsPausedHint": "No se anota mientras esté en pausa. Al reanudarlo, las fechas que pasaron no se anotan.",
   "recurringBillsFrequencyWeekly": "Semanal",
   "recurringBillsFrequencyBiweekly": "Cada 2 semanas",
   "recurringBillsFrequencySemimonthly": "Quincenal",
@@ -1240,24 +1190,25 @@
   },
   "recurringBillsFrequencyMonthly": "Mensual",
   "recurringBillsFrequencyYearly": "Anual",
-  "recurringBillsScheduleWeekly": "cada {weekday}",
+  "recurringBillsScheduleWeekly": "{weekday, select, monday{Cada lunes} tuesday{Cada martes} wednesday{Cada miércoles} thursday{Cada jueves} friday{Cada viernes} saturday{Cada sábado} other{Cada domingo}}",
   "@recurringBillsScheduleWeekly": {
-    "description": "Lowercase schedule fragment; {weekday} is the localized day name.",
+    "description": "A weekly item's schedule. {weekday} is monday, tuesday... sunday.",
     "placeholders": {
       "weekday": {
         "type": "String"
       }
     }
   },
-  "recurringBillsScheduleBiweekly": "cada 2 semanas, los {weekday}",
+  "recurringBillsScheduleBiweekly": "{weekday, select, monday{Cada 2 semanas, los lunes} tuesday{Cada 2 semanas, los martes} wednesday{Cada 2 semanas, los miércoles} thursday{Cada 2 semanas, los jueves} friday{Cada 2 semanas, los viernes} saturday{Cada 2 semanas, los sábados} other{Cada 2 semanas, los domingos}}",
   "@recurringBillsScheduleBiweekly": {
+    "description": "An every-2-weeks item's schedule. {weekday} is monday, tuesday... sunday.",
     "placeholders": {
       "weekday": {
         "type": "String"
       }
     }
   },
-  "recurringBillsScheduleSemimonthly": "días {day} y {secondDay}",
+  "recurringBillsScheduleSemimonthly": "Días {day} y {secondDay}",
   "@recurringBillsScheduleSemimonthly": {
     "placeholders": {
       "day": {
@@ -1268,16 +1219,15 @@
       }
     }
   },
-  "recurringBillsScheduleMonthly": "cada mes, día {day}",
+  "recurringBillsScheduleMonthly": "Cada mes, día {day}",
   "@recurringBillsScheduleMonthly": {
-    "description": "{day} is the day of the month, two digits.",
     "placeholders": {
       "day": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
-  "recurringBillsScheduleYearly": "cada año, {date}",
+  "recurringBillsScheduleYearly": "Cada año, {date}",
   "@recurringBillsScheduleYearly": {
     "description": "{date} is the localized month and day, e.g. '3 de marzo'.",
     "placeholders": {
@@ -1286,27 +1236,46 @@
       }
     }
   },
-  "monthlyNotesTitle": "Notas",
-  "monthlyNotesThisMonth": "Notas de este mes",
-  "monthlyNotesNextMonth": "Para el siguiente mes",
-  "monthlyNotesEmpty": "Toca para agregar notas.",
-  "notificationsTitle": "Notificaciones",
-  "notificationsNewCount": "{count, plural, =1{1 nueva} other{{count} nuevas}}",
-  "@notificationsNewCount": {
-    "description": "Unread notifications count (feminine: 'notificaciones').",
+  "recurringBillsScheduleUntil": "{schedule}, hasta el {date}",
+  "@recurringBillsScheduleUntil": {
+    "description": "{schedule} is a recurringBillsSchedule* text; {date} a short day and month, e.g. '15 dic'.",
     "placeholders": {
-      "count": {
-        "type": "int"
+      "schedule": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
       }
     }
   },
-  "notificationsUpToDate": "Al día",
-  "@notificationsUpToDate": {
-    "description": "Shown when there are no unread notifications."
+  "recurringBillsMonthlyCost": "{kind, select, average{Unos {amount} al mes} other{{amount} al mes}}",
+  "@recurringBillsMonthlyCost": {
+    "description": "Under the schedule in the edit form. {kind} is 'average' when the amount is a monthly average (weekly, yearly...), 'exact' otherwise.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
   },
-  "notificationsMarkAllRead": "Marcar leídas",
-  "notificationsEmpty": "Aún no hay notificaciones. Aquí verás avisos de pagos, metas y presupuesto.",
-  "notificationsMinutesAgo": "Hace {minutes} min",
+  "monthlyNotesTitle": "Notas del mes",
+  "monthlyNotesThisMonth": "Notas de este mes",
+  "monthlyNotesNextMonth": "Para el mes siguiente",
+  "monthlyNotesEmpty": "Nada escrito todavía. Toca para escribir.",
+  "monthlyNotesWrite": "Escribir",
+  "monthlyNotesHint": "Lo que no cabe en números.",
+  "notificationsTitle": "Avisos",
+  "notificationsMarkAllRead": "Marcar todo como leído",
+  "notificationsUnread": "Sin leer",
+  "@notificationsUnread": {
+    "description": "Screen-reader label for the violet dot after an unread notification's title."
+  },
+  "notificationsEmpty": "Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.",
+  "notificationsEmptyTitle": "Todo tranquilo.",
+  "notificationsEmptyAction": "Elegir qué avisar",
+  "notificationsMinutesAgo": "hace {minutes} min",
   "@notificationsMinutesAgo": {
     "placeholders": {
       "minutes": {
@@ -1314,7 +1283,7 @@
       }
     }
   },
-  "notificationsHoursAgo": "Hace {hours} h",
+  "notificationsHoursAgo": "hace {hours} h",
   "@notificationsHoursAgo": {
     "placeholders": {
       "hours": {
@@ -1322,16 +1291,7 @@
       }
     }
   },
-  "notificationsToday": "Hoy",
-  "notificationsYesterday": "Ayer",
-  "notificationsDaysAgo": "Hace {days} d",
-  "@notificationsDaysAgo": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
+  "notificationsYesterday": "ayer",
   "notificationsDebtDueTodayTitle": "Hoy pagas {name}",
   "@notificationsDebtDueTodayTitle": {
     "description": "Stored in-app notification, written in the language of the device that detects it; {name} is the debt's name.",
@@ -1409,27 +1369,67 @@
   "notificationsPartnerDebtTitle": "Nueva deuda",
   "notificationsPartnerAccountTitle": "Nueva cuenta",
   "notificationsPartnerInvestmentTitle": "Nueva inversión",
-  "notificationsPartnerBillTitle": "Nueva factura recurrente",
+  "notificationsPartnerBillTitle": "Nuevo fijo",
   "notificationsPartnerCategoryTitle": "Nueva categoría",
   "notificationsPartnerChallengeTitle": "Nuevo reto de ahorro",
   "notificationsPartnerGoalTitle": "Nueva meta de ahorro",
-  "notificationPrefsTitle": "Preferencias",
-  "notificationPrefsRemindersHeader": "RECORDATORIOS",
-  "notificationPrefsDailyReminder": "Recordatorio diario",
-  "notificationPrefsDebtPayments": "Pagos de deudas",
+  "notificationPrefsTitle": "Qué avisar",
+  "notificationPrefsIntro": "Solo para ti: {name} elige los suyos.",
+  "@notificationPrefsIntro": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationPrefsIntroSolo": "Solo para ti: cada quien elige los suyos.",
+  "notificationPrefsDailyReminder": "Recordatorio para anotar",
+  "notificationPrefsDailyReminderWhen": "Todos los días, a esta hora",
+  "notificationPrefsDailyReminderTimeTooltip": "Cambiar la hora",
+  "notificationPrefsDebtPayments": "Pagos que se acercan",
+  "notificationPrefsDebtPaymentsWhen": "3, 2 y 1 día antes, y el mismo día",
   "notificationPrefsGoalProgress": "Avance de metas",
-  "notificationPrefsAlertsHeader": "ALERTAS",
-  "notificationPrefsBudgetExceeded": "Exceso de presupuesto",
-  "notificationPrefsPartnerActivity": "Actividad de mi pareja",
+  "notificationPrefsGoalProgressWhen": "Una vez, cuando una meta pasa el 90%",
+  "notificationPrefsBudgetExceeded": "Categoría que se pasa",
+  "notificationPrefsBudgetExceededWhen": "Una vez por categoría y mes",
+  "notificationPrefsPartnerActivity": "Lo que anota tu pareja",
+  "notificationPrefsPartnerActivityNamed": "Lo que anota {name}",
+  "@notificationPrefsPartnerActivityNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationPrefsPartnerActivityWhen": "Cada movimiento, cuenta o meta nueva",
   "notificationPrefsWeeklySummary": "Resumen semanal",
-  "exportTitle": "Exportar reporte",
-  "exportSubtitle": "PDF o CSV",
-  "exportCsvHint": "Un archivo por sección, con montos sin formato y fechas AAAA-MM-DD, listo para una hoja de cálculo.",
+  "notificationPrefsWeeklySummaryWhen": "Los domingos, {time}",
+  "@notificationPrefsWeeklySummaryWhen": {
+    "description": "{time} is a localized time of day, e.g. '7:00 p. m.'.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "exportTitle": "Exportar",
   "exportPeriod": "Periodo",
+  "exportPeriodRange": "{from} – {to}",
+  "@exportPeriodRange": {
+    "description": "The months a report covers, e.g. 'Agosto – octubre 2026'.",
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
   "exportPeriodThisMonth": "Este mes",
-  "exportPeriodQuarter": "Trimestre",
-  "exportPeriodYear": "Año",
-  "exportInclude": "Incluir en el reporte",
+  "exportPeriodQuarter": "3 meses",
+  "exportPeriodYear": "12 meses",
+  "exportInclude": "Qué incluir",
   "exportTransactions": "Movimientos",
   "@exportTransactions": {
     "description": "Toggle and report section; also names its CSV file."
@@ -1438,7 +1438,13 @@
   "@exportBudget": {
     "description": "Toggle and report section; also names its CSV file."
   },
-  "exportDebtsAndSavings": "Deudas y ahorros",
+  "exportDebtsAndSavings": "Deudas y metas",
+  "exportPdfTitle": "PDF",
+  "exportPdfFor": "Para leer o imprimir, con los montos con formato.",
+  "exportCsvTitle": "CSV para hoja de cálculo",
+  "exportCsvFor": "Un archivo por sección, con números limpios y fechas AAAA-MM-DD.",
+  "exportOnDevice": "El archivo se arma en este teléfono con los datos ya descifrados: nada sale de aquí hasta que lo compartes.",
+  "exportAction": "Exportar",
   "exportDebts": "Deudas",
   "@exportDebts": {
     "description": "Report section; also names its CSV file."
@@ -1447,8 +1453,6 @@
   "@exportSavingsGoals": {
     "description": "Report section; also names its CSV file."
   },
-  "exportGeneratePdf": "Generar PDF",
-  "exportGenerateCsv": "Generar CSV",
   "exportPdfFileName": "finan2_reporte.pdf",
   "@exportPdfFileName": {
     "description": "File name of the shared PDF; keep it ASCII, no spaces."
@@ -1476,11 +1480,14 @@
   "exportColumnCompleted": "% Completado",
   "exportColumnCompletedPercent": "Completado (%)",
   "backupTitle": "Copia de seguridad",
-  "backupSubtitle": "Todo el hogar, cifrado",
-  "backupDescription": "La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.",
-  "backupSameHouseholdOnly": "Solo se puede restaurar en este mismo hogar.",
-  "backupCreate": "Crear copia",
+  "backupDescription": "Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.",
+  "backupCreate": "Crear copia ahora",
   "backupRestoreAction": "Restaurar una copia",
+  "backupRestoreLead": "Al restaurar",
+  "backupRestoreNote": ", el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.",
+  "@backupRestoreNote": {
+    "description": "Follows backupRestoreLead, which is shown in bold; keep the leading comma."
+  },
   "backupErrorTitle": "No se pudo completar",
   "backupFileName": "finan2-copia-{date}.finan2",
   "@backupFileName": {
@@ -1540,5 +1547,606 @@
         "type": "String"
       }
     }
-  }
+  },
+  "planBudget": "Presupuesto",
+  "@planBudget": {
+    "description": "Plan tab: the segment with the month's budget."
+  },
+  "budgetLeft": "quedan {amount}",
+  "@budgetLeft": {
+    "description": "Right of a budget line: what is still there to spend, already formatted.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetComplete": "Completo",
+  "@budgetComplete": {
+    "description": "Right of a budget line spent exactly to its plan."
+  },
+  "budgetUnplanned": "sin plan",
+  "@budgetUnplanned": {
+    "description": "Right of a budget line with spending and nothing planned."
+  },
+  "budgetSpentOf": "{spent} de {limit}",
+  "@budgetSpentOf": {
+    "description": "Small line under a budget line: spent of the plan.",
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetSpentNoPlan": "{spent} gastado",
+  "@budgetSpentNoPlan": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverTitle": "{category} se pasó {amount}",
+  "@budgetOverTitle": {
+    "description": "Notice on top of the budget when one category went over.",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverManyTitle": "{count} categorías se pasaron",
+  "@budgetOverManyTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetOverMessage": "Sale de lo que queda del plan.",
+  "budgetOverManyMessage": "{category} es la que más: {amount}.",
+  "@budgetOverManyMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedRemaining": "{planned} planeado · faltan {amount} por asignar",
+  "@budgetPlannedRemaining": {
+    "description": "Line under the budget: total planned against what came in.",
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedOver": "{planned} planeado · {amount} más de lo que entró",
+  "@budgetPlannedOver": {
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPlannedNoIncome": "{planned} planeado · aún no entra nada este mes",
+  "@budgetPlannedNoIncome": {
+    "placeholders": {
+      "planned": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsSavedTogether": "Ahorrado entre los dos",
+  "@goalsSavedTogether": {
+    "description": "Over the total of every goal, with two members."
+  },
+  "goalsOnTime": "van a tiempo en {onTime} de {dated} metas",
+  "@goalsOnTime": {
+    "description": "Under the goals total: goals with a date that are on time.",
+    "placeholders": {
+      "onTime": {
+        "type": "int"
+      },
+      "dated": {
+        "type": "int"
+      }
+    }
+  },
+  "goalsToGo": "faltan {amount} para completarlas",
+  "@goalsToGo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalRowLine": "{saved} de {target} · {when}",
+  "@goalRowLine": {
+    "description": "A goal's line: saved of target, then its date (or «sin fecha» / «va atrasada»).",
+    "placeholders": {
+      "saved": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "goalFor": "para {date}",
+  "@goalFor": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsFree": "Deudas: libres en {date}",
+  "@goalsDebtsFree": {
+    "description": "Notice under the goals summing up the debts.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsStuck": "Deudas: con los pagos actuales no se terminan",
+  "goalsDebtsOrder": "Primero {first}, luego {second}.",
+  "@goalsDebtsOrder": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "goalsDebtsOnly": "Solo queda {name}.",
+  "@goalsDebtsOnly": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "goalOnTimePace": "Van a tiempo: {amount} al mes",
+  "@goalOnTimePace": {
+    "description": "Goal detail, in green: on time at this monthly pace.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalBehindPace": "Van atrasados: hacen falta {amount} al mes",
+  "@goalBehindPace": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalReached": "¡Meta cumplida!",
+  "goalOfFor": "de {target} · {when}",
+  "@goalOfFor": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "goalInterest": "Incluye {amount} de intereses",
+  "@goalInterest": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalContributionOf": "Aporte de {month}",
+  "@goalContributionOf": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "goalCreate": "Crear",
+  "@goalCreate": {
+    "description": "Action of the new-goal form."
+  },
+  "goalNeededTitle": "{amount} al mes",
+  "@goalNeededTitle": {
+    "description": "New goal: what it takes each month to get there.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "goalNeededMessage": "Es lo que hace falta para llegar en {date}.",
+  "@goalNeededMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "commonEdit": "Editar",
+  "debtsLeftAvalanche": "quedan {amount} · orden Avalancha (primero la tasa más alta)",
+  "@debtsLeftAvalanche": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRowCard": "{rate}% · mín. {amount} · día {day}",
+  "@debtsRowCard": {
+    "description": "A card in the debts list: rate, minimum payment, payment day.",
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsRowLoan": "{rate}% · cuota {amount} · día {day}",
+  "@debtsRowLoan": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsFirst": "1.º",
+  "@debtsFirst": {
+    "description": "Badge on the first debt of the Avalanche order."
+  },
+  "debtsNextTitle": "Próximo pago: {name}, {date}",
+  "@debtsNextTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNextMinSuggested": "{min} mínimo · sugerido {suggested}",
+  "@debtsNextMinSuggested": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "suggested": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNextMin": "{min} mínimo",
+  "@debtsNextMin": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsDetailSub": "de {reference} · {pct}% pagado · {status}",
+  "@debtsDetailSub": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRateOnly": "Tasa {rate}% E.A.",
+  "@debtsRateOnly": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsRateExtra": "Tasa {rate}% E.A. · abono extra {amount}",
+  "@debtsRateExtra": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsPaidBy": "Pagado por",
+  "debtsInDays": "{days, plural, =0{hoy} =1{mañana} other{en {days} días}}",
+  "@debtsInDays": {
+    "description": "Next debt payment: how soon it is due.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsDeletePaymentMessage": "Se quitará el pago de {amount} del {date}.",
+  "@debtsDeletePaymentMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeSavedIn": "Ahorrado en el reto",
+  "challengeCells": "{done} de {total} casillas · meta {target}",
+  "@challengeCells": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeNextTitle": "Siguiente: {amount}",
+  "@challengeNextTitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "challengeNextMessage": "Márcala cuando la aporten.",
+  "challengeMark": "Marcar",
+  "challengeDoneTitle": "Reto completo",
+  "challengeDoneMessage": "Ahorraron {amount}.",
+  "@challengeDoneMessage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "annualTitleYear": "Resumen {year}",
+  "@annualTitleYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "annualAverage": "prom. {amount}",
+  "@annualAverage": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "annualHighestTitle": "{month} fue el mes más alto",
+  "@annualHighestTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "annualHighestReason": "{category}: {amount} más que en un mes normal.",
+  "@annualHighestReason": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsAvailableLabel": "Disponible entre las cuentas",
+  "accountsAvailableNote": "las tarjetas y créditos no suman aquí",
+  "accountsCards": "Tarjetas",
+  "accountsRowExcluded": "{type} · no suma en «Disponible»",
+  "@accountsRowExcluded": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "accountsIncludeHint": "Apágalo para cuentas que no se tocan, como un ahorro aparte.",
+  "accountsAdd": "Nueva cuenta",
+  "commonCreate": "Crear",
+  "debtsFormTitle": "{type, select, tarjeta{Tarjeta de crédito} credito{Crédito} hipoteca{Hipoteca} vehiculo{Crédito de vehículo} other{Deuda}}",
+  "@debtsFormTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsCardDays": "Corte día {cutoff} · paga día {day}",
+  "@debtsCardDays": {
+    "placeholders": {
+      "cutoff": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsCardPayDay": "Paga día {day}",
+  "@debtsCardPayDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "debtsCardPlaceholder": "Tu tarjeta",
+  "debtsOwedToday": "Cuánto deben hoy",
+  "debtsEndsIn": "Terminan en {date}",
+  "@debtsEndsIn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsEndsSooner": "Si abonan {amount} más al mes: {date}.",
+  "@debtsEndsSooner": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "debtsNeverEnds": "Con esa cuota no se termina de pagar",
+  "debtsNeverEndsHint": "Los intereses se comen el pago: suban la cuota o abonen más.",
+  "investmentsWorthToday": "Valen hoy",
+  "investmentsPutIn": "pusieron {amount}",
+  "@investmentsPutIn": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "investmentsGaining": "ganan",
+  "investmentsLosing": "pierden",
+  "investmentsManualNote": "Se actualizan a mano: la app no se conecta a ningún banco.",
+  "investmentsAdd": "Nueva inversión",
+  "transfersRowTo": "A {name}",
+  "@transfersRowTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersRowFrom": "de {name} · {date}",
+  "@transfersRowFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersHas": "tiene {amount}",
+  "@transfersHas": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersLeaves": "queda {amount}",
+  "@transfersLeaves": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "transfersNotExpense": "No es un gasto: no toca el presupuesto.",
+  "transfersSwap": "Invertir el sentido",
+  "demoSeed": "Llenar con datos de prueba",
+  "demoRemove": "Quitar datos de prueba",
+  "demoSeedTitle": "¿Llenar con datos de prueba?",
+  "demoSeedMessage": "Se añaden tres meses de cuentas, una tarjeta, un crédito, metas, inversiones, fijos y movimientos inventados. Lo que ya tienen no se toca, y no avisan a nadie.",
+  "demoSeedConfirm": "Llenar",
+  "demoSeedDoneTitle": "Listo",
+  "demoSeedDone": "Se escribieron {count} registros de prueba.",
+  "@demoSeedDone": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "demoRemoveTitle": "¿Quitar los datos de prueba?",
+  "demoRemoveMessage": "Se borra solo lo inventado. Lo que anotaron ustedes se queda.",
+  "demoRemoveConfirm": "Quitar",
+  "demoRemoveDoneTitle": "Quitados",
+  "demoRemoveDone": "Se borraron {count} registros de prueba.",
+  "@demoRemoveDone": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "demoError": "No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.",
+  "householdInviteValidUntil": "Sirve una vez y vence el {date}.",
+  "@householdInviteValidUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "householdInviteNewCode": "Generar otro código",
+  "householdInviteNewCodeTitle": "¿Generar otro código?",
+  "householdInviteNewCodeMessage": "El código que ya mandaste dejará de funcionar. Hazlo si llegó a quien no era o si se perdió.",
+  "householdJoinConfirmTitle": "¿Entrar a {household}?",
+  "@householdJoinConfirmTitle": {
+    "placeholders": {
+      "household": { "type": "String" }
+    }
+  },
+  "householdJoinConfirmTitleUnnamed": "¿Entrar a esta casa?",
+  "householdJoinConfirmMessage": "Te invitó {name}. Desde ahora los dos van a ver y anotar el dinero de esta casa.",
+  "@householdJoinConfirmMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa."
 }

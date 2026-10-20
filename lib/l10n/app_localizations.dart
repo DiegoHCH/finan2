@@ -135,12 +135,6 @@ abstract class AppLocalizations {
   /// **'Siguiente'**
   String get commonNext;
 
-  /// No description provided for @commonSkip.
-  ///
-  /// In es, this message translates to:
-  /// **'Omitir'**
-  String get commonSkip;
-
   /// No description provided for @commonUndo.
   ///
   /// In es, this message translates to:
@@ -201,24 +195,6 @@ abstract class AppLocalizations {
   /// **'Cuenta'**
   String get commonAccount;
 
-  /// No description provided for @budgetTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto · {month}'**
-  String budgetTitle(String month);
-
-  /// Header title: total amount budgeted for the month, already formatted.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} planeado'**
-  String budgetPlannedTotal(String amount);
-
-  /// Badge: share of the month's income already budgeted.
-  ///
-  /// In es, this message translates to:
-  /// **'{pct}% asignado'**
-  String budgetAssignedPct(int pct);
-
   /// No description provided for @budgetPreviousMonth.
   ///
   /// In es, this message translates to:
@@ -230,36 +206,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Mes siguiente'**
   String get budgetNextMonth;
-
-  /// No description provided for @budgetLeftToBudget.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta por presupuestar'**
-  String get budgetLeftToBudget;
-
-  /// Shown instead of an amount when the month has no income to budget yet.
-  ///
-  /// In es, this message translates to:
-  /// **'Registra ingresos este mes'**
-  String get budgetNoIncomeYet;
-
-  /// No description provided for @budgetOverBudgeted.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuestado de más'**
-  String get budgetOverBudgeted;
-
-  /// No description provided for @budgetVsActual.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto vs. real'**
-  String get budgetVsActual;
-
-  /// No description provided for @budgetEmpty.
-  ///
-  /// In es, this message translates to:
-  /// **'Aún no has presupuestado ninguna categoría.'**
-  String get budgetEmpty;
 
   /// No description provided for @budgetAddCategory.
   ///
@@ -291,6 +237,30 @@ abstract class AppLocalizations {
   /// **'Copiando…'**
   String get budgetCopying;
 
+  /// No description provided for @budgetEmptyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{month} todavía no tiene plan.'**
+  String budgetEmptyTitle(String month);
+
+  /// No description provided for @budgetEmptyDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Pongan cuánto quieren gastar en cada categoría y aquí verán lo que les queda de cada una.'**
+  String get budgetEmptyDescription;
+
+  /// No description provided for @budgetEmptyAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Planear una categoría'**
+  String get budgetEmptyAction;
+
+  /// No description provided for @budgetEmptyCopy.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar el plan de {month}'**
+  String budgetEmptyCopy(String month);
+
   /// Budget carried over from earlier months that went underspent.
   ///
   /// In es, this message translates to:
@@ -309,28 +279,16 @@ abstract class AppLocalizations {
   /// **'Resumen anual'**
   String get annualSummaryTitle;
 
-  /// No description provided for @annualSummaryPreviousYear.
-  ///
-  /// In es, this message translates to:
-  /// **'Año anterior'**
-  String get annualSummaryPreviousYear;
-
-  /// No description provided for @annualSummaryNextYear.
-  ///
-  /// In es, this message translates to:
-  /// **'Año siguiente'**
-  String get annualSummaryNextYear;
-
   /// No description provided for @annualSummaryEarned.
   ///
   /// In es, this message translates to:
-  /// **'Ganado'**
+  /// **'Entró'**
   String get annualSummaryEarned;
 
   /// No description provided for @annualSummarySpent.
   ///
   /// In es, this message translates to:
-  /// **'Gastado'**
+  /// **'Salió'**
   String get annualSummarySpent;
 
   /// No description provided for @annualSummarySaved.
@@ -345,47 +303,107 @@ abstract class AppLocalizations {
   /// **'Gasto por mes'**
   String get annualSummarySpendByMonth;
 
-  /// No description provided for @dashboardHousehold.
-  ///
-  /// In es, this message translates to:
-  /// **'Hogar'**
-  String get dashboardHousehold;
-
-  /// No description provided for @dashboardNetWorth.
-  ///
-  /// In es, this message translates to:
-  /// **'Patrimonio neto'**
-  String get dashboardNetWorth;
-
-  /// No description provided for @dashboardNetWorthFormula.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuentas + ahorros + inversiones − deudas'**
-  String get dashboardNetWorthFormula;
-
-  /// No description provided for @dashboardIncome.
-  ///
-  /// In es, this message translates to:
-  /// **'Ingresos'**
-  String get dashboardIncome;
-
-  /// No description provided for @dashboardExpenses.
-  ///
-  /// In es, this message translates to:
-  /// **'Gastos'**
-  String get dashboardExpenses;
-
-  /// No description provided for @dashboardWhereMoneyGoes.
-  ///
-  /// In es, this message translates to:
-  /// **'A dónde va el dinero'**
-  String get dashboardWhereMoneyGoes;
-
   /// No description provided for @dashboardNoCategorizedSpending.
   ///
   /// In es, this message translates to:
   /// **'No hay gastos categorizados este mes.'**
   String get dashboardNoCategorizedSpending;
+
+  /// No description provided for @dashboardDecrypting.
+  ///
+  /// In es, this message translates to:
+  /// **'Descifrando los montos en este teléfono…'**
+  String get dashboardDecrypting;
+
+  /// Inicio's title: greets the signed-in member by first name.
+  ///
+  /// In es, this message translates to:
+  /// **'Hola, {name}'**
+  String dashboardGreeting(String name);
+
+  /// Label over Inicio's big figure: what's left of the month's budget. {month} is the month name as DateFormat gives it (lowercase in Spanish).
+  ///
+  /// In es, this message translates to:
+  /// **'Les queda del plan de {month}'**
+  String dashboardLeftOfPlan(String month);
+
+  /// Label over Inicio's big figure when the month's spending went past the budget; the figure is by how much.
+  ///
+  /// In es, this message translates to:
+  /// **'Se pasaron del plan de {month}'**
+  String dashboardOverPlan(String month);
+
+  /// Label over Inicio's big figure when the month has no budget: what went out.
+  ///
+  /// In es, this message translates to:
+  /// **'Gastado en {month}'**
+  String dashboardSpentIn(String month);
+
+  /// Under Inicio's figure: the month's whole plan, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'de {amount}'**
+  String dashboardOfPlan(String amount);
+
+  /// Under Inicio's figure: whole days after today until the month ends.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{último día} =1{falta 1 día} other{faltan {count} días}}'**
+  String dashboardDaysLeft(int count);
+
+  /// Under Inicio's figure: what's left divided by the days left, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'unos {amount} al día'**
+  String dashboardPerDay(String amount);
+
+  /// Under Inicio's figure when the month has no budget.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin plan este mes'**
+  String get dashboardNoPlan;
+
+  /// Under Inicio's figure when there's no plan: the month's income, already formatted as money.
+  ///
+  /// In es, this message translates to:
+  /// **'entraron {amount}'**
+  String dashboardIncomeIn(String amount);
+
+  /// Legend of Inicio's stacked bar: the part of the plan not spent yet.
+  ///
+  /// In es, this message translates to:
+  /// **'Queda'**
+  String get dashboardLegendLeft;
+
+  /// Legend of Inicio's stacked bar: every category past the four biggest.
+  ///
+  /// In es, this message translates to:
+  /// **'Otras'**
+  String get dashboardLegendOther;
+
+  /// Action word at the end of Inicio's notice; opens the notifications.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver'**
+  String get dashboardNoticeSee;
+
+  /// No description provided for @dashboardWhoPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Quién pagó este mes'**
+  String get dashboardWhoPaid;
+
+  /// No description provided for @dashboardMovementCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 movimiento} other{{count} movimientos}}'**
+  String dashboardMovementCount(int count);
+
+  /// No description provided for @dashboardRecent.
+  ///
+  /// In es, this message translates to:
+  /// **'Últimos movimientos'**
+  String get dashboardRecent;
 
   /// Screen title, and the default name of a new challenge.
   ///
@@ -447,35 +465,17 @@ abstract class AppLocalizations {
   /// **'Crear reto'**
   String get savingsChallengeCreate;
 
-  /// No description provided for @savingsChallengeGoal.
-  ///
-  /// In es, this message translates to:
-  /// **'¡Tú puedes! Meta del reto'**
-  String get savingsChallengeGoal;
-
-  /// No description provided for @savingsChallengeProgress.
-  ///
-  /// In es, this message translates to:
-  /// **'Progreso'**
-  String get savingsChallengeProgress;
-
-  /// No description provided for @savingsChallengeMarkHint.
-  ///
-  /// In es, this message translates to:
-  /// **'Marca cada casilla al ahorrar'**
-  String get savingsChallengeMarkHint;
-
-  /// Login heading; a highlighted "2" follows it, completing the app name Finan2.
-  ///
-  /// In es, this message translates to:
-  /// **'Bienvenido a Finan'**
-  String get authLoginWelcome;
-
   /// No description provided for @authLoginSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Entra con tu cuenta. Cada quien tiene la suya; las finanzas del hogar son compartidas.'**
+  /// **'Cada quien entra con su cuenta; lo que anotan es de los dos.'**
   String get authLoginSubtitle;
+
+  /// Login heading: says what the app is. The line break is intended.
+  ///
+  /// In es, this message translates to:
+  /// **'La libreta de la casa,\npara los dos.'**
+  String get authLoginHeadline;
 
   /// No description provided for @authEmailLabel.
   ///
@@ -510,19 +510,13 @@ abstract class AppLocalizations {
   /// No description provided for @authSignIn.
   ///
   /// In es, this message translates to:
-  /// **'Iniciar sesión'**
+  /// **'Entrar'**
   String get authSignIn;
-
-  /// Separator between email sign-in and Google sign-in.
-  ///
-  /// In es, this message translates to:
-  /// **'o'**
-  String get authOr;
 
   /// No description provided for @authContinueWithGoogle.
   ///
   /// In es, this message translates to:
-  /// **'Continuar con Google'**
+  /// **'Seguir con Google'**
   String get authContinueWithGoogle;
 
   /// Followed by the authCreateAccountHere link; keep the trailing space.
@@ -534,7 +528,7 @@ abstract class AppLocalizations {
   /// No description provided for @authCreateAccountHere.
   ///
   /// In es, this message translates to:
-  /// **'Créala aquí'**
+  /// **'Créala'**
   String get authCreateAccountHere;
 
   /// No description provided for @authResetPasswordTitle.
@@ -570,13 +564,13 @@ abstract class AppLocalizations {
   /// No description provided for @authSignupTitle.
   ///
   /// In es, this message translates to:
-  /// **'Crea tu cuenta'**
+  /// **'Tu cuenta'**
   String get authSignupTitle;
 
   /// No description provided for @authSignupSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Regístrate para empezar a organizar las finanzas del hogar.'**
+  /// **'Es solo tuya. La casa la armas o te unes en el paso siguiente.'**
   String get authSignupSubtitle;
 
   /// No description provided for @authNameRequired.
@@ -603,17 +597,11 @@ abstract class AppLocalizations {
   /// **'Crear cuenta'**
   String get authCreateAccount;
 
-  /// Followed by the authSignInLink link; keep the trailing space.
+  /// No description provided for @authHaveAccountLink.
   ///
   /// In es, this message translates to:
-  /// **'¿Ya tienes cuenta? '**
-  String get authHaveAccount;
-
-  /// No description provided for @authSignInLink.
-  ///
-  /// In es, this message translates to:
-  /// **'Inicia sesión'**
-  String get authSignInLink;
+  /// **'Ya tengo cuenta'**
+  String get authHaveAccountLink;
 
   /// Prefilled, editable name when creating a household.
   ///
@@ -624,56 +612,62 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateJoinTitle.
   ///
   /// In es, this message translates to:
-  /// **'Un último paso'**
+  /// **'¿Arman la casa o ya existe?'**
   String get householdCreateJoinTitle;
 
   /// No description provided for @householdCreateJoinSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Crea el hogar desde cero o únete al que ya tiene tu pareja.'**
+  /// **'Uno de los dos la crea; el otro entra con un código.'**
   String get householdCreateJoinSubtitle;
 
   /// No description provided for @householdCreateOptionTitle.
   ///
   /// In es, this message translates to:
-  /// **'Crear un hogar nuevo'**
+  /// **'Crear la casa'**
   String get householdCreateOptionTitle;
 
   /// No description provided for @householdCreateOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Empiezas de cero e invitas a tu pareja.'**
+  /// **'Empiezo yo e invito a mi pareja.'**
   String get householdCreateOptionSubtitle;
 
   /// No description provided for @householdJoinOptionTitle.
   ///
   /// In es, this message translates to:
-  /// **'Unirme con un código'**
+  /// **'Tengo un código'**
   String get householdJoinOptionTitle;
 
   /// No description provided for @householdJoinOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Tu pareja ya creó el hogar.'**
+  /// **'Mi pareja ya la creó.'**
   String get householdJoinOptionSubtitle;
 
   /// No description provided for @householdNameLabel.
   ///
   /// In es, this message translates to:
-  /// **'Nombre del hogar'**
+  /// **'Nombre de la casa'**
   String get householdNameLabel;
 
   /// No description provided for @householdNameRequired.
   ///
   /// In es, this message translates to:
-  /// **'Ponle un nombre a tu hogar'**
+  /// **'Ponle un nombre a la casa'**
   String get householdNameRequired;
 
   /// No description provided for @householdCodeLabel.
   ///
   /// In es, this message translates to:
-  /// **'Código del hogar (pega el código completo)'**
+  /// **'Código'**
   String get householdCodeLabel;
+
+  /// No description provided for @householdCodeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Pégalo completo, tal como te llegó: lleva la llave de la casa.'**
+  String get householdCodeHint;
 
   /// No description provided for @householdCodeRequired.
   ///
@@ -684,13 +678,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateButton.
   ///
   /// In es, this message translates to:
-  /// **'Crear hogar'**
+  /// **'Armar la casa'**
   String get householdCreateButton;
 
   /// No description provided for @householdJoinButton.
   ///
   /// In es, this message translates to:
-  /// **'Entrar al hogar'**
+  /// **'Entrar a la casa'**
   String get householdJoinButton;
 
   /// No description provided for @householdJoinedWithoutKeyTitle.
@@ -702,7 +696,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdJoinedWithoutKeyMessage.
   ///
   /// In es, this message translates to:
-  /// **'Este código no traía la llave para ver montos. Pide a tu pareja que te comparta el código completo desde la tarjeta del hogar en Ajustes.'**
+  /// **'Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».'**
   String get householdJoinedWithoutKeyMessage;
 
   /// No description provided for @householdSetupStep.
@@ -714,13 +708,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupCurrencyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Moneda del hogar'**
+  /// **'¿En qué moneda llevan las cuentas?'**
   String get householdSetupCurrencyTitle;
 
   /// No description provided for @householdSetupCurrencyDescription.
   ///
   /// In es, this message translates to:
-  /// **'En la que llevan las cuentas. Se puede cambiar en Ajustes.'**
+  /// **'La de todos los montos de la casa. Se puede cambiar después en Ajustes.'**
   String get householdSetupCurrencyDescription;
 
   /// No description provided for @householdCurrencyCop.
@@ -738,13 +732,13 @@ abstract class AppLocalizations {
   /// A money account (bank, wallet, cash), not a login.
   ///
   /// In es, this message translates to:
-  /// **'Tu primera cuenta'**
+  /// **'¿Dónde está la plata hoy?'**
   String get householdSetupAccountTitle;
 
   /// No description provided for @householdSetupAccountDescription.
   ///
   /// In es, this message translates to:
-  /// **'De donde sale y a donde llega la plata: el banco, una billetera o el efectivo. Pon lo que tiene hoy para empezar con el saldo real.'**
+  /// **'Una cuenta para empezar: el banco, una billetera o el efectivo. Con el saldo real, lo que anotes cuadra desde el primer día.'**
   String get householdSetupAccountDescription;
 
   /// No description provided for @householdSetupAccountNameMissingTitle.
@@ -756,7 +750,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupAccountNameMissingMessage.
   ///
   /// In es, this message translates to:
-  /// **'Por ejemplo el banco o «Efectivo». Si prefieres, omite este paso.'**
+  /// **'Por ejemplo el banco o «Efectivo». Si prefieres, déjala para después con «Ahora no».'**
   String get householdSetupAccountNameMissingMessage;
 
   /// No description provided for @householdSetupBalanceToday.
@@ -780,8 +774,14 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupRecoveryDescription.
   ///
   /// In es, this message translates to:
-  /// **'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, estas 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja.'**
+  /// **'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.'**
   String get householdSetupRecoveryDescription;
+
+  /// No description provided for @householdSetupRecoveryTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Y si pierden la llave?'**
+  String get householdSetupRecoveryTitle;
 
   /// No description provided for @householdGeneratePhrase.
   ///
@@ -792,26 +792,32 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupLater.
   ///
   /// In es, this message translates to:
-  /// **'Más tarde, desde Ajustes'**
+  /// **'Ahora no'**
   String get householdSetupLater;
 
   /// No description provided for @householdInviteTitle.
   ///
   /// In es, this message translates to:
-  /// **'Invita a tu pareja'**
+  /// **'Ahora tu pareja.'**
   String get householdInviteTitle;
 
   /// No description provided for @householdInviteMessage.
   ///
   /// In es, this message translates to:
-  /// **'Comparte este código para que entre con su propia cuenta al mismo hogar. Sirve una sola vez y vence en 7 días.'**
+  /// **'Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.'**
   String get householdInviteMessage;
 
-  /// No description provided for @householdInviteWarning.
+  /// No description provided for @householdInviteFootnote.
   ///
   /// In es, this message translates to:
-  /// **'Usa el botón de compartir y envíalo por WhatsApp o mensaje - no lo dictes de viva voz, lleva pegada una llave más larga que no se ve aquí. Sin el código completo, tu pareja no podrá ver los montos.'**
-  String get householdInviteWarning;
+  /// **'Sirve una vez y vence en 7 días · se puede generar otro en Ajustes'**
+  String get householdInviteFootnote;
+
+  /// Screen-reader label of the empty, dashed circle where the partner will be.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta tu pareja'**
+  String get householdInviteMissingPartner;
 
   /// Title/subject of the OS share sheet when sharing the invite.
   ///
@@ -822,13 +828,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdInviteShare.
   ///
   /// In es, this message translates to:
-  /// **'Compartir invitación'**
+  /// **'Compartir'**
   String get householdInviteShare;
 
   /// No description provided for @householdInviteSkip.
   ///
   /// In es, this message translates to:
-  /// **'Omitir por ahora'**
+  /// **'Más tarde'**
   String get householdInviteSkip;
 
   /// No description provided for @householdRecoveryConfirmMessage.
@@ -876,7 +882,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdKeyIncomplete.
   ///
   /// In es, this message translates to:
-  /// **'Ese código no trae la llave completa. Pide a tu pareja que lo comparta de nuevo desde la tarjeta del hogar en Ajustes.'**
+  /// **'Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».'**
   String get householdKeyIncomplete;
 
   /// No description provided for @householdKeyWrongHousehold.
@@ -903,16 +909,46 @@ abstract class AppLocalizations {
   /// **'Ajustes'**
   String get settingsTitle;
 
-  /// Large title under the small settingsTitle label.
+  /// No description provided for @settingsAccountsAndCards.
   ///
   /// In es, this message translates to:
-  /// **'Configuración'**
-  String get settingsHeading;
+  /// **'Cuentas y tarjetas'**
+  String get settingsAccountsAndCards;
+
+  /// Under the signed-in member's name in Ajustes.
+  ///
+  /// In es, this message translates to:
+  /// **'tú'**
+  String get settingsMemberYou;
+
+  /// Under the other member's name in Ajustes.
+  ///
+  /// In es, this message translates to:
+  /// **'en la casa'**
+  String get settingsMemberPartner;
+
+  /// No description provided for @settingsInvite.
+  ///
+  /// In es, this message translates to:
+  /// **'Invitar a la casa'**
+  String get settingsInvite;
+
+  /// The empty second place in Ajustes while the household has one member.
+  ///
+  /// In es, this message translates to:
+  /// **'Invitar'**
+  String get settingsInviteSomeone;
+
+  /// No description provided for @settingsShareKey.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartir la llave'**
+  String get settingsShareKey;
 
   /// No description provided for @settingsMissingKeyBanner.
   ///
   /// In es, this message translates to:
-  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde su tarjeta del hogar, o escribe la frase de recuperación.'**
+  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.'**
   String get settingsMissingKeyBanner;
 
   /// No description provided for @settingsPasteCodeToUnlock.
@@ -930,92 +966,38 @@ abstract class AppLocalizations {
   /// No description provided for @settingsStorageWarning.
   ///
   /// In es, this message translates to:
-  /// **'Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes de la cuenta.'**
+  /// **'Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes, en «Tu cuenta».'**
   String get settingsStorageWarning;
-
-  /// No description provided for @settingsMemberCount.
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{1 miembro} other{{count} miembros}}'**
-  String settingsMemberCount(int count);
-
-  /// No description provided for @settingsTapToInvite.
-  ///
-  /// In es, this message translates to:
-  /// **'toca para invitar'**
-  String get settingsTapToInvite;
-
-  /// No description provided for @settingsTapToShareKey.
-  ///
-  /// In es, this message translates to:
-  /// **'toca para compartir la llave'**
-  String get settingsTapToShareKey;
 
   /// No description provided for @settingsFinancialSettings.
   ///
   /// In es, this message translates to:
-  /// **'Ajustes financieros'**
+  /// **'Moneda y año'**
   String get settingsFinancialSettings;
-
-  /// No description provided for @settingsFinancialSettingsSubtitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Moneda, año y categorías'**
-  String get settingsFinancialSettingsSubtitle;
 
   /// No description provided for @settingsAccountSettings.
   ///
   /// In es, this message translates to:
-  /// **'Ajustes de la cuenta'**
+  /// **'Tu cuenta'**
   String get settingsAccountSettings;
-
-  /// No description provided for @settingsAccountSettingsSubtitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Hogar y notificaciones'**
-  String get settingsAccountSettingsSubtitle;
 
   /// No description provided for @settingsExportReport.
   ///
   /// In es, this message translates to:
-  /// **'Exportar reporte'**
+  /// **'Exportar'**
   String get settingsExportReport;
 
   /// No description provided for @settingsBackup.
   ///
   /// In es, this message translates to:
-  /// **'Copia de seguridad'**
+  /// **'Copia y llave'**
   String get settingsBackup;
-
-  /// No description provided for @settingsBudget.
-  ///
-  /// In es, this message translates to:
-  /// **'Presupuesto'**
-  String get settingsBudget;
-
-  /// {amount} is an already-formatted money amount.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} planeado'**
-  String settingsBudgetPlanned(String amount);
-
-  /// No description provided for @settingsAnnualSummary.
-  ///
-  /// In es, this message translates to:
-  /// **'Resumen anual'**
-  String get settingsAnnualSummary;
 
   /// No description provided for @settingsInvestments.
   ///
   /// In es, this message translates to:
   /// **'Inversiones'**
   String get settingsInvestments;
-
-  /// No description provided for @settingsNotificationCenter.
-  ///
-  /// In es, this message translates to:
-  /// **'Centro de notificaciones'**
-  String get settingsNotificationCenter;
 
   /// No description provided for @settingsSignOut.
   ///
@@ -1032,7 +1014,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsUnlockAmountsMessage.
   ///
   /// In es, this message translates to:
-  /// **'Pega el código completo (con la llave después del punto) que tu pareja copió desde su tarjeta del hogar en Ajustes.'**
+  /// **'Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».'**
   String get settingsUnlockAmountsMessage;
 
   /// No description provided for @settingsUnlockCodeLabel.
@@ -1167,11 +1149,29 @@ abstract class AppLocalizations {
   /// **'Miembros del hogar'**
   String get settingsHouseholdMembers;
 
-  /// No description provided for @settingsNotifications.
+  /// No description provided for @settingsLanguage.
   ///
   /// In es, this message translates to:
-  /// **'Notificaciones'**
-  String get settingsNotifications;
+  /// **'Idioma'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsLanguageSystem.
+  ///
+  /// In es, this message translates to:
+  /// **'Como el teléfono'**
+  String get settingsLanguageSystem;
+
+  /// No description provided for @settingsLanguageSystemSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Sigue el idioma de tu teléfono.'**
+  String get settingsLanguageSystemSubtitle;
+
+  /// Under «Español» / «English» in the language sheet; those two names are never translated.
+  ///
+  /// In es, this message translates to:
+  /// **'Siempre en este idioma, aunque el teléfono esté en otro.'**
+  String get settingsLanguageFixedSubtitle;
 
   /// No description provided for @settingsTheme.
   ///
@@ -1251,18 +1251,6 @@ abstract class AppLocalizations {
   /// **'La semana inicia en'**
   String get settingsWeekStartsOn;
 
-  /// No description provided for @settingsCategories.
-  ///
-  /// In es, this message translates to:
-  /// **'Categorías'**
-  String get settingsCategories;
-
-  /// No description provided for @settingsAccounts.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuentas'**
-  String get settingsAccounts;
-
   /// No description provided for @coreSheetErrorTitle.
   ///
   /// In es, this message translates to:
@@ -1281,41 +1269,59 @@ abstract class AppLocalizations {
   /// **'Contraseña'**
   String get corePassword;
 
-  /// Default tooltip of the period picker's back arrow.
-  ///
-  /// In es, this message translates to:
-  /// **'Anterior'**
-  String get corePeriodPrevious;
-
   /// Shown under the period label when browsing another period; tapping jumps back to the current one.
   ///
   /// In es, this message translates to:
   /// **'Volver a hoy'**
   String get corePeriodBackToToday;
 
-  /// No description provided for @coreGoToSettings.
-  ///
-  /// In es, this message translates to:
-  /// **'Ir a Ajustes'**
-  String get coreGoToSettings;
-
-  /// The device lacks the household's encryption key.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta la llave de este hogar para ver estos montos.'**
-  String get coreMissingKeyInline;
-
   /// No description provided for @coreMissingKeyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Falta la llave de este hogar'**
+  /// **'Este teléfono no tiene la llave de la casa.'**
   String get coreMissingKeyTitle;
 
   /// No description provided for @coreMissingKeyBody.
   ///
   /// In es, this message translates to:
-  /// **'Este dispositivo no puede ver ni registrar montos todavía. Pide a tu pareja el código completo (con la llave después del punto) o usa la frase de recuperación del hogar en Ajustes para desbloquearlos.'**
+  /// **'Los montos se cifran con una llave que solo vive en sus teléfonos. Sin ella, este no puede abrir los movimientos ni anotar nuevos.'**
   String get coreMissingKeyBody;
+
+  /// No description provided for @coreMissingKeyUsePhrase.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar la frase de 12 palabras'**
+  String get coreMissingKeyUsePhrase;
+
+  /// No description provided for @coreMissingKeyAskPartner.
+  ///
+  /// In es, this message translates to:
+  /// **'Pedirle el código a {name}'**
+  String coreMissingKeyAskPartner(String name);
+
+  /// No description provided for @coreMissingKeyPasteCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Pegar el código de la llave'**
+  String get coreMissingKeyPasteCode;
+
+  /// No description provided for @coreOffline.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión. Lo que anotes se guarda aquí y se envía solo cuando vuelva la señal.'**
+  String get coreOffline;
+
+  /// No description provided for @coreUnsynced.
+  ///
+  /// In es, this message translates to:
+  /// **'por enviar'**
+  String get coreUnsynced;
+
+  /// No description provided for @coreLoading.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando'**
+  String get coreLoading;
 
   /// No description provided for @coreNotificationPrimerTitle.
   ///
@@ -1364,6 +1370,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Metas'**
   String get coreHomeTabGoals;
+
+  /// Bottom nav tab that holds savings goals and debts.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan'**
+  String get coreHomeTabPlan;
+
+  /// The center button of the bottom nav: record a new movement.
+  ///
+  /// In es, this message translates to:
+  /// **'Anotar'**
+  String get coreHomeAdd;
 
   /// No description provided for @coreHomeTabSettings.
   ///
@@ -1533,40 +1551,28 @@ abstract class AppLocalizations {
   /// **'Actividad del hogar'**
   String get reminderActivityChannel;
 
-  /// No description provided for @debtsTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Deudas'**
-  String get debtsTitle;
-
-  /// Badge naming the payoff strategy: highest interest rate first.
-  ///
-  /// In es, this message translates to:
-  /// **'Estrategia Avalancha'**
-  String get debtsAvalancheStrategy;
-
   /// No description provided for @debtsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'¡Libres de deudas!'**
+  /// **'No deben nada.'**
   String get debtsEmptyTitle;
 
   /// No description provided for @debtsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'No tienes deudas registradas. Si adquieres una, agrégala para seguir su pago con la estrategia Avalancha.'**
+  /// **'Si llega una tarjeta o un crédito, agréguenlo aquí y la app les dice cuándo terminan.'**
   String get debtsEmptyDescription;
 
   /// No description provided for @debtsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Agregar una deuda'**
+  /// **'Agregar una deuda'**
   String get debtsEmptyAction;
 
   /// Banner caption; the projected month is shown below it.
   ///
   /// In es, this message translates to:
-  /// **'¡Libre de deudas en!'**
+  /// **'Libres de deudas en'**
   String get debtsFreeDateLabel;
 
   /// Banner caption when the projection never reaches zero.
@@ -1580,24 +1586,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No alcanza a pagar'**
   String get debtsCannotPayOff;
-
-  /// Debt list row. rate is a pre-formatted number, minPayment a formatted amount.
-  ///
-  /// In es, this message translates to:
-  /// **'Tasa {rate}% · mín. {minPayment}/mes'**
-  String debtsCardSubtitle(String rate, String minPayment);
-
-  /// No description provided for @debtsPaidAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagado {amount}'**
-  String debtsPaidAmount(String amount);
-
-  /// No description provided for @debtsBalanceAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Saldo {amount}'**
-  String debtsBalanceAmount(String amount);
 
   /// Debt type: credit card.
   ///
@@ -1641,23 +1629,11 @@ abstract class AppLocalizations {
   /// **'no alcanza a pagar con los abonos actuales'**
   String get debtsStatusCannotPayOff;
 
-  /// E.A. = effective annual rate. status is one of the debtsStatus* texts.
-  ///
-  /// In es, this message translates to:
-  /// **'Tasa {rate}% E.A. · {status}'**
-  String debtsRateWithStatus(String rate, String status);
-
   /// No description provided for @debtsCurrentBalance.
   ///
   /// In es, this message translates to:
-  /// **'Saldo actual'**
+  /// **'Saldo pendiente'**
   String get debtsCurrentBalance;
-
-  /// No description provided for @debtsMinPaymentShort.
-  ///
-  /// In es, this message translates to:
-  /// **'Pago mín.'**
-  String get debtsMinPaymentShort;
 
   /// Amount paid on top of the minimum or the installment each month.
   ///
@@ -1665,23 +1641,11 @@ abstract class AppLocalizations {
   /// **'Abono extra'**
   String get debtsExtraPayment;
 
-  /// No description provided for @debtsPaid.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagado'**
-  String get debtsPaid;
-
   /// No description provided for @debtsMonthlyInstallment.
   ///
   /// In es, this message translates to:
   /// **'Cuota mensual'**
   String get debtsMonthlyInstallment;
-
-  /// No description provided for @debtsInstallmentsLeft.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuotas restantes'**
-  String get debtsInstallmentsLeft;
 
   /// No description provided for @debtsPaymentSchedule.
   ///
@@ -1701,23 +1665,11 @@ abstract class AppLocalizations {
   /// **'No hay una proyección disponible.'**
   String get debtsNoProjection;
 
-  /// No description provided for @debtsNextPayment.
-  ///
-  /// In es, this message translates to:
-  /// **'Próximo pago'**
-  String get debtsNextPayment;
-
   /// No description provided for @debtsScheduledPayment.
   ///
   /// In es, this message translates to:
-  /// **'Programado'**
+  /// **'Previsto'**
   String get debtsScheduledPayment;
-
-  /// Balance left after this scheduled payment.
-  ///
-  /// In es, this message translates to:
-  /// **'Saldo → {amount}'**
-  String debtsScheduleBalance(String amount);
 
   /// No description provided for @debtsNeedAccountFirst.
   ///
@@ -1736,24 +1688,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Desde'**
   String get debtsPaymentFrom;
-
-  /// No description provided for @debtsRecordedPayments.
-  ///
-  /// In es, this message translates to:
-  /// **'Pagos registrados'**
-  String get debtsRecordedPayments;
-
-  /// No description provided for @debtsNoCardPayments.
-  ///
-  /// In es, this message translates to:
-  /// **'Aún no registras pagos a esta tarjeta.'**
-  String get debtsNoCardPayments;
-
-  /// No description provided for @debtsDeletedAccount.
-  ///
-  /// In es, this message translates to:
-  /// **'Cuenta eliminada'**
-  String get debtsDeletedAccount;
 
   /// No description provided for @debtsDeletePayment.
   ///
@@ -1785,16 +1719,10 @@ abstract class AppLocalizations {
   /// **'Se eliminará \"{name}\". Los pagos y compras ya registrados se quedan en el historial. Esta acción no se puede deshacer.'**
   String debtsDeleteMessage(String name);
 
-  /// No description provided for @debtsTypeField.
-  ///
-  /// In es, this message translates to:
-  /// **'Tipo de deuda'**
-  String get debtsTypeField;
-
   /// No description provided for @debtsCreditLimit.
   ///
   /// In es, this message translates to:
-  /// **'Cupo total'**
+  /// **'Cupo'**
   String get debtsCreditLimit;
 
   /// Effective annual interest rate, in percent.
@@ -1839,40 +1767,28 @@ abstract class AppLocalizations {
   /// **'Cuotas pagadas'**
   String get debtsPaidInstallments;
 
-  /// No description provided for @savingsGoalsTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Metas de ahorro'**
-  String get savingsGoalsTitle;
-
   /// No description provided for @savingsGoalsTotalSaved.
   ///
   /// In es, this message translates to:
   /// **'Total ahorrado'**
   String get savingsGoalsTotalSaved;
 
-  /// No description provided for @savingsGoalsTotalSavedRemaining.
-  ///
-  /// In es, this message translates to:
-  /// **'Total ahorrado · falta {amount}'**
-  String savingsGoalsTotalSavedRemaining(String amount);
-
   /// No description provided for @savingsGoalsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no tienes metas'**
+  /// **'Todavía no hay metas.'**
   String get savingsGoalsEmptyTitle;
 
   /// No description provided for @savingsGoalsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Crea una meta de ahorro para llevarle el pulso con tu pareja.'**
+  /// **'Un viaje, un colchón, un carro: pónganle cifra y fecha, y aquí verán cuánto les falta y cuánto apartar cada mes.'**
   String get savingsGoalsEmptyDescription;
 
   /// No description provided for @savingsGoalsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva meta'**
+  /// **'Crear una meta'**
   String get savingsGoalsEmptyAction;
 
   /// Link to the savings challenge screen.
@@ -1887,76 +1803,16 @@ abstract class AppLocalizations {
   /// **'sin fecha'**
   String get savingsGoalsNoDate;
 
-  /// date is a formatted month and year, or savingsGoalsNoDate.
-  ///
-  /// In es, this message translates to:
-  /// **'Meta {amount} · {date}'**
-  String savingsGoalsCardSubtitle(String amount, String date);
-
   /// No description provided for @savingsGoalsPerMonth.
   ///
   /// In es, this message translates to:
   /// **'{amount}/mes'**
   String savingsGoalsPerMonth(String amount);
 
-  /// No description provided for @savingsGoalsSavedAmount.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado {amount}'**
-  String savingsGoalsSavedAmount(String amount);
-
-  /// No description provided for @savingsGoalsSavedRemaining.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado · falta {amount}'**
-  String savingsGoalsSavedRemaining(String amount);
-
-  /// No description provided for @savingsGoalsSavedReached.
-  ///
-  /// In es, this message translates to:
-  /// **'Ahorrado · meta cumplida'**
-  String get savingsGoalsSavedReached;
-
-  /// One deposit toward a savings goal.
-  ///
-  /// In es, this message translates to:
-  /// **'Aporte'**
-  String get savingsGoalsContribution;
-
-  /// No description provided for @savingsGoalsInterestEarned.
-  ///
-  /// In es, this message translates to:
-  /// **'Interés ganado'**
-  String get savingsGoalsInterestEarned;
-
-  /// Amount still missing to reach the goal.
-  ///
-  /// In es, this message translates to:
-  /// **'Falta'**
-  String get savingsGoalsRemaining;
-
-  /// No description provided for @savingsGoalsProgressOf.
-  ///
-  /// In es, this message translates to:
-  /// **'{percent}% de {amount}'**
-  String savingsGoalsProgressOf(int percent, String amount);
-
-  /// Lower-case. date is a formatted month and year.
-  ///
-  /// In es, this message translates to:
-  /// **'meta {date}'**
-  String savingsGoalsTargetBy(String date);
-
-  /// No description provided for @savingsGoalsOnTrack.
-  ///
-  /// In es, this message translates to:
-  /// **'a tiempo ✓'**
-  String get savingsGoalsOnTrack;
-
   /// No description provided for @savingsGoalsBehind.
   ///
   /// In es, this message translates to:
-  /// **'atrasado'**
+  /// **'va atrasada'**
   String get savingsGoalsBehind;
 
   /// No description provided for @savingsGoalsContributions.
@@ -1976,12 +1832,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuevo aporte'**
   String get savingsGoalsNewContribution;
-
-  /// Goal total after this contribution.
-  ///
-  /// In es, this message translates to:
-  /// **'Total → {amount}'**
-  String savingsGoalsRunningTotal(String amount);
 
   /// No description provided for @savingsGoalsIconTrip.
   ///
@@ -2046,7 +1896,7 @@ abstract class AppLocalizations {
   /// Label above the goal amount.
   ///
   /// In es, this message translates to:
-  /// **'Meta'**
+  /// **'Cuánto necesitan'**
   String get savingsGoalsTarget;
 
   /// No description provided for @savingsGoalsMonthlyContribution.
@@ -2058,7 +1908,7 @@ abstract class AppLocalizations {
   /// No description provided for @savingsGoalsTargetDate.
   ///
   /// In es, this message translates to:
-  /// **'Fecha meta'**
+  /// **'Para cuándo'**
   String get savingsGoalsTargetDate;
 
   /// No description provided for @savingsGoalsNoDateValue.
@@ -2076,7 +1926,7 @@ abstract class AppLocalizations {
   /// Amount saved before creating the goal.
   ///
   /// In es, this message translates to:
-  /// **'Ya tengo ahorrado'**
+  /// **'Ya tienen'**
   String get savingsGoalsAlreadySaved;
 
   /// Effective annual interest rate.
@@ -2094,7 +1944,7 @@ abstract class AppLocalizations {
   /// No description provided for @investmentsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay inversiones'**
+  /// **'Todavía no hay inversiones.'**
   String get investmentsEmptyTitle;
 
   /// CDT = certificado de depósito a término (a CD).
@@ -2106,20 +1956,8 @@ abstract class AppLocalizations {
   /// No description provided for @investmentsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva inversión'**
+  /// **'Agregar una inversión'**
   String get investmentsEmptyAction;
-
-  /// No description provided for @investmentsPortfolioValue.
-  ///
-  /// In es, this message translates to:
-  /// **'Valor del portafolio'**
-  String get investmentsPortfolioValue;
-
-  /// Follows the bold total return amount; keep the leading space.
-  ///
-  /// In es, this message translates to:
-  /// **' de rendimiento total'**
-  String get investmentsTotalReturnSuffix;
 
   /// No description provided for @investmentsKindFixedIncome.
   ///
@@ -2202,7 +2040,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsNewTitle.
   ///
   /// In es, this message translates to:
-  /// **'Nuevo movimiento'**
+  /// **'Anotar'**
   String get transactionsNewTitle;
 
   /// No description provided for @transactionsEditTitle.
@@ -2211,10 +2049,22 @@ abstract class AppLocalizations {
   /// **'Editar movimiento'**
   String get transactionsEditTitle;
 
+  /// Small line over a movement's detail title.
+  ///
+  /// In es, this message translates to:
+  /// **'Movimiento'**
+  String get transactionsDetailOver;
+
+  /// No description provided for @transactionsEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get transactionsEdit;
+
   /// No description provided for @transactionsDelete.
   ///
   /// In es, this message translates to:
-  /// **'Eliminar movimiento'**
+  /// **'Borrar movimiento'**
   String get transactionsDelete;
 
   /// No description provided for @transactionsDeleted.
@@ -2247,11 +2097,35 @@ abstract class AppLocalizations {
   /// **'Tarjeta de crédito'**
   String get transactionsCreditCard;
 
+  /// Anotar's fourth type: moving money between two of the household's own accounts.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasar'**
+  String get transactionsTypeTransfer;
+
+  /// No description provided for @transactionsTransferNeedsTwoAccounts.
+  ///
+  /// In es, this message translates to:
+  /// **'Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.'**
+  String get transactionsTransferNeedsTwoAccounts;
+
   /// No description provided for @transactionsIncomplete.
   ///
   /// In es, this message translates to:
   /// **'Completa el monto, la categoría y la cuenta.'**
   String get transactionsIncomplete;
+
+  /// Title of the sheet shown when Anotar can't save yet.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta un dato'**
+  String get transactionsIncompleteTitle;
+
+  /// Under Anotar's amount when the date is today; {date} is the weekday and day, e.g. «martes 14».
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy, {date}'**
+  String transactionsDateToday(String date);
 
   /// No description provided for @transactionsNoCategoriesOfType.
   ///
@@ -2304,26 +2178,8 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsLoggedBy.
   ///
   /// In es, this message translates to:
-  /// **'Registrado por'**
+  /// **'Lo anotó'**
   String get transactionsLoggedBy;
-
-  /// Header: the net of the listed movements, already formatted as money.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} neto'**
-  String transactionsNet(String amount);
-
-  /// No description provided for @transactionsNetInYear.
-  ///
-  /// In es, this message translates to:
-  /// **'{amount} neto en {year}'**
-  String transactionsNetInYear(String amount, int year);
-
-  /// Appended to the header's net when filters or a search are on.
-  ///
-  /// In es, this message translates to:
-  /// **'{text} · filtrado'**
-  String transactionsFiltered(String text);
 
   /// No description provided for @transactionsPreviousMonth.
   ///
@@ -2337,10 +2193,28 @@ abstract class AppLocalizations {
   /// **'Mes siguiente'**
   String get transactionsNextMonth;
 
+  /// Movimientos' day heading for today; {day} is the weekday and day, e.g. «martes 14». Shown in capitals.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy · {day}'**
+  String transactionsDayToday(String day);
+
+  /// Movimientos' day heading for yesterday.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayer · {day}'**
+  String transactionsDayYesterday(String day);
+
+  /// At the end of a search or filter: how many movements matched and their net, already formatted with its sign.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 movimiento} other{{count} movimientos}} · {amount}'**
+  String transactionsResultsTotal(int count, String amount);
+
   /// No description provided for @transactionsSearchWholeYear.
   ///
   /// In es, this message translates to:
-  /// **'Buscar en todo {year}'**
+  /// **'Todo {year}'**
   String transactionsSearchWholeYear(int year);
 
   /// No description provided for @transactionsNoMatchTitle.
@@ -2370,37 +2244,37 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay movimientos'**
-  String get transactionsEmptyTitle;
-
-  /// No description provided for @transactionsEmptyTitleMonth.
-  ///
-  /// In es, this message translates to:
-  /// **'Sin movimientos en {month}'**
-  String transactionsEmptyTitleMonth(String month);
+  /// **'{month} está en blanco.'**
+  String transactionsEmptyTitle(String month);
 
   /// No description provided for @transactionsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Registra tu primer ingreso o gasto del mes y aquí verás el resumen del hogar.'**
+  /// **'Lo primero que anoten aparece aquí, con quién lo pagó. Los fijos del mes se anotan solos el día que toca.'**
   String get transactionsEmptyDescription;
 
   /// No description provided for @transactionsEmptyDescriptionMonth.
   ///
   /// In es, this message translates to:
-  /// **'No se registró ningún ingreso ni gasto este mes.'**
+  /// **'Ese mes no se anotó nada. Si algo quedó por fuera, todavía se puede anotar con su fecha.'**
   String get transactionsEmptyDescriptionMonth;
 
   /// No description provided for @transactionsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Agregar el primero'**
+  /// **'Anotar el primero'**
   String get transactionsEmptyAction;
+
+  /// No description provided for @transactionsSeeMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver {month}'**
+  String transactionsSeeMonth(String month);
 
   /// No description provided for @transactionsRecurringBills.
   ///
   /// In es, this message translates to:
-  /// **'Facturas recurrentes'**
+  /// **'Fijos'**
   String get transactionsRecurringBills;
 
   /// No description provided for @transactionsNotes.
@@ -2412,7 +2286,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsSearchHint.
   ///
   /// In es, this message translates to:
-  /// **'Buscar descripción, categoría o monto'**
+  /// **'Buscar descripción, categoría, monto o #etiqueta'**
   String get transactionsSearchHint;
 
   /// No description provided for @transactionsFilters.
@@ -2424,7 +2298,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsFilterTitle.
   ///
   /// In es, this message translates to:
-  /// **'Filtrar movimientos'**
+  /// **'Filtrar'**
   String get transactionsFilterTitle;
 
   /// No description provided for @transactionsFilterType.
@@ -2445,23 +2319,29 @@ abstract class AppLocalizations {
   /// **'Etiqueta'**
   String get transactionsFilterTag;
 
+  /// Active filter chip: only what this member paid.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagó {name}'**
+  String transactionsPaidByChip(String name);
+
+  /// Filter sheet, who paid: no filter.
+  ///
+  /// In es, this message translates to:
+  /// **'Los dos'**
+  String get transactionsFilterBoth;
+
   /// No description provided for @transactionsFilterClear.
   ///
   /// In es, this message translates to:
   /// **'Limpiar'**
   String get transactionsFilterClear;
 
-  /// No description provided for @transactionsFilterApply.
+  /// Filter sheet's main button: how many movements the chosen filters show.
   ///
   /// In es, this message translates to:
-  /// **'Aplicar'**
-  String get transactionsFilterApply;
-
-  /// No description provided for @transfersTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Transferir'**
-  String get transfersTitle;
+  /// **'Ver {count}'**
+  String transactionsFilterSee(int count);
 
   /// No description provided for @transfersInvalid.
   ///
@@ -2469,22 +2349,16 @@ abstract class AppLocalizations {
   /// **'Elige un monto y dos cuentas distintas.'**
   String get transfersInvalid;
 
-  /// No description provided for @transfersAmountLabel.
-  ///
-  /// In es, this message translates to:
-  /// **'Monto a transferir'**
-  String get transfersAmountLabel;
-
   /// No description provided for @transfersFrom.
   ///
   /// In es, this message translates to:
-  /// **'Desde'**
+  /// **'De'**
   String get transfersFrom;
 
   /// No description provided for @transfersTo.
   ///
   /// In es, this message translates to:
-  /// **'Hacia'**
+  /// **'A'**
   String get transfersTo;
 
   /// No description provided for @transfersSelectAccount.
@@ -2496,7 +2370,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersHistoryTitle.
   ///
   /// In es, this message translates to:
-  /// **'Transferencias'**
+  /// **'Pasos entre cuentas'**
   String get transfersHistoryTitle;
 
   /// No description provided for @transfersDeleteTitle.
@@ -2520,19 +2394,19 @@ abstract class AppLocalizations {
   /// No description provided for @transfersEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay transferencias'**
+  /// **'Todavía no han pasado plata.'**
   String get transfersEmptyTitle;
 
   /// No description provided for @transfersEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Los movimientos de dinero entre tus propias cuentas aparecerán aquí.'**
+  /// **'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
   String get transfersEmptyDescription;
 
   /// No description provided for @transfersEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Transferir'**
+  /// **'Pasar plata'**
   String get transfersEmptyAction;
 
   /// No description provided for @accountsTitle.
@@ -2541,53 +2415,29 @@ abstract class AppLocalizations {
   /// **'Cuentas'**
   String get accountsTitle;
 
-  /// No description provided for @accountsAvailableMoney.
-  ///
-  /// In es, this message translates to:
-  /// **'Dinero disponible'**
-  String get accountsAvailableMoney;
-
-  /// No description provided for @accountsTotalAvailable.
-  ///
-  /// In es, this message translates to:
-  /// **'Total disponible'**
-  String get accountsTotalAvailable;
-
-  /// No description provided for @accountsCountInHousehold.
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{en 1 cuenta del hogar} other{en {count} cuentas del hogar}}'**
-  String accountsCountInHousehold(int count);
-
   /// No description provided for @accountsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay cuentas'**
+  /// **'Todavía no hay cuentas.'**
   String get accountsEmptyTitle;
 
   /// No description provided for @accountsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Agrega tu primera cuenta (efectivo, banco, billetera) para empezar a registrar movimientos.'**
+  /// **'Agreguen el efectivo, el banco o la billetera de donde sale la plata, y aquí verán cuánto tienen disponible.'**
   String get accountsEmptyDescription;
 
   /// No description provided for @accountsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva cuenta'**
+  /// **'Agregar una cuenta'**
   String get accountsEmptyAction;
 
   /// No description provided for @accountsTransferBetween.
   ///
   /// In es, this message translates to:
-  /// **'Transferir entre cuentas'**
+  /// **'Pasar entre cuentas'**
   String get accountsTransferBetween;
-
-  /// No description provided for @accountsHistory.
-  ///
-  /// In es, this message translates to:
-  /// **'Historial'**
-  String get accountsHistory;
 
   /// No description provided for @accountsNewTitle.
   ///
@@ -2604,19 +2454,19 @@ abstract class AppLocalizations {
   /// No description provided for @accountsTypeLabel.
   ///
   /// In es, this message translates to:
-  /// **'Tipo de cuenta'**
+  /// **'Tipo'**
   String get accountsTypeLabel;
 
   /// No description provided for @accountsCurrentBalance.
   ///
   /// In es, this message translates to:
-  /// **'Saldo actual'**
+  /// **'Saldo de hoy'**
   String get accountsCurrentBalance;
 
   /// No description provided for @accountsIncludeInAvailable.
   ///
   /// In es, this message translates to:
-  /// **'Incluir en dinero disponible'**
+  /// **'Cuenta en «Disponible»'**
   String get accountsIncludeInAvailable;
 
   /// No description provided for @accountsDeleteTitle.
@@ -2640,7 +2490,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountsCannotDeleteMessage.
   ///
   /// In es, this message translates to:
-  /// **'\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, desactiva \"Incluir en dinero disponible\".'**
+  /// **'\"{name}\" tiene {count, plural, =1{1 registro} other{{count} registros}} (movimientos, transferencias, pagos de tarjeta o facturas recurrentes). Bórralos o cámbialos de cuenta primero. Si solo quieres que no sume, apaga «Cuenta en Disponible».'**
   String accountsCannotDeleteMessage(String name, int count);
 
   /// Account types.
@@ -2673,28 +2523,40 @@ abstract class AppLocalizations {
   /// **'Categorías'**
   String get categoriesTitle;
 
-  /// How many categories the household has.
+  /// Under a category in the list: how many of this year's transactions are filed under it.
   ///
   /// In es, this message translates to:
-  /// **'{count, plural, =1{1 activa} other{{count} activas}}'**
-  String categoriesActiveCount(int count);
+  /// **'{count, plural, =0{Sin movimientos este año} =1{1 mov. este año} other{{count} mov. este año}}'**
+  String categoriesRowUsage(int count);
+
+  /// Under a category in the list when what's left of its budget carries into next month.
+  ///
+  /// In es, this message translates to:
+  /// **'Acumula'**
+  String get categoriesRowRollover;
+
+  /// No description provided for @categoriesNoneOfType.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay categorías de este tipo. Créala con el +.'**
+  String get categoriesNoneOfType;
 
   /// No description provided for @categoriesEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay categorías'**
+  /// **'Todavía no hay categorías.'**
   String get categoriesEmptyTitle;
 
   /// No description provided for @categoriesEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Crea tu primera categoría para poder registrar movimientos.'**
+  /// **'Cada movimiento va en una categoría: creen la primera para empezar a anotar.'**
   String get categoriesEmptyDescription;
 
   /// No description provided for @categoriesEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva categoría'**
+  /// **'Crear una categoría'**
   String get categoriesEmptyAction;
 
   /// No description provided for @categoriesNewTitle.
@@ -2742,7 +2604,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoriesRolloverSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Lo que sobre del presupuesto pasa al mes siguiente, y lo que te pases se descuenta. Se reinicia cada enero.'**
+  /// **'Lo que sobra o se pasa cuenta para el mes siguiente; se reinicia en enero.'**
   String get categoriesRolloverSubtitle;
 
   /// No description provided for @categoriesDeleteTitle.
@@ -2790,7 +2652,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoriesUsageRecurringBills.
   ///
   /// In es, this message translates to:
-  /// **'{count, plural, =1{1 factura recurrente} other{{count} facturas recurrentes}}'**
+  /// **'{count, plural, =1{1 fijo} other{{count} fijos}}'**
   String categoriesUsageRecurringBills(int count);
 
   /// No description provided for @categoriesUsageBoth.
@@ -2934,61 +2796,61 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsTitle.
   ///
   /// In es, this message translates to:
-  /// **'Facturas recurrentes'**
+  /// **'Fijos'**
   String get recurringBillsTitle;
 
-  /// Header: the monthly total of active recurring bills, already formatted as money.
+  /// No description provided for @recurringBillsCommittedLabel.
   ///
   /// In es, this message translates to:
-  /// **'{amount} al mes'**
-  String recurringBillsMonthlyTotal(String amount);
+  /// **'Comprometido cada mes'**
+  String get recurringBillsCommittedLabel;
 
-  /// Badge meaning the bills are logged automatically.
+  /// No description provided for @recurringBillsCommittedCount.
   ///
   /// In es, this message translates to:
-  /// **'Auto'**
-  String get recurringBillsAutoBadge;
+  /// **'{count, plural, =0{Ningún fijo activo} =1{1 fijo} other{{count} fijos}}'**
+  String recurringBillsCommittedCount(int count);
+
+  /// Follows recurringBillsCommittedCount after ' · ', lowercase.
+  ///
+  /// In es, this message translates to:
+  /// **'los no mensuales, en promedio'**
+  String get recurringBillsAveragedNote;
+
+  /// No description provided for @recurringBillsAutoNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Se anotan solos en Movimientos el día que les toca.'**
+  String get recurringBillsAutoNote;
 
   /// No description provided for @recurringBillsEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay facturas recurrentes'**
+  /// **'Todavía no hay fijos.'**
   String get recurringBillsEmptyTitle;
 
   /// No description provided for @recurringBillsEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Programa el arriendo, servicios o el sueldo para que se registren solos cada mes.'**
+  /// **'Programa el arriendo, los servicios o el sueldo para que se anoten solos el día que les toca.'**
   String get recurringBillsEmptyDescription;
 
   /// No description provided for @recurringBillsEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'+ Nueva factura recurrente'**
+  /// **'Agregar un fijo'**
   String get recurringBillsEmptyAction;
 
-  /// No description provided for @recurringBillsAutoLogged.
+  /// Under a paused recurring item in the list, instead of its schedule.
   ///
   /// In es, this message translates to:
-  /// **'Se registran solas'**
-  String get recurringBillsAutoLogged;
-
-  /// How many recurring bills are active (feminine: 'facturas').
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{1 activa} other{{count} activas}}'**
-  String recurringBillsActiveCount(int count);
-
-  /// Row status, lowercase, after the type: 'Factura · en pausa'.
-  ///
-  /// In es, this message translates to:
-  /// **'en pausa'**
+  /// **'En pausa'**
   String get recurringBillsStatusPaused;
 
-  /// Row status, lowercase, after the type: 'Factura · terminada'.
+  /// Under a recurring item whose end date went by.
   ///
   /// In es, this message translates to:
-  /// **'terminada'**
+  /// **'Ya terminó'**
   String get recurringBillsStatusEnded;
 
   /// No description provided for @recurringBillsTypeIncome.
@@ -3006,13 +2868,13 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsNewTitle.
   ///
   /// In es, this message translates to:
-  /// **'Nueva factura recurrente'**
+  /// **'Nuevo fijo'**
   String get recurringBillsNewTitle;
 
   /// No description provided for @recurringBillsEditTitle.
   ///
   /// In es, this message translates to:
-  /// **'Editar factura recurrente'**
+  /// **'Editar fijo'**
   String get recurringBillsEditTitle;
 
   /// No description provided for @recurringBillsMissingFields.
@@ -3036,13 +2898,13 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsDelete.
   ///
   /// In es, this message translates to:
-  /// **'Eliminar factura recurrente'**
+  /// **'Eliminar fijo'**
   String get recurringBillsDelete;
 
   /// No description provided for @recurringBillsDeleteMessage.
   ///
   /// In es, this message translates to:
-  /// **'Se eliminará \"{name}\" y dejará de generarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerla un tiempo, ponla en pausa.'**
+  /// **'Se eliminará \"{name}\" y dejará de anotarse. Los movimientos que ya creó se quedan. Esta acción no se puede deshacer. Si solo quieres detenerlo un tiempo, ponlo en pausa.'**
   String recurringBillsDeleteMessage(String name);
 
   /// No description provided for @recurringBillsNoCategories.
@@ -3066,7 +2928,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsRepeats.
   ///
   /// In es, this message translates to:
-  /// **'Se repite'**
+  /// **'Cada cuánto'**
   String get recurringBillsRepeats;
 
   /// Start date field label when editing an existing bill.
@@ -3074,18 +2936,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Desde'**
   String get recurringBillsFrom;
-
-  /// Start date field label when creating a bill: its first occurrence.
-  ///
-  /// In es, this message translates to:
-  /// **'Primera vez'**
-  String get recurringBillsFirstTime;
-
-  /// Hint under the start date; {schedule} is a recurringBillsSchedule* text, e.g. 'cada lunes'.
-  ///
-  /// In es, this message translates to:
-  /// **'Se registra {schedule}.'**
-  String recurringBillsLoggedOn(String schedule);
 
   /// End date field label.
   ///
@@ -3114,7 +2964,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringBillsPausedHint.
   ///
   /// In es, this message translates to:
-  /// **'No se registra mientras esté en pausa. Al reanudarla, las fechas que pasaron no se registran.'**
+  /// **'No se anota mientras esté en pausa. Al reanudarlo, las fechas que pasaron no se anotan.'**
   String get recurringBillsPausedHint;
 
   /// No description provided for @recurringBillsFrequencyWeekly.
@@ -3147,40 +2997,52 @@ abstract class AppLocalizations {
   /// **'Anual'**
   String get recurringBillsFrequencyYearly;
 
-  /// Lowercase schedule fragment; {weekday} is the localized day name.
+  /// A weekly item's schedule. {weekday} is monday, tuesday... sunday.
   ///
   /// In es, this message translates to:
-  /// **'cada {weekday}'**
+  /// **'{weekday, select, monday{Cada lunes} tuesday{Cada martes} wednesday{Cada miércoles} thursday{Cada jueves} friday{Cada viernes} saturday{Cada sábado} other{Cada domingo}}'**
   String recurringBillsScheduleWeekly(String weekday);
 
-  /// No description provided for @recurringBillsScheduleBiweekly.
+  /// An every-2-weeks item's schedule. {weekday} is monday, tuesday... sunday.
   ///
   /// In es, this message translates to:
-  /// **'cada 2 semanas, los {weekday}'**
+  /// **'{weekday, select, monday{Cada 2 semanas, los lunes} tuesday{Cada 2 semanas, los martes} wednesday{Cada 2 semanas, los miércoles} thursday{Cada 2 semanas, los jueves} friday{Cada 2 semanas, los viernes} saturday{Cada 2 semanas, los sábados} other{Cada 2 semanas, los domingos}}'**
   String recurringBillsScheduleBiweekly(String weekday);
 
   /// No description provided for @recurringBillsScheduleSemimonthly.
   ///
   /// In es, this message translates to:
-  /// **'días {day} y {secondDay}'**
+  /// **'Días {day} y {secondDay}'**
   String recurringBillsScheduleSemimonthly(int day, int secondDay);
 
-  /// {day} is the day of the month, two digits.
+  /// No description provided for @recurringBillsScheduleMonthly.
   ///
   /// In es, this message translates to:
-  /// **'cada mes, día {day}'**
-  String recurringBillsScheduleMonthly(String day);
+  /// **'Cada mes, día {day}'**
+  String recurringBillsScheduleMonthly(int day);
 
   /// {date} is the localized month and day, e.g. '3 de marzo'.
   ///
   /// In es, this message translates to:
-  /// **'cada año, {date}'**
+  /// **'Cada año, {date}'**
   String recurringBillsScheduleYearly(String date);
+
+  /// {schedule} is a recurringBillsSchedule* text; {date} a short day and month, e.g. '15 dic'.
+  ///
+  /// In es, this message translates to:
+  /// **'{schedule}, hasta el {date}'**
+  String recurringBillsScheduleUntil(String schedule, String date);
+
+  /// Under the schedule in the edit form. {kind} is 'average' when the amount is a monthly average (weekly, yearly...), 'exact' otherwise.
+  ///
+  /// In es, this message translates to:
+  /// **'{kind, select, average{Unos {amount} al mes} other{{amount} al mes}}'**
+  String recurringBillsMonthlyCost(String kind, String amount);
 
   /// No description provided for @monthlyNotesTitle.
   ///
   /// In es, this message translates to:
-  /// **'Notas'**
+  /// **'Notas del mes'**
   String get monthlyNotesTitle;
 
   /// No description provided for @monthlyNotesThisMonth.
@@ -3192,74 +3054,80 @@ abstract class AppLocalizations {
   /// No description provided for @monthlyNotesNextMonth.
   ///
   /// In es, this message translates to:
-  /// **'Para el siguiente mes'**
+  /// **'Para el mes siguiente'**
   String get monthlyNotesNextMonth;
 
   /// No description provided for @monthlyNotesEmpty.
   ///
   /// In es, this message translates to:
-  /// **'Toca para agregar notas.'**
+  /// **'Nada escrito todavía. Toca para escribir.'**
   String get monthlyNotesEmpty;
+
+  /// No description provided for @monthlyNotesWrite.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribir'**
+  String get monthlyNotesWrite;
+
+  /// No description provided for @monthlyNotesHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que no cabe en números.'**
+  String get monthlyNotesHint;
 
   /// No description provided for @notificationsTitle.
   ///
   /// In es, this message translates to:
-  /// **'Notificaciones'**
+  /// **'Avisos'**
   String get notificationsTitle;
-
-  /// Unread notifications count (feminine: 'notificaciones').
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{1 nueva} other{{count} nuevas}}'**
-  String notificationsNewCount(int count);
-
-  /// Shown when there are no unread notifications.
-  ///
-  /// In es, this message translates to:
-  /// **'Al día'**
-  String get notificationsUpToDate;
 
   /// No description provided for @notificationsMarkAllRead.
   ///
   /// In es, this message translates to:
-  /// **'Marcar leídas'**
+  /// **'Marcar todo como leído'**
   String get notificationsMarkAllRead;
+
+  /// Screen-reader label for the violet dot after an unread notification's title.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin leer'**
+  String get notificationsUnread;
 
   /// No description provided for @notificationsEmpty.
   ///
   /// In es, this message translates to:
-  /// **'Aún no hay notificaciones. Aquí verás avisos de pagos, metas y presupuesto.'**
+  /// **'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.'**
   String get notificationsEmpty;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Todo tranquilo.'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptyAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir qué avisar'**
+  String get notificationsEmptyAction;
 
   /// No description provided for @notificationsMinutesAgo.
   ///
   /// In es, this message translates to:
-  /// **'Hace {minutes} min'**
+  /// **'hace {minutes} min'**
   String notificationsMinutesAgo(int minutes);
 
   /// No description provided for @notificationsHoursAgo.
   ///
   /// In es, this message translates to:
-  /// **'Hace {hours} h'**
+  /// **'hace {hours} h'**
   String notificationsHoursAgo(int hours);
-
-  /// No description provided for @notificationsToday.
-  ///
-  /// In es, this message translates to:
-  /// **'Hoy'**
-  String get notificationsToday;
 
   /// No description provided for @notificationsYesterday.
   ///
   /// In es, this message translates to:
-  /// **'Ayer'**
+  /// **'ayer'**
   String get notificationsYesterday;
-
-  /// No description provided for @notificationsDaysAgo.
-  ///
-  /// In es, this message translates to:
-  /// **'Hace {days} d'**
-  String notificationsDaysAgo(int days);
 
   /// Stored in-app notification, written in the language of the device that detects it; {name} is the debt's name.
   ///
@@ -3372,7 +3240,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsPartnerBillTitle.
   ///
   /// In es, this message translates to:
-  /// **'Nueva factura recurrente'**
+  /// **'Nuevo fijo'**
   String get notificationsPartnerBillTitle;
 
   /// No description provided for @notificationsPartnerCategoryTitle.
@@ -3396,26 +3264,50 @@ abstract class AppLocalizations {
   /// No description provided for @notificationPrefsTitle.
   ///
   /// In es, this message translates to:
-  /// **'Preferencias'**
+  /// **'Qué avisar'**
   String get notificationPrefsTitle;
 
-  /// No description provided for @notificationPrefsRemindersHeader.
+  /// No description provided for @notificationPrefsIntro.
   ///
   /// In es, this message translates to:
-  /// **'RECORDATORIOS'**
-  String get notificationPrefsRemindersHeader;
+  /// **'Solo para ti: {name} elige los suyos.'**
+  String notificationPrefsIntro(String name);
+
+  /// No description provided for @notificationPrefsIntroSolo.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo para ti: cada quien elige los suyos.'**
+  String get notificationPrefsIntroSolo;
 
   /// No description provided for @notificationPrefsDailyReminder.
   ///
   /// In es, this message translates to:
-  /// **'Recordatorio diario'**
+  /// **'Recordatorio para anotar'**
   String get notificationPrefsDailyReminder;
+
+  /// No description provided for @notificationPrefsDailyReminderWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los días, a esta hora'**
+  String get notificationPrefsDailyReminderWhen;
+
+  /// No description provided for @notificationPrefsDailyReminderTimeTooltip.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar la hora'**
+  String get notificationPrefsDailyReminderTimeTooltip;
 
   /// No description provided for @notificationPrefsDebtPayments.
   ///
   /// In es, this message translates to:
-  /// **'Pagos de deudas'**
+  /// **'Pagos que se acercan'**
   String get notificationPrefsDebtPayments;
+
+  /// No description provided for @notificationPrefsDebtPaymentsWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'3, 2 y 1 día antes, y el mismo día'**
+  String get notificationPrefsDebtPaymentsWhen;
 
   /// No description provided for @notificationPrefsGoalProgress.
   ///
@@ -3423,23 +3315,41 @@ abstract class AppLocalizations {
   /// **'Avance de metas'**
   String get notificationPrefsGoalProgress;
 
-  /// No description provided for @notificationPrefsAlertsHeader.
+  /// No description provided for @notificationPrefsGoalProgressWhen.
   ///
   /// In es, this message translates to:
-  /// **'ALERTAS'**
-  String get notificationPrefsAlertsHeader;
+  /// **'Una vez, cuando una meta pasa el 90%'**
+  String get notificationPrefsGoalProgressWhen;
 
   /// No description provided for @notificationPrefsBudgetExceeded.
   ///
   /// In es, this message translates to:
-  /// **'Exceso de presupuesto'**
+  /// **'Categoría que se pasa'**
   String get notificationPrefsBudgetExceeded;
+
+  /// No description provided for @notificationPrefsBudgetExceededWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'Una vez por categoría y mes'**
+  String get notificationPrefsBudgetExceededWhen;
 
   /// No description provided for @notificationPrefsPartnerActivity.
   ///
   /// In es, this message translates to:
-  /// **'Actividad de mi pareja'**
+  /// **'Lo que anota tu pareja'**
   String get notificationPrefsPartnerActivity;
+
+  /// No description provided for @notificationPrefsPartnerActivityNamed.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que anota {name}'**
+  String notificationPrefsPartnerActivityNamed(String name);
+
+  /// No description provided for @notificationPrefsPartnerActivityWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada movimiento, cuenta o meta nueva'**
+  String get notificationPrefsPartnerActivityWhen;
 
   /// No description provided for @notificationPrefsWeeklySummary.
   ///
@@ -3447,29 +3357,29 @@ abstract class AppLocalizations {
   /// **'Resumen semanal'**
   String get notificationPrefsWeeklySummary;
 
+  /// {time} is a localized time of day, e.g. '7:00 p. m.'.
+  ///
+  /// In es, this message translates to:
+  /// **'Los domingos, {time}'**
+  String notificationPrefsWeeklySummaryWhen(String time);
+
   /// No description provided for @exportTitle.
   ///
   /// In es, this message translates to:
-  /// **'Exportar reporte'**
+  /// **'Exportar'**
   String get exportTitle;
-
-  /// No description provided for @exportSubtitle.
-  ///
-  /// In es, this message translates to:
-  /// **'PDF o CSV'**
-  String get exportSubtitle;
-
-  /// No description provided for @exportCsvHint.
-  ///
-  /// In es, this message translates to:
-  /// **'Un archivo por sección, con montos sin formato y fechas AAAA-MM-DD, listo para una hoja de cálculo.'**
-  String get exportCsvHint;
 
   /// No description provided for @exportPeriod.
   ///
   /// In es, this message translates to:
   /// **'Periodo'**
   String get exportPeriod;
+
+  /// The months a report covers, e.g. 'Agosto – octubre 2026'.
+  ///
+  /// In es, this message translates to:
+  /// **'{from} – {to}'**
+  String exportPeriodRange(String from, String to);
 
   /// No description provided for @exportPeriodThisMonth.
   ///
@@ -3480,19 +3390,19 @@ abstract class AppLocalizations {
   /// No description provided for @exportPeriodQuarter.
   ///
   /// In es, this message translates to:
-  /// **'Trimestre'**
+  /// **'3 meses'**
   String get exportPeriodQuarter;
 
   /// No description provided for @exportPeriodYear.
   ///
   /// In es, this message translates to:
-  /// **'Año'**
+  /// **'12 meses'**
   String get exportPeriodYear;
 
   /// No description provided for @exportInclude.
   ///
   /// In es, this message translates to:
-  /// **'Incluir en el reporte'**
+  /// **'Qué incluir'**
   String get exportInclude;
 
   /// Toggle and report section; also names its CSV file.
@@ -3510,8 +3420,44 @@ abstract class AppLocalizations {
   /// No description provided for @exportDebtsAndSavings.
   ///
   /// In es, this message translates to:
-  /// **'Deudas y ahorros'**
+  /// **'Deudas y metas'**
   String get exportDebtsAndSavings;
+
+  /// No description provided for @exportPdfTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'PDF'**
+  String get exportPdfTitle;
+
+  /// No description provided for @exportPdfFor.
+  ///
+  /// In es, this message translates to:
+  /// **'Para leer o imprimir, con los montos con formato.'**
+  String get exportPdfFor;
+
+  /// No description provided for @exportCsvTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'CSV para hoja de cálculo'**
+  String get exportCsvTitle;
+
+  /// No description provided for @exportCsvFor.
+  ///
+  /// In es, this message translates to:
+  /// **'Un archivo por sección, con números limpios y fechas AAAA-MM-DD.'**
+  String get exportCsvFor;
+
+  /// No description provided for @exportOnDevice.
+  ///
+  /// In es, this message translates to:
+  /// **'El archivo se arma en este teléfono con los datos ya descifrados: nada sale de aquí hasta que lo compartes.'**
+  String get exportOnDevice;
+
+  /// No description provided for @exportAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar'**
+  String get exportAction;
 
   /// Report section; also names its CSV file.
   ///
@@ -3524,18 +3470,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Metas de ahorro'**
   String get exportSavingsGoals;
-
-  /// No description provided for @exportGeneratePdf.
-  ///
-  /// In es, this message translates to:
-  /// **'Generar PDF'**
-  String get exportGeneratePdf;
-
-  /// No description provided for @exportGenerateCsv.
-  ///
-  /// In es, this message translates to:
-  /// **'Generar CSV'**
-  String get exportGenerateCsv;
 
   /// File name of the shared PDF; keep it ASCII, no spaces.
   ///
@@ -3627,28 +3561,16 @@ abstract class AppLocalizations {
   /// **'Copia de seguridad'**
   String get backupTitle;
 
-  /// No description provided for @backupSubtitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Todo el hogar, cifrado'**
-  String get backupSubtitle;
-
   /// No description provided for @backupDescription.
   ///
   /// In es, this message translates to:
-  /// **'La copia guarda cuentas, movimientos, presupuestos, deudas, metas, facturas recurrentes y notas en un archivo cifrado con la llave del hogar. Sin esa llave no se puede leer, así que puedes guardarlo en tu correo o en la nube.'**
+  /// **'Todo el hogar en un archivo cifrado con la llave de la casa. Sin la llave no se puede leer: se puede guardar en el correo o en la nube.'**
   String get backupDescription;
-
-  /// No description provided for @backupSameHouseholdOnly.
-  ///
-  /// In es, this message translates to:
-  /// **'Solo se puede restaurar en este mismo hogar.'**
-  String get backupSameHouseholdOnly;
 
   /// No description provided for @backupCreate.
   ///
   /// In es, this message translates to:
-  /// **'Crear copia'**
+  /// **'Crear copia ahora'**
   String get backupCreate;
 
   /// No description provided for @backupRestoreAction.
@@ -3656,6 +3578,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Restaurar una copia'**
   String get backupRestoreAction;
+
+  /// No description provided for @backupRestoreLead.
+  ///
+  /// In es, this message translates to:
+  /// **'Al restaurar'**
+  String get backupRestoreLead;
+
+  /// Follows backupRestoreLead, which is shown in bold; keep the leading comma.
+  ///
+  /// In es, this message translates to:
+  /// **', el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.'**
+  String get backupRestoreNote;
 
   /// No description provided for @backupErrorTitle.
   ///
@@ -3740,6 +3674,636 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Tipo de dato no soportado en la copia: {type}'**
   String backupErrorUnsupportedType(String type);
+
+  /// Plan tab: the segment with the month's budget.
+  ///
+  /// In es, this message translates to:
+  /// **'Presupuesto'**
+  String get planBudget;
+
+  /// Right of a budget line: what is still there to spend, already formatted.
+  ///
+  /// In es, this message translates to:
+  /// **'quedan {amount}'**
+  String budgetLeft(String amount);
+
+  /// Right of a budget line spent exactly to its plan.
+  ///
+  /// In es, this message translates to:
+  /// **'Completo'**
+  String get budgetComplete;
+
+  /// Right of a budget line with spending and nothing planned.
+  ///
+  /// In es, this message translates to:
+  /// **'sin plan'**
+  String get budgetUnplanned;
+
+  /// Small line under a budget line: spent of the plan.
+  ///
+  /// In es, this message translates to:
+  /// **'{spent} de {limit}'**
+  String budgetSpentOf(String spent, String limit);
+
+  /// No description provided for @budgetSpentNoPlan.
+  ///
+  /// In es, this message translates to:
+  /// **'{spent} gastado'**
+  String budgetSpentNoPlan(String spent);
+
+  /// Notice on top of the budget when one category went over.
+  ///
+  /// In es, this message translates to:
+  /// **'{category} se pasó {amount}'**
+  String budgetOverTitle(String category, String amount);
+
+  /// No description provided for @budgetOverManyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} categorías se pasaron'**
+  String budgetOverManyTitle(int count);
+
+  /// No description provided for @budgetOverMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Sale de lo que queda del plan.'**
+  String get budgetOverMessage;
+
+  /// No description provided for @budgetOverManyMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'{category} es la que más: {amount}.'**
+  String budgetOverManyMessage(String category, String amount);
+
+  /// Line under the budget: total planned against what came in.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · faltan {amount} por asignar'**
+  String budgetPlannedRemaining(String planned, String amount);
+
+  /// No description provided for @budgetPlannedOver.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · {amount} más de lo que entró'**
+  String budgetPlannedOver(String planned, String amount);
+
+  /// No description provided for @budgetPlannedNoIncome.
+  ///
+  /// In es, this message translates to:
+  /// **'{planned} planeado · aún no entra nada este mes'**
+  String budgetPlannedNoIncome(String planned);
+
+  /// Over the total of every goal, with two members.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorrado entre los dos'**
+  String get goalsSavedTogether;
+
+  /// Under the goals total: goals with a date that are on time.
+  ///
+  /// In es, this message translates to:
+  /// **'van a tiempo en {onTime} de {dated} metas'**
+  String goalsOnTime(int onTime, int dated);
+
+  /// No description provided for @goalsToGo.
+  ///
+  /// In es, this message translates to:
+  /// **'faltan {amount} para completarlas'**
+  String goalsToGo(String amount);
+
+  /// A goal's line: saved of target, then its date (or «sin fecha» / «va atrasada»).
+  ///
+  /// In es, this message translates to:
+  /// **'{saved} de {target} · {when}'**
+  String goalRowLine(String saved, String target, String when);
+
+  /// No description provided for @goalFor.
+  ///
+  /// In es, this message translates to:
+  /// **'para {date}'**
+  String goalFor(String date);
+
+  /// Notice under the goals summing up the debts.
+  ///
+  /// In es, this message translates to:
+  /// **'Deudas: libres en {date}'**
+  String goalsDebtsFree(String date);
+
+  /// No description provided for @goalsDebtsStuck.
+  ///
+  /// In es, this message translates to:
+  /// **'Deudas: con los pagos actuales no se terminan'**
+  String get goalsDebtsStuck;
+
+  /// No description provided for @goalsDebtsOrder.
+  ///
+  /// In es, this message translates to:
+  /// **'Primero {first}, luego {second}.'**
+  String goalsDebtsOrder(String first, String second);
+
+  /// No description provided for @goalsDebtsOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo queda {name}.'**
+  String goalsDebtsOnly(String name);
+
+  /// Goal detail, in green: on time at this monthly pace.
+  ///
+  /// In es, this message translates to:
+  /// **'Van a tiempo: {amount} al mes'**
+  String goalOnTimePace(String amount);
+
+  /// No description provided for @goalBehindPace.
+  ///
+  /// In es, this message translates to:
+  /// **'Van atrasados: hacen falta {amount} al mes'**
+  String goalBehindPace(String amount);
+
+  /// No description provided for @goalReached.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Meta cumplida!'**
+  String get goalReached;
+
+  /// No description provided for @goalOfFor.
+  ///
+  /// In es, this message translates to:
+  /// **'de {target} · {when}'**
+  String goalOfFor(String target, String when);
+
+  /// No description provided for @goalInterest.
+  ///
+  /// In es, this message translates to:
+  /// **'Incluye {amount} de intereses'**
+  String goalInterest(String amount);
+
+  /// No description provided for @goalContributionOf.
+  ///
+  /// In es, this message translates to:
+  /// **'Aporte de {month}'**
+  String goalContributionOf(String month);
+
+  /// Action of the new-goal form.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get goalCreate;
+
+  /// New goal: what it takes each month to get there.
+  ///
+  /// In es, this message translates to:
+  /// **'{amount} al mes'**
+  String goalNeededTitle(String amount);
+
+  /// No description provided for @goalNeededMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Es lo que hace falta para llegar en {date}.'**
+  String goalNeededMessage(String date);
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get commonEdit;
+
+  /// No description provided for @debtsLeftAvalanche.
+  ///
+  /// In es, this message translates to:
+  /// **'quedan {amount} · orden Avalancha (primero la tasa más alta)'**
+  String debtsLeftAvalanche(String amount);
+
+  /// A card in the debts list: rate, minimum payment, payment day.
+  ///
+  /// In es, this message translates to:
+  /// **'{rate}% · mín. {amount} · día {day}'**
+  String debtsRowCard(String rate, String amount, int day);
+
+  /// No description provided for @debtsRowLoan.
+  ///
+  /// In es, this message translates to:
+  /// **'{rate}% · cuota {amount} · día {day}'**
+  String debtsRowLoan(String rate, String amount, int day);
+
+  /// Badge on the first debt of the Avalanche order.
+  ///
+  /// In es, this message translates to:
+  /// **'1.º'**
+  String get debtsFirst;
+
+  /// No description provided for @debtsNextTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximo pago: {name}, {date}'**
+  String debtsNextTitle(String name, String date);
+
+  /// No description provided for @debtsNextMinSuggested.
+  ///
+  /// In es, this message translates to:
+  /// **'{min} mínimo · sugerido {suggested}'**
+  String debtsNextMinSuggested(String min, String suggested);
+
+  /// No description provided for @debtsNextMin.
+  ///
+  /// In es, this message translates to:
+  /// **'{min} mínimo'**
+  String debtsNextMin(String min);
+
+  /// No description provided for @debtsDetailSub.
+  ///
+  /// In es, this message translates to:
+  /// **'de {reference} · {pct}% pagado · {status}'**
+  String debtsDetailSub(String reference, int pct, String status);
+
+  /// No description provided for @debtsRateOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Tasa {rate}% E.A.'**
+  String debtsRateOnly(String rate);
+
+  /// No description provided for @debtsRateExtra.
+  ///
+  /// In es, this message translates to:
+  /// **'Tasa {rate}% E.A. · abono extra {amount}'**
+  String debtsRateExtra(String rate, String amount);
+
+  /// No description provided for @debtsPaidBy.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagado por'**
+  String get debtsPaidBy;
+
+  /// Next debt payment: how soon it is due.
+  ///
+  /// In es, this message translates to:
+  /// **'{days, plural, =0{hoy} =1{mañana} other{en {days} días}}'**
+  String debtsInDays(int days);
+
+  /// No description provided for @debtsDeletePaymentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se quitará el pago de {amount} del {date}.'**
+  String debtsDeletePaymentMessage(String amount, String date);
+
+  /// No description provided for @challengeSavedIn.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorrado en el reto'**
+  String get challengeSavedIn;
+
+  /// No description provided for @challengeCells.
+  ///
+  /// In es, this message translates to:
+  /// **'{done} de {total} casillas · meta {target}'**
+  String challengeCells(int done, int total, String target);
+
+  /// No description provided for @challengeNextTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente: {amount}'**
+  String challengeNextTitle(String amount);
+
+  /// No description provided for @challengeNextMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Márcala cuando la aporten.'**
+  String get challengeNextMessage;
+
+  /// No description provided for @challengeMark.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar'**
+  String get challengeMark;
+
+  /// No description provided for @challengeDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reto completo'**
+  String get challengeDoneTitle;
+
+  /// No description provided for @challengeDoneMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorraron {amount}.'**
+  String challengeDoneMessage(String amount);
+
+  /// No description provided for @annualTitleYear.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen {year}'**
+  String annualTitleYear(int year);
+
+  /// No description provided for @annualAverage.
+  ///
+  /// In es, this message translates to:
+  /// **'prom. {amount}'**
+  String annualAverage(String amount);
+
+  /// No description provided for @annualHighestTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{month} fue el mes más alto'**
+  String annualHighestTitle(String month);
+
+  /// No description provided for @annualHighestReason.
+  ///
+  /// In es, this message translates to:
+  /// **'{category}: {amount} más que en un mes normal.'**
+  String annualHighestReason(String category, String amount);
+
+  /// No description provided for @accountsAvailableLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible entre las cuentas'**
+  String get accountsAvailableLabel;
+
+  /// No description provided for @accountsAvailableNote.
+  ///
+  /// In es, this message translates to:
+  /// **'las tarjetas y créditos no suman aquí'**
+  String get accountsAvailableNote;
+
+  /// No description provided for @accountsCards.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas'**
+  String get accountsCards;
+
+  /// No description provided for @accountsRowExcluded.
+  ///
+  /// In es, this message translates to:
+  /// **'{type} · no suma en «Disponible»'**
+  String accountsRowExcluded(String type);
+
+  /// No description provided for @accountsIncludeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Apágalo para cuentas que no se tocan, como un ahorro aparte.'**
+  String get accountsIncludeHint;
+
+  /// No description provided for @accountsAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva cuenta'**
+  String get accountsAdd;
+
+  /// No description provided for @commonCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get commonCreate;
+
+  /// No description provided for @debtsFormTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{type, select, tarjeta{Tarjeta de crédito} credito{Crédito} hipoteca{Hipoteca} vehiculo{Crédito de vehículo} other{Deuda}}'**
+  String debtsFormTitle(String type);
+
+  /// No description provided for @debtsCardDays.
+  ///
+  /// In es, this message translates to:
+  /// **'Corte día {cutoff} · paga día {day}'**
+  String debtsCardDays(int cutoff, int day);
+
+  /// No description provided for @debtsCardPayDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Paga día {day}'**
+  String debtsCardPayDay(int day);
+
+  /// No description provided for @debtsCardPlaceholder.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu tarjeta'**
+  String get debtsCardPlaceholder;
+
+  /// No description provided for @debtsOwedToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuánto deben hoy'**
+  String get debtsOwedToday;
+
+  /// No description provided for @debtsEndsIn.
+  ///
+  /// In es, this message translates to:
+  /// **'Terminan en {date}'**
+  String debtsEndsIn(String date);
+
+  /// No description provided for @debtsEndsSooner.
+  ///
+  /// In es, this message translates to:
+  /// **'Si abonan {amount} más al mes: {date}.'**
+  String debtsEndsSooner(String amount, String date);
+
+  /// No description provided for @debtsNeverEnds.
+  ///
+  /// In es, this message translates to:
+  /// **'Con esa cuota no se termina de pagar'**
+  String get debtsNeverEnds;
+
+  /// No description provided for @debtsNeverEndsHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Los intereses se comen el pago: suban la cuota o abonen más.'**
+  String get debtsNeverEndsHint;
+
+  /// No description provided for @investmentsWorthToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Valen hoy'**
+  String get investmentsWorthToday;
+
+  /// No description provided for @investmentsPutIn.
+  ///
+  /// In es, this message translates to:
+  /// **'pusieron {amount}'**
+  String investmentsPutIn(String amount);
+
+  /// No description provided for @investmentsGaining.
+  ///
+  /// In es, this message translates to:
+  /// **'ganan'**
+  String get investmentsGaining;
+
+  /// No description provided for @investmentsLosing.
+  ///
+  /// In es, this message translates to:
+  /// **'pierden'**
+  String get investmentsLosing;
+
+  /// No description provided for @investmentsManualNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Se actualizan a mano: la app no se conecta a ningún banco.'**
+  String get investmentsManualNote;
+
+  /// No description provided for @investmentsAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva inversión'**
+  String get investmentsAdd;
+
+  /// No description provided for @transfersRowTo.
+  ///
+  /// In es, this message translates to:
+  /// **'A {name}'**
+  String transfersRowTo(String name);
+
+  /// No description provided for @transfersRowFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'de {name} · {date}'**
+  String transfersRowFrom(String name, String date);
+
+  /// No description provided for @transfersHas.
+  ///
+  /// In es, this message translates to:
+  /// **'tiene {amount}'**
+  String transfersHas(String amount);
+
+  /// No description provided for @transfersLeaves.
+  ///
+  /// In es, this message translates to:
+  /// **'queda {amount}'**
+  String transfersLeaves(String amount);
+
+  /// No description provided for @transfersNotExpense.
+  ///
+  /// In es, this message translates to:
+  /// **'No es un gasto: no toca el presupuesto.'**
+  String get transfersNotExpense;
+
+  /// No description provided for @transfersSwap.
+  ///
+  /// In es, this message translates to:
+  /// **'Invertir el sentido'**
+  String get transfersSwap;
+
+  /// No description provided for @demoSeed.
+  ///
+  /// In es, this message translates to:
+  /// **'Llenar con datos de prueba'**
+  String get demoSeed;
+
+  /// No description provided for @demoRemove.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar datos de prueba'**
+  String get demoRemove;
+
+  /// No description provided for @demoSeedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Llenar con datos de prueba?'**
+  String get demoSeedTitle;
+
+  /// No description provided for @demoSeedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se añaden tres meses de cuentas, una tarjeta, un crédito, metas, inversiones, fijos y movimientos inventados. Lo que ya tienen no se toca, y no avisan a nadie.'**
+  String get demoSeedMessage;
+
+  /// No description provided for @demoSeedConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Llenar'**
+  String get demoSeedConfirm;
+
+  /// No description provided for @demoSeedDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo'**
+  String get demoSeedDoneTitle;
+
+  /// No description provided for @demoSeedDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Se escribieron {count} registros de prueba.'**
+  String demoSeedDone(int count);
+
+  /// No description provided for @demoRemoveTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Quitar los datos de prueba?'**
+  String get demoRemoveTitle;
+
+  /// No description provided for @demoRemoveMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se borra solo lo inventado. Lo que anotaron ustedes se queda.'**
+  String get demoRemoveMessage;
+
+  /// No description provided for @demoRemoveConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar'**
+  String get demoRemoveConfirm;
+
+  /// No description provided for @demoRemoveDoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitados'**
+  String get demoRemoveDoneTitle;
+
+  /// No description provided for @demoRemoveDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Se borraron {count} registros de prueba.'**
+  String demoRemoveDone(int count);
+
+  /// No description provided for @demoError.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.'**
+  String get demoError;
+
+  /// No description provided for @householdInviteValidUntil.
+  ///
+  /// In es, this message translates to:
+  /// **'Sirve una vez y vence el {date}.'**
+  String householdInviteValidUntil(String date);
+
+  /// No description provided for @householdInviteNewCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Generar otro código'**
+  String get householdInviteNewCode;
+
+  /// No description provided for @householdInviteNewCodeTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Generar otro código?'**
+  String get householdInviteNewCodeTitle;
+
+  /// No description provided for @householdInviteNewCodeMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'El código que ya mandaste dejará de funcionar. Hazlo si llegó a quien no era o si se perdió.'**
+  String get householdInviteNewCodeMessage;
+
+  /// No description provided for @householdJoinConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Entrar a {household}?'**
+  String householdJoinConfirmTitle(String household);
+
+  /// No description provided for @householdJoinConfirmTitleUnnamed.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Entrar a esta casa?'**
+  String get householdJoinConfirmTitleUnnamed;
+
+  /// No description provided for @householdJoinConfirmMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Te invitó {name}. Desde ahora los dos van a ver y anotar el dinero de esta casa.'**
+  String householdJoinConfirmMessage(String name);
+
+  /// No description provided for @householdJoinConfirmMessageUnnamed.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde ahora los dos van a ver y anotar el dinero de esta casa.'**
+  String get householdJoinConfirmMessageUnnamed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

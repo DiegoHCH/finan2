@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/error_messages.dart';
 import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_chip.dart';
 import '../../../../core/widgets/finan2_field.dart';
 import '../../../../core/widgets/finan2_form_top.dart';
+import '../../../../core/widgets/finan2_section_label.dart';
+import '../../../../core/widgets/finan2_set_row.dart';
+import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../data/category_model.dart';
@@ -31,12 +35,15 @@ const _iconsByType = <CategoryType, List<String>>{
   CategoryType.ahorro: ['viaje', 'emergencia', 'meta', 'casa'],
 };
 
-const _colorSwatches = [0xFF0F9D74, 0xFFD4453F, 0xFFC8892F, 0xFF7C5CE0, 0xFF2F7FC8, 0xFFD466A6];
+const _colorSwatches = Finan2Palette.categorySwatches;
 
 class EditCategoryScreen extends ConsumerStatefulWidget {
-  const EditCategoryScreen({this.category, super.key});
+  const EditCategoryScreen({this.category, this.initialType = CategoryType.gasto, super.key});
 
   final Category? category;
+
+  /// A new category's kind - the one Categorías was showing.
+  final CategoryType initialType;
 
   @override
   ConsumerState<EditCategoryScreen> createState() => _EditCategoryScreenState();
@@ -44,7 +51,7 @@ class EditCategoryScreen extends ConsumerStatefulWidget {
 
 class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
   late final _nameController = TextEditingController(text: widget.category?.name ?? '');
-  late CategoryType _type = widget.category?.type ?? CategoryType.gasto;
+  late CategoryType _type = widget.category?.type ?? widget.initialType;
   late String _iconSlug = widget.category?.iconSlug ?? _iconsByType[_type]!.first;
   late int _color = widget.category?.color ?? _colorSwatches.first;
   late bool _rollover = widget.category?.rollover ?? false;
@@ -189,53 +196,72 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final isEditing = widget.category != null;
     final icons = _iconsByType[_type]!;
+    final tone = Finan2Tone.of(context, Color(_color));
     final l10n = context.l10n;
 
     return Scaffold(
       appBar: Finan2FormTop(
         title: isEditing ? l10n.categoriesEditTitle : l10n.categoriesNewTitle,
         onSave: _save,
+        closeIcon: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(Finan2Space.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Finan2Space.lg,
+          Finan2Space.sm,
+          Finan2Space.lg,
+          Finan2Space.xxl,
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-                decoration: BoxDecoration(
-                  color: colors.surfaceAlt,
-                  borderRadius: BorderRadius.circular(Finan2Radius.field),
-                  border: Border.all(color: colors.line, style: BorderStyle.solid),
+            // How it will look, while color and icon are chosen.
+            Row(
+              key: const Key('categoryPreview'),
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: tone.tint,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(Finan2Icons.categoria(_iconSlug), size: 26, color: tone.color),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Color(_color),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(Finan2Icons.categoria(_iconSlug), size: 15, color: Colors.white),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _nameController.text.isEmpty ? l10n.categoriesPreview : _nameController.text,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                    ),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  // Follows the name as it's typed.
+                  child: ListenableBuilder(
+                    listenable: _nameController,
+                    builder: (context, _) {
+                      final name = _nameController.text.trim();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name.isEmpty ? l10n.categoriesPreview : name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
+                              color: name.isEmpty ? colors.inkFaint : colors.ink,
+                            ),
+                          ),
+                          Text(_type.label, style: TextStyle(fontSize: 12, color: colors.inkFaint)),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
             const SizedBox(height: Finan2Space.lg),
             Finan2Field(label: l10n.commonName, controller: _nameController, validator: null),
             const SizedBox(height: Finan2Space.lg),
-            Text(l10n.categoriesTypeLabel, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
+            Finan2SectionLabel(l10n.categoriesTypeLabel),
             Wrap(
               spacing: 7,
               runSpacing: 7,
@@ -249,8 +275,21 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               ],
             ),
             const SizedBox(height: Finan2Space.lg),
-            Text(l10n.categoriesIcon, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
+            Finan2SectionLabel(l10n.categoriesColor),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                for (final swatch in _colorSwatches)
+                  _Swatch(
+                    color: Finan2Tone.of(context, Color(swatch)).color,
+                    selected: _color == swatch,
+                    onTap: () => setState(() => _color = swatch),
+                  ),
+              ],
+            ),
+            const SizedBox(height: Finan2Space.lg),
+            Finan2SectionLabel(l10n.categoriesIcon),
             Wrap(
               spacing: 7,
               runSpacing: 7,
@@ -258,50 +297,29 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                 for (final slug in icons)
                   Finan2Chip(
                     icon: Finan2Icons.categoria(slug),
+                    tone: tone,
                     selected: _iconSlug == slug,
                     onTap: () => setState(() => _iconSlug = slug),
                   ),
               ],
             ),
-            const SizedBox(height: Finan2Space.lg),
-            Text(l10n.categoriesColor, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: Finan2Space.sm),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                for (final swatch in _colorSwatches)
-                  GestureDetector(
-                    onTap: () => setState(() => _color = swatch),
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(swatch),
-                        border: _color == swatch
-                            ? Border.all(color: Theme.of(context).colorScheme.surface, width: 2)
-                            : null,
-                        boxShadow: _color == swatch
-                            ? [BoxShadow(color: colors.ink, spreadRadius: 2)]
-                            : null,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
             if (_type != CategoryType.ingreso) ...[
               const SizedBox(height: Finan2Space.lg),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.categoriesRolloverTitle),
-                subtitle: Text(l10n.categoriesRolloverSubtitle),
-                value: _rollover,
-                onChanged: (value) => setState(() => _rollover = value),
+              Finan2Sheet(
+                children: [
+                  Finan2SetRow(
+                    label: l10n.categoriesRolloverTitle,
+                    detail: l10n.categoriesRolloverSubtitle,
+                    trailing: Switch(
+                      value: _rollover,
+                      onChanged: (value) => setState(() => _rollover = value),
+                    ),
+                  ),
+                ],
               ),
             ],
             if (isEditing) ...[
-              const SizedBox(height: Finan2Space.xxl),
+              const SizedBox(height: Finan2Space.xl),
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: colors.expense),
@@ -309,6 +327,39 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A `.colors` dot; the chosen one is ringed in ink.
+class _Swatch extends StatelessWidget {
+  const _Swatch({required this.color, required this.selected, required this.onTap});
+
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 34,
+          height: 34,
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: selected ? colors.ink : Colors.transparent, width: 2),
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+          ),
         ),
       ),
     );

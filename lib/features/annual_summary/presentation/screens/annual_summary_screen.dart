@@ -3,23 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/finan2_app_top.dart';
-import '../../../../core/widgets/finan2_period_picker.dart';
-import '../../../../core/widgets/finan2_stat_box.dart';
+import '../../../../core/theme/finan2_tone.dart';
+import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_notice.dart';
+import '../../../../core/widgets/finan2_segmented_control.dart';
+import '../../../../core/widgets/finan2_split.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../household/data/household_model.dart';
+import '../../../categories/data/category_model.dart';
+import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../viewmodels/annual_summary_providers.dart';
 
-/// "Resumen anual": the whole year at a glance - reached from Inicio, not
-/// its own bottom-nav tab, matching the mockup (its nav always highlights
-/// "Inicio"). The year's savings-goal card is left out on purpose: Metas
-/// (Fase 5) doesn't exist yet to feed it, same call already made for the
-/// Dashboard's patrimonio neto card.
+/// Plan · año: what came in, went out and stayed, one bar per month - the
+/// highest in violet with why it was high underneath, the months still to
+/// come as gaps. Reached from Plan's header.
 class AnnualSummaryScreen extends ConsumerStatefulWidget {
-  const AnnualSummaryScreen({required this.household, super.key});
-
-  final Household household;
+  const AnnualSummaryScreen({super.key});
 
   @override
   ConsumerState<AnnualSummaryScreen> createState() => _AnnualSummaryScreenState();
@@ -31,143 +30,125 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final household = widget.household;
     final colors = Theme.of(context).extension<Finan2Colors>()!;
-    final summary = ref.watch(annualSummaryProvider(_year));
-    final formatMoney = ref.watch(moneyFormatterProvider);
-    final year = _year;
-    // Only the current year has a month in progress to highlight.
-    final currentMonthIndex = year == _currentYear ? DateTime.now().month - 1 : -1;
     final l10n = context.l10n;
-    final maxSpend = summary.gastoPorMes.fold(0, (m, v) => v > m ? v : m);
+    final summary = ref.watch(annualSummaryProvider(_year));
+    final compact = ref.watch(compactMoneyFormatterProvider);
+    final startYear = ref.watch(currentHouseholdProvider).value?.startYear ?? _currentYear;
+    // Three years at a time, ending one after the chosen year: picking the
+    // oldest shown slides the window back, down to the household's start.
+    final lastShown = (_year + 1).clamp(startYear, _currentYear);
+    final years = [
+      for (var y = lastShown - 2; y <= lastShown; y++)
+        if (y >= startYear) y,
+    ];
+    final categories = ref.watch(categoriesProvider).value ?? const <Category>[];
+    final highest = summary.highestMonth;
+    final reason = summary.highestReason;
+    final reasonCategory = reason == null
+        ? null
+        : categories.where((c) => c.id == reason.categoryId).firstOrNull;
+    const gap = SizedBox(height: Finan2Space.lg);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Finan2AppTop(
-              label: l10n.annualSummaryTitle,
-              title: '$year',
-              household: household,
-              showBackButton: true,
+            Finan2Head(
+              overLabel: l10n.coreHomeTabPlan,
+              title: l10n.annualTitleYear(_year),
+              onBack: () => Navigator.of(context).pop(),
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(Finan2Space.xl),
+                padding: const EdgeInsets.fromLTRB(
+                  Finan2Space.lg,
+                  Finan2Space.xs,
+                  Finan2Space.lg,
+                  Finan2Space.xl,
+                ),
                 children: [
-                  Finan2PeriodPicker(
-                    label: '$year',
-                    previousTooltip: l10n.annualSummaryPreviousYear,
-                    nextTooltip: l10n.annualSummaryNextYear,
-                    onPrevious: () => setState(() => _year--),
-                    // Future years have nothing to show yet.
-                    onNext: year >= _currentYear ? null : () => setState(() => _year++),
-                    onReset: year == _currentYear
-                        ? null
-                        : () => setState(() => _year = _currentYear),
-                  ),
-                  const SizedBox(height: Finan2Space.lg),
-                  Row(
+                  if (years.length > 1) ...[
+                    Finan2SegmentedControl<int>(
+                      options: {for (final y in years) y: '$y'},
+                      selected: _year,
+                      onChanged: (y) => setState(() => _year = y),
+                    ),
+                    gap,
+                  ],
+                  Finan2Split(
                     children: [
-                      Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.annualSummaryEarned,
-                          value: formatMoney(summary.ganado),
-                          valueColor: colors.income,
-                        ),
+                      Finan2SplitBlock(
+                        tone: Finan2Tone(colors.income, colors.incomeTint),
+                        label: l10n.annualSummaryEarned,
+                        value: compact(summary.ganado),
+                        valueSize: 16,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.annualSummarySpent,
-                          value: formatMoney(summary.gastado),
-                          valueColor: colors.expense,
-                        ),
+                      Finan2SplitBlock(
+                        tone: Finan2Tone(colors.inkSoft, Theme.of(context).colorScheme.surface),
+                        label: l10n.annualSummarySpent,
+                        value: compact(summary.gastado),
+                        valueSize: 16,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Finan2StatBox(
-                          dense: true,
-                          label: l10n.annualSummarySaved,
-                          value: formatMoney(summary.ahorrado),
-                          valueColor: Theme.of(context).colorScheme.primary,
-                        ),
+                      Finan2SplitBlock(
+                        tone: Finan2Tone(colors.saving, colors.savingTint),
+                        label: l10n.annualSummarySaved,
+                        value: compact(summary.ahorrado),
+                        valueSize: 16,
                       ),
                     ],
                   ),
-                  const SizedBox(height: Finan2Space.lg),
+                  gap,
                   Container(
                     padding: const EdgeInsets.all(Finan2Space.md),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(color: colors.line),
-                      borderRadius: BorderRadius.circular(Finan2Radius.card),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          l10n.annualSummarySpendByMonth,
-                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                l10n.annualSummarySpendByMonth,
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                            ),
+                            if (summary.average case final average?)
+                              Text(
+                                l10n.annualAverage(compact(average)),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 12),
-                        SizedBox(
-                          height: 104,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              for (var i = 0; i < 12; i++)
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: i == 11 ? 0 : 4),
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: FractionallySizedBox(
-                                              widthFactor: 1,
-                                              heightFactor: maxSpend == 0
-                                                  ? 0.04
-                                                  : (0.04 +
-                                                            (summary.gastoPorMes[i] / maxSpend) *
-                                                                0.96)
-                                                        .clamp(0.04, 1.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: i == currentMonthIndex
-                                                      ? colors.saving
-                                                      : Theme.of(context).colorScheme.primary,
-                                                  borderRadius: const BorderRadius.only(
-                                                    topLeft: Radius.circular(4),
-                                                    topRight: Radius.circular(4),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          _monthInitial(i + 1),
-                                          style: TextStyle(
-                                            fontSize: 7.5,
-                                            fontWeight: FontWeight.w600,
-                                            color: colors.inkFaint,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
+                        _YearBars(summary: summary),
                       ],
                     ),
                   ),
+                  if (highest != null) ...[
+                    gap,
+                    Finan2Notice(
+                      kind: Finan2NoticeKind.calm,
+                      icon: Finan2Icons.resumen,
+                      title: l10n.annualHighestTitle(_monthName(highest)),
+                      message: reason == null
+                          ? null
+                          : l10n.annualHighestReason(
+                              reasonCategory?.name ?? '?',
+                              compact(reason.extra),
+                            ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -178,7 +159,73 @@ class _AnnualSummaryScreenState extends ConsumerState<AnnualSummaryScreen> {
   }
 }
 
-String _monthInitial(int month) {
-  final name = DateFormat.MMMM().format(DateTime(2000, month));
-  return name[0].toUpperCase();
+/// The `.ybars`: one bar per month in Casa's color, the highest in the
+/// accent, months without spending (or still to come) as a sunken stub.
+class _YearBars extends StatelessWidget {
+  const _YearBars({required this.summary});
+
+  final AnnualSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
+    final accent = Theme.of(context).colorScheme.primary;
+    final barColor = Finan2Tone.of(context, Finan2Palette.casa).color;
+    final max = summary.gastoPorMes.fold(0, (m, v) => v > m ? v : m);
+    const height = 120.0;
+    const labelSpace = 17.0;
+
+    return SizedBox(
+      height: height,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var month = 1; month <= 12; month++) ...[
+            if (month > 1) const SizedBox(width: 5),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: summary.hasData(month) && max > 0
+                        ? ((height - labelSpace) * summary.gastoPorMes[month - 1] / max).clamp(
+                            4.0,
+                            height - labelSpace,
+                          )
+                        : (height - labelSpace) * 0.3,
+                    decoration: BoxDecoration(
+                      color: !summary.hasData(month)
+                          ? colors.surfaceAlt
+                          : (month == summary.highestMonth ? accent : barColor),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(6),
+                        bottom: Radius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    _monthInitial(month),
+                    style: TextStyle(
+                      fontSize: 9,
+                      height: 1.33,
+                      fontWeight: FontWeight.w600,
+                      color: colors.inkFaint,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
+
+String _monthName(int month) {
+  final name = DateFormat.MMMM().format(DateTime(2000, month));
+  return '${name[0].toUpperCase()}${name.substring(1)}';
+}
+
+String _monthInitial(int month) => _monthName(month)[0];

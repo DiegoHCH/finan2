@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
+import '../../../transactions/presentation/viewmodels/transaction_providers.dart';
+import '../../domain/category_use.dart';
 import '../../data/category_model.dart';
 import '../../data/category_usage.dart';
 import '../../data/category_repository.dart';
@@ -15,6 +18,14 @@ final categoriesProvider = StreamProvider<List<Category>>((ref) {
   final householdId = ref.watch(currentHouseholdProvider).value?.id;
   if (householdId == null) return Stream.value(const []);
   return ref.watch(categoryRepositoryProvider).watchCategories(householdId);
+});
+
+/// How much each category is used, by its ID: this year's movements and
+/// the fijos that log into it. Absent means unused.
+final categoryUsesProvider = Provider.autoDispose<Map<String, CategoryUse>>((ref) {
+  final movements = ref.watch(transactionsForYearProvider(DateTime.now().year)).value;
+  final bills = ref.watch(recurringBillsProvider).value;
+  return categoryUses(movements: movements ?? const [], bills: bills ?? const []);
 });
 
 class CategoryController extends AsyncNotifier<void> {

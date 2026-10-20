@@ -1,6 +1,7 @@
 import '../../accounts/data/account_model.dart';
 import '../../categories/data/category_model.dart';
 import '../../debts/domain/entities/debt.dart';
+import '../../demo/domain/demo_ids.dart';
 import '../../investments/data/investment_model.dart';
 import '../../notification_prefs/data/notification_prefs.dart';
 import '../../recurring_bills/domain/entities/recurring_bill.dart';
@@ -29,6 +30,43 @@ extension NotificationScanSources on NotificationScanner {
     SavingsChallenge? savingsChallenge,
     DateTime? now,
   }) {
+    // Test data never notifies: it'd announce a hundred made-up records.
+    debts = [
+      for (final d in debts)
+        if (!isDemoId(d.id)) d,
+    ];
+    goals = [
+      for (final g in goals)
+        if (!isDemoId(g.id)) g,
+    ];
+    budget = {
+      for (final e in budget.entries)
+        if (!isDemoId(e.key)) e.key: e.value,
+    };
+    transactionsThisMonth = [
+      for (final t in transactionsThisMonth)
+        if (!isDemoId(t.id)) t,
+    ];
+    categories = [
+      for (final c in categories)
+        if (!isDemoId(c.id)) c,
+    ];
+    accounts = [
+      for (final a in accounts)
+        if (!isDemoId(a.id)) a,
+    ];
+    investments = [
+      for (final i in investments)
+        if (!isDemoId(i.id)) i,
+    ];
+    recurringBills = [
+      for (final b in recurringBills)
+        if (!isDemoId(b.id)) b,
+    ];
+    transfers = [
+      for (final t in transfers)
+        if (!isDemoId(t.id)) t,
+    ];
     final at = now ?? DateTime.now();
     PartnerRecord record(
       PartnerRecordKind kind,

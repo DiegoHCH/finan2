@@ -16,6 +16,22 @@ class HouseholdFullException implements Exception {
   const HouseholdFullException();
 }
 
+/// What an invite says before using it: whose household it opens. The
+/// names are null for invites made before they were stored.
+class InvitePreview {
+  const InvitePreview({
+    required this.code,
+    required this.expiresAt,
+    this.householdName,
+    this.inviterName,
+  });
+
+  final String code;
+  final DateTime expiresAt;
+  final String? householdName;
+  final String? inviterName;
+}
+
 /// A household's data encryption key, wrapped under its recovery phrase and
 /// stashed in `households/{id}/security/recovery` for cross-device recovery.
 class KeyRecovery {
@@ -37,6 +53,10 @@ class KeyRecovery {
 const _inviteCodeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const _inviteCodeLength = 10;
 const _inviteLifetime = Duration(days: 7);
+
+/// An invite with less than this left is replaced rather than shown again,
+/// so the partner isn't sent a code about to expire.
+const _inviteReuseMargin = Duration(days: 1);
 
 /// Every subcollection under `households/{id}` - what [HouseholdRepository]
 /// wipes when the last member leaves. A new subcollection must be added here
@@ -103,29 +123,107 @@ class HouseholdRepository {
     );
     final batch = _db.batch()
       ..set(docRef, {...household.toFirestore(), 'createdBy': uid, 'activeInvite': code})
-      ..set(_invites.doc(code), _inviteData(docRef.id, uid));
+      ..set(
+        _invites.doc(code),
+        _inviteData(docRef.id, uid, householdName: householdName, inviterName: displayName),
+      );
     await batch.commit();
     return (household, code);
   }
 
-  /// Replaces the household's current invite (if any) with a fresh one and
-  /// returns its code.
-  Future<String> createInvite(String householdId, String uid) async {
-    final docRef = _households.doc(householdId);
-    final previous = (await docRef.get()).data()?['activeInvite'] as String?;
-    final code = _generateInviteCode();
-    final batch = _db.batch()
-      ..update(docRef, {'activeInvite': code})
-      ..set(_invites.doc(code), _inviteData(householdId, uid));
-    if (previous != null) batch.delete(_invites.doc(previous));
-    await batch.commit();
-    return code;
+  /// The household's current invite if it still has at least
+  /// [_inviteReuseMargin] left, so opening the invite again doesn't break
+  /// the code already sent; otherwise a fresh one ([createInvite]).
+  Future<InvitePreview> currentInvite(
+    String householdId,
+    String uid, {
+    required String inviterName,
+  }) async {
+    final household = (await _households.doc(householdId).get()).data() ?? const {};
+    final active = household['activeInvite'] as String?;
+    if (active != null) {
+      final invite = await _invites.doc(active).get();
+      final preview = invite.exists ? _preview(invite) : null;
+      if (preview != null && preview.expiresAt.isAfter(DateTime.now().add(_inviteReuseMargin))) {
+        return preview;
+      }
+    }
+    return createInvite(householdId, uid, inviterName: inviterName);
   }
 
-  Map<String, dynamic> _inviteData(String householdId, String uid) => {
+  /// Replaces the household's current invite (if any) with a fresh one: the
+  /// old code stops working.
+  Future<InvitePreview> createInvite(
+    String householdId,
+    String uid, {
+    required String inviterName,
+  }) async {
+    final docRef = _households.doc(householdId);
+    final household = (await docRef.get()).data() ?? const {};
+    final previous = household['activeInvite'] as String?;
+    final code = _generateInviteCode();
+    final data = _inviteData(
+      householdId,
+      uid,
+      householdName: household['name'] as String? ?? '',
+      inviterName: inviterName,
+    );
+    final batch = _db.batch()
+      ..update(docRef, {'activeInvite': code})
+      ..set(_invites.doc(code), data);
+    if (previous != null) batch.delete(_invites.doc(previous));
+    await batch.commit();
+    return InvitePreview(
+      code: code,
+      expiresAt: (data['expiresAt'] as Timestamp).toDate(),
+      householdName: data['householdName'] as String?,
+      inviterName: data['inviterName'] as String?,
+    );
+  }
+
+  /// Whose household [code] opens, without joining - so the partner can
+  /// check it's the right one first. Throws [HouseholdNotFoundException] if
+  /// it doesn't exist or expired.
+  Future<InvitePreview> previewInvite(String code) async {
+    final invite = await _invites.doc(code.trim().toUpperCase()).get();
+    final preview = invite.exists ? _preview(invite) : null;
+    if (preview == null || preview.expiresAt.isBefore(DateTime.now())) {
+      throw const HouseholdNotFoundException();
+    }
+    return preview;
+  }
+
+  InvitePreview? _preview(DocumentSnapshot<Map<String, dynamic>> invite) {
+    final data = invite.data()!;
+    final expiresAt = (data['expiresAt'] as Timestamp?)?.toDate();
+    if (expiresAt == null) return null;
+    String? text(String field) {
+      final value = (data[field] as String?)?.trim();
+      return value == null || value.isEmpty ? null : value;
+    }
+
+    return InvitePreview(
+      code: invite.id,
+      expiresAt: expiresAt,
+      householdName: text('householdName'),
+      inviterName: text('inviterName'),
+    );
+  }
+
+  /// The household's and the inviter's names ride on the invite in the
+  /// clear: whoever has the code is about to join, and a non-member can't
+  /// read the household itself to check it's the right one.
+  Map<String, dynamic> _inviteData(
+    String householdId,
+    String uid, {
+    required String householdName,
+    required String inviterName,
+  }) => {
     'householdId': householdId,
     'createdBy': uid,
     'expiresAt': Timestamp.fromDate(DateTime.now().add(_inviteLifetime)),
+    'householdName': householdName,
+    'inviterName': inviterName,
   };
 
   /// Joins the household behind invite [code], consuming the invite.
