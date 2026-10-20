@@ -22,7 +22,13 @@ service cloud.firestore {
       allow list: if false;
 
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['householdId', 'createdBy', 'expiresAt'])
+        && request.resource.data.keys().hasOnly(['householdId', 'createdBy', 'expiresAt',
+                                                  'householdName', 'inviterName'])
+        // Shown to whoever holds the code before they join.
+        && request.resource.data.get('householdName', '') is string
+        && request.resource.data.get('householdName', '').size() <= 200
+        && request.resource.data.get('inviterName', '') is string
+        && request.resource.data.get('inviterName', '').size() <= 200
         && request.resource.data.createdBy == request.auth.uid
         && request.resource.data.expiresAt is timestamp
         // 7 days from the client's clock, with room for a clock running fast.

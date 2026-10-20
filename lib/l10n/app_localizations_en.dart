@@ -2566,4 +2566,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get demoError =>
       'Couldn\'t finish. Check the connection and try again: it can be repeated without duplicating anything.';
+
+  @override
+  String householdInviteValidUntil(String date) {
+    return 'Works once and expires on $date.';
+  }
+
+  @override
+  String get householdInviteNewCode => 'Make a new code';
+
+  @override
+  String get householdInviteNewCodeTitle => 'Make a new code?';
+
+  @override
+  String get householdInviteNewCodeMessage =>
+      'The code you already sent will stop working. Do it if it reached the wrong person or got lost.';
+
+  @override
+  String householdJoinConfirmTitle(String household) {
+    return 'Join $household?';
+  }
+
+  @override
+  String get householdJoinConfirmTitleUnnamed => 'Join this household?';
+
+  @override
+  String householdJoinConfirmMessage(String name) {
+    return '$name invited you. From now on you’ll both see and log this household’s money.';
+  }
+
+  @override
+  String get householdJoinConfirmMessageUnnamed =>
+      'From now on you’ll both see and log this household’s money.';
 }

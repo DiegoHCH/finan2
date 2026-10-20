@@ -693,5 +693,13 @@
   "demoRemoveConfirm": "Remove",
   "demoRemoveDoneTitle": "Removed",
   "demoRemoveDone": "{count} test records deleted.",
-  "demoError": "Couldn't finish. Check the connection and try again: it can be repeated without duplicating anything."
+  "demoError": "Couldn't finish. Check the connection and try again: it can be repeated without duplicating anything.",
+  "householdInviteValidUntil": "Works once and expires on {date}.",
+  "householdInviteNewCode": "Make a new code",
+  "householdInviteNewCodeTitle": "Make a new code?",
+  "householdInviteNewCodeMessage": "The code you already sent will stop working. Do it if it reached the wrong person or got lost.",
+  "householdJoinConfirmTitle": "Join {household}?",
+  "householdJoinConfirmTitleUnnamed": "Join this household?",
+  "householdJoinConfirmMessage": "{name} invited you. From now on you’ll both see and log this household’s money.",
+  "householdJoinConfirmMessageUnnamed": "From now on you’ll both see and log this household’s money."
 }

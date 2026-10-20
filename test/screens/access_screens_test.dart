@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finan2/core/theme/app_theme.dart';
 import 'package:finan2/features/auth/data/auth_repository.dart';
 import 'package:finan2/features/auth/presentation/screens/login_screen.dart';
@@ -95,6 +96,30 @@ void main() {
     expect(find.text('Entrar a la casa'), findsOneWidget);
     final code = tester.widget<EditableText>(find.byType(EditableText));
     expect(code.style.fontFamily, 'monospace');
+  });
+
+  testWidgets('a code says whose household it opens before joining it', (tester) async {
+    final app = (await tester.runAsync(() => TestApp.start(withHousehold: false)))!;
+    await tester.runAsync(
+      () => app.firestore.collection('invites').doc('ABCDEFGHJK').set({
+        'householdId': 'h-vale',
+        'createdBy': 'u-vale',
+        'expiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(days: 3))),
+        'householdName': 'Casa de Vale',
+        'inviterName': 'Vale',
+      }),
+    );
+    await pumpScreen(tester, app, const CreateJoinHouseholdScreen());
+
+    await tester.tap(find.text('Tengo un código'));
+    await tester.pump();
+    await tester.enterText(find.byType(EditableText), 'ABCDEFGHJK.llave');
+    await tester.tap(find.widgetWithText(FilledButton, 'Entrar a la casa'));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pumpAndSettle();
+
+    expect(find.text('¿Entrar a Casa de Vale?'), findsOneWidget);
+    expect(find.textContaining('Te invitó Vale.'), findsOneWidget);
   });
 
   testWidgets('the backup says what restoring does before any button', (tester) async {
