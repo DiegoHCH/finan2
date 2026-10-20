@@ -223,7 +223,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  if (demoDataEnabled) ...[
+                  if (ref.watch(demoDataEnabledProvider).value == true) ...[
                     const SizedBox(height: Finan2Space.md),
                     Finan2Sheet(
                       children: [

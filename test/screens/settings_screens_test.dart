@@ -205,7 +205,8 @@ void main() {
     await pumpScreen(tester, app, const NotificationsScreen());
 
     expect(find.byKey(const Key('notificationUnreadDot')), findsOneWidget);
-    expect(find.text('hace 2 h'), findsNWidgets(2));
+    // Two hours back is yesterday right after midnight - CI runs in UTC.
+    expect(find.text(now.hour >= 2 ? 'hace 2 h' : 'ayer'), findsNWidgets(2));
     final colors = Finan2Theme.light.extension<Finan2Colors>()!;
     final overIcon = tester.widget<Icon>(find.byIcon(Finan2Icons.alerta));
     expect(overIcon.color, colors.expense);
