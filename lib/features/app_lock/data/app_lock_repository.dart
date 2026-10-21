@@ -22,7 +22,10 @@ class PinCheck {
 
 /// The app lock lives on this device only, in the same secure storage as
 /// the household key (Keystore / Keychain). The PIN is never stored: only a
-/// salted PBKDF2 of it. Wrong attempts and the wait they earn are stored
+/// salted HMAC-SHA256 of it. Not a slow KDF on purpose: with 10,000 possible
+/// PINs it wouldn't stop anyone who can read the Keychain, and in pure Dart
+/// it froze the pad for minutes on a debug iPhone - the protection is the
+/// secure storage and the attempts limit. Wrong attempts and the wait they earn are stored
 /// too, so closing the app doesn't reset them.
 class AppLockRepository {
   AppLockRepository({Finan2KeyStore? store, DateTime Function()? now})
@@ -37,7 +40,7 @@ class AppLockRepository {
   static const _failuresKey = 'app_lock_failures';
   static const _untilKey = 'app_lock_until';
 
-  static final _kdf = Pbkdf2(macAlgorithm: Hmac.sha256(), iterations: 20000, bits: 256);
+  static final _mac = Hmac.sha256();
 
   Future<AppLockSettings> load() async {
     final enabled = await _store.read(_pinKey) != null;
@@ -112,8 +115,8 @@ class AppLockRepository {
   }
 
   Future<List<int>> _hash(String pin, List<int> salt) async {
-    final key = await _kdf.deriveKey(secretKey: SecretKey(utf8.encode(pin)), nonce: salt);
-    return key.extractBytes();
+    final mac = await _mac.calculateMac(utf8.encode(pin), secretKey: SecretKey(salt));
+    return mac.bytes;
   }
 
   Future<void> _resetFailures() async {

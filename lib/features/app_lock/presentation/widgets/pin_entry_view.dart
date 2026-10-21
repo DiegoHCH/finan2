@@ -56,6 +56,17 @@ class _PinEntryViewState extends State<PinEntryView> with SingleTickerProviderSt
   late final _shake = AnimationController(vsync: this, duration: const Duration(milliseconds: 380));
 
   @override
+  void initState() {
+    super.initState();
+    // The pad is the keyboard here: let go of whatever field had the focus
+    // (the password, coming from sign-in), or the phone's opens on top.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    });
+  }
+
+  @override
   void dispose() {
     _shake.dispose();
     super.dispose();
