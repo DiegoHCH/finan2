@@ -9,8 +9,8 @@ import '../../../core/widgets/finan2_logo_tile.dart';
 /// switcher, a call, Control Center - so the switcher's thumbnail shows the
 /// logo over a blur instead of balances. Back to active, it lifts.
 ///
-/// On Android 13+ MainActivity also tells the system not to take that
-/// thumbnail at all; this covers iOS and older Androids.
+/// The same on Android and iOS: a blur, not the blank page Android's own
+/// «no recents screenshot» flag leaves.
 class PrivacyShield extends StatefulWidget {
   const PrivacyShield({required this.child, super.key});
 
