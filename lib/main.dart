@@ -11,6 +11,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_providers.dart';
 import 'core/widgets/auth_gate.dart';
 import 'features/app_lock/presentation/app_lock_gate.dart';
+import 'features/app_lock/presentation/privacy_shield.dart';
 import 'firebase_options.dart';
 import 'l10n/l10n.dart';
 import 'core/observability/error_reporter.dart';
@@ -61,8 +62,9 @@ class MainApp extends ConsumerWidget {
       darkTheme: Finan2Theme.dark,
       themeMode: themeMode,
       home: const AuthGate(),
-      // Above the Navigator, so the lock covers whatever screen is open.
-      builder: (context, child) => AppLockGate(child: child!),
+      // Above the Navigator, so the lock covers whatever screen is open and
+      // the app switcher shows a blur instead of balances.
+      builder: (context, child) => PrivacyShield(child: AppLockGate(child: child!)),
     );
   }
 }
