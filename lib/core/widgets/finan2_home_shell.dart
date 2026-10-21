@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/accounts/presentation/viewmodels/account_providers.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
@@ -29,6 +28,7 @@ import '../../features/transactions/presentation/screens/transactions_screen.dar
 import '../../features/transactions/presentation/viewmodels/transaction_providers.dart';
 import '../../features/transfers/presentation/viewmodels/transfer_providers.dart';
 import '../../l10n/l10n.dart';
+import '../notifications/notification_opt_in.dart';
 import '../notifications/notification_primer_sheet.dart';
 import '../notifications/notification_providers.dart';
 import '../pwa/ios_install_detection.dart';
@@ -123,8 +123,6 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     }
   }
 
-  static const _notifPrimerShownKey = 'notif_primer_shown';
-
   /// Registering the push token is what triggers the OS notification
   /// permission prompt automatically on first launch - shows our own
   /// explainer bottom sheet once, right before that happens, instead of
@@ -149,14 +147,15 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
       _primerDeferred = true;
       return;
     }
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(_notifPrimerShownKey) == true) {
+    if (await NotificationOptIn.wasAsked()) {
+      // «Ahora no» sticks until they turn notifications on in Ajustes.
+      if (await NotificationOptIn.optedIn() == false) return;
       await _registerPushToken();
       return;
     }
-    await prefs.setBool(_notifPrimerShownKey, true);
     if (!mounted) return;
     final proceed = await showNotificationPrimerSheet(context);
+    await NotificationOptIn.record(optedIn: proceed);
     if (proceed) {
       await _registerPushToken();
     }

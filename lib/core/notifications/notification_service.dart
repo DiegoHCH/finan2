@@ -40,7 +40,13 @@ class NotificationService {
     }
 
     const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_finan2');
-    const iosSettings = DarwinInitializationSettings();
+    // Off: by default the plugin asks for permission right here, at launch,
+    // over the splash. The onboarding asks instead, saying what for.
+    const iosSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     await _plugin.initialize(
       settings: const InitializationSettings(android: androidSettings, iOS: iosSettings),
     );

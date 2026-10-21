@@ -15,6 +15,13 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await tester.pump(const Duration(milliseconds: 800));
   await settle(tester);
 
+  // First time on this phone: notifications later, a PIN typed twice (no
+  // fingerprint on this one, so that step isn't there).
+  await tap(tester, find.text('Ahora no'));
+  for (final digit in '13971397'.split('')) {
+    await tap(tester, find.text(digit).last);
+  }
+
   // Create the household, keeping the suggested name.
   await tap(tester, find.text('Crear la casa'));
   await tap(tester, find.text('Armar la casa'));

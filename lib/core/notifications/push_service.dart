@@ -38,6 +38,17 @@ class PushService {
   /// platforms don't need this at all.
   static const _vapidKey = String.fromEnvironment('FINAN2_FCM_VAPID_KEY');
 
+  /// Whether the OS lets the app show notifications right now.
+  Future<bool> notificationsAllowed() async =>
+      _allows((await _messaging.getNotificationSettings()).authorizationStatus);
+
+  /// Shows the OS prompt (if it still can) and says whether they're allowed.
+  Future<bool> requestNotificationPermission() async =>
+      _allows((await _messaging.requestPermission()).authorizationStatus);
+
+  static bool _allows(AuthorizationStatus status) =>
+      status == AuthorizationStatus.authorized || status == AuthorizationStatus.provisional;
+
   /// Requests permission, grabs this device's FCM token and saves it under
   /// the household so the Worker can find it, then keeps it fresh.
   Future<void> registerToken(String householdId, String uid) async {

@@ -17,3 +17,9 @@ final pushServiceProvider = Provider<PushService>((ref) {
 final foregroundPushesProvider = Provider<Stream<RemoteMessage>>((ref) {
   return FirebaseMessaging.onMessage;
 });
+
+/// Whether the OS lets the app show notifications on this device -
+/// invalidated after asking, so screens see the answer.
+final notificationsAllowedProvider = FutureProvider<bool>(
+  (ref) => ref.watch(pushServiceProvider).notificationsAllowed(),
+);
