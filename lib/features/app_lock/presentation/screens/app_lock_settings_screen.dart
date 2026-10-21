@@ -20,16 +20,16 @@ class AppLockSettingsScreen extends ConsumerWidget {
   const AppLockSettingsScreen({super.key});
 
   Future<bool> _checkCurrent(BuildContext context) async {
-    final ok = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const AppLockScreen(checkOnly: true)),
-    );
+    final ok = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => const AppLockScreen(checkOnly: true)));
     return ok ?? false;
   }
 
   Future<void> _choosePin(BuildContext context, WidgetRef ref) async {
-    final pin = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const PinSetupScreen()),
-    );
+    final pin = await Navigator.of(
+      context,
+    ).push<String>(MaterialPageRoute(builder: (_) => const PinSetupScreen()));
     if (pin != null) await ref.read(appLockSettingsProvider.notifier).setPin(pin);
   }
 

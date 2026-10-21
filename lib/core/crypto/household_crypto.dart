@@ -65,7 +65,8 @@ class Finan2SecureKeyStore implements Finan2KeyStore {
 /// [RecoveryPhrase], which nobody - including an admin of the Firebase/GCP
 /// project - can open without the phrase.
 class HouseholdCrypto {
-  HouseholdCrypto({Finan2KeyStore? keyStore}) : _keyStore = keyStore ?? const Finan2SecureKeyStore();
+  HouseholdCrypto({Finan2KeyStore? keyStore})
+    : _keyStore = keyStore ?? const Finan2SecureKeyStore();
 
   final Finan2KeyStore _keyStore;
   static final _algorithm = AesGcm.with256bits();

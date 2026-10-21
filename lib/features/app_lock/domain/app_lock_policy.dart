@@ -37,6 +37,5 @@ abstract final class AppLockPolicy {
   }
 
   /// Wrong PINs left before the first wait, for the hint under the dots.
-  static int attemptsLeft(int failures) =>
-      failures >= freeAttempts ? 0 : freeAttempts - failures;
+  static int attemptsLeft(int failures) => failures >= freeAttempts ? 0 : freeAttempts - failures;
 }

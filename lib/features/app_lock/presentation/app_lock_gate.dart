@@ -64,7 +64,10 @@ class _AppLockGateState extends ConsumerState<AppLockGate> {
       fit: StackFit.expand,
       children: [
         // Offstage keeps the app's state without painting a pixel of it.
-        Offstage(offstage: cover, child: TickerMode(enabled: !cover, child: widget.child)),
+        Offstage(
+          offstage: cover,
+          child: TickerMode(enabled: !cover, child: widget.child),
+        ),
         if (loading) const Finan2SplashScreen(),
         // Its own Navigator: the lock's sheets («forgot your PIN?») need one,
         // and the app's is the one being covered.

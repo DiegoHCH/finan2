@@ -133,7 +133,10 @@ class _PinEntryViewState extends State<PinEntryView> with SingleTickerProviderSt
                   AnimatedBuilder(
                     animation: _shake,
                     builder: (context, child) => Transform.translate(
-                      offset: Offset(math.sin(_shake.value * math.pi * 6) * 10 * (1 - _shake.value), 0),
+                      offset: Offset(
+                        math.sin(_shake.value * math.pi * 6) * 10 * (1 - _shake.value),
+                        0,
+                      ),
                       child: child,
                     ),
                     child: _PinDots(filled: _pin.length, error: widget.hintIsError),
@@ -165,7 +168,12 @@ class _PinEntryViewState extends State<PinEntryView> with SingleTickerProviderSt
             leading: widget.leading,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(Finan2Space.lg, Finan2Space.sm, Finan2Space.lg, Finan2Space.md),
+            padding: const EdgeInsets.fromLTRB(
+              Finan2Space.lg,
+              Finan2Space.sm,
+              Finan2Space.lg,
+              Finan2Space.md,
+            ),
             child: SizedBox(height: 44, child: Center(child: widget.footer)),
           ),
         ],
@@ -244,7 +252,11 @@ class _PinPad extends StatelessWidget {
           row([key('4'), key('5'), key('6')]),
           row([key('7'), key('8'), key('9')]),
           row([
-            SizedBox(width: _PadKey.size, height: _PadKey.size, child: Center(child: leading)),
+            SizedBox(
+              width: _PadKey.size,
+              height: _PadKey.size,
+              child: Center(child: leading),
+            ),
             key('0'),
             _PadKey(
               plain: true,
@@ -283,7 +295,11 @@ class _PadKey extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onTap,
-          child: SizedBox(width: size, height: size, child: Center(child: child)),
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Center(child: child),
+          ),
         ),
       ),
     );
