@@ -14,10 +14,11 @@ import '../../../app_lock/presentation/widgets/pin_entry_view.dart';
 
 enum _Step { notifications, pin, biometrics }
 
-/// The first time someone signs in on a phone: notifications, the PIN that
-/// opens the app from then on (required - it's what spares signing in
+/// The first time an account signs in on a phone: notifications, the PIN
+/// that opens the app from then on (required - it's what spares signing in
 /// again) and, when the phone has one, fingerprint or face. Steps that
-/// don't apply are left out: notifications already allowed, no biometrics.
+/// don't apply are left out: notifications already allowed, a PIN the
+/// account already set on another phone, no biometrics.
 /// Nothing is saved until the end, so the app moves on once, all set.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -45,15 +46,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _decideSteps() async {
     final notificationsAllowed = await ref.read(pushServiceProvider).notificationsAllowed();
     final biometricsAvailable = await ref.read(biometricsAvailableProvider.future);
+    // The account may already have a PIN from another phone: it's the same here.
+    final hasPin = (await ref.read(appLockSettingsProvider.future)).enabled;
     if (notificationsAllowed) await NotificationOptIn.record(optedIn: true);
     if (!mounted) return;
-    setState(() {
-      _steps = [
-        if (!notificationsAllowed) _Step.notifications,
-        _Step.pin,
-        if (biometricsAvailable) _Step.biometrics,
-      ];
-    });
+    final steps = [
+      if (!notificationsAllowed) _Step.notifications,
+      if (!hasPin) _Step.pin,
+      if (biometricsAvailable) _Step.biometrics,
+    ];
+    if (steps.isEmpty) {
+      await _finish(biometrics: false);
+      return;
+    }
+    setState(() => _steps = steps);
   }
 
   _Step get _step => _steps![_index];
@@ -68,7 +74,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _finish({required bool biometrics}) async {
     setState(() => _busy = true);
-    await ref.read(appLockSettingsProvider.notifier).setUp(pin: _pin!, biometrics: biometrics);
+    await ref.read(appLockSettingsProvider.notifier).setUp(pin: _pin, biometrics: biometrics);
   }
 
   Future<void> _askNotifications({required bool enable}) async {

@@ -143,4 +143,29 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 5));
   });
+
+  testWidgets('a new phone of an account with a PIN skips choosing it', (tester) async {
+    final app = (await tester.runAsync(() => TestApp.start(withPin: false)))!;
+    // The PIN this account set on its other phone.
+    await tester.runAsync(
+      () => app.firestore.doc('users/$testUid/private/appLock').set({
+        'pin': 'c2FsdHNhbHRzYWx0c2FsdA==:aGFzaA==',
+      }),
+    );
+    app.biometrics.enrolled = true;
+    app.biometrics.matches = true;
+    await pumpScreen(tester, app, const AuthGate());
+    await tester.pump(const Duration(milliseconds: 800));
+    await settle(tester);
+
+    expect(find.text('Paso 1 de 2'), findsOneWidget);
+    await _tap(tester, 'Ahora no');
+    expect(find.text('Crea tu PIN'), findsNothing);
+    expect(find.text('Paso 2 de 2'), findsOneWidget);
+    await _tap(tester, 'Usar huella o rostro');
+
+    final lock = app.container.read(appLockSettingsProvider).value!;
+    expect(lock.onboarded, isTrue);
+    expect(lock.biometrics, isTrue);
+  });
 }

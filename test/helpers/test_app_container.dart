@@ -4,6 +4,7 @@ import 'package:finan2/core/notifications/notification_providers.dart';
 import 'package:finan2/core/notifications/push_service.dart';
 import 'package:finan2/features/accounts/data/account_repository.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
+import 'package:finan2/features/app_lock/data/app_lock_cloud.dart';
 import 'package:finan2/features/app_lock/data/app_lock_repository.dart';
 import 'package:finan2/features/app_lock/presentation/viewmodels/app_lock_providers.dart';
 import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
@@ -115,16 +116,23 @@ class TestApp {
   /// With [withHousehold] false the member has none yet: the household
   /// comes from the fake Firestore, so creating one in the app shows it.
   ///
-  /// [withPin] false leaves this phone without a PIN, so the AuthGate shows
-  /// the onboarding first; true (the default) is a phone already set up.
+  /// [withPin] false is a phone this account never set up (the AuthGate
+  /// shows the onboarding first); true (the default) is one already set up.
   static Future<TestApp> start({bool withHousehold = true, bool withPin = true}) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
     final ledger = testBalanceLedger(firestore, crypto);
     final push = FakePushService();
     final biometrics = FakeBiometricUnlock();
-    final appLock = AppLockRepository(store: InMemoryKeyStore());
-    if (withPin) await appLock.setPin('1397');
+    final appLock = AppLockRepository(
+      account: testUid,
+      cloud: FirestoreAppLockCloud(firestore: firestore),
+      store: InMemoryKeyStore(),
+    );
+    if (withPin) {
+      await appLock.setPin('1397');
+      await appLock.markOnboarded();
+    }
     final container = ProviderContainer(
       overrides: [
         authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),

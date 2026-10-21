@@ -63,9 +63,9 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   }
 }
 
-/// The PIN is required on phones, so a phone without one hasn't been
-/// through the onboarding yet - a first sign-in, or the first after signing
-/// out. The web has no PIN, fingerprint or face: straight on.
+/// The first sign-in of an account on a phone (or the first after «forgot
+/// your PIN?») goes through the onboarding. The web has no PIN, fingerprint
+/// or face: straight on.
 class _OnboardingGate extends ConsumerWidget {
   const _OnboardingGate();
 
@@ -78,7 +78,7 @@ class _OnboardingGate extends ConsumerWidget {
           loading: () => const _LoadingScreen(),
           // Secure storage unreadable: better in without a PIN than locked out.
           error: (_, _) => const _HouseholdGate(),
-          data: (lock) => lock.enabled ? const _HouseholdGate() : const OnboardingScreen(),
+          data: (lock) => lock.onboarded ? const _HouseholdGate() : const OnboardingScreen(),
         );
   }
 }

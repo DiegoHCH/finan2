@@ -45,6 +45,17 @@ service cloud.firestore {
         && request.auth.uid in getAfter(householdPath(resource.data.householdId)).data.members;
     }
 
+    // An account's app-lock PIN record (salt:HMAC, never the PIN), so every
+    // phone it signs in on opens with the same PIN (AppLockRepository).
+    // Its owner's alone.
+    match /users/{uid}/private/appLock {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['pin', 'updatedAt'])
+        && request.resource.data.pin is string
+        && request.resource.data.pin.size() < 120;
+    }
+
     match /households/{hid} {
       function isMemberOfStored() {
         return signedIn() && request.auth.uid in resource.data.members;

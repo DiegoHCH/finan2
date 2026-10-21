@@ -1,3 +1,4 @@
+import 'package:finan2/features/app_lock/data/app_lock_cloud.dart';
 import 'package:finan2/features/app_lock/data/app_lock_repository.dart';
 import 'package:finan2/features/app_lock/domain/app_lock_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -103,4 +104,76 @@ void main() {
       expect(await store.read('app_lock_biometrics'), isNull);
     });
   });
+
+  group('the PIN follows the account to other phones', () {
+    late _FakeCloud cloud;
+    AppLockRepository phone() =>
+        AppLockRepository(account: 'ana', cloud: cloud, store: InMemoryKeyStore());
+
+    setUp(() => cloud = _FakeCloud());
+
+    test('a PIN set on one phone opens the app on another', () async {
+      final first = phone();
+      await first.setPin('2580');
+      await pumpEventQueue();
+
+      final second = phone();
+      final settings = await second.load();
+      expect(settings.enabled, isTrue);
+      expect(settings.onboarded, isFalse, reason: 'its own notifications and fingerprint still');
+      expect((await second.verify('2580')).ok, isTrue);
+    });
+
+    test('a PIN changed on one phone is the PIN on the other next time', () async {
+      final first = phone();
+      final second = phone();
+      await first.setPin('2580');
+      await pumpEventQueue();
+      await second.load();
+
+      await first.setPin('1397');
+      await pumpEventQueue();
+      await second.load();
+      expect((await second.verify('2580')).ok, isFalse);
+      expect((await second.verify('1397')).ok, isTrue);
+    });
+
+    test('offline, the copy on the phone works', () async {
+      final first = phone();
+      await first.setPin('2580');
+      await first.markOnboarded();
+      cloud.offline = true;
+      final settings = await first.load();
+      expect(settings.enabled, isTrue);
+      expect(settings.onboarded, isTrue);
+      expect((await first.verify('2580')).ok, isTrue);
+    });
+
+    test('«forgot your PIN?» clears it in the cloud too', () async {
+      final first = phone();
+      await first.setPin('2580');
+      await pumpEventQueue();
+      await first.clear();
+      await pumpEventQueue();
+      expect(cloud.records, isEmpty);
+      expect((await phone().load()).enabled, isFalse);
+    });
+  });
+}
+
+class _FakeCloud implements AppLockCloud {
+  final records = <String, String>{};
+  var offline = false;
+
+  @override
+  Future<String?> fetch(String account) async {
+    if (offline) throw StateError('offline');
+    return records[account];
+  }
+
+  @override
+  Future<void> save(String account, String record) async => records[account] = record;
+
+  @override
+  Future<void> delete(String account) async => records.remove(account);
 }

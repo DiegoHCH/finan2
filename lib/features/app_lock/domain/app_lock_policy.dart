@@ -1,14 +1,26 @@
-/// How this device's app lock is set: off, or on with a 4-digit PIN and,
-/// optionally, the phone's fingerprint or face to skip typing it.
+/// How the app lock is set for this account on this phone: the account's
+/// 4-digit PIN (the same on all its phones) and, optionally, this phone's
+/// fingerprint or face to skip typing it.
 class AppLockSettings {
-  const AppLockSettings({required this.enabled, required this.biometrics});
+  const AppLockSettings({required this.enabled, required this.biometrics, required this.onboarded});
 
-  static const off = AppLockSettings(enabled: false, biometrics: false);
+  static const off = AppLockSettings(enabled: false, biometrics: false, onboarded: false);
 
+  /// The account has a PIN.
   final bool enabled;
 
   /// Only meaningful while [enabled]: the PIN always works as well.
   final bool biometrics;
+
+  /// This phone went through the first-time steps (notifications, PIN,
+  /// fingerprint) for this account.
+  final bool onboarded;
+
+  AppLockSettings copyWith({bool? enabled, bool? biometrics, bool? onboarded}) => AppLockSettings(
+    enabled: enabled ?? this.enabled,
+    biometrics: biometrics ?? this.biometrics,
+    onboarded: onboarded ?? this.onboarded,
+  );
 }
 
 /// The rules of the lock, kept apart from where they're stored or shown.
