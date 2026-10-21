@@ -98,6 +98,14 @@ class FakePushService extends Fake implements PushService {
 class TestApp {
   TestApp._(this.container, this.firestore, this.crypto, this.push, this.biometrics);
 
+  /// The same fakes behind [container] - a child of [app]'s with a few
+  /// overrides of its own (a sign-in stream to drive, say).
+  TestApp.withContainer(TestApp app, this.container)
+    : firestore = app.firestore,
+      crypto = app.crypto,
+      push = app.push,
+      biometrics = app.biometrics;
+
   final ProviderContainer container;
   final FakeFirebaseFirestore firestore;
   final HouseholdCrypto crypto;

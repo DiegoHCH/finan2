@@ -131,8 +131,9 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       destructive: true,
     );
     if (!confirmed) return;
-    // Signing out clears the lock (see AuthGate); signing back in proves
-    // it's you.
+    // Signing back in proves it's you, and with no PIN left the onboarding
+    // asks for a new one.
+    await ref.read(appLockRepositoryProvider).clear();
     await ref.read(authControllerProvider.notifier).signOut();
   }
 

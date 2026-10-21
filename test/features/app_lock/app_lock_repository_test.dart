@@ -77,6 +77,17 @@ void main() {
       expect(await repository.lockedUntil(), isNull);
     });
 
+    test('each account on the phone has its own PIN', () async {
+      final mine = AppLockRepository(account: 'ana', store: store, now: () => now);
+      final theirs = AppLockRepository(account: 'luis', store: store, now: () => now);
+      await mine.setPin('2580');
+      expect((await mine.load()).enabled, isTrue);
+      expect((await theirs.load()).enabled, isFalse);
+      await theirs.setPin('1397');
+      expect((await mine.verify('1397')).ok, isFalse);
+      expect((await mine.verify('2580')).ok, isTrue);
+    });
+
     test('changing the PIN keeps biometrics; clearing forgets everything', () async {
       await repository.setPin('2580');
       await repository.setBiometrics(true);

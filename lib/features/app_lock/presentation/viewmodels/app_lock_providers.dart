@@ -1,10 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../auth/presentation/viewmodels/auth_providers.dart';
+
 import '../../data/app_lock_repository.dart';
 import '../../data/biometric_unlock.dart';
 import '../../domain/app_lock_policy.dart';
 
-final appLockRepositoryProvider = Provider<AppLockRepository>((ref) => AppLockRepository());
+/// This phone's lock for whoever is signed in.
+final appLockRepositoryProvider = Provider<AppLockRepository>(
+  (ref) => AppLockRepository(account: ref.watch(authStateChangesProvider).value?.uid),
+);
 
 final biometricUnlockProvider = Provider<BiometricUnlock>((ref) => LocalAuthBiometricUnlock());
 
@@ -16,7 +21,7 @@ final biometricsAvailableProvider = FutureProvider<bool>(
 
 class AppLockSettingsController extends AsyncNotifier<AppLockSettings> {
   @override
-  Future<AppLockSettings> build() => ref.read(appLockRepositoryProvider).load();
+  Future<AppLockSettings> build() => ref.watch(appLockRepositoryProvider).load();
 
   AppLockRepository get _repository => ref.read(appLockRepositoryProvider);
 

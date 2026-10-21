@@ -41,14 +41,13 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateChangesProvider);
-    // Signing out (or deleting the account) forgets this device's PIN, so
-    // the next account here doesn't inherit it - and «forgot your PIN?»
-    // is just signing out and back in.
-    ref.listen(authStateChangesProvider, (previous, next) async {
-      if (previous?.value == null || next.value != null) return;
-      await ref.read(appLockRepositoryProvider).clear();
-      ref.invalidate(appLockSettingsProvider);
-      ref.read(appLockedProvider.notifier).lock();
+    // Signing in with the password just proved who it is: no PIN on the
+    // spot, the next opening asks. A cold start with a saved session comes
+    // from loading, not from signed out, so it stays locked.
+    ref.listen(authStateChangesProvider, (previous, next) {
+      final wasSignedOut = previous != null && previous.hasValue && previous.value == null;
+      if (wasSignedOut && next.value != null) ref.read(appLockedProvider.notifier).unlock();
+      if (next.hasValue && next.value == null) ref.read(appLockedProvider.notifier).lock();
     });
 
     if (!_minSplashElapsed) return const _LoadingScreen();

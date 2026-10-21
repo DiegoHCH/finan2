@@ -28,17 +28,22 @@ class PinCheck {
 /// secure storage and the attempts limit. Wrong attempts and the wait they earn are stored
 /// too, so closing the app doesn't reset them.
 class AppLockRepository {
-  AppLockRepository({Finan2KeyStore? store, DateTime Function()? now})
+  /// [account] scopes everything to one signed-in user: signing out keeps
+  /// the PIN for when they're back, and another account on this phone has
+  /// its own.
+  AppLockRepository({String? account, Finan2KeyStore? store, DateTime Function()? now})
     : _store = store ?? const Finan2SecureKeyStore(),
-      _now = now ?? DateTime.now;
+      _now = now ?? DateTime.now,
+      _suffix = account == null ? '' : '_$account';
 
   final Finan2KeyStore _store;
   final DateTime Function() _now;
+  final String _suffix;
 
-  static const _pinKey = 'app_lock_pin';
-  static const _biometricsKey = 'app_lock_biometrics';
-  static const _failuresKey = 'app_lock_failures';
-  static const _untilKey = 'app_lock_until';
+  String get _pinKey => 'app_lock_pin$_suffix';
+  String get _biometricsKey => 'app_lock_biometrics$_suffix';
+  String get _failuresKey => 'app_lock_failures$_suffix';
+  String get _untilKey => 'app_lock_until$_suffix';
 
   static final _mac = Hmac.sha256();
 
@@ -61,8 +66,8 @@ class AppLockRepository {
   Future<void> setBiometrics(bool on) =>
       on ? _store.write(_biometricsKey, '1') : _store.delete(_biometricsKey);
 
-  /// Turns the lock off and forgets everything about it - also on sign-out,
-  /// so the next account on this phone doesn't inherit someone's PIN.
+  /// Forgets this account's PIN and everything about it - the way out of a
+  /// forgotten PIN, before signing out.
   Future<void> clear() async {
     await _store.delete(_pinKey);
     await _store.delete(_biometricsKey);

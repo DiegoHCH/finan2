@@ -1,6 +1,12 @@
 import 'package:finan2/core/notifications/notification_opt_in.dart';
 import 'package:finan2/core/widgets/auth_gate.dart';
+import 'dart:async';
+
 import 'package:finan2/features/app_lock/presentation/viewmodels/app_lock_providers.dart';
+import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,5 +108,39 @@ void main() {
 
     expect(find.text('Crea tu PIN'), findsNothing);
     expect(find.text('Que no se te pase nada'), findsNothing);
+  });
+
+  testWidgets('signing out and back in keeps the PIN, and doesn\'t ask for it then', (
+    tester,
+  ) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    final auth = StreamController<User?>();
+    addTearDown(auth.close);
+    final container = ProviderContainer(
+      parent: app.container,
+      overrides: [authStateChangesProvider.overrideWith((ref) => auth.stream)],
+    );
+    addTearDown(container.dispose);
+    final scoped = TestApp.withContainer(app, container);
+
+    auth.add(FakeUser(testUid));
+    await pumpScreen(tester, scoped, const AuthGate());
+    await tester.pump(const Duration(milliseconds: 800));
+    await settle(tester);
+    // A cold start with a saved session: locked until the PIN.
+    expect(container.read(appLockedProvider), isTrue);
+
+    auth.add(null);
+    await settle(tester);
+    auth.add(FakeUser(testUid));
+    await settle(tester);
+
+    expect(find.text('Crea tu PIN'), findsNothing, reason: 'no onboarding again');
+    expect(container.read(appLockSettingsProvider).value?.enabled, isTrue);
+    expect(container.read(appLockedProvider), isFalse, reason: 'the password just proved it');
+
+    // Let the sign-in screen's timers run out before the tree goes.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 5));
   });
 }
