@@ -2148,5 +2148,61 @@
       "name": { "type": "String" }
     }
   },
-  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa."
+  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa.",
+  "appLockTitle": "Bloqueo de la app",
+  "@appLockTitle": {
+    "description": "Row in Ajustes and title of the screen that turns the PIN / fingerprint lock on."
+  },
+  "appLockOn": "Activado",
+  "appLockOff": "Desactivado",
+  "appLockIntro": "Pide un PIN al abrir Finan2 y al volver tras 30 segundos fuera. Es solo de este teléfono: tu pareja pone el suyo en el suyo.",
+  "appLockSwitch": "Pedir PIN al abrir",
+  "appLockSwitchWhen": "4 dígitos, guardados cifrados en este teléfono.",
+  "appLockBiometrics": "Usar huella o rostro",
+  "appLockBiometricsWhen": "Abre sin escribir el PIN. El PIN sigue sirviendo.",
+  "appLockChangePin": "Cambiar PIN",
+  "appLockEnterPin": "Escribe tu PIN",
+  "appLockEnterPinMessage": "Finan2 está bloqueado en este teléfono.",
+  "appLockWrongPin": "{count, plural, =0{PIN incorrecto.} =1{PIN incorrecto. Te queda 1 intento.} other{PIN incorrecto. Te quedan {count} intentos.}}",
+  "@appLockWrongPin": {
+    "description": "Under the PIN dots after a wrong PIN; count is how many tries are left before a wait.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockWait": "Demasiados intentos. Prueba otra vez en {seconds} s.",
+  "@appLockWait": {
+    "description": "Under the PIN dots while the keypad is blocked; counts down every second.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockForgot": "¿Olvidaste tu PIN?",
+  "appLockForgotTitle": "Quitar el PIN cerrando sesión",
+  "appLockForgotMessage": "Al cerrar sesión se borra el PIN de este teléfono. Vuelve a entrar con tu correo o con Google y tus datos siguen ahí.",
+  "appLockUseBiometrics": "Usar huella o rostro",
+  "appLockBiometricReason": "Abre Finan2",
+  "@appLockBiometricReason": {
+    "description": "Shown by the system fingerprint / Face ID prompt."
+  },
+  "appLockErase": "Borrar",
+  "appLockStep": "Paso {step} de 2",
+  "@appLockStep": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockCreateTitle": "Elige un PIN",
+  "appLockCreateMessage": "4 dígitos que vas a escribir al abrir Finan2. Mejor uno que no sea tu fecha de nacimiento.",
+  "appLockConfirmTitle": "Escríbelo otra vez",
+  "appLockConfirmMessage": "Para estar seguros de que es el que quieres.",
+  "appLockMismatch": "No coinciden. Elige el PIN otra vez.",
+  "appLockCurrentTitle": "Escribe tu PIN actual",
+  "appLockCurrentMessage": "Para cambiar el bloqueo hace falta el PIN de ahora."
 }

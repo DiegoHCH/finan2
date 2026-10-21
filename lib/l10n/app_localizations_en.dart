@@ -2598,4 +2598,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get householdJoinConfirmMessageUnnamed =>
       'From now on you’ll both see and log this household’s money.';
+
+  @override
+  String get appLockTitle => 'App lock';
+
+  @override
+  String get appLockOn => 'On';
+
+  @override
+  String get appLockOff => 'Off';
+
+  @override
+  String get appLockIntro =>
+      'Asks for a PIN when you open Finan2 and when you come back after 30 seconds away. It\'s for this phone only: your partner sets their own on theirs.';
+
+  @override
+  String get appLockSwitch => 'Ask for a PIN on open';
+
+  @override
+  String get appLockSwitchWhen => '4 digits, stored encrypted on this phone.';
+
+  @override
+  String get appLockBiometrics => 'Use fingerprint or face';
+
+  @override
+  String get appLockBiometricsWhen => 'Opens without typing the PIN. The PIN still works.';
+
+  @override
+  String get appLockChangePin => 'Change PIN';
+
+  @override
+  String get appLockEnterPin => 'Enter your PIN';
+
+  @override
+  String get appLockEnterPinMessage => 'Finan2 is locked on this phone.';
+
+  @override
+  String appLockWrongPin(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Wrong PIN. $count tries left.',
+      one: 'Wrong PIN. 1 try left.',
+      zero: 'Wrong PIN.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appLockWait(int seconds) {
+    return 'Too many tries. Try again in $seconds s.';
+  }
+
+  @override
+  String get appLockForgot => 'Forgot your PIN?';
+
+  @override
+  String get appLockForgotTitle => 'Remove the PIN by signing out';
+
+  @override
+  String get appLockForgotMessage =>
+      'Signing out removes the PIN from this phone. Sign back in with your email or Google and your data is still there.';
+
+  @override
+  String get appLockUseBiometrics => 'Use fingerprint or face';
+
+  @override
+  String get appLockBiometricReason => 'Unlock Finan2';
+
+  @override
+  String get appLockErase => 'Delete';
+
+  @override
+  String appLockStep(int step) {
+    return 'Step $step of 2';
+  }
+
+  @override
+  String get appLockCreateTitle => 'Choose a PIN';
+
+  @override
+  String get appLockCreateMessage =>
+      '4 digits you\'ll type when you open Finan2. Better one that isn\'t your birthday.';
+
+  @override
+  String get appLockConfirmTitle => 'Type it again';
+
+  @override
+  String get appLockConfirmMessage => 'To be sure it\'s the one you want.';
+
+  @override
+  String get appLockMismatch => 'They don\'t match. Choose the PIN again.';
+
+  @override
+  String get appLockCurrentTitle => 'Enter your current PIN';
+
+  @override
+  String get appLockCurrentMessage => 'Changing the lock needs the PIN you have now.';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/app_lock/presentation/viewmodels/app_lock_providers.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/household/presentation/screens/create_join_household_screen.dart';
@@ -37,6 +38,15 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateChangesProvider);
+    // Signing out (or deleting the account) forgets this device's PIN, so
+    // the next account here doesn't inherit it - and «forgot your PIN?»
+    // is just signing out and back in.
+    ref.listen(authStateChangesProvider, (previous, next) async {
+      if (previous?.value == null || next.value != null) return;
+      await ref.read(appLockRepositoryProvider).clear();
+      ref.invalidate(appLockSettingsProvider);
+      ref.read(appLockedProvider.notifier).lock();
+    });
 
     if (!_minSplashElapsed) return const _LoadingScreen();
 

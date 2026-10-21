@@ -4,6 +4,8 @@ import 'package:finan2/core/notifications/notification_providers.dart';
 import 'package:finan2/core/notifications/push_service.dart';
 import 'package:finan2/features/accounts/data/account_repository.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
+import 'package:finan2/features/app_lock/data/app_lock_repository.dart';
+import 'package:finan2/features/app_lock/presentation/viewmodels/app_lock_providers.dart';
 import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
 import 'package:finan2/features/budget/data/budget_repository.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
@@ -42,6 +44,7 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_balance_ledger.dart';
+import 'fake_biometric_unlock.dart';
 import 'test_household_crypto.dart';
 
 const testHouseholdId = 'h1';
@@ -108,6 +111,8 @@ class TestApp {
             ),
           ),
         householdCryptoProvider.overrideWithValue(crypto),
+        appLockRepositoryProvider.overrideWithValue(AppLockRepository(store: InMemoryKeyStore())),
+        biometricUnlockProvider.overrideWithValue(FakeBiometricUnlock()),
         pushServiceProvider.overrideWithValue(FakePushService()),
         foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
