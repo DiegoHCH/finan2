@@ -8,6 +8,7 @@ import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/household/presentation/screens/create_join_household_screen.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/profile/presentation/profile_providers.dart';
 import 'finan2_home_shell.dart';
 import 'finan2_splash_screen.dart';
 
@@ -57,6 +58,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       error: (error, _) => _ErrorScreen(message: error.toString()),
       data: (user) {
         if (user == null) return const LoginScreen();
+        // The profile exists and language/theme follow the account.
+        ref.watch(profileSyncProvider);
         return const _OnboardingGate();
       },
     );

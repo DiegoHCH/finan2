@@ -417,7 +417,6 @@
   },
   "settingsLeaveAndDelete": "Salir y borrar",
   "settingsLeave": "Salir",
-  "settingsMyName": "Mi nombre",
   "settingsHouseholdMembers": "Miembros del hogar",
   "settingsLanguage": "Idioma",
   "settingsLanguageSystem": "Como el teléfono",
@@ -2223,5 +2222,22 @@
   "onboardingBiometricsFailed": "No pudimos reconocerte. Prueba otra vez o elige «Ahora no».",
   "notificationPrefsOffBanner": "Las notificaciones están apagadas en este teléfono: no te llega ningún aviso.",
   "notificationPrefsBlockedTitle": "Actívalas desde el teléfono",
-  "notificationPrefsBlockedMessage": "El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas."
+  "notificationPrefsBlockedMessage": "El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.",
+  "profileTitle": "Tu perfil",
+  "profileName": "Nombre",
+  "profileEmail": "Correo",
+  "profilePassword": "Contraseña",
+  "profilePasswordGoogle": "Entras con Google: la contraseña se cambia en tu cuenta de Google.",
+  "profileChangePassword": "Cambiar contraseña",
+  "profilePasswordSentTitle": "Revisa tu correo",
+  "profilePasswordSentMessage": "Te enviamos un enlace a {email} para elegir una contraseña nueva.",
+  "@profilePasswordSentMessage": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePreferences": "Preferencias",
+  "profilePreferencesNote": "El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual."
 }

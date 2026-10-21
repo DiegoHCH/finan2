@@ -7,7 +7,9 @@ import '../../../../core/crypto/household_crypto.dart';
 import '../../../../core/crypto/recovery_phrase.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../app_lock/presentation/viewmodels/app_lock_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
+import '../../../profile/presentation/profile_providers.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../data/household_model.dart';
 import '../../data/household_repository.dart';
@@ -251,9 +253,15 @@ class HouseholdController extends AsyncNotifier<Household?> {
   /// Leaves the current household (see [leaveHousehold]) and deletes the
   /// signed-in user. Must be called right after a successful
   /// reauthentication.
+  /// Everything of the account's goes before the account itself - after,
+  /// the rules no longer let it: its household place, its PIN (here and in
+  /// the cloud) and its profile.
   Future<void> deleteAccount() async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
+    final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId != null) await leaveHousehold(householdId);
+    await ref.read(appLockRepositoryProvider).clear();
+    if (uid != null) await ref.read(userProfileRepositoryProvider).delete(uid);
     await ref.read(authRepositoryProvider).deleteAccount();
   }
 

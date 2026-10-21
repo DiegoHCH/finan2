@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/error_messages.dart';
-import '../../../../core/utils/text_case.dart';
 import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_head.dart';
 import '../../../../core/widgets/finan2_reauth.dart';
@@ -15,6 +14,8 @@ import '../../../household/data/household_model.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../household/presentation/widgets/recovery_phrase_flow.dart';
 import '../../../notification_prefs/presentation/screens/notification_preferences_screen.dart';
+import '../../../profile/presentation/profile_providers.dart';
+import 'profile_screen.dart';
 
 /// Tu cuenta: what's yours rather than the household's - your name, what to
 /// be notified of, the recovery phrase - and leaving or deleting the
@@ -42,24 +43,6 @@ class AccountSettingsScreen extends ConsumerWidget {
       final reauthenticated = await reauthenticate(context, ref);
       if (!reauthenticated || !context.mounted) return;
       await ref.read(householdControllerProvider.notifier).leaveHousehold(household.id);
-    } catch (error) {
-      if (!context.mounted) return;
-      await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
-    }
-  }
-
-  Future<void> _editMyName(BuildContext context, WidgetRef ref, String currentName) async {
-    final controller = TextEditingController(text: currentName);
-    final result = await showFinan2InputSheet(
-      context,
-      title: context.l10n.settingsMyName,
-      fieldLabel: context.l10n.commonName,
-      controller: controller,
-    );
-    final name = toTitleCase(result ?? '');
-    if (name.isEmpty || name == currentName) return;
-    try {
-      await ref.read(householdControllerProvider.notifier).updateMyName(name);
     } catch (error) {
       if (!context.mounted) return;
       await showFinan2ErrorSheet(context, message: friendlyErrorMessage(error));
@@ -124,9 +107,11 @@ class AccountSettingsScreen extends ConsumerWidget {
                       if (myUid != null)
                         Finan2SetRow(
                           icon: Icons.badge_outlined,
-                          label: l10n.settingsMyName,
-                          value: myName,
-                          onTap: () => _editMyName(context, ref, myName),
+                          label: l10n.profileTitle,
+                          value: ref.watch(userProfileProvider).value?.name ?? myName,
+                          onTap: () => Navigator.of(
+                            context,
+                          ).push(MaterialPageRoute<void>(builder: (_) => const ProfileScreen())),
                         ),
                       Finan2SetRow(
                         icon: Finan2Icons.miembros,

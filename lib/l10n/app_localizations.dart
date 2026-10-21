@@ -1137,12 +1137,6 @@ abstract class AppLocalizations {
   /// **'Salir'**
   String get settingsLeave;
 
-  /// No description provided for @settingsMyName.
-  ///
-  /// In es, this message translates to:
-  /// **'Mi nombre'**
-  String get settingsMyName;
-
   /// No description provided for @settingsHouseholdMembers.
   ///
   /// In es, this message translates to:
@@ -4520,6 +4514,66 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.'**
   String get notificationPrefsBlockedMessage;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu perfil'**
+  String get profileTitle;
+
+  /// No description provided for @profileName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get profileName;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo'**
+  String get profileEmail;
+
+  /// No description provided for @profilePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get profilePassword;
+
+  /// No description provided for @profilePasswordGoogle.
+  ///
+  /// In es, this message translates to:
+  /// **'Entras con Google: la contraseña se cambia en tu cuenta de Google.'**
+  String get profilePasswordGoogle;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar contraseña'**
+  String get profileChangePassword;
+
+  /// No description provided for @profilePasswordSentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa tu correo'**
+  String get profilePasswordSentTitle;
+
+  /// No description provided for @profilePasswordSentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Te enviamos un enlace a {email} para elegir una contraseña nueva.'**
+  String profilePasswordSentMessage(String email);
+
+  /// No description provided for @profilePreferences.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias'**
+  String get profilePreferences;
+
+  /// No description provided for @profilePreferencesNote.
+  ///
+  /// In es, this message translates to:
+  /// **'El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual.'**
+  String get profilePreferencesNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

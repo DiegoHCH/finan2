@@ -174,7 +174,6 @@
   "settingsLeaveHouseholdMessage": "You're leaving \"{name}\". Your accounts, transactions and other data stay available to the rest of the household. You can create or join another one later.",
   "settingsLeaveAndDelete": "Leave and delete",
   "settingsLeave": "Leave",
-  "settingsMyName": "My name",
   "settingsHouseholdMembers": "Household members",
   "settingsLanguage": "Language",
   "settingsLanguageSystem": "Same as the phone",
@@ -737,5 +736,15 @@
   "onboardingBiometricsFailed": "We couldn't recognize you. Try again or choose «Not now».",
   "notificationPrefsOffBanner": "Notifications are off on this phone: no alerts reach you.",
   "notificationPrefsBlockedTitle": "Turn them on from the phone",
-  "notificationPrefsBlockedMessage": "The phone no longer lets the app ask. Go to the phone's settings › Apps › Finan2 › Notifications and turn them on."
+  "notificationPrefsBlockedMessage": "The phone no longer lets the app ask. Go to the phone's settings › Apps › Finan2 › Notifications and turn them on.",
+  "profileTitle": "Your profile",
+  "profileName": "Name",
+  "profileEmail": "Email",
+  "profilePassword": "Password",
+  "profilePasswordGoogle": "You sign in with Google: the password is changed in your Google account.",
+  "profileChangePassword": "Change password",
+  "profilePasswordSentTitle": "Check your email",
+  "profilePasswordSentMessage": "We sent a link to {email} to choose a new password.",
+  "profilePreferences": "Preferences",
+  "profilePreferencesNote": "Language and theme are saved to your account: you'll find them the same on another phone."
 }

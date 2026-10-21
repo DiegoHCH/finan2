@@ -622,9 +622,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLeave => 'Salir';
 
   @override
-  String get settingsMyName => 'Mi nombre';
-
-  @override
   String get settingsHouseholdMembers => 'Miembros del hogar';
 
   @override
@@ -2728,4 +2725,38 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get notificationPrefsBlockedMessage =>
       'El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.';
+
+  @override
+  String get profileTitle => 'Tu perfil';
+
+  @override
+  String get profileName => 'Nombre';
+
+  @override
+  String get profileEmail => 'Correo';
+
+  @override
+  String get profilePassword => 'Contraseña';
+
+  @override
+  String get profilePasswordGoogle =>
+      'Entras con Google: la contraseña se cambia en tu cuenta de Google.';
+
+  @override
+  String get profileChangePassword => 'Cambiar contraseña';
+
+  @override
+  String get profilePasswordSentTitle => 'Revisa tu correo';
+
+  @override
+  String profilePasswordSentMessage(String email) {
+    return 'Te enviamos un enlace a $email para elegir una contraseña nueva.';
+  }
+
+  @override
+  String get profilePreferences => 'Preferencias';
+
+  @override
+  String get profilePreferencesNote =>
+      'El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual.';
 }
