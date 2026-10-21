@@ -55,13 +55,13 @@ const testHouseholdId = 'h1';
 const testUid = 'u1';
 
 class FakeUser extends Fake implements User {
-  FakeUser(this.uid);
+  FakeUser(this.uid, {this.displayName = 'Diego'});
 
   @override
   final String uid;
 
   @override
-  String? get displayName => 'Diego';
+  final String? displayName;
 
   @override
   String? get email => 'diego@example.com';
@@ -71,6 +71,10 @@ class FakeUser extends Fake implements User {
 /// Auth without Firebase: what the screens ask of it, recorded.
 class FakeAuthRepository extends Fake implements AuthRepository {
   String? displayName;
+
+  /// Firebase's live user, as opposed to the sign-in's snapshot.
+  @override
+  User? currentUser;
   final passwordResets = <String>[];
 
   @override
