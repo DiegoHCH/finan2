@@ -45,6 +45,32 @@ service cloud.firestore {
         && request.auth.uid in getAfter(householdPath(resource.data.householdId)).data.members;
     }
 
+    // An account's own profile (UserProfileRepository): its name - copied
+    // into each household's memberInfo for the partner - its sign-in email
+    // and the preferences that follow it to every phone. Its owner's alone.
+    match /users/{uid} {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'email', 'language', 'theme', 'createdAt', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 60
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && (!('language' in request.resource.data) || request.resource.data.language in ['system', 'es', 'en'])
+        && (!('theme' in request.resource.data) || request.resource.data.theme in ['system', 'light', 'dark']);
+    }
+
+    // An account's app-lock PIN record (salt:HMAC, never the PIN), so every
+    // phone it signs in on opens with the same PIN (AppLockRepository).
+    // Its owner's alone.
+    match /users/{uid}/private/appLock {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['pin', 'updatedAt'])
+        && request.resource.data.pin is string
+        && request.resource.data.pin.size() < 120;
+    }
+
     match /households/{hid} {
       function isMemberOfStored() {
         return signedIn() && request.auth.uid in resource.data.members;

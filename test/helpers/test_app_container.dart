@@ -4,6 +4,10 @@ import 'package:finan2/core/notifications/notification_providers.dart';
 import 'package:finan2/core/notifications/push_service.dart';
 import 'package:finan2/features/accounts/data/account_repository.dart';
 import 'package:finan2/features/accounts/presentation/viewmodels/account_providers.dart';
+import 'package:finan2/features/app_lock/data/app_lock_cloud.dart';
+import 'package:finan2/features/app_lock/data/app_lock_repository.dart';
+import 'package:finan2/features/app_lock/presentation/viewmodels/app_lock_providers.dart';
+import 'package:finan2/features/auth/data/auth_repository.dart';
 import 'package:finan2/features/auth/presentation/viewmodels/auth_providers.dart';
 import 'package:finan2/features/budget/data/budget_repository.dart';
 import 'package:finan2/features/budget/presentation/viewmodels/budget_providers.dart';
@@ -26,6 +30,8 @@ import 'package:finan2/features/notification_prefs/data/notification_prefs_repos
 import 'package:finan2/features/notification_prefs/presentation/viewmodels/notification_prefs_providers.dart';
 import 'package:finan2/features/notifications/data/notification_repository.dart';
 import 'package:finan2/features/notifications/presentation/viewmodels/notification_providers.dart';
+import 'package:finan2/features/profile/data/user_profile_repository.dart';
+import 'package:finan2/features/profile/presentation/profile_providers.dart';
 import 'package:finan2/features/recurring_bills/data/recurring_bill_repository.dart';
 import 'package:finan2/features/recurring_bills/presentation/viewmodels/recurring_bill_providers.dart';
 import 'package:finan2/features/savings_challenge/data/savings_challenge_repository.dart';
@@ -42,26 +48,66 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_balance_ledger.dart';
+import 'fake_biometric_unlock.dart';
 import 'test_household_crypto.dart';
 
 const testHouseholdId = 'h1';
 const testUid = 'u1';
 
 class FakeUser extends Fake implements User {
-  FakeUser(this.uid);
+  FakeUser(this.uid, {this.displayName = 'Diego'});
 
   @override
   final String uid;
 
   @override
-  String? get displayName => 'Diego';
+  final String? displayName;
 
   @override
   String? get email => 'diego@example.com';
 }
 
 /// Never reaches FCM or the Worker.
+/// Auth without Firebase: what the screens ask of it, recorded.
+class FakeAuthRepository extends Fake implements AuthRepository {
+  String? displayName;
+
+  /// Firebase's live user, as opposed to the sign-in's snapshot.
+  @override
+  User? currentUser;
+  final passwordResets = <String>[];
+
+  @override
+  bool get signedInWithGoogle => false;
+
+  @override
+  Future<void> updateDisplayName(String name) async => displayName = name;
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async => passwordResets.add(email);
+
+  var deleted = false;
+
+  @override
+  Future<void> deleteAccount() async => deleted = true;
+}
+
 class FakePushService extends Fake implements PushService {
+  /// Whether the OS allows notifications; [grantOnRequest] whether the
+  /// prompt, when shown, is answered «Allow».
+  bool allowed = false;
+  bool grantOnRequest = true;
+  var requests = 0;
+
+  @override
+  Future<bool> notificationsAllowed() async => allowed;
+
+  @override
+  Future<bool> requestNotificationPermission() async {
+    requests++;
+    return allowed = allowed || grantOnRequest;
+  }
+
   @override
   Future<void> registerToken(String householdId, String uid) async {}
 
@@ -78,21 +124,49 @@ class FakePushService extends Fake implements PushService {
 /// [firestore] - what a controller test needs to drive the real data layer
 /// without Firebase.
 class TestApp {
-  TestApp._(this.container, this.firestore, this.crypto);
+  TestApp._(this.container, this.firestore, this.crypto, this.push, this.biometrics, this.auth);
+
+  /// The same fakes behind [container] - a child of [app]'s with a few
+  /// overrides of its own (a sign-in stream to drive, say).
+  TestApp.withContainer(TestApp app, this.container)
+    : firestore = app.firestore,
+      crypto = app.crypto,
+      push = app.push,
+      biometrics = app.biometrics,
+      auth = app.auth;
 
   final ProviderContainer container;
   final FakeFirebaseFirestore firestore;
   final HouseholdCrypto crypto;
+  final FakePushService push;
+  final FakeBiometricUnlock biometrics;
+  final FakeAuthRepository auth;
 
   /// With [withHousehold] false the member has none yet: the household
   /// comes from the fake Firestore, so creating one in the app shows it.
-  static Future<TestApp> start({bool withHousehold = true}) async {
+  ///
+  /// [withPin] false is a phone this account never set up (the AuthGate
+  /// shows the onboarding first); true (the default) is one already set up.
+  static Future<TestApp> start({bool withHousehold = true, bool withPin = true}) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
     final ledger = testBalanceLedger(firestore, crypto);
+    final push = FakePushService();
+    final biometrics = FakeBiometricUnlock();
+    final auth = FakeAuthRepository();
+    final appLock = AppLockRepository(
+      account: testUid,
+      cloud: FirestoreAppLockCloud(firestore: firestore),
+      store: InMemoryKeyStore(),
+    );
+    if (withPin) {
+      await appLock.setPin('1397');
+      await appLock.markOnboarded();
+    }
     final container = ProviderContainer(
       overrides: [
         authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),
+        authRepositoryProvider.overrideWithValue(auth),
         if (withHousehold)
           currentHouseholdProvider.overrideWith(
             (ref) => Stream<Household?>.value(
@@ -108,9 +182,14 @@ class TestApp {
             ),
           ),
         householdCryptoProvider.overrideWithValue(crypto),
-        pushServiceProvider.overrideWithValue(FakePushService()),
+        appLockRepositoryProvider.overrideWithValue(appLock),
+        biometricUnlockProvider.overrideWithValue(biometrics),
+        pushServiceProvider.overrideWithValue(push),
         foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
+        userProfileRepositoryProvider.overrideWithValue(
+          UserProfileRepository(firestore: firestore),
+        ),
         connectionRepositoryProvider.overrideWithValue(ConnectionRepository(firestore: firestore)),
         notificationRepositoryProvider.overrideWithValue(
           NotificationRepository(firestore: firestore),
@@ -160,7 +239,7 @@ class TestApp {
     container.listen(currentHouseholdProvider, (_, _) {});
     await container.read(authStateChangesProvider.future);
     await container.read(currentHouseholdProvider.future);
-    return TestApp._(container, firestore, crypto);
+    return TestApp._(container, firestore, crypto, push, biometrics, auth);
   }
 
   /// The household's `collection`, for asserting what a controller wrote.

@@ -8,6 +8,8 @@
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
 		<string>Finan2</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>Finan2 usa Face ID para abrirse sin que escribas tu PIN.</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>

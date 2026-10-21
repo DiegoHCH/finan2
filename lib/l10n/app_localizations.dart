@@ -1137,12 +1137,6 @@ abstract class AppLocalizations {
   /// **'Salir'**
   String get settingsLeave;
 
-  /// No description provided for @settingsMyName.
-  ///
-  /// In es, this message translates to:
-  /// **'Mi nombre'**
-  String get settingsMyName;
-
   /// No description provided for @settingsHouseholdMembers.
   ///
   /// In es, this message translates to:
@@ -4304,6 +4298,282 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Desde ahora los dos van a ver y anotar el dinero de esta casa.'**
   String get householdJoinConfirmMessageUnnamed;
+
+  /// Row in Ajustes and title of the screen that turns the PIN / fingerprint lock on.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueo de la app'**
+  String get appLockTitle;
+
+  /// No description provided for @appLockIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Finan2 pide tu PIN al abrirse y al volver tras 30 segundos fuera, así no tienes que iniciar sesión cada vez. Es solo de este teléfono.'**
+  String get appLockIntro;
+
+  /// No description provided for @appLockBiometrics.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar huella o rostro'**
+  String get appLockBiometrics;
+
+  /// No description provided for @appLockBiometricsWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre sin escribir el PIN. El PIN sigue sirviendo.'**
+  String get appLockBiometricsWhen;
+
+  /// No description provided for @appLockChangePin.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar PIN'**
+  String get appLockChangePin;
+
+  /// No description provided for @appLockEnterPin.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe tu PIN'**
+  String get appLockEnterPin;
+
+  /// No description provided for @appLockEnterPinMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Finan2 está bloqueado en este teléfono.'**
+  String get appLockEnterPinMessage;
+
+  /// Under the PIN dots after a wrong PIN; count is how many tries are left before a wait.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{PIN incorrecto.} =1{PIN incorrecto. Te queda 1 intento.} other{PIN incorrecto. Te quedan {count} intentos.}}'**
+  String appLockWrongPin(int count);
+
+  /// Under the PIN dots while the keypad is blocked; counts down every second.
+  ///
+  /// In es, this message translates to:
+  /// **'Demasiados intentos. Prueba otra vez en {seconds} s.'**
+  String appLockWait(int seconds);
+
+  /// No description provided for @appLockForgot.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Olvidaste tu PIN?'**
+  String get appLockForgot;
+
+  /// No description provided for @appLockForgotTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar el PIN cerrando sesión'**
+  String get appLockForgotTitle;
+
+  /// No description provided for @appLockForgotMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Al cerrar sesión se borra el PIN de este teléfono. Vuelve a entrar con tu correo o con Google y tus datos siguen ahí.'**
+  String get appLockForgotMessage;
+
+  /// No description provided for @appLockUseBiometrics.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar huella o rostro'**
+  String get appLockUseBiometrics;
+
+  /// Shown by the system fingerprint / Face ID prompt.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre Finan2'**
+  String get appLockBiometricReason;
+
+  /// No description provided for @appLockErase.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrar'**
+  String get appLockErase;
+
+  /// No description provided for @appLockStep.
+  ///
+  /// In es, this message translates to:
+  /// **'Paso {step} de 2'**
+  String appLockStep(int step);
+
+  /// No description provided for @appLockCreateTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un PIN'**
+  String get appLockCreateTitle;
+
+  /// No description provided for @appLockCreateMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'4 dígitos que vas a escribir al abrir Finan2. Mejor uno que no sea tu fecha de nacimiento.'**
+  String get appLockCreateMessage;
+
+  /// No description provided for @appLockConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Escríbelo otra vez'**
+  String get appLockConfirmTitle;
+
+  /// No description provided for @appLockConfirmMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Para estar seguros de que es el que quieres.'**
+  String get appLockConfirmMessage;
+
+  /// No description provided for @appLockMismatch.
+  ///
+  /// In es, this message translates to:
+  /// **'No coinciden. Elige el PIN otra vez.'**
+  String get appLockMismatch;
+
+  /// No description provided for @appLockCurrentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe tu PIN actual'**
+  String get appLockCurrentTitle;
+
+  /// No description provided for @appLockCurrentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Para cambiar el bloqueo hace falta el PIN de ahora.'**
+  String get appLockCurrentMessage;
+
+  /// No description provided for @appLockValuePin.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo PIN'**
+  String get appLockValuePin;
+
+  /// No description provided for @appLockValueBiometrics.
+  ///
+  /// In es, this message translates to:
+  /// **'Con huella o rostro'**
+  String get appLockValueBiometrics;
+
+  /// No description provided for @appLockBiometricsUnavailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Este teléfono no tiene huella ni rostro configurados. Agrégalos en los ajustes del teléfono y vuelve aquí.'**
+  String get appLockBiometricsUnavailable;
+
+  /// No description provided for @onboardingNotificationsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Que no se te pase nada'**
+  String get onboardingNotificationsTitle;
+
+  /// No description provided for @onboardingNotificationsMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.'**
+  String get onboardingNotificationsMessage;
+
+  /// No description provided for @onboardingPinTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu PIN'**
+  String get onboardingPinTitle;
+
+  /// No description provided for @onboardingPinMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Con estos 4 dígitos entras a Finan2 sin volver a iniciar sesión. Solo vale en este teléfono.'**
+  String get onboardingPinMessage;
+
+  /// No description provided for @onboardingBiometricsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Entrar con tu huella o tu rostro?'**
+  String get onboardingBiometricsTitle;
+
+  /// No description provided for @onboardingBiometricsMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Más rápido que escribir el PIN, que sigue sirviendo. Lo cambias cuando quieras en Ajustes › Bloqueo de la app.'**
+  String get onboardingBiometricsMessage;
+
+  /// No description provided for @onboardingBiometricsFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos reconocerte. Prueba otra vez o elige «Ahora no».'**
+  String get onboardingBiometricsFailed;
+
+  /// No description provided for @notificationPrefsOffBanner.
+  ///
+  /// In es, this message translates to:
+  /// **'Las notificaciones están apagadas en este teléfono: no te llega ningún aviso.'**
+  String get notificationPrefsOffBanner;
+
+  /// No description provided for @notificationPrefsBlockedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Actívalas desde el teléfono'**
+  String get notificationPrefsBlockedTitle;
+
+  /// No description provided for @notificationPrefsBlockedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.'**
+  String get notificationPrefsBlockedMessage;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu perfil'**
+  String get profileTitle;
+
+  /// No description provided for @profileName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get profileName;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo'**
+  String get profileEmail;
+
+  /// No description provided for @profilePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get profilePassword;
+
+  /// No description provided for @profilePasswordGoogle.
+  ///
+  /// In es, this message translates to:
+  /// **'Entras con Google: la contraseña se cambia en tu cuenta de Google.'**
+  String get profilePasswordGoogle;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar contraseña'**
+  String get profileChangePassword;
+
+  /// No description provided for @profilePasswordSentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa tu correo'**
+  String get profilePasswordSentTitle;
+
+  /// No description provided for @profilePasswordSentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Te enviamos un enlace a {email} para elegir una contraseña nueva.'**
+  String profilePasswordSentMessage(String email);
+
+  /// No description provided for @profilePreferences.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias'**
+  String get profilePreferences;
+
+  /// No description provided for @profilePreferencesNote.
+  ///
+  /// In es, this message translates to:
+  /// **'El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual.'**
+  String get profilePreferencesNote;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

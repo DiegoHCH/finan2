@@ -19,7 +19,7 @@ void main() {
 
   testWidgets('create a household, record a movement, plan its category', (tester) async {
     SharedPreferences.setMockInitialValues({'notif_primer_shown': true});
-    final app = (await tester.runAsync(() => TestApp.start(withHousehold: false)))!;
+    final app = (await tester.runAsync(() => TestApp.start(withHousehold: false, withPin: false)))!;
 
     await householdFlow(tester, app);
   });

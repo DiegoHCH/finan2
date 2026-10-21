@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../app_lock/presentation/screens/app_lock_settings_screen.dart';
+import '../../../app_lock/presentation/viewmodels/app_lock_providers.dart';
 import '../../../demo/presentation/demo_data_actions.dart';
 import '../../../../core/locale/app_language.dart';
 import '../../../../core/pwa/pwa_providers.dart';
@@ -180,6 +182,17 @@ class SettingsScreen extends ConsumerWidget {
                         label: l10n.settingsBackup,
                         onTap: () => _open(context, const BackupScreen()),
                       ),
+                      // Fingerprint, face and a phone's secure storage: not on the web.
+                      if (!kIsWeb)
+                        Finan2SetRow(
+                          icon: Icons.lock_outline,
+                          tone: Finan2Tone(accent, colors.brandTint),
+                          label: l10n.appLockTitle,
+                          value: ref.watch(appLockSettingsProvider).value?.biometrics == true
+                              ? l10n.appLockValueBiometrics
+                              : l10n.appLockValuePin,
+                          onTap: () => _open(context, const AppLockSettingsScreen()),
+                        ),
                       Finan2SetRow(
                         icon: members.length < 2
                             ? Icons.person_add_alt_1_outlined

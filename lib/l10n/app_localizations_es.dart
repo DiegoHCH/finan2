@@ -622,9 +622,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLeave => 'Salir';
 
   @override
-  String get settingsMyName => 'Mi nombre';
-
-  @override
   String get settingsHouseholdMembers => 'Miembros del hogar';
 
   @override
@@ -2597,4 +2594,169 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get householdJoinConfirmMessageUnnamed =>
       'Desde ahora los dos van a ver y anotar el dinero de esta casa.';
+
+  @override
+  String get appLockTitle => 'Bloqueo de la app';
+
+  @override
+  String get appLockIntro =>
+      'Finan2 pide tu PIN al abrirse y al volver tras 30 segundos fuera, así no tienes que iniciar sesión cada vez. Es solo de este teléfono.';
+
+  @override
+  String get appLockBiometrics => 'Usar huella o rostro';
+
+  @override
+  String get appLockBiometricsWhen => 'Abre sin escribir el PIN. El PIN sigue sirviendo.';
+
+  @override
+  String get appLockChangePin => 'Cambiar PIN';
+
+  @override
+  String get appLockEnterPin => 'Escribe tu PIN';
+
+  @override
+  String get appLockEnterPinMessage => 'Finan2 está bloqueado en este teléfono.';
+
+  @override
+  String appLockWrongPin(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'PIN incorrecto. Te quedan $count intentos.',
+      one: 'PIN incorrecto. Te queda 1 intento.',
+      zero: 'PIN incorrecto.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String appLockWait(int seconds) {
+    return 'Demasiados intentos. Prueba otra vez en $seconds s.';
+  }
+
+  @override
+  String get appLockForgot => '¿Olvidaste tu PIN?';
+
+  @override
+  String get appLockForgotTitle => 'Quitar el PIN cerrando sesión';
+
+  @override
+  String get appLockForgotMessage =>
+      'Al cerrar sesión se borra el PIN de este teléfono. Vuelve a entrar con tu correo o con Google y tus datos siguen ahí.';
+
+  @override
+  String get appLockUseBiometrics => 'Usar huella o rostro';
+
+  @override
+  String get appLockBiometricReason => 'Abre Finan2';
+
+  @override
+  String get appLockErase => 'Borrar';
+
+  @override
+  String appLockStep(int step) {
+    return 'Paso $step de 2';
+  }
+
+  @override
+  String get appLockCreateTitle => 'Elige un PIN';
+
+  @override
+  String get appLockCreateMessage =>
+      '4 dígitos que vas a escribir al abrir Finan2. Mejor uno que no sea tu fecha de nacimiento.';
+
+  @override
+  String get appLockConfirmTitle => 'Escríbelo otra vez';
+
+  @override
+  String get appLockConfirmMessage => 'Para estar seguros de que es el que quieres.';
+
+  @override
+  String get appLockMismatch => 'No coinciden. Elige el PIN otra vez.';
+
+  @override
+  String get appLockCurrentTitle => 'Escribe tu PIN actual';
+
+  @override
+  String get appLockCurrentMessage => 'Para cambiar el bloqueo hace falta el PIN de ahora.';
+
+  @override
+  String get appLockValuePin => 'Solo PIN';
+
+  @override
+  String get appLockValueBiometrics => 'Con huella o rostro';
+
+  @override
+  String get appLockBiometricsUnavailable =>
+      'Este teléfono no tiene huella ni rostro configurados. Agrégalos en los ajustes del teléfono y vuelve aquí.';
+
+  @override
+  String get onboardingNotificationsTitle => 'Que no se te pase nada';
+
+  @override
+  String get onboardingNotificationsMessage =>
+      'Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.';
+
+  @override
+  String get onboardingPinTitle => 'Crea tu PIN';
+
+  @override
+  String get onboardingPinMessage =>
+      'Con estos 4 dígitos entras a Finan2 sin volver a iniciar sesión. Solo vale en este teléfono.';
+
+  @override
+  String get onboardingBiometricsTitle => '¿Entrar con tu huella o tu rostro?';
+
+  @override
+  String get onboardingBiometricsMessage =>
+      'Más rápido que escribir el PIN, que sigue sirviendo. Lo cambias cuando quieras en Ajustes › Bloqueo de la app.';
+
+  @override
+  String get onboardingBiometricsFailed =>
+      'No pudimos reconocerte. Prueba otra vez o elige «Ahora no».';
+
+  @override
+  String get notificationPrefsOffBanner =>
+      'Las notificaciones están apagadas en este teléfono: no te llega ningún aviso.';
+
+  @override
+  String get notificationPrefsBlockedTitle => 'Actívalas desde el teléfono';
+
+  @override
+  String get notificationPrefsBlockedMessage =>
+      'El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.';
+
+  @override
+  String get profileTitle => 'Tu perfil';
+
+  @override
+  String get profileName => 'Nombre';
+
+  @override
+  String get profileEmail => 'Correo';
+
+  @override
+  String get profilePassword => 'Contraseña';
+
+  @override
+  String get profilePasswordGoogle =>
+      'Entras con Google: la contraseña se cambia en tu cuenta de Google.';
+
+  @override
+  String get profileChangePassword => 'Cambiar contraseña';
+
+  @override
+  String get profilePasswordSentTitle => 'Revisa tu correo';
+
+  @override
+  String profilePasswordSentMessage(String email) {
+    return 'Te enviamos un enlace a $email para elegir una contraseña nueva.';
+  }
+
+  @override
+  String get profilePreferences => 'Preferencias';
+
+  @override
+  String get profilePreferencesNote =>
+      'El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual.';
 }

@@ -417,7 +417,6 @@
   },
   "settingsLeaveAndDelete": "Salir y borrar",
   "settingsLeave": "Salir",
-  "settingsMyName": "Mi nombre",
   "settingsHouseholdMembers": "Miembros del hogar",
   "settingsLanguage": "Idioma",
   "settingsLanguageSystem": "Como el teléfono",
@@ -2112,7 +2111,9 @@
   "demoSeedDone": "Se escribieron {count} registros de prueba.",
   "@demoSeedDone": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "demoRemoveTitle": "¿Quitar los datos de prueba?",
@@ -2122,14 +2123,18 @@
   "demoRemoveDone": "Se borraron {count} registros de prueba.",
   "@demoRemoveDone": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "demoError": "No se pudo terminar. Revisa la conexión y vuelve a intentarlo: se puede repetir sin duplicar nada.",
   "householdInviteValidUntil": "Sirve una vez y vence el {date}.",
   "@householdInviteValidUntil": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "householdInviteNewCode": "Generar otro código",
@@ -2138,15 +2143,101 @@
   "householdJoinConfirmTitle": "¿Entrar a {household}?",
   "@householdJoinConfirmTitle": {
     "placeholders": {
-      "household": { "type": "String" }
+      "household": {
+        "type": "String"
+      }
     }
   },
   "householdJoinConfirmTitleUnnamed": "¿Entrar a esta casa?",
   "householdJoinConfirmMessage": "Te invitó {name}. Desde ahora los dos van a ver y anotar el dinero de esta casa.",
   "@householdJoinConfirmMessage": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
-  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa."
+  "householdJoinConfirmMessageUnnamed": "Desde ahora los dos van a ver y anotar el dinero de esta casa.",
+  "appLockTitle": "Bloqueo de la app",
+  "@appLockTitle": {
+    "description": "Row in Ajustes and title of the screen that turns the PIN / fingerprint lock on."
+  },
+  "appLockIntro": "Finan2 pide tu PIN al abrirse y al volver tras 30 segundos fuera, así no tienes que iniciar sesión cada vez. Es solo de este teléfono.",
+  "appLockBiometrics": "Usar huella o rostro",
+  "appLockBiometricsWhen": "Abre sin escribir el PIN. El PIN sigue sirviendo.",
+  "appLockChangePin": "Cambiar PIN",
+  "appLockEnterPin": "Escribe tu PIN",
+  "appLockEnterPinMessage": "Finan2 está bloqueado en este teléfono.",
+  "appLockWrongPin": "{count, plural, =0{PIN incorrecto.} =1{PIN incorrecto. Te queda 1 intento.} other{PIN incorrecto. Te quedan {count} intentos.}}",
+  "@appLockWrongPin": {
+    "description": "Under the PIN dots after a wrong PIN; count is how many tries are left before a wait.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockWait": "Demasiados intentos. Prueba otra vez en {seconds} s.",
+  "@appLockWait": {
+    "description": "Under the PIN dots while the keypad is blocked; counts down every second.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockForgot": "¿Olvidaste tu PIN?",
+  "appLockForgotTitle": "Quitar el PIN cerrando sesión",
+  "appLockForgotMessage": "Al cerrar sesión se borra el PIN de este teléfono. Vuelve a entrar con tu correo o con Google y tus datos siguen ahí.",
+  "appLockUseBiometrics": "Usar huella o rostro",
+  "appLockBiometricReason": "Abre Finan2",
+  "@appLockBiometricReason": {
+    "description": "Shown by the system fingerprint / Face ID prompt."
+  },
+  "appLockErase": "Borrar",
+  "appLockStep": "Paso {step} de 2",
+  "@appLockStep": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockCreateTitle": "Elige un PIN",
+  "appLockCreateMessage": "4 dígitos que vas a escribir al abrir Finan2. Mejor uno que no sea tu fecha de nacimiento.",
+  "appLockConfirmTitle": "Escríbelo otra vez",
+  "appLockConfirmMessage": "Para estar seguros de que es el que quieres.",
+  "appLockMismatch": "No coinciden. Elige el PIN otra vez.",
+  "appLockCurrentTitle": "Escribe tu PIN actual",
+  "appLockCurrentMessage": "Para cambiar el bloqueo hace falta el PIN de ahora.",
+  "appLockValuePin": "Solo PIN",
+  "appLockValueBiometrics": "Con huella o rostro",
+  "appLockBiometricsUnavailable": "Este teléfono no tiene huella ni rostro configurados. Agrégalos en los ajustes del teléfono y vuelve aquí.",
+  "onboardingNotificationsTitle": "Que no se te pase nada",
+  "onboardingNotificationsMessage": "Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.",
+  "onboardingPinTitle": "Crea tu PIN",
+  "onboardingPinMessage": "Con estos 4 dígitos entras a Finan2 sin volver a iniciar sesión. Solo vale en este teléfono.",
+  "onboardingBiometricsTitle": "¿Entrar con tu huella o tu rostro?",
+  "onboardingBiometricsMessage": "Más rápido que escribir el PIN, que sigue sirviendo. Lo cambias cuando quieras en Ajustes › Bloqueo de la app.",
+  "onboardingBiometricsFailed": "No pudimos reconocerte. Prueba otra vez o elige «Ahora no».",
+  "notificationPrefsOffBanner": "Las notificaciones están apagadas en este teléfono: no te llega ningún aviso.",
+  "notificationPrefsBlockedTitle": "Actívalas desde el teléfono",
+  "notificationPrefsBlockedMessage": "El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.",
+  "profileTitle": "Tu perfil",
+  "profileName": "Nombre",
+  "profileEmail": "Correo",
+  "profilePassword": "Contraseña",
+  "profilePasswordGoogle": "Entras con Google: la contraseña se cambia en tu cuenta de Google.",
+  "profileChangePassword": "Cambiar contraseña",
+  "profilePasswordSentTitle": "Revisa tu correo",
+  "profilePasswordSentMessage": "Te enviamos un enlace a {email} para elegir una contraseña nueva.",
+  "@profilePasswordSentMessage": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePreferences": "Preferencias",
+  "profilePreferencesNote": "El idioma y el tema se guardan en tu cuenta: en otro teléfono los encuentras igual."
 }

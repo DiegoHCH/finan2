@@ -41,8 +41,8 @@ abstract class Finan2KeyStore {
   Future<void> delete(String key);
 }
 
-class _SecureKeyStore implements Finan2KeyStore {
-  const _SecureKeyStore();
+class Finan2SecureKeyStore implements Finan2KeyStore {
+  const Finan2SecureKeyStore();
 
   static const _storage = FlutterSecureStorage();
 
@@ -65,7 +65,8 @@ class _SecureKeyStore implements Finan2KeyStore {
 /// [RecoveryPhrase], which nobody - including an admin of the Firebase/GCP
 /// project - can open without the phrase.
 class HouseholdCrypto {
-  HouseholdCrypto({Finan2KeyStore? keyStore}) : _keyStore = keyStore ?? const _SecureKeyStore();
+  HouseholdCrypto({Finan2KeyStore? keyStore})
+    : _keyStore = keyStore ?? const Finan2SecureKeyStore();
 
   final Finan2KeyStore _keyStore;
   static final _algorithm = AesGcm.with256bits();
