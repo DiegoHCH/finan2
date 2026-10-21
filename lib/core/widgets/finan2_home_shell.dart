@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -170,9 +169,6 @@ class _Finan2HomeShellState extends ConsumerState<Finan2HomeShell> {
     try {
       await ref.read(notificationServiceProvider).scheduleDebtPaymentReminders(debts);
     } catch (e, st) {
-      // Without exact-alarm permission (user hasn't opened notification
-      // prefs) this is expected - scanning/in-app alerts still work regardless.
-      if (e is PlatformException && e.code == 'exact_alarms_not_permitted') return;
       ErrorReporter.recoverable(e, st, reason: 'debt reminders not scheduled');
     }
   }
