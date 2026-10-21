@@ -156,8 +156,16 @@ class HouseholdController extends AsyncNotifier<Household?> {
       return currentL10n.householdKeyWrongHousehold;
     }
     await ref.read(householdCryptoProvider).importKey(householdId, key);
-    ref.invalidate(householdHasKeyProvider(householdId));
+    _keyArrived(householdId);
     return null;
+  }
+
+  /// The key is here now: «has the key?» changes, and every list of the
+  /// household is read again - the ones already open failed to decrypt and
+  /// would keep showing that until something in them changed.
+  void _keyArrived(String householdId) {
+    ref.invalidate(householdHasKeyProvider(householdId));
+    ref.invalidate(currentHouseholdProvider);
   }
 
   /// The invite for [householdId] as the full `<invite>.<key>` string to
@@ -237,7 +245,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
     if (!unwrapped) {
       return currentL10n.householdRecoveryPhraseMismatch;
     }
-    ref.invalidate(householdHasKeyProvider(householdId));
+    _keyArrived(householdId);
     return null;
   }
 
