@@ -46,8 +46,8 @@ class NotificationService {
     );
   }
 
-  /// Requests OS notification permission (and, on Android, exact-alarm
-  /// permission needed for reminders to fire at the exact chosen time).
+  /// Requests OS notification permission. Reminders are scheduled inexact on
+  /// Android: Play only allows exact alarms for alarm-clock and calendar apps.
   Future<bool> requestPermission() async {
     final androidImpl = _plugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
@@ -57,7 +57,6 @@ class NotificationService {
     var granted = true;
     if (androidImpl != null) {
       granted = await androidImpl.requestNotificationsPermission() ?? granted;
-      await androidImpl.requestExactAlarmsPermission();
     }
     if (iosImpl != null) {
       granted = await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? granted;
@@ -76,7 +75,7 @@ class NotificationService {
         android: AndroidNotificationDetails('daily_reminder', l10n.reminderDailyChannel),
         iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
@@ -94,7 +93,7 @@ class NotificationService {
         android: AndroidNotificationDetails('weekly_summary', l10n.reminderWeeklyChannel),
         iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
   }
@@ -131,7 +130,7 @@ class NotificationService {
             android: AndroidNotificationDetails('debt_reminders', l10n.reminderDebtChannel),
             iOS: DarwinNotificationDetails(),
           ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
         );
       }
