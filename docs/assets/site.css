@@ -190,7 +190,7 @@ h1 em { font-style: normal; color: var(--violet); }
 .switch small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 12.5px; margin-top: 2px; }
 
 @media (max-width: 900px) {
-  .hero .wrap { grid-template-columns: 1fr; }
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); }
   .stage { min-height: 0; padding-bottom: 210px; margin-top: 8px; }
   .stage .phone { rotate: 2deg; translate: 18% 0; width: min(250px, 62vw); }
   .slip { bottom: 0; left: 0; right: 0; margin: 0 auto; width: min(340px, 100%); rotate: -1.5deg; translate: -4% 0; }
@@ -237,7 +237,7 @@ h2 {
 .who-v { color: var(--vale); font-weight: 600; }
 
 @media (max-width: 900px) {
-  .tour { grid-template-columns: 1fr; }
+  .tour { grid-template-columns: minmax(0, 1fr); }
   .tour-phone { display: none; }
   .step, .step:first-child, .step:last-child { min-height: 0; padding: 36px 0; opacity: 1; }
   .step .inline-phone {
@@ -266,6 +266,8 @@ pre.doc {
 }
 pre.doc .k { color: #8FB8FF; }
 pre.doc .s { color: #E6E0F7; }
+/* The full ciphertext is one long token: let it break, unlike other amounts. */
+pre.doc .amt { white-space: normal; word-break: break-all; }
 pre.doc .x { color: var(--cipher); background: rgba(184, 166, 255, 0.10); border-radius: 4px; padding: 1px 2px; }
 .doc-note { margin-top: 14px; font-size: 14px; color: var(--vault-soft); }
 .doc-note b { color: var(--vault-ink); font-weight: 600; }
@@ -281,9 +283,9 @@ pre.doc .x { color: var(--cipher); background: rgba(184, 166, 255, 0.10); border
 }
 .words span:nth-child(1) { filter: none; }
 @media (max-width: 960px) {
-  .compare { grid-template-columns: 1fr; }
+  .compare { grid-template-columns: minmax(0, 1fr); }
   .arrow svg { transform: rotate(90deg); }
-  .facts { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── Questions ──────────────────────────────────────────────────── */
@@ -304,7 +306,7 @@ summary::after {
 details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
 details p { color: var(--ink-soft); padding: 0 0 24px; max-width: 36em; }
 details p a { color: var(--violet-ink); font-weight: 600; }
-@media (max-width: 900px) { .faq { grid-template-columns: 1fr; } .faq .section-head { position: static; } }
+@media (max-width: 900px) { .faq { grid-template-columns: minmax(0, 1fr); } .faq .section-head { position: static; } }
 
 /* ── Closing ────────────────────────────────────────────────────── */
 .closing { text-align: center; padding: clamp(72px, 10vw, 140px) 0 clamp(56px, 8vw, 100px); }
@@ -356,7 +358,7 @@ html[lang="en"] .lang-es, html[lang="es"] .lang-en { display: none; }
 .toc a { display: block; text-decoration: none; color: var(--ink-soft); padding: 6px 0 6px 14px; margin-left: -2px; border-left: 2px solid transparent; }
 .toc a:hover { color: var(--ink); }
 .toc a.on { color: var(--violet-ink); border-left-color: var(--violet); font-weight: 600; }
-@media (max-width: 900px) { .legal { grid-template-columns: 1fr; } .toc { display: none; } }
+@media (max-width: 900px) { .legal { grid-template-columns: minmax(0, 1fr); } .toc { display: none; } }
 
 .prose { max-width: 720px; }
 .prose section { padding-top: 8px; margin-bottom: 44px; scroll-margin-top: 90px; }
@@ -365,7 +367,7 @@ html[lang="en"] .lang-es, html[lang="es"] .lang-en { display: none; }
 .prose p, .prose li { color: var(--ink-soft); font-size: 17.5px; }
 .prose p + p { margin-top: 12px; }
 .prose strong, .prose b { color: var(--ink); font-weight: 600; }
-.prose a { color: var(--violet-ink); font-weight: 600; text-underline-offset: 3px; }
+.prose a { color: var(--violet-ink); font-weight: 600; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .prose ul, .prose ol { padding-left: 1.25em; display: grid; gap: 8px; margin: 12px 0; }
 .prose li::marker { color: var(--violet); }
 
@@ -401,6 +403,16 @@ td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
 .steps-list li::before {
   content: counter(s); width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center;
   font: 700 14px/1 var(--display); color: var(--violet-ink); background: color-mix(in srgb, var(--violet) 14%, transparent);
+}
+
+/* Phones: a single column ("1fr") still grows to its widest content - a
+   table, an email, a big title - and pushed every page past the screen. */
+@media (max-width: 600px) {
+  h1, h2, h3 { overflow-wrap: break-word; hyphens: auto; }
+  .meta a, .summary li, .plain p, .plain li { overflow-wrap: anywhere; }
+  td:first-child { white-space: normal; }
+  th, td { padding: 10px 12px; }
+  .stage .phone { translate: 10% 0; }
 }
 
 /* 404 */
