@@ -108,32 +108,55 @@ void main() {
     expect(find.text('Quitar el PIN cerrando sesión'), findsOneWidget);
   });
 
-  testWidgets('turning it on in Ajustes asks for the PIN twice', (tester) async {
+  testWidgets('Ajustes: the PIN stays on; changing it asks for the current one', (tester) async {
     final repository = AppLockRepository(store: InMemoryKeyStore());
+    await tester.runAsync(() => repository.setPin('2580'));
     final container = await _pumpApp(
       tester,
       repository: repository,
       home: const AppLockSettingsScreen(),
     );
+    // Cold start with the lock on: unlock first.
+    await _typePin(tester, '2580');
 
-    expect(find.text('Pedir PIN al abrir'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('appLockSwitch')));
+    expect(find.text('Cambiar PIN'), findsOneWidget);
+    expect(find.text('Pedir PIN al abrir'), findsNothing);
+    // No fingerprint here: the switch is there, off, and says why.
+    expect(find.textContaining('no tiene huella ni rostro'), findsOneWidget);
+
+    await tester.tap(find.text('Cambiar PIN'));
     await settle(tester);
+    expect(find.text('Escribe tu PIN actual'), findsOneWidget);
+    await _typePin(tester, '2580');
     expect(find.text('Elige un PIN'), findsOneWidget);
-
-    await _typePin(tester, '1397');
-    expect(find.text('Escríbelo otra vez'), findsOneWidget);
-    await _typePin(tester, '1300');
-    expect(find.text('No coinciden. Elige el PIN otra vez.'), findsOneWidget);
-
     await _typePin(tester, '1397');
     await _typePin(tester, '1397');
     await settle(tester);
 
     expect(container.read(appLockSettingsProvider).value?.enabled, isTrue);
-    expect(find.text('Cambiar PIN'), findsOneWidget);
-    // Whoever turned it on is already in: no lock screen on the spot.
     expect(find.text('Escribe tu PIN'), findsNothing);
     expect((await tester.runAsync(() => repository.verify('1397')))!.ok, isTrue);
+  });
+
+  testWidgets('Ajustes: fingerprint goes on only after it recognizes you', (tester) async {
+    final repository = AppLockRepository(store: InMemoryKeyStore());
+    await tester.runAsync(() => repository.setPin('2580'));
+    final biometrics = FakeBiometricUnlock(enrolled: true);
+    final container = await _pumpApp(
+      tester,
+      repository: repository,
+      biometrics: biometrics,
+      home: const AppLockSettingsScreen(),
+    );
+    await _typePin(tester, '2580');
+
+    await tester.tap(find.byKey(const Key('appLockBiometricsSwitch')));
+    await settle(tester);
+    expect(container.read(appLockSettingsProvider).value?.biometrics, isFalse);
+
+    biometrics.matches = true;
+    await tester.tap(find.byKey(const Key('appLockBiometricsSwitch')));
+    await settle(tester);
+    expect(container.read(appLockSettingsProvider).value?.biometrics, isTrue);
   });
 }

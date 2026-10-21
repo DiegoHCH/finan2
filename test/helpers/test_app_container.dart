@@ -65,6 +65,21 @@ class FakeUser extends Fake implements User {
 
 /// Never reaches FCM or the Worker.
 class FakePushService extends Fake implements PushService {
+  /// Whether the OS allows notifications; [grantOnRequest] whether the
+  /// prompt, when shown, is answered «Allow».
+  bool allowed = false;
+  bool grantOnRequest = true;
+  var requests = 0;
+
+  @override
+  Future<bool> notificationsAllowed() async => allowed;
+
+  @override
+  Future<bool> requestNotificationPermission() async {
+    requests++;
+    return allowed = allowed || grantOnRequest;
+  }
+
   @override
   Future<void> registerToken(String householdId, String uid) async {}
 
@@ -81,18 +96,27 @@ class FakePushService extends Fake implements PushService {
 /// [firestore] - what a controller test needs to drive the real data layer
 /// without Firebase.
 class TestApp {
-  TestApp._(this.container, this.firestore, this.crypto);
+  TestApp._(this.container, this.firestore, this.crypto, this.push, this.biometrics);
 
   final ProviderContainer container;
   final FakeFirebaseFirestore firestore;
   final HouseholdCrypto crypto;
+  final FakePushService push;
+  final FakeBiometricUnlock biometrics;
 
   /// With [withHousehold] false the member has none yet: the household
   /// comes from the fake Firestore, so creating one in the app shows it.
-  static Future<TestApp> start({bool withHousehold = true}) async {
+  ///
+  /// [withPin] false leaves this phone without a PIN, so the AuthGate shows
+  /// the onboarding first; true (the default) is a phone already set up.
+  static Future<TestApp> start({bool withHousehold = true, bool withPin = true}) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
     final ledger = testBalanceLedger(firestore, crypto);
+    final push = FakePushService();
+    final biometrics = FakeBiometricUnlock();
+    final appLock = AppLockRepository(store: InMemoryKeyStore());
+    if (withPin) await appLock.setPin('1397');
     final container = ProviderContainer(
       overrides: [
         authStateChangesProvider.overrideWith((ref) => Stream<User?>.value(FakeUser(testUid))),
@@ -111,9 +135,9 @@ class TestApp {
             ),
           ),
         householdCryptoProvider.overrideWithValue(crypto),
-        appLockRepositoryProvider.overrideWithValue(AppLockRepository(store: InMemoryKeyStore())),
-        biometricUnlockProvider.overrideWithValue(FakeBiometricUnlock()),
-        pushServiceProvider.overrideWithValue(FakePushService()),
+        appLockRepositoryProvider.overrideWithValue(appLock),
+        biometricUnlockProvider.overrideWithValue(biometrics),
+        pushServiceProvider.overrideWithValue(push),
         foregroundPushesProvider.overrideWithValue(const Stream.empty()),
         householdRepositoryProvider.overrideWithValue(HouseholdRepository(firestore: firestore)),
         connectionRepositoryProvider.overrideWithValue(ConnectionRepository(firestore: firestore)),
@@ -165,7 +189,7 @@ class TestApp {
     container.listen(currentHouseholdProvider, (_, _) {});
     await container.read(authStateChangesProvider.future);
     await container.read(currentHouseholdProvider.future);
-    return TestApp._(container, firestore, crypto);
+    return TestApp._(container, firestore, crypto, push, biometrics);
   }
 
   /// The household's `collection`, for asserting what a controller wrote.

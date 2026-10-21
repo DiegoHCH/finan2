@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/notifications/notification_opt_in.dart';
+import '../../../../core/notifications/notification_providers.dart';
 import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
+import '../../../../core/widgets/finan2_bottom_sheet.dart';
 import '../../../../core/widgets/finan2_head.dart';
+import '../../../../core/widgets/finan2_notice.dart';
 import '../../../../core/widgets/finan2_set_row.dart';
 import '../../../../core/widgets/finan2_sheet.dart';
 import '../../../../core/widgets/finan2_skeleton.dart';
@@ -20,6 +24,28 @@ import '../viewmodels/notification_prefs_providers.dart';
 /// switch that's on isn't an action.
 class NotificationPreferencesScreen extends ConsumerWidget {
   const NotificationPreferencesScreen({super.key});
+
+  /// For whoever said «Ahora no» at first: asks now, and registers this
+  /// phone for pushes if it's a yes. A phone that won't ask anymore gets
+  /// the way to do it by hand.
+  Future<void> _turnOn(BuildContext context, WidgetRef ref) async {
+    final push = ref.read(pushServiceProvider);
+    final allowed = await push.requestNotificationPermission();
+    await NotificationOptIn.record(optedIn: allowed);
+    ref.invalidate(notificationsAllowedProvider);
+    if (allowed) {
+      final householdId = ref.read(currentHouseholdProvider).value?.id;
+      final uid = ref.read(authStateChangesProvider).value?.uid;
+      if (householdId != null && uid != null) await push.registerToken(householdId, uid);
+      return;
+    }
+    if (!context.mounted) return;
+    await showFinan2InfoSheet(
+      context,
+      title: context.l10n.notificationPrefsBlockedTitle,
+      message: context.l10n.notificationPrefsBlockedMessage,
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,6 +101,15 @@ class NotificationPreferencesScreen extends ConsumerWidget {
                         Finan2Space.xxl,
                       ),
                       children: [
+                        if (ref.watch(notificationsAllowedProvider).value == false) ...[
+                          Finan2Notice(
+                            icon: Icons.notifications_off_outlined,
+                            title: l10n.coreNotificationPrimerEnable,
+                            message: l10n.notificationPrefsOffBanner,
+                            onTap: () => _turnOn(context, ref),
+                          ),
+                          const SizedBox(height: Finan2Space.md),
+                        ],
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Text(

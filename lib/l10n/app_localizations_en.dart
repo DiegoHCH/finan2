@@ -2603,20 +2603,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockTitle => 'App lock';
 
   @override
-  String get appLockOn => 'On';
-
-  @override
-  String get appLockOff => 'Off';
-
-  @override
   String get appLockIntro =>
-      'Asks for a PIN when you open Finan2 and when you come back after 30 seconds away. It\'s for this phone only: your partner sets their own on theirs.';
-
-  @override
-  String get appLockSwitch => 'Ask for a PIN on open';
-
-  @override
-  String get appLockSwitchWhen => '4 digits, stored encrypted on this phone.';
+      'Finan2 asks for your PIN when it opens and when you come back after 30 seconds away, so you don\'t have to sign in every time. It\'s for this phone only.';
 
   @override
   String get appLockBiometrics => 'Use fingerprint or face';
@@ -2695,4 +2683,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appLockCurrentMessage => 'Changing the lock needs the PIN you have now.';
+
+  @override
+  String get appLockValuePin => 'PIN only';
+
+  @override
+  String get appLockValueBiometrics => 'With fingerprint or face';
+
+  @override
+  String get appLockBiometricsUnavailable =>
+      'This phone has no fingerprint or face set up. Add one in the phone\'s settings and come back here.';
+
+  @override
+  String get onboardingNotificationsTitle => 'Don\'t miss a thing';
+
+  @override
+  String get onboardingNotificationsMessage =>
+      'We\'ll tell you when your partner records something, when a payment is near and when you go over budget. Change it anytime in Settings › Notifications.';
+
+  @override
+  String get onboardingPinTitle => 'Create your PIN';
+
+  @override
+  String get onboardingPinMessage =>
+      'With these 4 digits you open Finan2 without signing in again. It only works on this phone.';
+
+  @override
+  String get onboardingBiometricsTitle => 'Unlock with your fingerprint or face?';
+
+  @override
+  String get onboardingBiometricsMessage =>
+      'Faster than typing the PIN, which still works. Change it anytime in Settings › App lock.';
+
+  @override
+  String get onboardingBiometricsFailed =>
+      'We couldn\'t recognize you. Try again or choose «Not now».';
+
+  @override
+  String get notificationPrefsOffBanner =>
+      'Notifications are off on this phone: no alerts reach you.';
+
+  @override
+  String get notificationPrefsBlockedTitle => 'Turn them on from the phone';
+
+  @override
+  String get notificationPrefsBlockedMessage =>
+      'The phone no longer lets the app ask. Go to the phone\'s settings › Apps › Finan2 › Notifications and turn them on.';
 }

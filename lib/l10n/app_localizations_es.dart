@@ -2602,20 +2602,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appLockTitle => 'Bloqueo de la app';
 
   @override
-  String get appLockOn => 'Activado';
-
-  @override
-  String get appLockOff => 'Desactivado';
-
-  @override
   String get appLockIntro =>
-      'Pide un PIN al abrir Finan2 y al volver tras 30 segundos fuera. Es solo de este teléfono: tu pareja pone el suyo en el suyo.';
-
-  @override
-  String get appLockSwitch => 'Pedir PIN al abrir';
-
-  @override
-  String get appLockSwitchWhen => '4 dígitos, guardados cifrados en este teléfono.';
+      'Finan2 pide tu PIN al abrirse y al volver tras 30 segundos fuera, así no tienes que iniciar sesión cada vez. Es solo de este teléfono.';
 
   @override
   String get appLockBiometrics => 'Usar huella o rostro';
@@ -2694,4 +2682,50 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get appLockCurrentMessage => 'Para cambiar el bloqueo hace falta el PIN de ahora.';
+
+  @override
+  String get appLockValuePin => 'Solo PIN';
+
+  @override
+  String get appLockValueBiometrics => 'Con huella o rostro';
+
+  @override
+  String get appLockBiometricsUnavailable =>
+      'Este teléfono no tiene huella ni rostro configurados. Agrégalos en los ajustes del teléfono y vuelve aquí.';
+
+  @override
+  String get onboardingNotificationsTitle => 'Que no se te pase nada';
+
+  @override
+  String get onboardingNotificationsMessage =>
+      'Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.';
+
+  @override
+  String get onboardingPinTitle => 'Crea tu PIN';
+
+  @override
+  String get onboardingPinMessage =>
+      'Con estos 4 dígitos entras a Finan2 sin volver a iniciar sesión. Solo vale en este teléfono.';
+
+  @override
+  String get onboardingBiometricsTitle => '¿Entrar con tu huella o tu rostro?';
+
+  @override
+  String get onboardingBiometricsMessage =>
+      'Más rápido que escribir el PIN, que sigue sirviendo. Lo cambias cuando quieras en Ajustes › Bloqueo de la app.';
+
+  @override
+  String get onboardingBiometricsFailed =>
+      'No pudimos reconocerte. Prueba otra vez o elige «Ahora no».';
+
+  @override
+  String get notificationPrefsOffBanner =>
+      'Las notificaciones están apagadas en este teléfono: no te llega ningún aviso.';
+
+  @override
+  String get notificationPrefsBlockedTitle => 'Actívalas desde el teléfono';
+
+  @override
+  String get notificationPrefsBlockedMessage =>
+      'El teléfono ya no deja preguntar desde la app. Ve a los ajustes del teléfono › Aplicaciones › Finan2 › Notificaciones y actívalas.';
 }

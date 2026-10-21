@@ -31,14 +31,18 @@ class AppLockSettingsController extends AsyncNotifier<AppLockSettings> {
     );
   }
 
+  /// The onboarding's end: PIN and biometrics written together, so the
+  /// app moves on once, with both in place.
+  Future<void> setUp({required String pin, required bool biometrics}) async {
+    await _repository.setPin(pin);
+    await _repository.setBiometrics(biometrics);
+    ref.read(appLockedProvider.notifier).unlock();
+    state = AsyncData(AppLockSettings(enabled: true, biometrics: biometrics));
+  }
+
   Future<void> setBiometrics(bool on) async {
     await _repository.setBiometrics(on);
     state = AsyncData(AppLockSettings(enabled: state.value?.enabled ?? false, biometrics: on));
-  }
-
-  Future<void> disable() async {
-    await _repository.clear();
-    state = const AsyncData(AppLockSettings.off);
   }
 }
 

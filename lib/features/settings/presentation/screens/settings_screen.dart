@@ -188,9 +188,9 @@ class SettingsScreen extends ConsumerWidget {
                           icon: Icons.lock_outline,
                           tone: Finan2Tone(accent, colors.brandTint),
                           label: l10n.appLockTitle,
-                          value: ref.watch(appLockSettingsProvider).value?.enabled == true
-                              ? l10n.appLockOn
-                              : l10n.appLockOff,
+                          value: ref.watch(appLockSettingsProvider).value?.biometrics == true
+                              ? l10n.appLockValueBiometrics
+                              : l10n.appLockValuePin,
                           onTap: () => _open(context, const AppLockSettingsScreen()),
                         ),
                       Finan2SetRow(

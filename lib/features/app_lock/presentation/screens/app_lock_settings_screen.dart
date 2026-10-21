@@ -12,10 +12,10 @@ import '../viewmodels/app_lock_providers.dart';
 import 'app_lock_screen.dart';
 import 'pin_setup_screen.dart';
 
-/// Bloqueo: the PIN switch, the fingerprint/face switch when the phone has
-/// one, and changing the PIN. Turning it off or changing the PIN asks for
-/// the current one first - otherwise anyone holding the open app could.
-/// On is green here, as in Qué avisar: a switch that's on isn't an action.
+/// Bloqueo: the PIN is required (set in the onboarding), so this is where
+/// fingerprint/face goes on or off later and where the PIN changes - after
+/// typing the current one, or anyone holding the open app could. On is
+/// green here, as in Qué avisar: a switch that's on isn't an action.
 class AppLockSettingsScreen extends ConsumerWidget {
   const AppLockSettingsScreen({super.key});
 
@@ -33,12 +33,20 @@ class AppLockSettingsScreen extends ConsumerWidget {
     if (pin != null) await ref.read(appLockSettingsProvider.notifier).setPin(pin);
   }
 
+  /// Turning it on proves the finger or face works before relying on it.
+  Future<void> _setBiometrics(BuildContext context, WidgetRef ref, bool on) async {
+    if (on) {
+      final reason = context.l10n.appLockBiometricReason;
+      if (!await ref.read(biometricUnlockProvider).authenticate(reason)) return;
+    }
+    await ref.read(appLockSettingsProvider.notifier).setBiometrics(on);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<Finan2Colors>()!;
     final settingsAsync = ref.watch(appLockSettingsProvider);
     final biometricsAvailable = ref.watch(biometricsAvailableProvider).value ?? false;
-    final notifier = ref.read(appLockSettingsProvider.notifier);
     final l10n = context.l10n;
 
     final theme = Theme.of(context);
@@ -84,39 +92,26 @@ class AppLockSettingsScreen extends ConsumerWidget {
                       Finan2Sheet(
                         children: [
                           Finan2SetRow(
-                            label: l10n.appLockSwitch,
-                            detail: l10n.appLockSwitchWhen,
+                            label: l10n.appLockBiometrics,
+                            detail: biometricsAvailable
+                                ? l10n.appLockBiometricsWhen
+                                : l10n.appLockBiometricsUnavailable,
                             trailing: Switch(
-                              key: const Key('appLockSwitch'),
-                              value: settings.enabled,
-                              onChanged: (on) async {
-                                if (on) {
-                                  await _choosePin(context, ref);
-                                } else if (await _checkCurrent(context)) {
-                                  await notifier.disable();
-                                }
-                              },
+                              key: const Key('appLockBiometricsSwitch'),
+                              value: settings.biometrics && biometricsAvailable,
+                              onChanged: biometricsAvailable
+                                  ? (on) => _setBiometrics(context, ref, on)
+                                  : null,
                             ),
                           ),
-                          if (settings.enabled && biometricsAvailable)
-                            Finan2SetRow(
-                              label: l10n.appLockBiometrics,
-                              detail: l10n.appLockBiometricsWhen,
-                              trailing: Switch(
-                                key: const Key('appLockBiometricsSwitch'),
-                                value: settings.biometrics,
-                                onChanged: notifier.setBiometrics,
-                              ),
-                            ),
-                          if (settings.enabled)
-                            Finan2SetRow(
-                              label: l10n.appLockChangePin,
-                              onTap: () async {
-                                if (await _checkCurrent(context) && context.mounted) {
-                                  await _choosePin(context, ref);
-                                }
-                              },
-                            ),
+                          Finan2SetRow(
+                            label: l10n.appLockChangePin,
+                            onTap: () async {
+                              if (await _checkCurrent(context) && context.mounted) {
+                                await _choosePin(context, ref);
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ],

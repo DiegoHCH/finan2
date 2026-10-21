@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,11 +7,13 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/viewmodels/auth_providers.dart';
 import '../../features/household/presentation/screens/create_join_household_screen.dart';
 import '../../features/household/presentation/viewmodels/household_providers.dart';
+import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'finan2_home_shell.dart';
 import 'finan2_splash_screen.dart';
 
-/// Root of the navigation: signed out -> auth screens; signed in without a
-/// household -> create/join; signed in with a household -> its home.
+/// Root of the navigation: signed out -> auth screens; signed in on a phone
+/// without a PIN yet -> the onboarding; signed in without a household ->
+/// create/join; signed in with a household -> its home.
 class AuthGate extends ConsumerStatefulWidget {
   const AuthGate({super.key});
 
@@ -55,9 +58,29 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       error: (error, _) => _ErrorScreen(message: error.toString()),
       data: (user) {
         if (user == null) return const LoginScreen();
-        return const _HouseholdGate();
+        return const _OnboardingGate();
       },
     );
+  }
+}
+
+/// The PIN is required on phones, so a phone without one hasn't been
+/// through the onboarding yet - a first sign-in, or the first after signing
+/// out. The web has no PIN, fingerprint or face: straight on.
+class _OnboardingGate extends ConsumerWidget {
+  const _OnboardingGate();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (kIsWeb) return const _HouseholdGate();
+    return ref
+        .watch(appLockSettingsProvider)
+        .when(
+          loading: () => const _LoadingScreen(),
+          // Secure storage unreadable: better in without a PIN than locked out.
+          error: (_, _) => const _HouseholdGate(),
+          data: (lock) => lock.enabled ? const _HouseholdGate() : const OnboardingScreen(),
+        );
   }
 }
 
