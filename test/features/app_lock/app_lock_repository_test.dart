@@ -149,6 +149,35 @@ void main() {
       expect((await first.verify('2580')).ok, isTrue);
     });
 
+    test('a PIN that never reached the cloud goes up, and then works elsewhere', () async {
+      final store = InMemoryKeyStore();
+      // Made before the PIN synced: the phone has it, the cloud doesn't.
+      await AppLockRepository(account: 'ana', store: store).setPin('2580');
+      expect(cloud.records, isEmpty);
+
+      await AppLockRepository(account: 'ana', cloud: cloud, store: store).load();
+      await pumpEventQueue();
+      expect(cloud.records, contains('ana'));
+
+      final other = phone();
+      expect((await other.load()).enabled, isTrue);
+      expect((await other.verify('2580')).ok, isTrue);
+    });
+
+    test('a PIN another phone forgot is not put back from this one', () async {
+      final first = phone();
+      final second = phone();
+      await first.setPin('2580');
+      await pumpEventQueue();
+      await second.load();
+
+      await first.clear();
+      await pumpEventQueue();
+      await second.load();
+      await pumpEventQueue();
+      expect(cloud.records, isEmpty);
+    });
+
     test('«forgot your PIN?» clears it in the cloud too', () async {
       final first = phone();
       await first.setPin('2580');

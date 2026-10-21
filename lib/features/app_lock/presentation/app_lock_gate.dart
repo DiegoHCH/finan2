@@ -50,7 +50,7 @@ class _AppLockGateState extends ConsumerState<AppLockGate> {
 
   @override
   Widget build(BuildContext context) {
-    final signedIn = ref.watch(authStateChangesProvider).value != null;
+    final signedIn = ref.watch(authStateChangesProvider.select((auth) => auth.value != null));
     final settings = signedIn ? ref.watch(appLockSettingsProvider) : null;
     final locked = ref.watch(appLockedProvider);
     // Unknown yet: the splash rather than a flash of the money behind.

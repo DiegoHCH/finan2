@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:finan2/core/theme/app_theme.dart';
+import 'package:finan2/features/app_lock/data/app_lock_cloud.dart';
 import 'package:finan2/features/app_lock/data/app_lock_repository.dart';
 import 'package:finan2/features/app_lock/presentation/app_lock_gate.dart';
 import 'package:finan2/features/app_lock/presentation/screens/app_lock_settings_screen.dart';
@@ -98,6 +101,52 @@ void main() {
     expect(find.text('Casa'), findsOneWidget);
   });
 
+  testWidgets('Firebase announcing the same user again keeps the lock as it was', (tester) async {
+    final auth = StreamController<User?>();
+    addTearDown(auth.close);
+    final store = InMemoryKeyStore();
+    final cloud = _MemoryCloud();
+    await tester.runAsync(
+      () => AppLockRepository(account: testUid, cloud: cloud, store: store).setPin('2580'),
+    );
+    final container = ProviderContainer(
+      overrides: [
+        authStateChangesProvider.overrideWith((ref) => auth.stream),
+        appLockCloudProvider.overrideWithValue(cloud),
+        appLockKeyStoreProvider.overrideWithValue(store),
+        biometricUnlockProvider.overrideWithValue(FakeBiometricUnlock()),
+      ],
+    );
+    addTearDown(container.dispose);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          theme: Finan2Theme.light,
+          locale: const Locale('es'),
+          supportedLocales: supportedAppLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: const Scaffold(body: Text('Casa')),
+          builder: (context, child) => AppLockGate(child: child!),
+        ),
+      ),
+    );
+    auth.add(FakeUser(testUid));
+    await settle(tester);
+    expect(find.text('Escribe tu PIN'), findsOneWidget);
+
+    // A cold start or a token refresh: same account, a new User object.
+    auth.add(FakeUser(testUid));
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text('Escribe tu PIN'), findsOneWidget);
+  });
+
   testWidgets('«forgot your PIN?» offers to sign out, in a sheet', (tester) async {
     final repository = AppLockRepository(store: InMemoryKeyStore());
     await tester.runAsync(() => repository.setPin('2580'));
@@ -159,4 +208,17 @@ void main() {
     await settle(tester);
     expect(container.read(appLockSettingsProvider).value?.biometrics, isTrue);
   });
+}
+
+class _MemoryCloud implements AppLockCloud {
+  final _records = <String, String>{};
+
+  @override
+  Future<String?> fetch(String account) async => _records[account];
+
+  @override
+  Future<void> save(String account, String record) async => _records[account] = record;
+
+  @override
+  Future<void> delete(String account) async => _records.remove(account);
 }

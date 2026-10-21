@@ -62,19 +62,28 @@ class AppLockRepository {
   String get _untilKey => 'app_lock_until$_suffix';
   String get _onboardedKey => 'app_lock_onboarded$_suffix';
 
+  /// The record the cloud is known to have: tells a PIN that never got
+  /// there from one another phone's «forgot your PIN?» removed.
+  String get _syncedKey => 'app_lock_synced$_suffix';
+
   static final _mac = Hmac.sha256();
 
   /// Takes the account's PIN from the cloud when there is one - a first
   /// sign-in on this phone, or a PIN changed on another - and otherwise
-  /// keeps the copy here.
+  /// keeps the copy here. A PIN that never reached the cloud - made before
+  /// it synced, or while the write was refused - goes up now, so the next
+  /// phone finds it.
   Future<AppLockSettings> load() async {
     var record = await _store.read(_pinKey);
     // A phone that had a PIN before the onboarding flag existed is set up.
     final onboarded = record != null || await _store.read(_onboardedKey) == '1';
-    final remote = await _fetchRemote();
-    if (remote != null && remote != record) {
-      await _store.write(_pinKey, remote);
+    final (reached, remote) = await _fetchRemote();
+    if (remote != null) {
+      if (remote != record) await _store.write(_pinKey, remote);
       record = remote;
+      await _store.write(_syncedKey, remote);
+    } else if (reached && record != null && await _store.read(_syncedKey) != record) {
+      _upload(record);
     }
     return AppLockSettings(
       enabled: record != null,
@@ -83,13 +92,15 @@ class AppLockRepository {
     );
   }
 
-  Future<String?> _fetchRemote() async {
+  /// Whether the cloud answered, and its record. Not reached (offline, no
+  /// account) is not the same as reached and empty.
+  Future<(bool, String?)> _fetchRemote() async {
     final cloud = _cloud;
-    if (cloud == null) return null;
+    if (cloud == null) return (false, null);
     try {
-      return await cloud.fetch(_account!).timeout(_cloudWait);
+      return (true, await cloud.fetch(_account!).timeout(_cloudWait));
     } on Object {
-      return null;
+      return (false, null);
     }
   }
 
@@ -100,6 +111,10 @@ class AppLockRepository {
     if (cloud == null) return;
     write(cloud, _account!).catchError((Object _) {});
   }
+
+  void _upload(String record) => _syncRemote(
+    (cloud, account) => cloud.save(account, record).then((_) => _store.write(_syncedKey, record)),
+  );
 
   Future<void> markOnboarded() => _store.write(_onboardedKey, '1');
 
@@ -112,7 +127,7 @@ class AppLockRepository {
     final record = '${base64Encode(salt)}:${base64Encode(hash)}';
     await _store.write(_pinKey, record);
     await _resetFailures();
-    _syncRemote((cloud, account) => cloud.save(account, record));
+    _upload(record);
   }
 
   Future<void> setBiometrics(bool on) =>
@@ -125,6 +140,7 @@ class AppLockRepository {
     await _store.delete(_pinKey);
     await _store.delete(_biometricsKey);
     await _store.delete(_onboardedKey);
+    await _store.delete(_syncedKey);
     await _resetFailures();
     _syncRemote((cloud, account) => cloud.delete(account));
   }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/crypto/household_crypto.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 
 import '../../data/app_lock_cloud.dart';
@@ -7,11 +8,18 @@ import '../../data/app_lock_repository.dart';
 import '../../data/biometric_unlock.dart';
 import '../../domain/app_lock_policy.dart';
 
-/// The lock of whoever is signed in, on this phone.
+final appLockCloudProvider = Provider<AppLockCloud>((ref) => FirestoreAppLockCloud());
+
+final appLockKeyStoreProvider = Provider<Finan2KeyStore>((ref) => const Finan2SecureKeyStore());
+
+/// The lock of whoever is signed in, on this phone. Only a different account
+/// makes a new one: Firebase re-announces the same user (a cold start, a
+/// token refresh), and rebuilding on that reloaded the settings mid-frame.
 final appLockRepositoryProvider = Provider<AppLockRepository>(
   (ref) => AppLockRepository(
-    account: ref.watch(authStateChangesProvider).value?.uid,
-    cloud: FirestoreAppLockCloud(),
+    account: ref.watch(authStateChangesProvider.select((auth) => auth.value?.uid)),
+    cloud: ref.watch(appLockCloudProvider),
+    store: ref.watch(appLockKeyStoreProvider),
   ),
 );
 
