@@ -266,6 +266,8 @@ pre.doc {
 }
 pre.doc .k { color: #8FB8FF; }
 pre.doc .s { color: #E6E0F7; }
+/* The full ciphertext is one long token: let it break, unlike other amounts. */
+pre.doc .amt { white-space: normal; word-break: break-all; }
 pre.doc .x { color: var(--cipher); background: rgba(184, 166, 255, 0.10); border-radius: 4px; padding: 1px 2px; }
 .doc-note { margin-top: 14px; font-size: 14px; color: var(--vault-soft); }
 .doc-note b { color: var(--vault-ink); font-weight: 600; }
