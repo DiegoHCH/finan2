@@ -31,6 +31,9 @@ const _iconsByType = <CategoryType, List<String>>{
     'educacion',
     'regalo',
     'hogar_aseo',
+    'mascotas',
+    'hijos',
+    'gimnasio',
   ],
   CategoryType.ahorro: ['viaje', 'emergencia', 'meta', 'casa'],
 };

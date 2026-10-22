@@ -16,7 +16,7 @@ final accountSwatchesProvider = Provider<Map<String, int>>((ref) {
   return assignSwatches([for (final a in accounts) a.id], Finan2Palette.accountSwatches.length);
 });
 
-/// An account's color: the same in Cuentas, Anotar, Pasar and its history.
+/// An account's color: the same in Cuentas, Anotar, Mover and its history.
 /// The base color, for widgets that make the tone themselves.
 Color accountColor(WidgetRef ref, String accountId) {
   final slot = ref.watch(accountSwatchesProvider)[accountId] ?? stableIndex(accountId);

@@ -131,7 +131,7 @@ abstract class Finan2Palette {
   ];
 
   /// Accounts store no color either: each takes one from its ID, so it's
-  /// recognised in Anotar and in Pasar. The category hues, without the
+  /// recognised in Anotar and in Mover. The category hues, without the
   /// violet of the action, the two members' blue and orange, or red.
   static const accountSwatches = <Color>[
     Color(0xFF0F766E),
@@ -410,6 +410,9 @@ abstract class Finan2Icons {
     'educacion': Icons.school_outlined,
     'regalo': Icons.card_giftcard_outlined,
     'hogar_aseo': Icons.cleaning_services_outlined,
+    'mascotas': Icons.pets_outlined,
+    'hijos': Icons.child_care_outlined,
+    'gimnasio': Icons.fitness_center_outlined,
     // Deudas
     'tarjeta': Icons.credit_card_outlined,
     'credito': Icons.account_balance_outlined,

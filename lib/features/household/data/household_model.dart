@@ -33,6 +33,7 @@ class Household {
     required this.currency,
     required this.startYear,
     required this.weekStartsOn,
+    this.createdAt,
   });
 
   final String id;
@@ -42,6 +43,11 @@ class Household {
   final String currency;
   final int startYear;
   final String weekStartsOn;
+
+  /// Set once by the server when the household is created; null for
+  /// households from before it was kept. Movements can't be dated before
+  /// its month (see earliestDate).
+  final DateTime? createdAt;
 
   factory Household.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
@@ -57,8 +63,12 @@ class Household {
       currency: data['settings']?['currency'] as String? ?? 'COP',
       startYear: data['settings']?['startYear'] as int? ?? DateTime.now().year,
       weekStartsOn: data['settings']?['weekStartsOn'] as String? ?? 'monday',
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }
+
+  // createdAt stays out of toFirestore: it's written once on creation and
+  // the rules don't let an update touch it.
 
   Map<String, dynamic> toFirestore() {
     return {

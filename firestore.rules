@@ -81,7 +81,10 @@ service cloud.firestore {
 
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly(
-             ['name', 'members', 'memberInfo', 'settings', 'createdBy', 'activeInvite'])
+             ['name', 'members', 'memberInfo', 'settings', 'createdBy', 'activeInvite', 'createdAt'])
+        // Movements can't be dated before this, so it's the server's clock.
+        && (!('createdAt' in request.resource.data)
+            || request.resource.data.createdAt == request.time)
         && request.resource.data.members == [request.auth.uid]
         && request.resource.data.createdBy == request.auth.uid
         && request.resource.data.memberInfo.keys().hasOnly([request.auth.uid]);

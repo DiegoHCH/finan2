@@ -1158,7 +1158,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transactionsTransferExplain =>
-      '“Transfer” moves money between your accounts, from the bank to cash for example. It\'s neither an expense nor income: the total stays the same.';
+      '“Move” takes money from one of your accounts to another, from the bank to cash for example. It\'s neither an expense nor income: the total stays the same.';
 
   @override
   String get transactionsTransferCreateAccount => 'Create another account';
@@ -1589,6 +1589,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoriesDefaultHomeCleaning => 'Home & cleaning';
+
+  @override
+  String get categoriesDefaultPets => 'Pets';
+
+  @override
+  String get categoriesDefaultKids => 'Kids';
+
+  @override
+  String get categoriesDefaultGym => 'Gym';
 
   @override
   String get categoriesDefaultEmergencyFund => 'Emergency fund';

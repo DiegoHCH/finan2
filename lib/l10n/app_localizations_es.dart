@@ -1152,14 +1152,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transactionsCreditCard => 'Tarjeta de crédito';
 
   @override
-  String get transactionsTypeTransfer => 'Pasar';
+  String get transactionsTypeTransfer => 'Mover';
 
   @override
   String get transactionsTransferNeedsTwoAccounts => 'Para eso hacen falta al menos dos cuentas.';
 
   @override
   String get transactionsTransferExplain =>
-      '«Pasar» mueve plata entre tus cuentas, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.';
+      '«Mover» lleva plata de una cuenta tuya a otra, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.';
 
   @override
   String get transactionsTransferCreateAccount => 'Crear otra cuenta';
@@ -1332,7 +1332,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transfersSelectAccount => 'Selecciona una cuenta';
 
   @override
-  String get transfersHistoryTitle => 'Pasos entre cuentas';
+  String get transfersHistoryTitle => 'Plata movida entre cuentas';
 
   @override
   String get transfersDeleteTitle => 'Eliminar transferencia';
@@ -1345,14 +1345,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get transfersDeletedAccount => 'Cuenta eliminada';
 
   @override
-  String get transfersEmptyTitle => 'Todavía no han pasado plata.';
+  String get transfersEmptyTitle => 'Todavía no han movido plata.';
 
   @override
   String get transfersEmptyDescription =>
-      'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.';
+      'Cuando muevan plata de una cuenta a otra queda anotado aquí, sin contar como gasto.';
 
   @override
-  String get transfersEmptyAction => 'Pasar plata';
+  String get transfersEmptyAction => 'Mover plata';
 
   @override
   String get accountsTitle => 'Cuentas';
@@ -1368,7 +1368,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountsEmptyAction => 'Agregar una cuenta';
 
   @override
-  String get accountsTransferBetween => 'Pasar entre cuentas';
+  String get accountsTransferBetween => 'Mover entre cuentas';
 
   @override
   String get accountsNewTitle => 'Nueva cuenta';
@@ -1590,6 +1590,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get categoriesDefaultHomeCleaning => 'Hogar y aseo';
+
+  @override
+  String get categoriesDefaultPets => 'Mascotas';
+
+  @override
+  String get categoriesDefaultKids => 'Hijos';
+
+  @override
+  String get categoriesDefaultGym => 'Gimnasio';
 
   @override
   String get categoriesDefaultEmergencyFund => 'Fondo de emergencia';
