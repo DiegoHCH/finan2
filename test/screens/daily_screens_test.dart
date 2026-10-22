@@ -1,3 +1,4 @@
+import 'package:finan2/features/accounts/presentation/screens/edit_account_screen.dart';
 import 'package:finan2/core/utils/year_month.dart';
 import 'package:finan2/core/widgets/finan2_chip.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
@@ -207,6 +208,20 @@ void main() {
     };
     expect(balances['Banco']! + balances['Efectivo']!, 1100000);
     expect(balances.values, containsAll([350000, 750000]));
+  });
+
+  testWidgets('«Pasar» with one account says what it is and offers the second', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    await tester.runAsync(() => _account(app, 'Banco', 1000000));
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.text('Pasar'));
+    await settle(tester);
+
+    expect(find.textContaining('mueve plata entre tus cuentas'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pasarCreateAccount')));
+    await settle(tester);
+    expect(find.byType(EditAccountScreen), findsOneWidget);
   });
 
   testWidgets('Anotar says what is missing in a sheet, not a snackbar', (tester) async {

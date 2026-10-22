@@ -284,6 +284,14 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                   ),
               ],
             ),
+            if (frequencyHint(_frequency, l10n: l10n) case final hint?) ...[
+              const SizedBox(height: Finan2Space.xs),
+              Text(
+                hint,
+                key: const Key('recurringBillFrequencyHint'),
+                style: TextStyle(fontSize: 12.5, height: 1.4, color: colors.inkSoft),
+              ),
+            ],
             const SizedBox(height: Finan2Space.md),
             // Read aloud, to check it was understood: «Cada lunes», and
             // what that comes to in a month.
@@ -302,7 +310,13 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                     withUntil: false,
                   ),
                   message: amount > 0
-                      ? describeMonthlyCost(amount, _frequency, formatMoney, l10n: l10n)
+                      ? describeMonthlyCost(
+                          amount,
+                          _frequency,
+                          formatMoney,
+                          l10n: l10n,
+                          withReason: true,
+                        )
                       : null,
                 );
               },
