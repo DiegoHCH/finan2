@@ -32,6 +32,7 @@ import '../../../household/presentation/viewmodels/member_providers.dart';
 import '../../../transfers/data/transfer_model.dart';
 import '../../../transfers/domain/transfer_plan.dart';
 import '../../../transfers/presentation/viewmodels/transfer_providers.dart';
+import '../../domain/earliest_date.dart';
 import '../../domain/tags.dart';
 import '../../domain/entities/movement.dart';
 import '../viewmodels/transaction_providers.dart';
@@ -228,7 +229,13 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: DateTime(_date.year - 3),
+      // Not before the account's month: older spending is already behind
+      // the balances typed in at setup (tester feedback F2).
+      firstDate: earliestDate(
+        accountCreatedAt: ref.read(accountCreatedAtProvider),
+        today: DateTime.now(),
+        current: _date,
+      ),
       lastDate: DateTime(_date.year + 1),
     );
     if (picked != null) setState(() => _date = picked);
@@ -396,7 +403,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                _HintButton(label: dateLabel, onTap: _pickDate),
+                _HintButton(key: const Key('movementDate'), label: dateLabel, onTap: _pickDate),
                 if (_kind != _Kind.pasar) ...[
                   Text(' · ', style: TextStyle(fontSize: 12, color: colors.inkFaint)),
                   if (accounts.isEmpty && cards.isEmpty)

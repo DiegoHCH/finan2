@@ -14,6 +14,12 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
   return ref.watch(authRepositoryProvider).authStateChanges();
 });
 
+/// When the signed-in account was created - movements can't be dated before
+/// its month (see earliestDate).
+final accountCreatedAtProvider = Provider<DateTime?>(
+  (ref) => ref.watch(authStateChangesProvider).value?.metadata.creationTime,
+);
+
 /// Web only: LoginScreen watches this so it's actively subscribed to the
 /// embedded Google button's sign-in events while visible (and unsubscribed
 /// automatically once it isn't). authStateChangesProvider picks up the

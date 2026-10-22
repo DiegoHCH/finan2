@@ -65,6 +65,20 @@ class FakeUser extends Fake implements User {
 
   @override
   String? get email => 'diego@example.com';
+
+  @override
+  UserMetadata get metadata => _FakeMetadata(accountCreatedAt);
+}
+
+/// When [FakeUser]'s account was created: movements can't be dated before
+/// this month.
+final accountCreatedAt = DateTime(2026, 9, 12);
+
+class _FakeMetadata extends Fake implements UserMetadata {
+  _FakeMetadata(this.creationTime);
+
+  @override
+  final DateTime? creationTime;
 }
 
 /// Never reaches FCM or the Worker.
