@@ -22,7 +22,7 @@ class RecurringSchedule {
   /// The day of the month of a monthly, quincenal or yearly one.
   final int day;
 
-  /// A quincenal's second day, 15 after [day].
+  /// A quincenal's other day, half a month from [day]: see [semimonthlyDays].
   final int secondDay;
 
   /// A yearly one's month, 1 to 12.
@@ -38,10 +38,21 @@ RecurringSchedule scheduleOf(RecurringFrequency frequency, DateTime start, {Date
       frequency: frequency,
       weekday: start.weekday,
       day: start.day,
-      secondDay: start.day + 15,
+      secondDay: semimonthlyPair(start.day),
       month: start.month,
       until: until,
     );
+
+/// The day half a month from [day] in a quincenal: 15 later up to the
+/// 15th, 15 earlier after it - a quincenal from the 22nd is the 7th and the
+/// 22nd, not the 22nd and «the 37th».
+int semimonthlyPair(int day) => day > 15 ? day - 15 : day + 15;
+
+/// A quincenal's two days of the month, the earlier first.
+(int, int) semimonthlyDays(int day) {
+  final other = semimonthlyPair(day);
+  return day < other ? (day, other) : (other, day);
+}
 
 /// The date a bill's schedule is described from: its start, or for bills
 /// saved before frequencies existed, its day in [today]'s month.
