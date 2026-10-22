@@ -41,6 +41,12 @@ final currentHouseholdProvider = StreamProvider<Household?>((ref) {
   return ref.watch(householdRepositoryProvider).watchHouseholdForUser(user.uid);
 });
 
+/// When the household was created - movements can't be dated before its
+/// month (see earliestDate). Null for households from before it was kept.
+final householdCreatedAtProvider = Provider<DateTime?>(
+  (ref) => ref.watch(currentHouseholdProvider).value?.createdAt,
+);
+
 /// The household's currency code (e.g. "COP", "USD"), defaulting to
 /// [defaultCurrency] until the household loads.
 final currentCurrencyProvider = Provider<String>((ref) {

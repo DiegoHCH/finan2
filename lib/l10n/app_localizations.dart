@@ -2094,7 +2094,7 @@ abstract class AppLocalizations {
   /// Anotar's fourth type: moving money between two of the household's own accounts.
   ///
   /// In es, this message translates to:
-  /// **'Pasar'**
+  /// **'Mover'**
   String get transactionsTypeTransfer;
 
   /// No description provided for @transactionsTransferNeedsTwoAccounts.
@@ -2106,7 +2106,7 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsTransferExplain.
   ///
   /// In es, this message translates to:
-  /// **'«Pasar» mueve plata entre tus cuentas, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.'**
+  /// **'«Mover» lleva plata de una cuenta tuya a otra, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.'**
   String get transactionsTransferExplain;
 
   /// No description provided for @transactionsTransferCreateAccount.
@@ -2388,7 +2388,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersHistoryTitle.
   ///
   /// In es, this message translates to:
-  /// **'Pasos entre cuentas'**
+  /// **'Plata movida entre cuentas'**
   String get transfersHistoryTitle;
 
   /// No description provided for @transfersDeleteTitle.
@@ -2412,19 +2412,19 @@ abstract class AppLocalizations {
   /// No description provided for @transfersEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Todavía no han pasado plata.'**
+  /// **'Todavía no han movido plata.'**
   String get transfersEmptyTitle;
 
   /// No description provided for @transfersEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
+  /// **'Cuando muevan plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
   String get transfersEmptyDescription;
 
   /// No description provided for @transfersEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'Pasar plata'**
+  /// **'Mover plata'**
   String get transfersEmptyAction;
 
   /// No description provided for @accountsTitle.
@@ -2454,7 +2454,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountsTransferBetween.
   ///
   /// In es, this message translates to:
-  /// **'Pasar entre cuentas'**
+  /// **'Mover entre cuentas'**
   String get accountsTransferBetween;
 
   /// No description provided for @accountsNewTitle.
@@ -2804,6 +2804,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hogar y aseo'**
   String get categoriesDefaultHomeCleaning;
+
+  /// No description provided for @categoriesDefaultPets.
+  ///
+  /// In es, this message translates to:
+  /// **'Mascotas'**
+  String get categoriesDefaultPets;
+
+  /// No description provided for @categoriesDefaultKids.
+  ///
+  /// In es, this message translates to:
+  /// **'Hijos'**
+  String get categoriesDefaultKids;
+
+  /// No description provided for @categoriesDefaultGym.
+  ///
+  /// In es, this message translates to:
+  /// **'Gimnasio'**
+  String get categoriesDefaultGym;
 
   /// No description provided for @categoriesDefaultEmergencyFund.
   ///

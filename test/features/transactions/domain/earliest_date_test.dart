@@ -11,6 +11,17 @@ void main() {
     );
   });
 
+  test('the household\'s month wins, so a partner who joined later can log earlier ones', () {
+    expect(
+      earliestDate(
+        householdCreatedAt: DateTime(2026, 8, 30),
+        accountCreatedAt: DateTime(2026, 9, 12),
+        today: today,
+      ),
+      DateTime(2026, 8),
+    );
+  });
+
   test('without a creation date, three years back as before', () {
     expect(earliestDate(today: today), DateTime(2023));
   });

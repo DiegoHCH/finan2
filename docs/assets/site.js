@@ -15,7 +15,7 @@
     navFaq: 'Questions',
     themeLabel: 'Change theme',
     eyebrow: 'Household money, for you or for the two of you',
-    h1: 'Your household’s money, in view of <em>you&nbsp;both</em>.',
+    h1: 'Your household’s money, clear for you or for <em>you&nbsp;both</em>.',
     lead: 'Finan2 brings what you spend, save and owe into one place, alone or as a couple. <strong>If you share the household, each of you logs from your own phone and the other sees it right away</strong>, and amounts are encrypted before they leave it.',
     soon: 'Coming soon to',
     seeHow: 'See what it’s like ↓',

@@ -23,7 +23,7 @@ import '../../data/transfer_model.dart';
 import '../../domain/transfer_plan.dart';
 import '../viewmodels/transfer_providers.dart';
 
-/// Pasar · historial: the money moved between accounts, by month. Each icon
+/// Mover · historial: the money moved between accounts, by month. Each icon
 /// takes the color of the account the money went to, so it shows at a
 /// glance how much goes to savings. Transfers have no edit screen - tapping
 /// one only offers to delete it, which reverses both balances.

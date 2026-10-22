@@ -74,6 +74,10 @@ class FakeUser extends Fake implements User {
 /// this month.
 final accountCreatedAt = DateTime(2026, 9, 12);
 
+/// When the test household was created: after the account, as when a
+/// partner set it up later.
+final householdCreatedAt = DateTime(2026, 10, 3);
+
 class _FakeMetadata extends Fake implements UserMetadata {
   _FakeMetadata(this.creationTime);
 
@@ -199,14 +203,15 @@ class TestApp {
         if (withHousehold)
           currentHouseholdProvider.overrideWith(
             (ref) => Stream<Household?>.value(
-              const Household(
+              Household(
                 id: testHouseholdId,
                 name: 'Casa',
-                members: [testUid],
-                memberInfo: {},
+                members: const [testUid],
+                memberInfo: const {},
                 currency: 'COP',
                 startYear: 2026,
                 weekStartsOn: 'monday',
+                createdAt: householdCreatedAt,
               ),
             ),
           ),

@@ -122,7 +122,12 @@ class HouseholdRepository {
       weekStartsOn: 'monday',
     );
     final batch = _db.batch()
-      ..set(docRef, {...household.toFirestore(), 'createdBy': uid, 'activeInvite': code})
+      ..set(docRef, {
+        ...household.toFirestore(),
+        'createdBy': uid,
+        'activeInvite': code,
+        'createdAt': FieldValue.serverTimestamp(),
+      })
       ..set(
         _invites.doc(code),
         _inviteData(docRef.id, uid, householdName: householdName, inviterName: displayName),

@@ -38,7 +38,7 @@ import '../../domain/tags.dart';
 import '../../domain/entities/movement.dart';
 import '../viewmodels/transaction_providers.dart';
 
-/// What Anotar records: a movement of one of three kinds, or «Pasar» -
+/// What Anotar records: a movement of one of three kinds, or «Mover» -
 /// money moved between two of the household's own accounts (R4).
 enum _Kind { ingreso, gasto, ahorro, pasar }
 
@@ -87,7 +87,7 @@ class EditTransactionScreen extends ConsumerStatefulWidget {
   /// Date for a new movement - the month being browsed in Movimientos.
   final DateTime? initialDate;
 
-  /// Opens on «Pasar», for the entry points that used to open a separate
+  /// Opens on «Mover», for the entry points that used to open a separate
   /// transfer screen.
   final bool startWithTransfer;
 
@@ -119,14 +119,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   /// null until the user picks - then whoever is logging it.
   late String? _paidBy = widget.transaction?.payer;
 
-  /// «Pasar»: from one account to another.
+  /// «Mover»: from one account to another.
   String? _fromAccountId;
   String? _toAccountId;
 
   @override
   void initState() {
     super.initState();
-    // The amount drives the resulting balances shown under «Pasar».
+    // The amount drives the resulting balances shown under «Mover».
     _amountController.addListener(_onAmountChanged);
   }
 
@@ -237,9 +237,10 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
-      // Not before the account's month: older spending is already behind
+      // Not before the household's month: older spending is already behind
       // the balances typed in at setup (tester feedback F2).
       firstDate: earliestDate(
+        householdCreatedAt: ref.read(householdCreatedAtProvider),
         accountCreatedAt: ref.read(accountCreatedAtProvider),
         today: DateTime.now(),
         current: _date,
@@ -528,7 +529,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     );
   }
 
-  /// «Pasar»: from and to, each in its color with what it will be left
+  /// «Mover»: from and to, each in its color with what it will be left
   /// with, and the reminder that it isn't an expense.
   List<Widget> _transferFields(List<Account> accounts) {
     final l10n = context.l10n;
@@ -537,7 +538,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final from = accounts.where((a) => a.id == _fromAccountId).firstOrNull;
     final to = accounts.where((a) => a.id == _toAccountId).firstOrNull;
 
-    // With one account there's nowhere to move it to: say what «Pasar» is
+    // With one account there's nowhere to move it to: say what «Mover» is
     // for and offer the second account right here, not «go to Ajustes».
     if (accounts.length < 2) {
       return [
@@ -631,7 +632,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   }
 }
 
-/// One end of «Pasar»: the account's tile in its color, «De» or «A» over
+/// One end of «Mover»: the account's tile in its color, «De» or «A» over
 /// its name, and on the right what it has - or, once there's an amount,
 /// what it will be left with.
 class _TransferEnd extends ConsumerWidget {

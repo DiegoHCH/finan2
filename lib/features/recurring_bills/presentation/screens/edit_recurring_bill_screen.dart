@@ -108,10 +108,11 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
   }
 
   Future<void> _pickStart() async {
-    // A fijo starting before the account would log those months too.
+    // A fijo starting before the household would log those months too.
     final picked = await _pickDay(
       _startDate,
       first: earliestDate(
+        householdCreatedAt: ref.read(householdCreatedAtProvider),
         accountCreatedAt: ref.read(accountCreatedAtProvider),
         today: _today(),
         current: _startDate,
