@@ -51,7 +51,7 @@
       <span class="eyebrow">Política de privacidad</span>
       <h1>Qué guardamos, y qué no podemos leer.</h1>
       <p>Finan2 es una app para que dos personas lleven juntas el dinero de su casa. Esta página explica qué datos guarda, para qué, con quién se comparten y cómo pedir que se borren.</p>
-      <div class="meta"><span>Responsable: <b>Katanalabs</b></span><span>Contacto: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Vigente desde: <b>19 de octubre de 2026</b></span></div>
+      <div class="meta"><span>Responsable: <b>Katanalabs</b></span><span>Contacto: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Vigente desde: <b>22 de octubre de 2026</b></span></div>
     </div>
 
     <div class="legal">
@@ -96,6 +96,8 @@
           <ul>
             <li>Tu correo electrónico, para que puedas entrar.</li>
             <li>Tu nombre y, si entras con Google, tu foto de perfil, para que la otra persona del hogar sepa quién anotó cada cosa.</li>
+            <li>Tu idioma y tema elegidos, para que te sigan en todos tus teléfonos.</li>
+            <li>Si proteges la app con PIN, una <b>huella cifrada del PIN</b> (un HMAC-SHA256 con sal), para que el mismo PIN sirva en todos tus teléfonos. Con ella no se puede saber cuál es tu PIN.</li>
           </ul>
           <h3>Lo que anotan en el hogar</h3>
           <ul>
@@ -111,7 +113,7 @@
           <ul>
             <li>La llave que cifra los montos, en el almacenamiento seguro del teléfono.</li>
             <li>Una copia de lo último que llegó, para que la app funcione sin conexión. Los montos siguen cifrados en esa copia.</li>
-            <li>Tu idioma y tema elegidos.</li>
+            <li>Tu huella dactilar o tu cara, si desbloqueas con ellas: las comprueba el sistema del teléfono y Finan2 solo recibe un «sí» o un «no».</li>
             <li>Los informes y copias de seguridad que exportes: se crean en tu teléfono y tú decides dónde guardarlos o a quién enviarlos. Las copias de seguridad van cifradas con la llave del hogar.</li>
           </ul>
           <div class="callout"><p>Finan2 <b>no</b> recoge tu ubicación, tus contactos, tus fotos ni datos de tarjetas o cuentas bancarias.</p></div>
@@ -175,7 +177,7 @@
             <li><b>Los datos del hogar</b>, mientras el hogar exista.</li>
             <li><b>Si sales del hogar</b>, se borran tu membresía, tus preferencias de avisos y los tokens de tus teléfonos. Lo anotado se queda para la otra persona, porque es de los dos.</li>
             <li><b>Si eres la última persona del hogar y sales</b>, se borra todo el hogar en ese momento.</li>
-            <li><b>Si eliminas tu cuenta</b>, además se borra tu usuario. <a href="../eliminar-cuenta/">Más detalle</a>.</li>
+            <li><b>Si eliminas tu cuenta</b>, además se borran tu usuario, tu perfil (nombre, correo, idioma y tema) y la huella de tu PIN. <a href="../eliminar-cuenta/">Más detalle</a>.</li>
             <li><b>Los informes de fallos</b> se borran solos a los 90 días.</li>
           </ul>
         </section>
@@ -215,7 +217,7 @@
       <span class="eyebrow">Privacy policy</span>
       <h1>What we keep, and what we can’t read.</h1>
       <p>Finan2 is an app for two people to manage their household’s money together. This page explains what data it keeps, what for, who it’s shared with and how to have it deleted.</p>
-      <div class="meta"><span>Controller: <b>Katanalabs</b></span><span>Contact: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Effective: <b>October 19, 2026</b></span></div>
+      <div class="meta"><span>Controller: <b>Katanalabs</b></span><span>Contact: <b><a href="mailto:katanalabs.6002@gmail.com">katanalabs.6002@gmail.com</a></b></span><span>Effective: <b>October 22, 2026</b></span></div>
     </div>
 
     <div class="legal">
@@ -260,6 +262,8 @@
           <ul>
             <li>Your email address, so you can sign in.</li>
             <li>Your name and, if you sign in with Google, your profile photo, so the other person in the household knows who logged what.</li>
+            <li>Your chosen language and theme, so they follow you to all your phones.</li>
+            <li>If you lock the app with a PIN, an <b>encrypted fingerprint of the PIN</b> (a salted HMAC-SHA256), so the same PIN works on all your phones. It can’t be used to find out your PIN.</li>
           </ul>
           <h3>What you log in the household</h3>
           <ul>
@@ -275,7 +279,7 @@
           <ul>
             <li>The key that encrypts amounts, in the phone’s secure storage.</li>
             <li>A copy of what last arrived, so the app works offline. Amounts stay encrypted in that copy.</li>
-            <li>Your chosen language and theme.</li>
+            <li>Your fingerprint or face, if you unlock with them: the phone’s system checks them and Finan2 only gets a “yes” or “no”.</li>
             <li>Reports and backups you export: they’re created on your phone and you decide where to keep them or who to send them to. Backups are encrypted with the household key.</li>
           </ul>
           <div class="callout"><p>Finan2 does <b>not</b> collect your location, contacts, photos, or card or bank account details.</p></div>
@@ -339,7 +343,7 @@
             <li><b>Household data</b>, for as long as the household exists.</li>
             <li><b>If you leave the household</b>, your membership, notice preferences and your phones’ tokens are deleted. What was logged stays for the other person, since it belongs to both of you.</li>
             <li><b>If you’re the last person in the household and you leave</b>, the whole household is deleted right then.</li>
-            <li><b>If you delete your account</b>, your user is deleted as well. <a href="../eliminar-cuenta/">More detail</a>.</li>
+            <li><b>If you delete your account</b>, your user, your profile (name, email, language and theme) and your PIN’s fingerprint are deleted as well. <a href="../eliminar-cuenta/">More detail</a>.</li>
             <li><b>Crash reports</b> are deleted automatically after 90 days.</li>
           </ul>
         </section>
