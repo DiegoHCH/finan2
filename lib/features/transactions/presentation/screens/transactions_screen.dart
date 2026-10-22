@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/finan2_tone.dart';
 import '../../../../core/utils/year_month.dart';
+import '../../../../core/widgets/finan2_chip.dart';
+import '../../../../core/widgets/finan2_section_label.dart';
 import '../../../../core/widgets/finan2_async_error_view.dart';
 import '../../../../core/widgets/finan2_empty_state.dart';
 import '../../../../core/widgets/finan2_head.dart';
@@ -122,6 +124,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     final transactions = _filter.apply(allTransactions, options.categoryNames)
       ..sort((a, b) => b.date.compareTo(a.date));
     final filtering = !_filter.isEmpty;
+    final byTag = spendingByTag(allTransactions);
 
     String signed(int amount) =>
         amount < 0 ? '−${formatMoney(-amount)}' : '+${formatMoney(amount)}';
@@ -246,6 +249,32 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                       Finan2Space.xl,
                     ),
                     children: [
+                      // What each tag adds up to this month (#gasolina, #remesa):
+                      // one tap shows its movements and the total (F4).
+                      if (!filtering && byTag.isNotEmpty) ...[
+                        Finan2SectionLabel(l10n.transactionsByTag),
+                        const SizedBox(height: Finan2Space.xs),
+                        Wrap(
+                          key: const Key('movementsByTag'),
+                          spacing: 7,
+                          runSpacing: 7,
+                          children: [
+                            for (final (tag, spent) in byTag)
+                              Finan2Chip(
+                                label: '#$tag · ${formatMoney(spent)}',
+                                selected: false,
+                                onTap: () =>
+                                    setState(() => _filter = _filter.copyWith(tag: () => tag)),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: Finan2Space.xs),
+                        Text(
+                          l10n.transactionsByTagHint,
+                          style: TextStyle(fontSize: 12, color: colors.inkFaint),
+                        ),
+                        const SizedBox(height: Finan2Space.md),
+                      ],
                       Finan2Sheet(
                         children: filtering
                             // Found movements read as one list, each with its date.
