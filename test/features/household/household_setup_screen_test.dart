@@ -70,14 +70,14 @@ void main() {
     expect(find.text('¿Y si pierden la llave?'), findsOneWidget);
     await tester.tap(find.text('Ahora no'));
     await tester.pumpAndSettle();
-    expect(find.text('Ahora tu pareja.'), findsOneWidget);
+    expect(find.text('¿Alguien más va a anotar?'), findsOneWidget);
     expect(find.text('ABC'), findsOneWidget);
     // Diego's circle, and the partner's still empty.
     expect(find.text('D'), findsOneWidget);
-    expect(find.bySemanticsLabel('Falta tu pareja'), findsOneWidget);
+    expect(find.bySemanticsLabel('Invita a alguien'), findsOneWidget);
     expect(container.read(householdSetupProvider).active, isTrue);
 
-    await tester.tap(find.text('Más tarde'));
+    await tester.tap(find.text('Por ahora, solo yo'));
     await tester.pumpAndSettle();
     expect(find.text('open'), findsOneWidget);
     expect(container.read(householdSetupProvider).active, isFalse);

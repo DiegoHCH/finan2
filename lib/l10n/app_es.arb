@@ -219,8 +219,8 @@
     "description": "Size chip: size name and how many boxes the challenge will have."
   },
   "savingsChallengeCreate": "Crear reto",
-  "authLoginSubtitle": "Cada quien entra con su cuenta; lo que anotan es de los dos.",
-  "authLoginHeadline": "La libreta de la casa,\npara los dos.",
+  "authLoginSubtitle": "Cada quien entra con su cuenta. Si comparten el hogar, lo que anotan lo ven los dos.",
+  "authLoginHeadline": "La libreta de la casa,\npara ti o para los dos.",
   "@authLoginHeadline": {
     "description": "Login heading: says what the app is. The line break is intended."
   },
@@ -262,12 +262,12 @@
   "@householdDefaultName": {
     "description": "Prefilled, editable name when creating a household."
   },
-  "householdCreateJoinTitle": "¿Arman la casa o ya existe?",
-  "householdCreateJoinSubtitle": "Uno de los dos la crea; el otro entra con un código.",
+  "householdCreateJoinTitle": "¿Armas la casa o ya existe?",
+  "householdCreateJoinSubtitle": "Créalo tú. Si alguien más va a anotar contigo, entra con un código.",
   "householdCreateOptionTitle": "Crear la casa",
-  "householdCreateOptionSubtitle": "Empiezo yo e invito a mi pareja.",
+  "householdCreateOptionSubtitle": "Empiezo yo. Si quiero, invito a alguien después.",
   "householdJoinOptionTitle": "Tengo un código",
-  "householdJoinOptionSubtitle": "Mi pareja ya la creó.",
+  "householdJoinOptionSubtitle": "Alguien ya lo creó y me pasó el código.",
   "householdNameLabel": "Nombre de la casa",
   "householdNameRequired": "Ponle un nombre a la casa",
   "householdCodeLabel": "Código",
@@ -276,7 +276,7 @@
   "householdCreateButton": "Armar la casa",
   "householdJoinButton": "Entrar a la casa",
   "householdJoinedWithoutKeyTitle": "Te uniste al hogar",
-  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».",
+  "householdJoinedWithoutKeyMessage": "Este código no traía la llave para ver montos. Pide a quien te invitó que te la comparta desde Ajustes, en «Compartir la llave».",
   "householdSetupStep": "Paso {step} de {total}",
   "@householdSetupStep": {
     "placeholders": {
@@ -305,14 +305,14 @@
     "description": "Creates a money account (bank, wallet, cash), not a login."
   },
   "householdRecoveryPhraseTitle": "Frase de recuperación",
-  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.",
+  "householdSetupRecoveryDescription": "Los montos se cifran con una llave que vive solo en tus teléfonos. Si se pierde, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas en un lugar seguro. También se puede hacer después, desde Ajustes.",
   "householdSetupRecoveryTitle": "¿Y si pierden la llave?",
   "householdGeneratePhrase": "Generar frase",
   "householdSetupLater": "Ahora no",
-  "householdInviteTitle": "Ahora tu pareja.",
-  "householdInviteMessage": "Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.",
+  "householdInviteTitle": "¿Alguien más va a anotar?",
+  "householdInviteMessage": "Si compartes el hogar, mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con esa persona y no lo publiques en ningún lado. Si lo usas tú solo, sigue sin invitar.",
   "householdInviteFootnote": "Sirve una vez y vence en 7 días · se puede generar otro en Ajustes",
-  "householdInviteMissingPartner": "Falta tu pareja",
+  "householdInviteMissingPartner": "Invita a alguien",
   "@householdInviteMissingPartner": {
     "description": "Screen-reader label of the empty, dashed circle where the partner will be."
   },
@@ -321,8 +321,8 @@
     "description": "Title/subject of the OS share sheet when sharing the invite."
   },
   "householdInviteShare": "Compartir",
-  "householdInviteSkip": "Más tarde",
-  "householdRecoveryConfirmMessage": "Si algún día ninguno de los dos tiene la llave del hogar en su dispositivo, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas con tu pareja. Si ya había una frase o un PIN, dejarán de servir.",
+  "householdInviteSkip": "Por ahora, solo yo",
+  "householdRecoveryConfirmMessage": "Si algún día la llave del hogar no está en ningún teléfono, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas en un lugar seguro. Si ya había una frase o un PIN, dejarán de servir.",
   "householdRecoverySavedTitle": "Frase guardada",
   "householdRecoverySavedMessage": "Desde ahora esta frase permite recuperar los montos del hogar en cualquier dispositivo.",
   "householdRecoverySaveFailed": "No se pudo guardar la frase nueva, así que no sirve: la anterior sigue siendo la válida. {error}",
@@ -337,10 +337,10 @@
   "householdRecoveryShowTitle": "Anota estas 12 palabras",
   "householdRecoveryShowMessage": "En este orden. No se vuelven a mostrar y Finan2 no las guarda.",
   "householdRecoveryShowDone": "Ya las anoté",
-  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».",
-  "householdKeyWrongHousehold": "Esa llave no es de este hogar. Revisa que el código sea el que tu pareja compartió desde este mismo hogar.",
+  "householdKeyIncomplete": "Ese código no trae la llave completa. Pide a la otra persona del hogar que la comparta de nuevo desde Ajustes, en «Compartir la llave».",
+  "householdKeyWrongHousehold": "Esa llave no es de este hogar. Revisa que el código sea el que se compartió desde este mismo hogar.",
   "householdRecoveryNotSet": "Este hogar no tiene una frase de recuperación configurada.",
-  "householdRecoveryPhraseMismatch": "Esa frase no corresponde a este hogar. Si tu pareja generó una nueva, la anterior dejó de servir.",
+  "householdRecoveryPhraseMismatch": "Esa frase no corresponde a este hogar. Si se generó una nueva, la anterior dejó de servir.",
   "settingsTitle": "Ajustes",
   "settingsAccountsAndCards": "Cuentas y tarjetas",
   "settingsMemberYou": "tú",
@@ -357,7 +357,7 @@
     "description": "The empty second place in Ajustes while the household has one member."
   },
   "settingsShareKey": "Compartir la llave",
-  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.",
+  "settingsMissingKeyBanner": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que se compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.",
   "settingsPasteCodeToUnlock": "Pegar código para desbloquear montos",
   "settingsUseRecoveryPhrase": "Usar frase de recuperación",
   "settingsStorageWarning": "Tu navegador no garantizó que los datos de Finan2 se conserven. Si no abres la app por varios días, podrías perder el acceso a los montos cifrados de este dispositivo. Asegúrate de tener una frase de recuperación en Ajustes, en «Tu cuenta».",
@@ -368,7 +368,7 @@
   "settingsInvestments": "Inversiones",
   "settingsSignOut": "Cerrar sesión",
   "settingsUnlockAmountsTitle": "Desbloquear montos",
-  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».",
+  "settingsUnlockAmountsMessage": "Pega el código completo (con la llave después del punto) que se compartió desde Ajustes, en «Compartir la llave».",
   "settingsUnlockCodeLabel": "Código completo (CODIGO.llave)",
   "settingsUnlock": "Desbloquear",
   "settingsAmountsUnlockedTitle": "Montos desbloqueados",
@@ -469,7 +469,7 @@
   "coreUnsynced": "por enviar",
   "coreLoading": "Cargando",
   "coreNotificationPrimerTitle": "Activa las notificaciones",
-  "coreNotificationPrimerBody": "Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.",
+  "coreNotificationPrimerBody": "Te avisamos cuando se acerque una fecha de pago o se pasen del presupuesto y, si compartes el hogar, cuando la otra persona registre algo. Puedes ajustar esto después en Ajustes.",
   "coreNotificationPrimerEnable": "Activar notificaciones",
   "coreInstallBanner": "Para recibir notificaciones y que tus datos no se borren solos, instala Finan2: toca Compartir y luego \"Agregar a inicio\".",
   "@coreInstallBanner": {
@@ -494,7 +494,7 @@
     "description": "The center button of the bottom nav: record a new movement."
   },
   "coreHomeTabSettings": "Ajustes",
-  "coreSplashTagline": "Finanzas del hogar - para dos",
+  "coreSplashTagline": "Finanzas del hogar - para ti o para los dos",
   "errorInvalidEmail": "El correo no es válido.",
   "errorWrongCredentials": "Correo o contraseña incorrectos.",
   "errorEmailInUse": "Ya existe una cuenta con ese correo.",
@@ -509,10 +509,10 @@
       }
     }
   },
-  "errorInviteNotFound": "Esa invitación no existe o ya venció. Pide a tu pareja una nueva desde Ajustes.",
+  "errorInviteNotFound": "Esa invitación no existe o ya venció. Pide una nueva a quien te invitó, desde Ajustes.",
   "errorHouseholdFull": "No pudimos unirte: el hogar ya tiene 2 miembros o la invitación dejó de ser válida.",
   "errorGeneric": "Algo salió mal, intenta de nuevo.",
-  "errorMissingKey": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pide a tu pareja el código de invitación completo.",
+  "errorMissingKey": "Este dispositivo no tiene la llave para ver los montos de este hogar. Pide el código de invitación completo a la otra persona del hogar.",
   "errorRecoveryPhraseWordCount": "La frase debe tener {expected} palabras (escribiste {typed}).",
   "@errorRecoveryPhraseWordCount": {
     "placeholders": {
@@ -1271,7 +1271,7 @@
   "@notificationsUnread": {
     "description": "Screen-reader label for the violet dot after an unread notification's title."
   },
-  "notificationsEmpty": "Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.",
+  "notificationsEmpty": "Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y, si compartes el hogar, lo que anota la otra persona.",
   "notificationsEmptyTitle": "Todo tranquilo.",
   "notificationsEmptyAction": "Elegir qué avisar",
   "notificationsMinutesAgo": "hace {minutes} min",
@@ -1353,7 +1353,7 @@
     "description": "Stands in for {category} in notificationsBudgetExceededBody when the category is gone."
   },
   "notificationsContributionTitle": "Aporte registrado",
-  "notificationsContributionBody": "Tu pareja agregó un aporte a {goal}.",
+  "notificationsContributionBody": "Alguien del hogar agregó un aporte a {goal}.",
   "@notificationsContributionBody": {
     "placeholders": {
       "goal": {
@@ -1362,9 +1362,9 @@
     }
   },
   "notificationsPartnerMovementTitle": "Nuevo movimiento",
-  "notificationsPartnerMovementBody": "Tu pareja registró un movimiento.",
+  "notificationsPartnerMovementBody": "Alguien del hogar registró un movimiento.",
   "notificationsPartnerTransferTitle": "Nueva transferencia",
-  "notificationsPartnerTransferBody": "Tu pareja registró una transferencia entre cuentas.",
+  "notificationsPartnerTransferBody": "Alguien del hogar registró una transferencia entre cuentas.",
   "notificationsPartnerDebtTitle": "Nueva deuda",
   "notificationsPartnerAccountTitle": "Nueva cuenta",
   "notificationsPartnerInvestmentTitle": "Nueva inversión",
@@ -1391,7 +1391,7 @@
   "notificationPrefsGoalProgressWhen": "Una vez, cuando una meta pasa el 90%",
   "notificationPrefsBudgetExceeded": "Categoría que se pasa",
   "notificationPrefsBudgetExceededWhen": "Una vez por categoría y mes",
-  "notificationPrefsPartnerActivity": "Lo que anota tu pareja",
+  "notificationPrefsPartnerActivity": "Lo que anota la otra persona",
   "notificationPrefsPartnerActivityNamed": "Lo que anota {name}",
   "@notificationPrefsPartnerActivityNamed": {
     "placeholders": {
@@ -1483,7 +1483,7 @@
   "backupCreate": "Crear copia ahora",
   "backupRestoreAction": "Restaurar una copia",
   "backupRestoreLead": "Al restaurar",
-  "backupRestoreNote": ", el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.",
+  "backupRestoreNote": ", el hogar vuelve a como estaba ese día, para todos en él: lo creado después se borra. Solo funciona en este mismo hogar.",
   "@backupRestoreNote": {
     "description": "Follows backupRestoreLead, which is shown in bold; keep the leading comma."
   },
@@ -1498,7 +1498,7 @@
     }
   },
   "backupRestoreTitle": "Restaurar la copia",
-  "backupRestoreMessage": "El hogar volverá a como estaba el {date}. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para tu pareja.",
+  "backupRestoreMessage": "El hogar volverá a como estaba el {date}. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para la otra persona del hogar.",
   "@backupRestoreMessage": {
     "placeholders": {
       "date": {
@@ -1527,7 +1527,7 @@
       }
     }
   },
-  "backupReattributed": "{count, plural, =1{1 registro de tu pareja que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.} other{{count} registros de tu pareja que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.}}",
+  "backupReattributed": "{count, plural, =1{1 registro de la otra persona que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.} other{{count} registros de la otra persona que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.}}",
   "@backupReattributed": {
     "placeholders": {
       "count": {
@@ -1651,7 +1651,7 @@
       }
     }
   },
-  "goalsSavedTogether": "Ahorrado entre los dos",
+  "goalsSavedTogether": "Ahorrado en el hogar",
   "@goalsSavedTogether": {
     "description": "Over the total of every goal, with two members."
   },
@@ -2214,7 +2214,7 @@
   "appLockValueBiometrics": "Con huella o rostro",
   "appLockBiometricsUnavailable": "Este teléfono no tiene huella ni rostro configurados. Agrégalos en los ajustes del teléfono y vuelve aquí.",
   "onboardingNotificationsTitle": "Que no se te pase nada",
-  "onboardingNotificationsMessage": "Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.",
+  "onboardingNotificationsMessage": "Te avisamos cuando se acerque un pago, cuando se pasen del presupuesto y, si compartes el hogar, cuando la otra persona anote algo. Lo ajustas cuando quieras en Ajustes › Avisos.",
   "onboardingPinTitle": "Crea tu PIN",
   "onboardingPinMessage": "Con estos 4 dígitos entras a Finan2 sin volver a iniciar sesión. Solo vale en este teléfono.",
   "onboardingBiometricsTitle": "¿Entrar con tu huella o tu rostro?",

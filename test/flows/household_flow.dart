@@ -33,7 +33,7 @@ Future<void> householdFlow(WidgetTester tester, TestApp app) async {
   await tester.enterText(find.byType(TextField).at(1), '1000000');
   await tap(tester, find.text('Crear cuenta'));
   await tap(tester, find.text('Ahora no'));
-  await tap(tester, find.text('Más tarde'));
+  await tap(tester, find.text('Por ahora, solo yo'));
 
   // A movement from the Movimientos tab.
   await tap(tester, navTab('Movimientos'));

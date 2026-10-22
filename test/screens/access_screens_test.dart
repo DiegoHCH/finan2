@@ -51,7 +51,7 @@ void main() {
   testWidgets('Entrar says what the app is, not «Bienvenido»', (tester) async {
     await _pumpSignedOut(tester, const LoginScreen());
 
-    expect(find.text('La libreta de la casa,\npara los dos.'), findsOneWidget);
+    expect(find.text('La libreta de la casa,\npara ti o para los dos.'), findsOneWidget);
     expect(find.textContaining('Bienvenido'), findsNothing);
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Seguir con Google'), findsOneWidget);
