@@ -25,6 +25,7 @@ import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
 import '../../../categories/presentation/new_category_chip.dart';
+import '../../../transactions/domain/earliest_date.dart';
 import '../../domain/entities/recurring_bill.dart';
 import '../../domain/recurring_schedule.dart';
 import '../recurring_schedule_label.dart';
@@ -107,7 +108,15 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
   }
 
   Future<void> _pickStart() async {
-    final picked = await _pickDay(_startDate);
+    // A fijo starting before the account would log those months too.
+    final picked = await _pickDay(
+      _startDate,
+      first: earliestDate(
+        accountCreatedAt: ref.read(accountCreatedAtProvider),
+        today: _today(),
+        current: _startDate,
+      ),
+    );
     if (picked == null) return;
     setState(() {
       _startDate = picked;
