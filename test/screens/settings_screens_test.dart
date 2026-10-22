@@ -265,7 +265,11 @@ void main() {
     expect(find.text('\$1.560.000'), findsOneWidget);
     expect(find.text('2 fijos · los no mensuales, en promedio'), findsOneWidget);
     expect(find.text('Cada mes, día 5'), findsOneWidget);
-    expect(find.text('Cada lunes, hasta el 15 dic ${year + 1}'), findsOneWidget);
+    // A non-monthly one also says what it adds to the total, to check it by eye.
+    expect(
+      find.text('Cada lunes, hasta el 15 dic ${year + 1} · Unos \$260.000 al mes'),
+      findsOneWidget,
+    );
     expect(find.text('En pausa'), findsOneWidget);
   });
 
@@ -285,9 +289,17 @@ void main() {
     await tester.pump();
     expect(find.descendant(of: readAloud, matching: find.text('Cada lunes')), findsOneWidget);
     expect(
-      find.descendant(of: readAloud, matching: find.text('Unos \$260.000 al mes')),
+      find.descendant(
+        of: readAloud,
+        matching: find.text('Unos \$260.000 al mes. 52 pagos al año: algunos meses caen 5.'),
+      ),
       findsOneWidget,
     );
+    expect(find.byKey(const Key('recurringBillFrequencyHint')), findsNothing);
+
+    await tester.tap(find.text('Cada 2 semanas'));
+    await tester.pump();
+    expect(find.byKey(const Key('recurringBillFrequencyHint')), findsOneWidget);
   });
 
   testWidgets('Notas del mes shows the note as written and browses months', (tester) async {

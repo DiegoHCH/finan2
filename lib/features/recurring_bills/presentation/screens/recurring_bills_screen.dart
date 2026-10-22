@@ -159,11 +159,17 @@ class _BillRow extends StatelessWidget {
     final subLabel = switch (status) {
       RecurringBillStatus.paused => l10n.recurringBillsStatusPaused,
       RecurringBillStatus.ended => l10n.recurringBillsStatusEnded,
-      RecurringBillStatus.active => describeSchedule(
-        scheduleOf(bill.frequency, scheduleAnchor(bill, today), until: bill.endDate),
-        l10n: l10n,
-        today: today,
-      ),
+      RecurringBillStatus.active => [
+        describeSchedule(
+          scheduleOf(bill.frequency, scheduleAnchor(bill, today), until: bill.endDate),
+          l10n: l10n,
+          today: today,
+        ),
+        // What a non-monthly one adds to «Comprometido cada mes», so the
+        // total can be checked by eye.
+        if (bill.frequency != RecurringFrequency.monthly)
+          describeMonthlyCost(bill.amount, bill.frequency, formatMoney, l10n: l10n),
+      ].join(' · '),
     };
     final category = this.category;
 

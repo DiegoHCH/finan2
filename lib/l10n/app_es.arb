@@ -798,7 +798,9 @@
   "@transactionsTypeTransfer": {
     "description": "Anotar's fourth type: moving money between two of the household's own accounts."
   },
-  "transactionsTransferNeedsTwoAccounts": "Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.",
+  "transactionsTransferNeedsTwoAccounts": "Para eso hacen falta al menos dos cuentas.",
+  "transactionsTransferExplain": "«Pasar» mueve plata entre tus cuentas, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.",
+  "transactionsTransferCreateAccount": "Crear otra cuenta",
   "transactionsIncomplete": "Completa el monto, la categoría y la cuenta.",
   "transactionsIncompleteTitle": "Falta un dato",
   "@transactionsIncompleteTitle": {
@@ -1256,6 +1258,22 @@
         "type": "String"
       },
       "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsAverageWhy": "{frequency, select, weekly{52 pagos al año: algunos meses caen 5.} biweekly{26 pagos al año: algunos meses caen 3.} yearly{1 pago al año, repartido en 12.} other{}}",
+  "@recurringBillsAverageWhy": {
+    "placeholders": {
+      "frequency": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringBillsFrequencyHint": "{frequency, select, biweekly{Cada 14 días, siempre el mismo día de la semana: algunos meses caen 3.} semimonthly{2 veces al mes, en días fijos: siempre 2.} other{}}",
+  "@recurringBillsFrequencyHint": {
+    "placeholders": {
+      "frequency": {
         "type": "String"
       }
     }
