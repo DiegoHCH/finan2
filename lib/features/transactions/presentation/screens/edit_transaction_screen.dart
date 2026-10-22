@@ -18,6 +18,7 @@ import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/account_style.dart';
+import '../../../categories/presentation/new_category_chip.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
@@ -45,6 +46,13 @@ extension on _Kind {
     _Kind.gasto => l10n.categoriesTypeExpense,
     _Kind.ahorro => l10n.categoriesTypeSavings,
     _Kind.pasar => l10n.transactionsTypeTransfer,
+  };
+
+  /// What a category created from here is: an expense from «Gasto».
+  CategoryType get newCategoryType => switch (this) {
+    _Kind.ingreso => CategoryType.ingreso,
+    _Kind.ahorro => CategoryType.ahorro,
+    _Kind.gasto || _Kind.pasar => CategoryType.gasto,
   };
 
   bool matches(CategoryType type) => switch (this) {
@@ -423,26 +431,31 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               ..._transferFields(accounts)
             else ...[
               Finan2SectionLabel(l10n.commonCategory),
-              if (categoriesOfKind.isEmpty)
+              if (categoriesOfKind.isEmpty) ...[
                 Text(
                   l10n.transactionsNoCategoriesOfType,
                   style: TextStyle(fontSize: 12, color: colors.inkSoft),
-                )
-              else
-                Wrap(
-                  spacing: 7,
-                  runSpacing: 7,
-                  children: [
-                    for (final category in categoriesOfKind)
-                      Finan2Chip(
-                        icon: Finan2Icons.categoria(category.iconSlug),
-                        label: category.name,
-                        tone: Finan2Tone.of(context, Color(category.color)),
-                        selected: _categoryId == category.id,
-                        onTap: () => setState(() => _categoryId = category.id),
-                      ),
-                  ],
                 ),
+                const SizedBox(height: Finan2Space.xs),
+              ],
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final category in categoriesOfKind)
+                    Finan2Chip(
+                      icon: Finan2Icons.categoria(category.iconSlug),
+                      label: category.name,
+                      tone: Finan2Tone.of(context, Color(category.color)),
+                      selected: _categoryId == category.id,
+                      onTap: () => setState(() => _categoryId = category.id),
+                    ),
+                  NewCategoryChip(
+                    type: _kind.newCategoryType,
+                    onCreated: (id) => setState(() => _categoryId = id),
+                  ),
+                ],
+              ),
               const SizedBox(height: Finan2Space.md),
               Finan2Field(label: l10n.commonDescription, controller: _descriptionController),
               // Only worth asking once there's a partner to tell apart.

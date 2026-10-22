@@ -178,6 +178,22 @@ void main() {
     expect((await tester.runAsync(() => app.first(transactionsForMonthProvider)))!, hasLength(1));
   });
 
+  testWidgets('a missing category is created from Anotar and comes back selected', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.byKey(const Key('newCategoryChip')));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField).first, 'Mascotas');
+    await tester.tap(find.text('Guardar'));
+    await settle(tester);
+
+    // Back in Anotar, with the new one there and chosen.
+    final chip = find.widgetWithText(Finan2Chip, 'Mascotas');
+    expect(chip, findsOneWidget);
+    expect(tester.widget<Finan2Chip>(chip).selected, isTrue);
+  });
+
   testWidgets('«Pasar» inside Anotar moves money between two accounts', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
     await tester.runAsync(() async {

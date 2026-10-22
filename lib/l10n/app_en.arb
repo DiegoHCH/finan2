@@ -411,6 +411,7 @@
   "categoriesEmptyDescription": "Every movement goes in a category: create the first one to start logging.",
   "categoriesEmptyAction": "Create a category",
   "categoriesNewTitle": "New category",
+  "categoriesNewChip": "New",
   "categoriesEditTitle": "Edit category",
   "categoriesPreview": "Preview",
   "categoriesTypeLabel": "Type",

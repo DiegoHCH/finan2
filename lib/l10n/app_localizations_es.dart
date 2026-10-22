@@ -1441,6 +1441,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get categoriesNewTitle => 'Nueva categoría';
 
   @override
+  String get categoriesNewChip => 'Nueva';
+
+  @override
   String get categoriesEditTitle => 'Editar categoría';
 
   @override

@@ -1014,6 +1014,7 @@
   "categoriesEmptyDescription": "Cada movimiento va en una categoría: creen la primera para empezar a anotar.",
   "categoriesEmptyAction": "Crear una categoría",
   "categoriesNewTitle": "Nueva categoría",
+  "categoriesNewChip": "Nueva",
   "categoriesEditTitle": "Editar categoría",
   "categoriesPreview": "Vista previa",
   "categoriesTypeLabel": "Tipo",
