@@ -1154,8 +1154,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsTypeTransfer => 'Move';
 
   @override
-  String get transactionsTransferNeedsTwoAccounts =>
-      'Moving money needs two accounts. Create them in Settings.';
+  String get transactionsTransferNeedsTwoAccounts => 'That takes at least two accounts.';
+
+  @override
+  String get transactionsTransferExplain =>
+      '“Transfer” moves money between your accounts, from the bank to cash for example. It\'s neither an expense nor income: the total stays the same.';
+
+  @override
+  String get transactionsTransferCreateAccount => 'Create another account';
 
   @override
   String get transactionsIncomplete => 'Fill in the amount, category and account.';
@@ -1751,6 +1757,27 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.selectLogic(kind, {
       'average': 'About $amount a month',
       'other': '$amount a month',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String recurringBillsAverageWhy(String frequency) {
+    String _temp0 = intl.Intl.selectLogic(frequency, {
+      'weekly': '52 payments a year: some months get 5.',
+      'biweekly': '26 payments a year: some months get 3.',
+      'yearly': '1 payment a year, spread over 12.',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String recurringBillsFrequencyHint(String frequency) {
+    String _temp0 = intl.Intl.selectLogic(frequency, {
+      'biweekly': 'Every 14 days, always the same weekday: some months get 3.',
+      'semimonthly': 'Twice a month, on set days: always 2.',
+      'other': '',
     });
     return '$_temp0';
   }

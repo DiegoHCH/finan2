@@ -171,4 +171,20 @@ void main() {
       'About \$260000 a month',
     );
   });
+
+  test('every 2 weeks says why it comes to more than two payments a month', () {
+    String money(num v) => '\$${v.round()}';
+    // The tester's case: 800.000 every 2 weeks read like a wrong sum.
+    expect(
+      describeMonthlyCost(800000, RecurringFrequency.biweekly, money, withReason: true),
+      'Unos \$1733333 al mes. 26 pagos al año: algunos meses caen 3.',
+    );
+    expect(
+      describeMonthlyCost(800000, RecurringFrequency.semimonthly, money, withReason: true),
+      '\$1600000 al mes',
+    );
+    expect(frequencyHint(RecurringFrequency.biweekly), contains('Cada 14 días'));
+    expect(frequencyHint(RecurringFrequency.semimonthly), contains('2 veces al mes'));
+    expect(frequencyHint(RecurringFrequency.monthly), isNull);
+  });
 }

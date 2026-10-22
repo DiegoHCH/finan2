@@ -2100,8 +2100,20 @@ abstract class AppLocalizations {
   /// No description provided for @transactionsTransferNeedsTwoAccounts.
   ///
   /// In es, this message translates to:
-  /// **'Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.'**
+  /// **'Para eso hacen falta al menos dos cuentas.'**
   String get transactionsTransferNeedsTwoAccounts;
+
+  /// No description provided for @transactionsTransferExplain.
+  ///
+  /// In es, this message translates to:
+  /// **'«Pasar» mueve plata entre tus cuentas, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.'**
+  String get transactionsTransferExplain;
+
+  /// No description provided for @transactionsTransferCreateAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear otra cuenta'**
+  String get transactionsTransferCreateAccount;
 
   /// No description provided for @transactionsIncomplete.
   ///
@@ -3032,6 +3044,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{kind, select, average{Unos {amount} al mes} other{{amount} al mes}}'**
   String recurringBillsMonthlyCost(String kind, String amount);
+
+  /// No description provided for @recurringBillsAverageWhy.
+  ///
+  /// In es, this message translates to:
+  /// **'{frequency, select, weekly{52 pagos al año: algunos meses caen 5.} biweekly{26 pagos al año: algunos meses caen 3.} yearly{1 pago al año, repartido en 12.} other{}}'**
+  String recurringBillsAverageWhy(String frequency);
+
+  /// No description provided for @recurringBillsFrequencyHint.
+  ///
+  /// In es, this message translates to:
+  /// **'{frequency, select, biweekly{Cada 14 días, siempre el mismo día de la semana: algunos meses caen 3.} semimonthly{2 veces al mes, en días fijos: siempre 2.} other{}}'**
+  String recurringBillsFrequencyHint(String frequency);
 
   /// No description provided for @monthlyNotesTitle.
   ///

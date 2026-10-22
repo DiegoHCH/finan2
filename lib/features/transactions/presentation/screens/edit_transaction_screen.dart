@@ -18,6 +18,7 @@ import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/account_style.dart';
+import '../../../accounts/presentation/screens/edit_account_screen.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
@@ -516,12 +517,31 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final from = accounts.where((a) => a.id == _fromAccountId).firstOrNull;
     final to = accounts.where((a) => a.id == _toAccountId).firstOrNull;
 
+    // With one account there's nowhere to move it to: say what «Pasar» is
+    // for and offer the second account right here, not «go to Ajustes».
     if (accounts.length < 2) {
       return [
+        Text(
+          l10n.transactionsTransferExplain,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 14, height: 1.45, color: colors.ink),
+        ),
+        const SizedBox(height: Finan2Space.xs),
         Text(
           l10n.transactionsTransferNeedsTwoAccounts,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12.5, color: colors.inkSoft),
+        ),
+        const SizedBox(height: Finan2Space.md),
+        Center(
+          child: OutlinedButton.icon(
+            key: const Key('pasarCreateAccount'),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
+            icon: const Icon(Icons.add, size: Finan2Sizes.iconSm),
+            label: Text(l10n.transactionsTransferCreateAccount),
+          ),
         ),
       ];
     }
