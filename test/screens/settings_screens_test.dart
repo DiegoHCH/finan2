@@ -1,3 +1,4 @@
+import 'package:finan2/core/utils/year_month.dart';
 import 'package:finan2/core/theme/app_theme.dart';
 import 'package:finan2/features/accounts/presentation/screens/accounts_screen.dart';
 import 'package:finan2/features/backup/presentation/screens/backup_screen.dart';
@@ -300,6 +301,26 @@ void main() {
     await tester.tap(find.text('Cada 2 semanas'));
     await tester.pump();
     expect(find.byKey(const Key('recurringBillFrequencyHint')), findsOneWidget);
+  });
+
+  testWidgets('what was left for next month shows up when that month comes', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    await tester.runAsync(
+      () => app.container
+          .read(monthlyNotesControllerProvider.notifier)
+          .saveNextMonth('Renovar el SOAT.', month: currentYearMonth().plusMonths(-1)),
+    );
+
+    await pumpScreen(tester, app, const MonthlyNotesScreen());
+
+    expect(find.text('Te dejaste esto para este mes'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('monthNoteFromLastMonth')),
+        matching: find.text('Renovar el SOAT.'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Notas del mes shows the note as written and browses months', (tester) async {

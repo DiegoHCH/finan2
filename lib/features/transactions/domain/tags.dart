@@ -27,3 +27,22 @@ List<String> tagsByUse(Iterable<Movement> movements) {
     return byCount != 0 ? byCount : a.compareTo(b);
   });
 }
+
+/// What was spent under each tag in [movements], biggest first - Angela's
+/// «el 1 gasté 15.000 en gasolina, el 15 otros 20.000: ¿cuánto en total?».
+/// Income doesn't count; a movement with two tags counts for both.
+List<(String tag, int spent)> spendingByTag(Iterable<Movement> movements) {
+  final totals = <String, int>{};
+  for (final tx in movements) {
+    if (tx.isIncome) continue;
+    for (final tag in tx.tags) {
+      totals[tag] = (totals[tag] ?? 0) + tx.amount;
+    }
+  }
+  final entries = totals.entries.toList()
+    ..sort((a, b) {
+      final bySpent = b.value.compareTo(a.value);
+      return bySpent != 0 ? bySpent : a.key.compareTo(b.key);
+    });
+  return [for (final e in entries) (e.key, e.value)];
+}

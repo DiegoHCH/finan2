@@ -48,6 +48,7 @@ Future<void> _movement(
   required String categoryId,
   required String accountId,
   DateTime? date,
+  List<String> tags = const [],
 }) => app.container
     .read(transactionControllerProvider.notifier)
     .save(
@@ -60,10 +61,37 @@ Future<void> _movement(
         description: description,
         date: date ?? DateTime.now(),
         createdBy: testUid,
+        tags: tags,
       ),
     );
 
 void main() {
+  testWidgets('Movimientos adds up each tag of the month and opens it', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    await tester.runAsync(() async {
+      final account = await _account(app, 'Banco', 1000000);
+      final transporte = await _category(app, 'Transporte');
+      // The tester's case: two fill-ups this month, one total.
+      for (final amount in [15000, 20000]) {
+        await _movement(
+          app,
+          description: 'Gasolina',
+          amount: amount,
+          categoryId: transporte,
+          accountId: account,
+          tags: const ['gasolina'],
+        );
+      }
+    });
+
+    await pumpScreen(tester, app, const TransactionsScreen());
+    expect(find.text('POR ETIQUETA'), findsOneWidget);
+    await tester.tap(find.text('#gasolina · \$35.000'));
+    await settle(tester);
+    expect(find.byKey(const Key('movementsResultsTotal')), findsOneWidget);
+    expect(find.textContaining('35.000'), findsWidgets);
+  });
+
   testWidgets('Movimientos groups the month by day, each with its net', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
     final now = DateTime.now();

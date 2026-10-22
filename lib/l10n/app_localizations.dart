@@ -2211,6 +2211,18 @@ abstract class AppLocalizations {
   /// **'Ayer · {day}'**
   String transactionsDayYesterday(String day);
 
+  /// No description provided for @transactionsByTag.
+  ///
+  /// In es, this message translates to:
+  /// **'Por etiqueta'**
+  String get transactionsByTag;
+
+  /// No description provided for @transactionsByTagHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo gastado este mes con cada etiqueta. Toca una para ver sus movimientos.'**
+  String get transactionsByTagHint;
+
   /// At the end of a search or filter: how many movements matched and their net, already formatted with its sign.
   ///
   /// In es, this message translates to:
@@ -3092,6 +3104,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Lo que no cabe en números.'**
   String get monthlyNotesHint;
+
+  /// No description provided for @monthlyNotesExplain.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que no cabe en números, compartido con tu hogar. Para que un gasto sume, anótalo con una etiqueta, como #gasolina: Movimientos te da el total.'**
+  String get monthlyNotesExplain;
+
+  /// No description provided for @monthlyNotesFromLastMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Te dejaste esto para este mes'**
+  String get monthlyNotesFromLastMonth;
 
   /// No description provided for @notificationsTitle.
   ///

@@ -1220,6 +1220,13 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get transactionsByTag => 'Por etiqueta';
+
+  @override
+  String get transactionsByTagHint =>
+      'Lo gastado este mes con cada etiqueta. Toca una para ver sus movimientos.';
+
+  @override
   String transactionsResultsTotal(int count, String amount) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1799,6 +1806,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get monthlyNotesHint => 'Lo que no cabe en números.';
+
+  @override
+  String get monthlyNotesExplain =>
+      'Lo que no cabe en números, compartido con tu hogar. Para que un gasto sume, anótalo con una etiqueta, como #gasolina: Movimientos te da el total.';
+
+  @override
+  String get monthlyNotesFromLastMonth => 'Te dejaste esto para este mes';
 
   @override
   String get notificationsTitle => 'Avisos';

@@ -1219,6 +1219,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get transactionsByTag => 'By tag';
+
+  @override
+  String get transactionsByTagHint =>
+      'What was spent this month under each tag. Tap one to see its transactions.';
+
+  @override
   String transactionsResultsTotal(int count, String amount) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1799,6 +1806,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthlyNotesHint => 'What doesn\'t fit in numbers.';
+
+  @override
+  String get monthlyNotesExplain =>
+      'What doesn\'t fit in numbers, shared with your household. To make spending add up, log it with a tag, like #gas: Transactions gives you the total.';
+
+  @override
+  String get monthlyNotesFromLastMonth => 'You left this for this month';
 
   @override
   String get notificationsTitle => 'Notifications';

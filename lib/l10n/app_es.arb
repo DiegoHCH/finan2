@@ -853,6 +853,8 @@
       }
     }
   },
+  "transactionsByTag": "Por etiqueta",
+  "transactionsByTagHint": "Lo gastado este mes con cada etiqueta. Toca una para ver sus movimientos.",
   "transactionsResultsTotal": "{count, plural, =1{1 movimiento} other{{count} movimientos}} · {amount}",
   "@transactionsResultsTotal": {
     "description": "At the end of a search or filter: how many movements matched and their net, already formatted with its sign.",
@@ -1283,6 +1285,8 @@
   "monthlyNotesEmpty": "Nada escrito todavía. Toca para escribir.",
   "monthlyNotesWrite": "Escribir",
   "monthlyNotesHint": "Lo que no cabe en números.",
+  "monthlyNotesExplain": "Lo que no cabe en números, compartido con tu hogar. Para que un gasto sume, anótalo con una etiqueta, como #gasolina: Movimientos te da el total.",
+  "monthlyNotesFromLastMonth": "Te dejaste esto para este mes",
   "notificationsTitle": "Avisos",
   "notificationsMarkAllRead": "Marcar todo como leído",
   "notificationsUnread": "Sin leer",
