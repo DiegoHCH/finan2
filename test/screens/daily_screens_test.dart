@@ -179,6 +179,18 @@ void main() {
     expect((await tester.runAsync(() => app.first(transactionsForMonthProvider)))!, hasLength(1));
   });
 
+  testWidgets('Anotar lets a date go back only to the account\'s month', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.byKey(const Key('movementDate')));
+    await settle(tester);
+
+    // Earlier spending is already behind the balances typed in at setup.
+    final picker = tester.widget<DatePickerDialog>(find.byType(DatePickerDialog));
+    expect(picker.firstDate, DateTime(accountCreatedAt.year, accountCreatedAt.month));
+  });
+
   testWidgets('«Pasar» inside Anotar moves money between two accounts', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
     await tester.runAsync(() async {
