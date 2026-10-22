@@ -1,4 +1,5 @@
 import '../../../categories/domain/category_type.dart';
+import '../recurring_schedule.dart';
 
 enum RecurringFrequency { weekly, biweekly, semimonthly, monthly, yearly }
 
@@ -111,7 +112,7 @@ class RecurringBill {
         ) {
           final days = {
             dayOfMonth,
-            if (frequency == RecurringFrequency.semimonthly) dayOfMonth + 15,
+            if (frequency == RecurringFrequency.semimonthly) semimonthlyPair(dayOfMonth),
           };
           for (final day in days) {
             dates.add(DateTime(month.year, month.month, _clampDay(month.year, month.month, day)));

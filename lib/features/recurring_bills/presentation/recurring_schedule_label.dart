@@ -41,10 +41,9 @@ String describeSchedule(
   final text = switch (schedule.frequency) {
     RecurringFrequency.weekly => l10n.recurringBillsScheduleWeekly(weekday),
     RecurringFrequency.biweekly => l10n.recurringBillsScheduleBiweekly(weekday),
-    RecurringFrequency.semimonthly => l10n.recurringBillsScheduleSemimonthly(
-      schedule.day,
-      schedule.secondDay,
-    ),
+    RecurringFrequency.semimonthly => switch (semimonthlyDays(schedule.day)) {
+      (final first, final second) => l10n.recurringBillsScheduleSemimonthly(first, second),
+    },
     RecurringFrequency.monthly => l10n.recurringBillsScheduleMonthly(schedule.day),
     RecurringFrequency.yearly => l10n.recurringBillsScheduleYearly(
       DateFormat.MMMMd(locale).format(DateTime(2000, schedule.month, schedule.day)),
