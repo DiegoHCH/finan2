@@ -136,13 +136,22 @@ class AppLockRepository {
   /// Forgets this account's PIN, here and in the cloud, and this phone's
   /// setup - the way out of a forgotten PIN, before signing out: signing
   /// back in runs the onboarding and asks for a new one.
-  Future<void> clear() async {
+  ///
+  /// [waitForCloud] when the account itself is going next: once it's gone
+  /// nobody signed in can delete the cloud copy, so it has to be gone first.
+  /// Otherwise («forgot your PIN?», maybe offline) it isn't waited for.
+  Future<void> clear({bool waitForCloud = false}) async {
     await _store.delete(_pinKey);
     await _store.delete(_biometricsKey);
     await _store.delete(_onboardedKey);
     await _store.delete(_syncedKey);
     await _resetFailures();
-    _syncRemote((cloud, account) => cloud.delete(account));
+    final cloud = _cloud;
+    if (waitForCloud && cloud != null) {
+      await cloud.delete(_account!);
+    } else {
+      _syncRemote((cloud, account) => cloud.delete(account));
+    }
   }
 
   Future<DateTime?> lockedUntil() async {
