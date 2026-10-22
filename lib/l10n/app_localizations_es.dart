@@ -256,10 +256,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savingsChallengeCreate => 'Crear reto';
 
   @override
-  String get authLoginSubtitle => 'Cada quien entra con su cuenta; lo que anotan es de los dos.';
+  String get authLoginSubtitle =>
+      'Cada quien entra con su cuenta. Si comparten el hogar, lo que anotan lo ven los dos.';
 
   @override
-  String get authLoginHeadline => 'La libreta de la casa,\npara los dos.';
+  String get authLoginHeadline => 'La libreta de la casa,\npara ti o para los dos.';
 
   @override
   String get authEmailLabel => 'Correo';
@@ -331,22 +332,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get householdDefaultName => 'Nuestro hogar';
 
   @override
-  String get householdCreateJoinTitle => '¿Arman la casa o ya existe?';
+  String get householdCreateJoinTitle => '¿Armas la casa o ya existe?';
 
   @override
-  String get householdCreateJoinSubtitle => 'Uno de los dos la crea; el otro entra con un código.';
+  String get householdCreateJoinSubtitle =>
+      'Créalo tú. Si alguien más va a anotar contigo, entra con un código.';
 
   @override
   String get householdCreateOptionTitle => 'Crear la casa';
 
   @override
-  String get householdCreateOptionSubtitle => 'Empiezo yo e invito a mi pareja.';
+  String get householdCreateOptionSubtitle => 'Empiezo yo. Si quiero, invito a alguien después.';
 
   @override
   String get householdJoinOptionTitle => 'Tengo un código';
 
   @override
-  String get householdJoinOptionSubtitle => 'Mi pareja ya la creó.';
+  String get householdJoinOptionSubtitle => 'Alguien ya lo creó y me pasó el código.';
 
   @override
   String get householdNameLabel => 'Nombre de la casa';
@@ -374,7 +376,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get householdJoinedWithoutKeyMessage =>
-      'Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».';
+      'Este código no traía la llave para ver montos. Pide a quien te invitó que te la comparta desde Ajustes, en «Compartir la llave».';
 
   @override
   String householdSetupStep(int step, int total) {
@@ -419,7 +421,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get householdSetupRecoveryDescription =>
-      'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.';
+      'Los montos se cifran con una llave que vive solo en tus teléfonos. Si se pierde, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas en un lugar seguro. También se puede hacer después, desde Ajustes.';
 
   @override
   String get householdSetupRecoveryTitle => '¿Y si pierden la llave?';
@@ -431,18 +433,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get householdSetupLater => 'Ahora no';
 
   @override
-  String get householdInviteTitle => 'Ahora tu pareja.';
+  String get householdInviteTitle => '¿Alguien más va a anotar?';
 
   @override
   String get householdInviteMessage =>
-      'Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.';
+      'Si compartes el hogar, mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con esa persona y no lo publiques en ningún lado. Si lo usas tú solo, sigue sin invitar.';
 
   @override
   String get householdInviteFootnote =>
       'Sirve una vez y vence en 7 días · se puede generar otro en Ajustes';
 
   @override
-  String get householdInviteMissingPartner => 'Falta tu pareja';
+  String get householdInviteMissingPartner => 'Invita a alguien';
 
   @override
   String get householdInviteShareSubject => 'Invitación a nuestro hogar en Finan2';
@@ -451,11 +453,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get householdInviteShare => 'Compartir';
 
   @override
-  String get householdInviteSkip => 'Más tarde';
+  String get householdInviteSkip => 'Por ahora, solo yo';
 
   @override
   String get householdRecoveryConfirmMessage =>
-      'Si algún día ninguno de los dos tiene la llave del hogar en su dispositivo, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas con tu pareja. Si ya había una frase o un PIN, dejarán de servir.';
+      'Si algún día la llave del hogar no está en ningún teléfono, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas en un lugar seguro. Si ya había una frase o un PIN, dejarán de servir.';
 
   @override
   String get householdRecoverySavedTitle => 'Frase guardada';
@@ -481,11 +483,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get householdKeyIncomplete =>
-      'Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».';
+      'Ese código no trae la llave completa. Pide a la otra persona del hogar que la comparta de nuevo desde Ajustes, en «Compartir la llave».';
 
   @override
   String get householdKeyWrongHousehold =>
-      'Esa llave no es de este hogar. Revisa que el código sea el que tu pareja compartió desde este mismo hogar.';
+      'Esa llave no es de este hogar. Revisa que el código sea el que se compartió desde este mismo hogar.';
 
   @override
   String get householdRecoveryNotSet =>
@@ -493,7 +495,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get householdRecoveryPhraseMismatch =>
-      'Esa frase no corresponde a este hogar. Si tu pareja generó una nueva, la anterior dejó de servir.';
+      'Esa frase no corresponde a este hogar. Si se generó una nueva, la anterior dejó de servir.';
 
   @override
   String get settingsTitle => 'Ajustes';
@@ -518,7 +520,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsMissingKeyBanner =>
-      'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.';
+      'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que se compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.';
 
   @override
   String get settingsPasteCodeToUnlock => 'Pegar código para desbloquear montos';
@@ -553,7 +555,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsUnlockAmountsMessage =>
-      'Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».';
+      'Pega el código completo (con la llave después del punto) que se compartió desde Ajustes, en «Compartir la llave».';
 
   @override
   String get settingsUnlockCodeLabel => 'Código completo (CODIGO.llave)';
@@ -724,7 +726,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get coreNotificationPrimerBody =>
-      'Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.';
+      'Te avisamos cuando se acerque una fecha de pago o se pasen del presupuesto y, si compartes el hogar, cuando la otra persona registre algo. Puedes ajustar esto después en Ajustes.';
 
   @override
   String get coreNotificationPrimerEnable => 'Activar notificaciones';
@@ -755,7 +757,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get coreHomeTabSettings => 'Ajustes';
 
   @override
-  String get coreSplashTagline => 'Finanzas del hogar - para dos';
+  String get coreSplashTagline => 'Finanzas del hogar - para ti o para los dos';
 
   @override
   String get errorInvalidEmail => 'El correo no es válido.';
@@ -779,7 +781,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorInviteNotFound =>
-      'Esa invitación no existe o ya venció. Pide a tu pareja una nueva desde Ajustes.';
+      'Esa invitación no existe o ya venció. Pide una nueva a quien te invitó, desde Ajustes.';
 
   @override
   String get errorHouseholdFull =>
@@ -790,7 +792,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorMissingKey =>
-      'Este dispositivo no tiene la llave para ver los montos de este hogar. Pide a tu pareja el código de invitación completo.';
+      'Este dispositivo no tiene la llave para ver los montos de este hogar. Pide el código de invitación completo a la otra persona del hogar.';
 
   @override
   String errorRecoveryPhraseWordCount(int expected, int typed) {
@@ -1782,7 +1784,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get notificationsEmpty =>
-      'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.';
+      'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y, si compartes el hogar, lo que anota la otra persona.';
 
   @override
   String get notificationsEmptyTitle => 'Todo tranquilo.';
@@ -1853,21 +1855,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String notificationsContributionBody(String goal) {
-    return 'Tu pareja agregó un aporte a $goal.';
+    return 'Alguien del hogar agregó un aporte a $goal.';
   }
 
   @override
   String get notificationsPartnerMovementTitle => 'Nuevo movimiento';
 
   @override
-  String get notificationsPartnerMovementBody => 'Tu pareja registró un movimiento.';
+  String get notificationsPartnerMovementBody => 'Alguien del hogar registró un movimiento.';
 
   @override
   String get notificationsPartnerTransferTitle => 'Nueva transferencia';
 
   @override
   String get notificationsPartnerTransferBody =>
-      'Tu pareja registró una transferencia entre cuentas.';
+      'Alguien del hogar registró una transferencia entre cuentas.';
 
   @override
   String get notificationsPartnerDebtTitle => 'Nueva deuda';
@@ -1929,7 +1931,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationPrefsBudgetExceededWhen => 'Una vez por categoría y mes';
 
   @override
-  String get notificationPrefsPartnerActivity => 'Lo que anota tu pareja';
+  String get notificationPrefsPartnerActivity => 'Lo que anota la otra persona';
 
   @override
   String notificationPrefsPartnerActivityNamed(String name) {
@@ -2064,7 +2066,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupRestoreNote =>
-      ', el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.';
+      ', el hogar vuelve a como estaba ese día, para todos en él: lo creado después se borra. Solo funciona en este mismo hogar.';
 
   @override
   String get backupErrorTitle => 'No se pudo completar';
@@ -2079,7 +2081,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String backupRestoreMessage(String date) {
-    return 'El hogar volverá a como estaba el $date. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para tu pareja.';
+    return 'El hogar volverá a como estaba el $date. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para la otra persona del hogar.';
   }
 
   @override
@@ -2122,9 +2124,9 @@ class AppLocalizationsEs extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count registros de tu pareja que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.',
+          '$count registros de la otra persona que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.',
       one:
-          '1 registro de tu pareja que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.',
+          '1 registro de la otra persona que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.',
     );
     return '$_temp0';
   }
@@ -2206,7 +2208,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get goalsSavedTogether => 'Ahorrado entre los dos';
+  String get goalsSavedTogether => 'Ahorrado en el hogar';
 
   @override
   String goalsOnTime(int onTime, int dated) {
@@ -2695,7 +2697,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingNotificationsMessage =>
-      'Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.';
+      'Te avisamos cuando se acerque un pago, cuando se pasen del presupuesto y, si compartes el hogar, cuando la otra persona anote algo. Lo ajustas cuando quieras en Ajustes › Avisos.';
 
   @override
   String get onboardingPinTitle => 'Crea tu PIN';

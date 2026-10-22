@@ -257,10 +257,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authLoginSubtitle =>
-      'Each of you signs in with your own account; what you write down belongs to both.';
+      'Each person signs in with their own account. If you share the household, you both see what you write down.';
 
   @override
-  String get authLoginHeadline => 'The household notebook,\nfor the two of you.';
+  String get authLoginHeadline => 'The household notebook,\nfor you or for the two of you.';
 
   @override
   String get authEmailLabel => 'Email';
@@ -335,19 +335,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdCreateJoinTitle => 'Setting up the household, or joining one?';
 
   @override
-  String get householdCreateJoinSubtitle => 'One of you creates it; the other joins with a code.';
+  String get householdCreateJoinSubtitle =>
+      'Create it yourself. If someone else will log with you, they join with a code.';
 
   @override
   String get householdCreateOptionTitle => 'Create the household';
 
   @override
-  String get householdCreateOptionSubtitle => 'I\'ll start and invite my partner.';
+  String get householdCreateOptionSubtitle => 'I\'ll start. I can invite someone later if I want.';
 
   @override
   String get householdJoinOptionTitle => 'I have a code';
 
   @override
-  String get householdJoinOptionSubtitle => 'My partner already created it.';
+  String get householdJoinOptionSubtitle => 'Someone already created it and sent me the code.';
 
   @override
   String get householdNameLabel => 'Household name';
@@ -375,7 +376,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdJoinedWithoutKeyMessage =>
-      'This code didn\'t include the key to see amounts. Ask your partner to share it from Settings, under \"Share the key\".';
+      'This code didn\'t include the key to see amounts. Ask whoever invited you to share it from Settings, under \"Share the key\".';
 
   @override
   String householdSetupStep(int step, int total) {
@@ -420,7 +421,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdSetupRecoveryDescription =>
-      'Amounts are encrypted with a key that lives only on your phones. If you both lose it, 12 words bring it back. They\'re shown only once: write them down on paper and keep them with your partner. You can also do it later, from Settings.';
+      'Amounts are encrypted with a key that lives only on your phones. If it\'s lost, 12 words bring it back. They\'re shown only once: write them down on paper and keep them somewhere safe. You can also do it later, from Settings.';
 
   @override
   String get householdSetupRecoveryTitle => 'What if you lose the key?';
@@ -432,18 +433,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdSetupLater => 'Not now';
 
   @override
-  String get householdInviteTitle => 'Now your partner.';
+  String get householdInviteTitle => 'Will someone else log with you?';
 
   @override
   String get householdInviteMessage =>
-      'Send them this code with the share button. It carries the household key, which you can\'t see here: share it only with your partner and don\'t post it anywhere.';
+      'If you share the household, send them this code with the share button. It carries the household key, which you can\'t see here: share it only with that person and don\'t post it anywhere. If it\'s just you, carry on without inviting.';
 
   @override
   String get householdInviteFootnote =>
       'Works once and expires in 7 days · you can make another in Settings';
 
   @override
-  String get householdInviteMissingPartner => 'Your partner isn\'t here yet';
+  String get householdInviteMissingPartner => 'Invite someone';
 
   @override
   String get householdInviteShareSubject => 'Invitation to our household on Finan2';
@@ -452,11 +453,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get householdInviteShare => 'Share';
 
   @override
-  String get householdInviteSkip => 'Later';
+  String get householdInviteSkip => 'Just me for now';
 
   @override
   String get householdRecoveryConfirmMessage =>
-      'If neither of you ever has the household key on your device, these 12 words recover the amounts. You\'ll see them only once: write them down on paper and keep them with your partner. Any previous phrase or PIN will stop working.';
+      'If the household key is ever on no phone at all, these 12 words recover the amounts. You\'ll see them only once: write them down on paper and keep them somewhere safe. Any previous phrase or PIN will stop working.';
 
   @override
   String get householdRecoverySavedTitle => 'Phrase saved';
@@ -482,18 +483,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get householdKeyIncomplete =>
-      'That code doesn\'t include the full key. Ask your partner to share it again from Settings, under \"Share the key\".';
+      'That code doesn\'t include the full key. Ask the other person in the household to share it again from Settings, under \"Share the key\".';
 
   @override
   String get householdKeyWrongHousehold =>
-      'That key isn\'t for this household. Check that it\'s the code your partner shared from this same household.';
+      'That key isn\'t for this household. Check that it\'s the code shared from this same household.';
 
   @override
   String get householdRecoveryNotSet => 'This household has no recovery phrase set up.';
 
   @override
   String get householdRecoveryPhraseMismatch =>
-      'That phrase doesn\'t match this household. If your partner generated a new one, the old one stopped working.';
+      'That phrase doesn\'t match this household. If a new one was generated, the old one stopped working.';
 
   @override
   String get settingsTitle => 'Settings';
@@ -518,7 +519,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsMissingKeyBanner =>
-      'This device doesn\'t have the key to see this household\'s amounts. Paste the code your partner shared from Settings, under \"Share the key\", or type the recovery phrase.';
+      'This device doesn\'t have the key to see this household\'s amounts. Paste the code shared from Settings, under \"Share the key\", or type the recovery phrase.';
 
   @override
   String get settingsPasteCodeToUnlock => 'Paste code to unlock amounts';
@@ -553,7 +554,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsUnlockAmountsMessage =>
-      'Paste the full code (with the key after the dot) your partner shared from Settings, under \"Share the key\".';
+      'Paste the full code (with the key after the dot) shared from Settings, under \"Share the key\".';
 
   @override
   String get settingsUnlockCodeLabel => 'Full code (CODE.key)';
@@ -723,7 +724,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreNotificationPrimerBody =>
-      'We\'ll let you know when your partner logs something, a payment is coming up, or you go over budget. You can change this later in Settings.';
+      'We\'ll let you know when a payment is coming up or you go over budget and, if you share the household, when the other person logs something. You can change this later in Settings.';
 
   @override
   String get coreNotificationPrimerEnable => 'Turn on notifications';
@@ -754,7 +755,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreHomeTabSettings => 'Settings';
 
   @override
-  String get coreSplashTagline => 'Household finances - for two';
+  String get coreSplashTagline => 'Household finances - for you or for the two of you';
 
   @override
   String get errorInvalidEmail => 'That email isn\'t valid.';
@@ -778,7 +779,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInviteNotFound =>
-      'That invite doesn\'t exist or has expired. Ask your partner for a new one from Settings.';
+      'That invite doesn\'t exist or has expired. Ask whoever invited you for a new one from Settings.';
 
   @override
   String get errorHouseholdFull =>
@@ -789,7 +790,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorMissingKey =>
-      'This device doesn\'t have the key to see this household\'s amounts. Ask your partner for the full invite code.';
+      'This device doesn\'t have the key to see this household\'s amounts. Ask the other person in the household for the full invite code.';
 
   @override
   String errorRecoveryPhraseWordCount(int expected, int typed) {
@@ -1783,7 +1784,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsEmpty =>
-      'Upcoming payments, goals on track, anything over budget and what your partner logs show up here.';
+      'Upcoming payments, goals on track, anything over budget and, if you share the household, what the other person logs show up here.';
 
   @override
   String get notificationsEmptyTitle => 'All quiet.';
@@ -1854,20 +1855,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notificationsContributionBody(String goal) {
-    return 'Your partner added a contribution to $goal.';
+    return 'Someone in the household added a contribution to $goal.';
   }
 
   @override
   String get notificationsPartnerMovementTitle => 'New transaction';
 
   @override
-  String get notificationsPartnerMovementBody => 'Your partner logged a transaction.';
+  String get notificationsPartnerMovementBody => 'Someone in the household logged a transaction.';
 
   @override
   String get notificationsPartnerTransferTitle => 'New transfer';
 
   @override
-  String get notificationsPartnerTransferBody => 'Your partner logged a transfer between accounts.';
+  String get notificationsPartnerTransferBody =>
+      'Someone in the household logged a transfer between accounts.';
 
   @override
   String get notificationsPartnerDebtTitle => 'New debt';
@@ -1929,7 +1931,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationPrefsBudgetExceededWhen => 'Once per category and month';
 
   @override
-  String get notificationPrefsPartnerActivity => 'What your partner adds';
+  String get notificationPrefsPartnerActivity => 'What the other person adds';
 
   @override
   String notificationPrefsPartnerActivityNamed(String name) {
@@ -2064,7 +2066,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupRestoreNote =>
-      ', the household goes back to how it was that day, for both of you: anything created since is deleted. It only works in this same household.';
+      ', the household goes back to how it was that day, for everyone in it: anything created since is deleted. It only works in this same household.';
 
   @override
   String get backupErrorTitle => 'Couldn\'t finish';
@@ -2079,7 +2081,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String backupRestoreMessage(String date) {
-    return 'The household will go back to how it was on $date. Anything created since is deleted and anything changed goes back to how it was, for your partner too.';
+    return 'The household will go back to how it was on $date. Anything created since is deleted and anything changed goes back to how it was, for the other person in the household too.';
   }
 
   @override
@@ -2122,9 +2124,9 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count deleted records of your partner\'s are now in your name: you can only create records as yourself. Transactions keep who paid.',
+          '$count deleted records of the other person\'s are now in your name: you can only create records as yourself. Transactions keep who paid.',
       one:
-          '1 deleted record of your partner\'s is now in your name: you can only create records as yourself. Transactions keep who paid.',
+          '1 deleted record of the other person\'s is now in your name: you can only create records as yourself. Transactions keep who paid.',
     );
     return '$_temp0';
   }
@@ -2206,7 +2208,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get goalsSavedTogether => 'Saved between you two';
+  String get goalsSavedTogether => 'Saved in the household';
 
   @override
   String goalsOnTime(int onTime, int dated) {
@@ -2696,7 +2698,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingNotificationsMessage =>
-      'We\'ll tell you when your partner records something, when a payment is near and when you go over budget. Change it anytime in Settings › Notifications.';
+      'We\'ll tell you when a payment is near, when you go over budget and, if you share the household, when the other person records something. Change it anytime in Settings › Notifications.';
 
   @override
   String get onboardingPinTitle => 'Create your PIN';
