@@ -2571,6 +2571,12 @@ abstract class AppLocalizations {
   /// **'Nueva categoría'**
   String get categoriesNewTitle;
 
+  /// No description provided for @categoriesNewChip.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva'**
+  String get categoriesNewChip;
+
   /// No description provided for @categoriesEditTitle.
   ///
   /// In es, this message translates to:
