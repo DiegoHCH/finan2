@@ -1,3 +1,4 @@
+import 'package:finan2/features/accounts/presentation/screens/edit_account_screen.dart';
 import 'package:finan2/core/utils/year_month.dart';
 import 'package:finan2/core/widgets/finan2_chip.dart';
 import 'package:finan2/features/accounts/data/account_model.dart';
@@ -47,6 +48,7 @@ Future<void> _movement(
   required String categoryId,
   required String accountId,
   DateTime? date,
+  List<String> tags = const [],
 }) => app.container
     .read(transactionControllerProvider.notifier)
     .save(
@@ -59,10 +61,37 @@ Future<void> _movement(
         description: description,
         date: date ?? DateTime.now(),
         createdBy: testUid,
+        tags: tags,
       ),
     );
 
 void main() {
+  testWidgets('Movimientos adds up each tag of the month and opens it', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    await tester.runAsync(() async {
+      final account = await _account(app, 'Banco', 1000000);
+      final transporte = await _category(app, 'Transporte');
+      // The tester's case: two fill-ups this month, one total.
+      for (final amount in [15000, 20000]) {
+        await _movement(
+          app,
+          description: 'Gasolina',
+          amount: amount,
+          categoryId: transporte,
+          accountId: account,
+          tags: const ['gasolina'],
+        );
+      }
+    });
+
+    await pumpScreen(tester, app, const TransactionsScreen());
+    expect(find.text('POR ETIQUETA'), findsOneWidget);
+    await tester.tap(find.text('#gasolina · \$35.000'));
+    await settle(tester);
+    expect(find.byKey(const Key('movementsResultsTotal')), findsOneWidget);
+    expect(find.textContaining('35.000'), findsWidgets);
+  });
+
   testWidgets('Movimientos groups the month by day, each with its net', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
     final now = DateTime.now();
@@ -178,7 +207,36 @@ void main() {
     expect((await tester.runAsync(() => app.first(transactionsForMonthProvider)))!, hasLength(1));
   });
 
-  testWidgets('«Pasar» inside Anotar moves money between two accounts', (tester) async {
+  testWidgets('a missing category is created from Anotar and comes back selected', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.byKey(const Key('newCategoryChip')));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField).first, 'Plantas');
+    await tester.tap(find.text('Guardar'));
+    await settle(tester);
+
+    // Back in Anotar, with the new one there and chosen.
+    final chip = find.widgetWithText(Finan2Chip, 'Plantas');
+    expect(chip, findsOneWidget);
+    expect(tester.widget<Finan2Chip>(chip).selected, isTrue);
+  });
+
+  testWidgets('Anotar lets a date go back only to the household\'s month', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.byKey(const Key('movementDate')));
+    await settle(tester);
+
+    // Earlier spending is already behind the balances typed in at setup,
+    // and it's the household's month (October), not the account's (September).
+    final picker = tester.widget<DatePickerDialog>(find.byType(DatePickerDialog));
+    expect(picker.firstDate, DateTime(householdCreatedAt.year, householdCreatedAt.month));
+  });
+
+  testWidgets('«Mover» inside Anotar moves money between two accounts', (tester) async {
     final app = (await tester.runAsync(TestApp.start))!;
     await tester.runAsync(() async {
       await _account(app, 'Banco', 1000000);
@@ -186,7 +244,7 @@ void main() {
     });
 
     await pumpScreen(tester, app, const EditTransactionScreen());
-    await tester.tap(find.text('Pasar'));
+    await tester.tap(find.text('Mover'));
     await settle(tester);
     await tester.enterText(find.byType(TextField).first, '250000');
     await tester.pump();
@@ -207,6 +265,20 @@ void main() {
     };
     expect(balances['Banco']! + balances['Efectivo']!, 1100000);
     expect(balances.values, containsAll([350000, 750000]));
+  });
+
+  testWidgets('«Mover» with one account says what it is and offers the second', (tester) async {
+    final app = (await tester.runAsync(TestApp.start))!;
+    await tester.runAsync(() => _account(app, 'Banco', 1000000));
+
+    await pumpScreen(tester, app, const EditTransactionScreen());
+    await tester.tap(find.text('Mover'));
+    await settle(tester);
+
+    expect(find.textContaining('lleva plata de una cuenta tuya'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pasarCreateAccount')));
+    await settle(tester);
+    expect(find.byType(EditAccountScreen), findsOneWidget);
   });
 
   testWidgets('Anotar says what is missing in a sheet, not a snackbar', (tester) async {

@@ -65,6 +65,24 @@ class FakeUser extends Fake implements User {
 
   @override
   String? get email => 'diego@example.com';
+
+  @override
+  UserMetadata get metadata => _FakeMetadata(accountCreatedAt);
+}
+
+/// When [FakeUser]'s account was created: movements can't be dated before
+/// this month.
+final accountCreatedAt = DateTime(2026, 9, 12);
+
+/// When the test household was created: after the account, as when a
+/// partner set it up later.
+final householdCreatedAt = DateTime(2026, 10, 3);
+
+class _FakeMetadata extends Fake implements UserMetadata {
+  _FakeMetadata(this.creationTime);
+
+  @override
+  final DateTime? creationTime;
 }
 
 /// Never reaches FCM or the Worker.
@@ -88,8 +106,14 @@ class FakeAuthRepository extends Fake implements AuthRepository {
 
   var deleted = false;
 
+  /// Runs as the account goes - after it nothing signed in can write.
+  Future<void> Function()? onDelete;
+
   @override
-  Future<void> deleteAccount() async => deleted = true;
+  Future<void> deleteAccount() async {
+    await onDelete?.call();
+    deleted = true;
+  }
 }
 
 class FakePushService extends Fake implements PushService {
@@ -147,7 +171,14 @@ class TestApp {
   ///
   /// [withPin] false is a phone this account never set up (the AuthGate
   /// shows the onboarding first); true (the default) is one already set up.
-  static Future<TestApp> start({bool withHousehold = true, bool withPin = true}) async {
+  ///
+  /// [slowCloud] makes the PIN's cloud copy answer the way the network does,
+  /// a moment later, instead of right away.
+  static Future<TestApp> start({
+    bool withHousehold = true,
+    bool withPin = true,
+    bool slowCloud = false,
+  }) async {
     final firestore = FakeFirebaseFirestore();
     final crypto = await testHouseholdCrypto(testHouseholdId);
     final ledger = testBalanceLedger(firestore, crypto);
@@ -156,7 +187,9 @@ class TestApp {
     final auth = FakeAuthRepository();
     final appLock = AppLockRepository(
       account: testUid,
-      cloud: FirestoreAppLockCloud(firestore: firestore),
+      cloud: slowCloud
+          ? _SlowCloud(FirestoreAppLockCloud(firestore: firestore))
+          : FirestoreAppLockCloud(firestore: firestore),
       store: InMemoryKeyStore(),
     );
     if (withPin) {
@@ -170,14 +203,15 @@ class TestApp {
         if (withHousehold)
           currentHouseholdProvider.overrideWith(
             (ref) => Stream<Household?>.value(
-              const Household(
+              Household(
                 id: testHouseholdId,
                 name: 'Casa',
-                members: [testUid],
-                memberInfo: {},
+                members: const [testUid],
+                memberInfo: const {},
                 currency: 'COP',
                 startYear: 2026,
                 weekStartsOn: 'monday',
+                createdAt: householdCreatedAt,
               ),
             ),
           ),
@@ -264,4 +298,22 @@ class TestApp {
     }
     return sub.read().requireValue;
   }
+}
+
+class _SlowCloud implements AppLockCloud {
+  _SlowCloud(this._cloud);
+
+  final AppLockCloud _cloud;
+  static const _latency = Duration(milliseconds: 50);
+
+  @override
+  Future<String?> fetch(String account) => _cloud.fetch(account);
+
+  @override
+  Future<void> save(String account, String record) =>
+      Future<void>.delayed(_latency, () => _cloud.save(account, record));
+
+  @override
+  Future<void> delete(String account) =>
+      Future<void>.delayed(_latency, () => _cloud.delete(account));
 }

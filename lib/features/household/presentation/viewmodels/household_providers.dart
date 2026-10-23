@@ -41,6 +41,12 @@ final currentHouseholdProvider = StreamProvider<Household?>((ref) {
   return ref.watch(householdRepositoryProvider).watchHouseholdForUser(user.uid);
 });
 
+/// When the household was created - movements can't be dated before its
+/// month (see earliestDate). Null for households from before it was kept.
+final householdCreatedAtProvider = Provider<DateTime?>(
+  (ref) => ref.watch(currentHouseholdProvider).value?.createdAt,
+);
+
 /// The household's currency code (e.g. "COP", "USD"), defaulting to
 /// [defaultCurrency] until the household loads.
 final currentCurrencyProvider = Provider<String>((ref) {
@@ -273,7 +279,7 @@ class HouseholdController extends AsyncNotifier<Household?> {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
     final uid = ref.read(authStateChangesProvider).value?.uid;
     if (householdId != null) await leaveHousehold(householdId);
-    await ref.read(appLockRepositoryProvider).clear();
+    await ref.read(appLockRepositoryProvider).clear(waitForCloud: true);
     if (uid != null) await ref.read(userProfileRepositoryProvider).delete(uid);
     await ref.read(authRepositoryProvider).deleteAccount();
   }

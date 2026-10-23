@@ -24,6 +24,8 @@ import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
 import '../../../categories/presentation/viewmodels/category_providers.dart';
 import '../../../household/presentation/viewmodels/household_providers.dart';
+import '../../../categories/presentation/new_category_chip.dart';
+import '../../../transactions/domain/earliest_date.dart';
 import '../../domain/entities/recurring_bill.dart';
 import '../../domain/recurring_schedule.dart';
 import '../recurring_schedule_label.dart';
@@ -106,7 +108,16 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
   }
 
   Future<void> _pickStart() async {
-    final picked = await _pickDay(_startDate);
+    // A fijo starting before the household would log those months too.
+    final picked = await _pickDay(
+      _startDate,
+      first: earliestDate(
+        householdCreatedAt: ref.read(householdCreatedAtProvider),
+        accountCreatedAt: ref.read(accountCreatedAtProvider),
+        today: _today(),
+        current: _startDate,
+      ),
+    );
     if (picked == null) return;
     setState(() {
       _startDate = picked;
@@ -233,26 +244,31 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
             Finan2AmountInput(controller: _amountController, currencySymbol: currencySymbol),
             const SizedBox(height: Finan2Space.md),
             Finan2SectionLabel(l10n.commonCategory),
-            if (categoriesOfSegment.isEmpty)
+            if (categoriesOfSegment.isEmpty) ...[
               Text(
                 l10n.recurringBillsNoCategories,
                 style: TextStyle(fontSize: 12, color: colors.inkSoft),
-              )
-            else
-              Wrap(
-                spacing: 7,
-                runSpacing: 7,
-                children: [
-                  for (final category in categoriesOfSegment)
-                    Finan2Chip(
-                      icon: Finan2Icons.categoria(category.iconSlug),
-                      label: category.name,
-                      tone: Finan2Tone.of(context, Color(category.color)),
-                      selected: _categoryId == category.id,
-                      onTap: () => setState(() => _categoryId = category.id),
-                    ),
-                ],
               ),
+              const SizedBox(height: Finan2Space.xs),
+            ],
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: [
+                for (final category in categoriesOfSegment)
+                  Finan2Chip(
+                    icon: Finan2Icons.categoria(category.iconSlug),
+                    label: category.name,
+                    tone: Finan2Tone.of(context, Color(category.color)),
+                    selected: _categoryId == category.id,
+                    onTap: () => setState(() => _categoryId = category.id),
+                  ),
+                NewCategoryChip(
+                  type: _segment.categoryType,
+                  onCreated: (id) => setState(() => _categoryId = id),
+                ),
+              ],
+            ),
             const SizedBox(height: Finan2Space.md),
             if (accounts.isEmpty)
               Text(
@@ -284,6 +300,14 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                   ),
               ],
             ),
+            if (frequencyHint(_frequency, l10n: l10n) case final hint?) ...[
+              const SizedBox(height: Finan2Space.xs),
+              Text(
+                hint,
+                key: const Key('recurringBillFrequencyHint'),
+                style: TextStyle(fontSize: 12.5, height: 1.4, color: colors.inkSoft),
+              ),
+            ],
             const SizedBox(height: Finan2Space.md),
             // Read aloud, to check it was understood: «Cada lunes», and
             // what that comes to in a month.
@@ -302,7 +326,13 @@ class _EditRecurringBillScreenState extends ConsumerState<EditRecurringBillScree
                     withUntil: false,
                   ),
                   message: amount > 0
-                      ? describeMonthlyCost(amount, _frequency, formatMoney, l10n: l10n)
+                      ? describeMonthlyCost(
+                          amount,
+                          _frequency,
+                          formatMoney,
+                          l10n: l10n,
+                          withReason: true,
+                        )
                       : null,
                 );
               },

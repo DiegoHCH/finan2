@@ -31,6 +31,9 @@ const _iconsByType = <CategoryType, List<String>>{
     'educacion',
     'regalo',
     'hogar_aseo',
+    'mascotas',
+    'hijos',
+    'gimnasio',
   ],
   CategoryType.ahorro: ['viaje', 'emergencia', 'meta', 'casa'],
 };
@@ -74,7 +77,7 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
   Future<void> _save() async {
     final name = toTitleCase(_nameController.text);
     if (name.isEmpty) return;
-    await ref
+    final id = await ref
         .read(categoryControllerProvider.notifier)
         .save(
           Category(
@@ -89,7 +92,8 @@ class _EditCategoryScreenState extends ConsumerState<EditCategoryScreen> {
                 widget.category?.createdBy ?? ref.read(authStateChangesProvider).value?.uid ?? '',
           ),
         );
-    if (mounted) Navigator.of(context).pop();
+    // With its ID, so Anotar and Fijos can select the one just created.
+    if (mounted) Navigator.of(context).pop(id);
   }
 
   Future<void> _delete() async {

@@ -52,7 +52,15 @@ class _MonthlyNotesScreenState extends ConsumerState<MonthlyNotesScreen> {
   Widget build(BuildContext context) {
     final notesAsync = ref.watch(monthNotesProvider(_month));
     final notes = notesAsync.value;
+    // What was left «para el mes siguiente» last month comes back here:
+    // written in October, it was never seen again in November.
+    final leftForThisMonth = ref
+        .watch(monthNotesProvider(_month.plusMonths(-1)))
+        .value
+        ?.nextMonth
+        .trim();
     final l10n = context.l10n;
+    final colors = Theme.of(context).extension<Finan2Colors>()!;
 
     return Scaffold(
       body: SafeArea(
@@ -97,6 +105,29 @@ class _MonthlyNotesScreenState extends ConsumerState<MonthlyNotesScreen> {
                     Finan2Space.xxl,
                   ),
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, bottom: Finan2Space.md),
+                      child: Text(
+                        l10n.monthlyNotesExplain,
+                        style: TextStyle(fontSize: 12.5, height: 1.45, color: colors.inkSoft),
+                      ),
+                    ),
+                    if (leftForThisMonth != null && leftForThisMonth.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, bottom: Finan2Space.sm),
+                        child: Text(
+                          l10n.monthlyNotesFromLastMonth,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      _NoteSheet(
+                        key: const Key('monthNoteFromLastMonth'),
+                        text: leftForThisMonth,
+                        // Where it was written, to change it there.
+                        onTap: () => setState(() => _month = _month.plusMonths(-1)),
+                      ),
+                      const SizedBox(height: Finan2Space.lg),
+                    ],
                     _NoteSheet(
                       key: const Key('monthNoteThisMonth'),
                       text: notes.thisMonth,

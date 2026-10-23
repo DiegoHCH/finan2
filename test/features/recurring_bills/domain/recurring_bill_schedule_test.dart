@@ -61,6 +61,17 @@ void main() {
       ]);
     });
 
+    test('quincenal from after the 15th pairs with 15 days earlier, not 15 later', () {
+      // Starting the 22nd: the 7th and the 22nd, never «the 37th» clamped to
+      // the month's last day. Nothing before the start.
+      final bill = _bill(frequency: RecurringFrequency.semimonthly, start: DateTime(2026, 10, 22));
+      expect(bill.occurrencesBetween(DateTime(2026, 10, 1), DateTime(2026, 11, 30)), [
+        DateTime(2026, 10, 22),
+        DateTime(2026, 11, 7),
+        DateTime(2026, 11, 22),
+      ]);
+    });
+
     test('yearly repeats the start month and day', () {
       final bill = _bill(frequency: RecurringFrequency.yearly, start: DateTime(2025, 3, 3));
       expect(bill.occurrencesBetween(DateTime(2026, 1, 1), DateTime(2027, 12, 31)), [
@@ -126,6 +137,9 @@ void main() {
     expect(say(RecurringFrequency.weekly, saturday), 'Cada sábado');
     expect(say(RecurringFrequency.biweekly, saturday), 'Cada 2 semanas, los sábados');
     expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 15)), 'Días 15 y 30');
+    expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 22)), 'Días 7 y 22');
+    expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 16)), 'Días 1 y 16');
+    expect(say(RecurringFrequency.semimonthly, DateTime(2026, 10, 5)), 'Días 5 y 20');
     expect(say(RecurringFrequency.monthly, monday), 'Cada mes, día 5');
     expect(say(RecurringFrequency.yearly, DateTime(2026, 3, 3)), 'Cada año, 3 de marzo');
     expect(
@@ -156,5 +170,21 @@ void main() {
       describeMonthlyCost(60000, RecurringFrequency.weekly, money, l10n: en),
       'About \$260000 a month',
     );
+  });
+
+  test('every 2 weeks says why it comes to more than two payments a month', () {
+    String money(num v) => '\$${v.round()}';
+    // The tester's case: 800.000 every 2 weeks read like a wrong sum.
+    expect(
+      describeMonthlyCost(800000, RecurringFrequency.biweekly, money, withReason: true),
+      'Unos \$1733333 al mes. 26 pagos al año: algunos meses caen 3.',
+    );
+    expect(
+      describeMonthlyCost(800000, RecurringFrequency.semimonthly, money, withReason: true),
+      '\$1600000 al mes',
+    );
+    expect(frequencyHint(RecurringFrequency.biweekly), contains('Cada 14 días'));
+    expect(frequencyHint(RecurringFrequency.semimonthly), contains('2 veces al mes'));
+    expect(frequencyHint(RecurringFrequency.monthly), isNull);
   });
 }

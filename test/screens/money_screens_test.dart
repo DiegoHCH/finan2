@@ -208,7 +208,7 @@ void main() {
 
     await pumpScreen(tester, app, const TransferHistoryScreen());
 
-    expect(find.text('Pasos entre cuentas'), findsOneWidget);
+    expect(find.text('Plata movida entre cuentas'), findsOneWidget);
     expect(find.textContaining('OCTUBRE'), findsOneWidget);
     expect(find.textContaining('SEPTIEMBRE'), findsOneWidget);
     final toSavings = tester.widget<Finan2TransactionRow>(

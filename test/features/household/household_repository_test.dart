@@ -42,6 +42,19 @@ void main() {
     expect(data['activeInvite'], code);
   });
 
+  test('a new household keeps when it was created, for dating movements', () async {
+    final before = DateTime.now().subtract(const Duration(minutes: 1));
+    final (household, _) = await repository.createHousehold(
+      uid: 'u1',
+      displayName: 'Diego',
+      householdName: 'Casa',
+    );
+
+    final stored = await repository.watchHouseholdForUser('u1').first;
+    expect(stored!.id, household.id);
+    expect(stored.createdAt!.isAfter(before), isTrue);
+  });
+
   test('joining consumes the invite and adds the member', () async {
     final (household, code) = await repository.createHousehold(
       uid: 'u1',

@@ -32,16 +32,23 @@ class CategoryController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
 
-  Future<void> save(Category category) async {
+  /// Returns the category's ID - a new one's too, so whoever opened the
+  /// editor from Anotar can select it - or null if it couldn't be saved.
+  Future<String?> save(Category category) async {
     final householdId = ref.read(currentHouseholdProvider).value?.id;
-    if (householdId == null) return;
+    if (householdId == null) return null;
     final repo = ref.read(categoryRepositoryProvider);
+    String? id;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => category.id.isEmpty
-          ? repo.createCategory(householdId, category)
-          : repo.updateCategory(householdId, category),
-    );
+    state = await AsyncValue.guard(() async {
+      if (category.id.isEmpty) {
+        id = await repo.createCategory(householdId, category);
+      } else {
+        await repo.updateCategory(householdId, category);
+        id = category.id;
+      }
+    });
+    return id;
   }
 
   Future<CategoryUsage> usage(String categoryId) async {

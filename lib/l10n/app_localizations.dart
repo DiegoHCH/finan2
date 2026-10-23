@@ -468,13 +468,13 @@ abstract class AppLocalizations {
   /// No description provided for @authLoginSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Cada quien entra con su cuenta; lo que anotan es de los dos.'**
+  /// **'Cada quien entra con su cuenta. Si comparten el hogar, lo que anotan lo ven los dos.'**
   String get authLoginSubtitle;
 
   /// Login heading: says what the app is. The line break is intended.
   ///
   /// In es, this message translates to:
-  /// **'La libreta de la casa,\npara los dos.'**
+  /// **'La libreta de la casa,\npara ti o para los dos.'**
   String get authLoginHeadline;
 
   /// No description provided for @authEmailLabel.
@@ -612,13 +612,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateJoinTitle.
   ///
   /// In es, this message translates to:
-  /// **'¿Arman la casa o ya existe?'**
+  /// **'¿Armas la casa o ya existe?'**
   String get householdCreateJoinTitle;
 
   /// No description provided for @householdCreateJoinSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Uno de los dos la crea; el otro entra con un código.'**
+  /// **'Créalo tú. Si alguien más va a anotar contigo, entra con un código.'**
   String get householdCreateJoinSubtitle;
 
   /// No description provided for @householdCreateOptionTitle.
@@ -630,7 +630,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdCreateOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Empiezo yo e invito a mi pareja.'**
+  /// **'Empiezo yo. Si quiero, invito a alguien después.'**
   String get householdCreateOptionSubtitle;
 
   /// No description provided for @householdJoinOptionTitle.
@@ -642,7 +642,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdJoinOptionSubtitle.
   ///
   /// In es, this message translates to:
-  /// **'Mi pareja ya la creó.'**
+  /// **'Alguien ya lo creó y me pasó el código.'**
   String get householdJoinOptionSubtitle;
 
   /// No description provided for @householdNameLabel.
@@ -696,7 +696,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdJoinedWithoutKeyMessage.
   ///
   /// In es, this message translates to:
-  /// **'Este código no traía la llave para ver montos. Pide a tu pareja que te la comparta desde Ajustes, en «Compartir la llave».'**
+  /// **'Este código no traía la llave para ver montos. Pide a quien te invitó que te la comparta desde Ajustes, en «Compartir la llave».'**
   String get householdJoinedWithoutKeyMessage;
 
   /// No description provided for @householdSetupStep.
@@ -774,7 +774,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdSetupRecoveryDescription.
   ///
   /// In es, this message translates to:
-  /// **'Los montos se cifran con una llave que vive solo en sus teléfonos. Si los dos la pierden, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas con tu pareja. También se puede hacer después, desde Ajustes.'**
+  /// **'Los montos se cifran con una llave que vive solo en tus teléfonos. Si se pierde, 12 palabras la recuperan. Se muestran una sola vez: anótalas en papel y guárdalas en un lugar seguro. También se puede hacer después, desde Ajustes.'**
   String get householdSetupRecoveryDescription;
 
   /// No description provided for @householdSetupRecoveryTitle.
@@ -798,13 +798,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdInviteTitle.
   ///
   /// In es, this message translates to:
-  /// **'Ahora tu pareja.'**
+  /// **'¿Alguien más va a anotar?'**
   String get householdInviteTitle;
 
   /// No description provided for @householdInviteMessage.
   ///
   /// In es, this message translates to:
-  /// **'Mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con tu pareja y no lo publiques en ningún lado.'**
+  /// **'Si compartes el hogar, mándale este código con el botón de compartir. Lleva pegada la llave de la casa, que no se ve aquí: compártelo solo con esa persona y no lo publiques en ningún lado. Si lo usas tú solo, sigue sin invitar.'**
   String get householdInviteMessage;
 
   /// No description provided for @householdInviteFootnote.
@@ -816,7 +816,7 @@ abstract class AppLocalizations {
   /// Screen-reader label of the empty, dashed circle where the partner will be.
   ///
   /// In es, this message translates to:
-  /// **'Falta tu pareja'**
+  /// **'Invita a alguien'**
   String get householdInviteMissingPartner;
 
   /// Title/subject of the OS share sheet when sharing the invite.
@@ -834,13 +834,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdInviteSkip.
   ///
   /// In es, this message translates to:
-  /// **'Más tarde'**
+  /// **'Por ahora, solo yo'**
   String get householdInviteSkip;
 
   /// No description provided for @householdRecoveryConfirmMessage.
   ///
   /// In es, this message translates to:
-  /// **'Si algún día ninguno de los dos tiene la llave del hogar en su dispositivo, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas con tu pareja. Si ya había una frase o un PIN, dejarán de servir.'**
+  /// **'Si algún día la llave del hogar no está en ningún teléfono, estas 12 palabras permiten recuperar los montos. Vas a verlas una sola vez: anótalas en papel y guárdalas en un lugar seguro. Si ya había una frase o un PIN, dejarán de servir.'**
   String get householdRecoveryConfirmMessage;
 
   /// No description provided for @householdRecoverySavedTitle.
@@ -882,13 +882,13 @@ abstract class AppLocalizations {
   /// No description provided for @householdKeyIncomplete.
   ///
   /// In es, this message translates to:
-  /// **'Ese código no trae la llave completa. Pide a tu pareja que la comparta de nuevo desde Ajustes, en «Compartir la llave».'**
+  /// **'Ese código no trae la llave completa. Pide a la otra persona del hogar que la comparta de nuevo desde Ajustes, en «Compartir la llave».'**
   String get householdKeyIncomplete;
 
   /// No description provided for @householdKeyWrongHousehold.
   ///
   /// In es, this message translates to:
-  /// **'Esa llave no es de este hogar. Revisa que el código sea el que tu pareja compartió desde este mismo hogar.'**
+  /// **'Esa llave no es de este hogar. Revisa que el código sea el que se compartió desde este mismo hogar.'**
   String get householdKeyWrongHousehold;
 
   /// No description provided for @householdRecoveryNotSet.
@@ -900,7 +900,7 @@ abstract class AppLocalizations {
   /// No description provided for @householdRecoveryPhraseMismatch.
   ///
   /// In es, this message translates to:
-  /// **'Esa frase no corresponde a este hogar. Si tu pareja generó una nueva, la anterior dejó de servir.'**
+  /// **'Esa frase no corresponde a este hogar. Si se generó una nueva, la anterior dejó de servir.'**
   String get householdRecoveryPhraseMismatch;
 
   /// No description provided for @settingsTitle.
@@ -948,7 +948,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsMissingKeyBanner.
   ///
   /// In es, this message translates to:
-  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que tu pareja compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.'**
+  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pega el código que se compartió desde Ajustes, en «Compartir la llave», o escribe la frase de recuperación.'**
   String get settingsMissingKeyBanner;
 
   /// No description provided for @settingsPasteCodeToUnlock.
@@ -1014,7 +1014,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsUnlockAmountsMessage.
   ///
   /// In es, this message translates to:
-  /// **'Pega el código completo (con la llave después del punto) que tu pareja compartió desde Ajustes, en «Compartir la llave».'**
+  /// **'Pega el código completo (con la llave después del punto) que se compartió desde Ajustes, en «Compartir la llave».'**
   String get settingsUnlockAmountsMessage;
 
   /// No description provided for @settingsUnlockCodeLabel.
@@ -1326,7 +1326,7 @@ abstract class AppLocalizations {
   /// No description provided for @coreNotificationPrimerBody.
   ///
   /// In es, this message translates to:
-  /// **'Te avisamos cuando tu pareja registre algo, se acerque una fecha de pago, o se pasen del presupuesto. Puedes ajustar esto después en Ajustes.'**
+  /// **'Te avisamos cuando se acerque una fecha de pago o se pasen del presupuesto y, si compartes el hogar, cuando la otra persona registre algo. Puedes ajustar esto después en Ajustes.'**
   String get coreNotificationPrimerBody;
 
   /// No description provided for @coreNotificationPrimerEnable.
@@ -1386,7 +1386,7 @@ abstract class AppLocalizations {
   /// No description provided for @coreSplashTagline.
   ///
   /// In es, this message translates to:
-  /// **'Finanzas del hogar - para dos'**
+  /// **'Finanzas del hogar - para ti o para los dos'**
   String get coreSplashTagline;
 
   /// No description provided for @errorInvalidEmail.
@@ -1428,7 +1428,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorInviteNotFound.
   ///
   /// In es, this message translates to:
-  /// **'Esa invitación no existe o ya venció. Pide a tu pareja una nueva desde Ajustes.'**
+  /// **'Esa invitación no existe o ya venció. Pide una nueva a quien te invitó, desde Ajustes.'**
   String get errorInviteNotFound;
 
   /// No description provided for @errorHouseholdFull.
@@ -1446,7 +1446,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorMissingKey.
   ///
   /// In es, this message translates to:
-  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pide a tu pareja el código de invitación completo.'**
+  /// **'Este dispositivo no tiene la llave para ver los montos de este hogar. Pide el código de invitación completo a la otra persona del hogar.'**
   String get errorMissingKey;
 
   /// No description provided for @errorRecoveryPhraseWordCount.
@@ -2094,14 +2094,26 @@ abstract class AppLocalizations {
   /// Anotar's fourth type: moving money between two of the household's own accounts.
   ///
   /// In es, this message translates to:
-  /// **'Pasar'**
+  /// **'Mover'**
   String get transactionsTypeTransfer;
 
   /// No description provided for @transactionsTransferNeedsTwoAccounts.
   ///
   /// In es, this message translates to:
-  /// **'Para pasar plata hacen falta dos cuentas. Créalas en Ajustes.'**
+  /// **'Para eso hacen falta al menos dos cuentas.'**
   String get transactionsTransferNeedsTwoAccounts;
+
+  /// No description provided for @transactionsTransferExplain.
+  ///
+  /// In es, this message translates to:
+  /// **'«Mover» lleva plata de una cuenta tuya a otra, del banco al efectivo por ejemplo. No es gasto ni ingreso: el total no cambia.'**
+  String get transactionsTransferExplain;
+
+  /// No description provided for @transactionsTransferCreateAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear otra cuenta'**
+  String get transactionsTransferCreateAccount;
 
   /// No description provided for @transactionsIncomplete.
   ///
@@ -2198,6 +2210,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ayer · {day}'**
   String transactionsDayYesterday(String day);
+
+  /// No description provided for @transactionsByTag.
+  ///
+  /// In es, this message translates to:
+  /// **'Por etiqueta'**
+  String get transactionsByTag;
+
+  /// No description provided for @transactionsByTagHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo gastado este mes con cada etiqueta. Toca una para ver sus movimientos.'**
+  String get transactionsByTagHint;
 
   /// At the end of a search or filter: how many movements matched and their net, already formatted with its sign.
   ///
@@ -2364,7 +2388,7 @@ abstract class AppLocalizations {
   /// No description provided for @transfersHistoryTitle.
   ///
   /// In es, this message translates to:
-  /// **'Pasos entre cuentas'**
+  /// **'Plata movida entre cuentas'**
   String get transfersHistoryTitle;
 
   /// No description provided for @transfersDeleteTitle.
@@ -2388,19 +2412,19 @@ abstract class AppLocalizations {
   /// No description provided for @transfersEmptyTitle.
   ///
   /// In es, this message translates to:
-  /// **'Todavía no han pasado plata.'**
+  /// **'Todavía no han movido plata.'**
   String get transfersEmptyTitle;
 
   /// No description provided for @transfersEmptyDescription.
   ///
   /// In es, this message translates to:
-  /// **'Cuando pasen plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
+  /// **'Cuando muevan plata de una cuenta a otra queda anotado aquí, sin contar como gasto.'**
   String get transfersEmptyDescription;
 
   /// No description provided for @transfersEmptyAction.
   ///
   /// In es, this message translates to:
-  /// **'Pasar plata'**
+  /// **'Mover plata'**
   String get transfersEmptyAction;
 
   /// No description provided for @accountsTitle.
@@ -2430,7 +2454,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountsTransferBetween.
   ///
   /// In es, this message translates to:
-  /// **'Pasar entre cuentas'**
+  /// **'Mover entre cuentas'**
   String get accountsTransferBetween;
 
   /// No description provided for @accountsNewTitle.
@@ -2558,6 +2582,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nueva categoría'**
   String get categoriesNewTitle;
+
+  /// No description provided for @categoriesNewChip.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva'**
+  String get categoriesNewChip;
 
   /// No description provided for @categoriesEditTitle.
   ///
@@ -2774,6 +2804,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hogar y aseo'**
   String get categoriesDefaultHomeCleaning;
+
+  /// No description provided for @categoriesDefaultPets.
+  ///
+  /// In es, this message translates to:
+  /// **'Mascotas'**
+  String get categoriesDefaultPets;
+
+  /// No description provided for @categoriesDefaultKids.
+  ///
+  /// In es, this message translates to:
+  /// **'Hijos'**
+  String get categoriesDefaultKids;
+
+  /// No description provided for @categoriesDefaultGym.
+  ///
+  /// In es, this message translates to:
+  /// **'Gimnasio'**
+  String get categoriesDefaultGym;
 
   /// No description provided for @categoriesDefaultEmergencyFund.
   ///
@@ -3033,6 +3081,18 @@ abstract class AppLocalizations {
   /// **'{kind, select, average{Unos {amount} al mes} other{{amount} al mes}}'**
   String recurringBillsMonthlyCost(String kind, String amount);
 
+  /// No description provided for @recurringBillsAverageWhy.
+  ///
+  /// In es, this message translates to:
+  /// **'{frequency, select, weekly{52 pagos al año: algunos meses caen 5.} biweekly{26 pagos al año: algunos meses caen 3.} yearly{1 pago al año, repartido en 12.} other{}}'**
+  String recurringBillsAverageWhy(String frequency);
+
+  /// No description provided for @recurringBillsFrequencyHint.
+  ///
+  /// In es, this message translates to:
+  /// **'{frequency, select, biweekly{Cada 14 días, siempre el mismo día de la semana: algunos meses caen 3.} semimonthly{2 veces al mes, en días fijos: siempre 2.} other{}}'**
+  String recurringBillsFrequencyHint(String frequency);
+
   /// No description provided for @monthlyNotesTitle.
   ///
   /// In es, this message translates to:
@@ -3069,6 +3129,18 @@ abstract class AppLocalizations {
   /// **'Lo que no cabe en números.'**
   String get monthlyNotesHint;
 
+  /// No description provided for @monthlyNotesExplain.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que no cabe en números, compartido con tu hogar. Para que un gasto sume, anótalo con una etiqueta, como #gasolina: Movimientos te da el total.'**
+  String get monthlyNotesExplain;
+
+  /// No description provided for @monthlyNotesFromLastMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Te dejaste esto para este mes'**
+  String get monthlyNotesFromLastMonth;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In es, this message translates to:
@@ -3090,7 +3162,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsEmpty.
   ///
   /// In es, this message translates to:
-  /// **'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y lo que anota tu pareja.'**
+  /// **'Aquí llegan los pagos que se acercan, las metas que van bien, lo que se pasa del presupuesto y, si compartes el hogar, lo que anota la otra persona.'**
   String get notificationsEmpty;
 
   /// No description provided for @notificationsEmptyTitle.
@@ -3186,7 +3258,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsContributionBody.
   ///
   /// In es, this message translates to:
-  /// **'Tu pareja agregó un aporte a {goal}.'**
+  /// **'Alguien del hogar agregó un aporte a {goal}.'**
   String notificationsContributionBody(String goal);
 
   /// No description provided for @notificationsPartnerMovementTitle.
@@ -3198,7 +3270,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsPartnerMovementBody.
   ///
   /// In es, this message translates to:
-  /// **'Tu pareja registró un movimiento.'**
+  /// **'Alguien del hogar registró un movimiento.'**
   String get notificationsPartnerMovementBody;
 
   /// No description provided for @notificationsPartnerTransferTitle.
@@ -3210,7 +3282,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsPartnerTransferBody.
   ///
   /// In es, this message translates to:
-  /// **'Tu pareja registró una transferencia entre cuentas.'**
+  /// **'Alguien del hogar registró una transferencia entre cuentas.'**
   String get notificationsPartnerTransferBody;
 
   /// No description provided for @notificationsPartnerDebtTitle.
@@ -3330,7 +3402,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationPrefsPartnerActivity.
   ///
   /// In es, this message translates to:
-  /// **'Lo que anota tu pareja'**
+  /// **'Lo que anota la otra persona'**
   String get notificationPrefsPartnerActivity;
 
   /// No description provided for @notificationPrefsPartnerActivityNamed.
@@ -3582,7 +3654,7 @@ abstract class AppLocalizations {
   /// Follows backupRestoreLead, which is shown in bold; keep the leading comma.
   ///
   /// In es, this message translates to:
-  /// **', el hogar vuelve a como estaba ese día para los dos: lo creado después se borra. Solo funciona en este mismo hogar.'**
+  /// **', el hogar vuelve a como estaba ese día, para todos en él: lo creado después se borra. Solo funciona en este mismo hogar.'**
   String get backupRestoreNote;
 
   /// No description provided for @backupErrorTitle.
@@ -3606,7 +3678,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupRestoreMessage.
   ///
   /// In es, this message translates to:
-  /// **'El hogar volverá a como estaba el {date}. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para tu pareja.'**
+  /// **'El hogar volverá a como estaba el {date}. Lo que se haya creado después se borra y lo que cambió vuelve a como estaba, también para la otra persona del hogar.'**
   String backupRestoreMessage(String date);
 
   /// No description provided for @backupRestoreConfirm.
@@ -3636,7 +3708,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupReattributed.
   ///
   /// In es, this message translates to:
-  /// **'{count, plural, =1{1 registro de tu pareja que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.} other{{count} registros de tu pareja que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.}}'**
+  /// **'{count, plural, =1{1 registro de la otra persona que se había borrado queda a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.} other{{count} registros de la otra persona que se habían borrado quedan a tu nombre: solo puedes crear registros como tuyos. En los movimientos se conserva quién pagó.}}'**
   String backupReattributed(int count);
 
   /// No description provided for @backupErrorOtherHousehold.
@@ -3750,7 +3822,7 @@ abstract class AppLocalizations {
   /// Over the total of every goal, with two members.
   ///
   /// In es, this message translates to:
-  /// **'Ahorrado entre los dos'**
+  /// **'Ahorrado en el hogar'**
   String get goalsSavedTogether;
 
   /// Under the goals total: goals with a date that are on time.
@@ -4464,7 +4536,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingNotificationsMessage.
   ///
   /// In es, this message translates to:
-  /// **'Te avisamos cuando tu pareja anote algo, cuando se acerque un pago y cuando se pasen del presupuesto. Lo ajustas cuando quieras en Ajustes › Avisos.'**
+  /// **'Te avisamos cuando se acerque un pago, cuando se pasen del presupuesto y, si compartes el hogar, cuando la otra persona anote algo. Lo ajustas cuando quieras en Ajustes › Avisos.'**
   String get onboardingNotificationsMessage;
 
   /// No description provided for @onboardingPinTitle.

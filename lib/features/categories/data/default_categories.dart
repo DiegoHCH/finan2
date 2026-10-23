@@ -97,6 +97,29 @@ List<Category> get defaultCategories {
       iconSlug: 'hogar_aseo',
       color: 0xFF0F766E,
     ),
+    // Common enough in a household to be there from the start (tester
+    // feedback); the ones who don't need them delete them.
+    Category(
+      id: '',
+      name: l10n.categoriesDefaultPets,
+      type: CategoryType.gasto,
+      iconSlug: 'mascotas',
+      color: 0xFFB45309,
+    ),
+    Category(
+      id: '',
+      name: l10n.categoriesDefaultKids,
+      type: CategoryType.gasto,
+      iconSlug: 'hijos',
+      color: 0xFF0284C7,
+    ),
+    Category(
+      id: '',
+      name: l10n.categoriesDefaultGym,
+      type: CategoryType.gasto,
+      iconSlug: 'gimnasio',
+      color: 0xFF7C3AED,
+    ),
     // Ahorros
     Category(
       id: '',

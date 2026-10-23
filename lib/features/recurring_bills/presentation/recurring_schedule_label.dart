@@ -41,10 +41,9 @@ String describeSchedule(
   final text = switch (schedule.frequency) {
     RecurringFrequency.weekly => l10n.recurringBillsScheduleWeekly(weekday),
     RecurringFrequency.biweekly => l10n.recurringBillsScheduleBiweekly(weekday),
-    RecurringFrequency.semimonthly => l10n.recurringBillsScheduleSemimonthly(
-      schedule.day,
-      schedule.secondDay,
-    ),
+    RecurringFrequency.semimonthly => switch (semimonthlyDays(schedule.day)) {
+      (final first, final second) => l10n.recurringBillsScheduleSemimonthly(first, second),
+    },
     RecurringFrequency.monthly => l10n.recurringBillsScheduleMonthly(schedule.day),
     RecurringFrequency.yearly => l10n.recurringBillsScheduleYearly(
       DateFormat.MMMMd(locale).format(DateTime(2000, schedule.month, schedule.day)),
@@ -66,10 +65,23 @@ String describeMonthlyCost(
   RecurringFrequency frequency,
   String Function(num) formatMoney, {
   AppLocalizations? l10n,
+  bool withReason = false,
 }) {
   l10n ??= currentL10n;
-  return l10n.recurringBillsMonthlyCost(
+  final cost = l10n.recurringBillsMonthlyCost(
     isAveraged(frequency) ? 'average' : 'exact',
     formatMoney(monthlyCost(amount, frequency)),
   );
+  // Every 2 weeks isn't twice a month: without the why, $800.000 every 2
+  // weeks reading «Unos $1.733.333» looked like a wrong sum.
+  if (!withReason || !isAveraged(frequency)) return cost;
+  return '$cost. ${l10n.recurringBillsAverageWhy(frequency.name)}';
+}
+
+/// How [frequency] differs from the one it's taken for - «Cada 2 semanas»
+/// against «Quincenal» - or null when there's nothing to tell apart.
+String? frequencyHint(RecurringFrequency frequency, {AppLocalizations? l10n}) {
+  l10n ??= currentL10n;
+  final hint = l10n.recurringBillsFrequencyHint(frequency.name);
+  return hint.isEmpty ? null : hint;
 }

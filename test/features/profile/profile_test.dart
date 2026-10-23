@@ -100,7 +100,9 @@ void main() {
   });
 
   testWidgets('deleting the account takes the profile and the PIN with it', (tester) async {
-    final app = (await tester.runAsync(() => TestApp.start(withHousehold: false)))!;
+    final app = (await tester.runAsync(
+      () => TestApp.start(withHousehold: false, slowCloud: true),
+    ))!;
     await _sync(tester, app);
     await tester.runAsync(() => app.container.read(appLockRepositoryProvider).setPin('2580'));
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
@@ -111,18 +113,20 @@ void main() {
       isTrue,
     );
 
+    // Checked the moment the account goes: anything left after that can't
+    // be deleted any more - the rules need someone signed in.
+    bool? pinLeft;
+    Map<String, dynamic>? profileLeft;
+    app.auth.onDelete = () async {
+      pinLeft = (await app.firestore.doc('users/$testUid/private/appLock').get()).exists;
+      profileLeft = await _profileDoc(app);
+    };
     await tester.runAsync(
       () => app.container.read(householdControllerProvider.notifier).deleteAccount(),
     );
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
 
-    expect(await tester.runAsync(() => _profileDoc(app)), isNull);
-    expect(
-      (await tester.runAsync(
-        () => app.firestore.doc('users/$testUid/private/appLock').get(),
-      ))!.exists,
-      isFalse,
-    );
+    expect(pinLeft, isFalse);
+    expect(profileLeft, isNull);
     expect(app.auth.deleted, isTrue);
   });
 }

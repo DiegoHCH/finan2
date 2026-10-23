@@ -18,6 +18,8 @@ import '../../../../core/widgets/finan2_tile.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../accounts/data/account_model.dart';
 import '../../../accounts/presentation/account_style.dart';
+import '../../../accounts/presentation/screens/edit_account_screen.dart';
+import '../../../categories/presentation/new_category_chip.dart';
 import '../../../accounts/presentation/viewmodels/account_providers.dart';
 import '../../../auth/presentation/viewmodels/auth_providers.dart';
 import '../../../categories/data/category_model.dart';
@@ -31,11 +33,12 @@ import '../../../household/presentation/viewmodels/member_providers.dart';
 import '../../../transfers/data/transfer_model.dart';
 import '../../../transfers/domain/transfer_plan.dart';
 import '../../../transfers/presentation/viewmodels/transfer_providers.dart';
+import '../../domain/earliest_date.dart';
 import '../../domain/tags.dart';
 import '../../domain/entities/movement.dart';
 import '../viewmodels/transaction_providers.dart';
 
-/// What Anotar records: a movement of one of three kinds, or «Pasar» -
+/// What Anotar records: a movement of one of three kinds, or «Mover» -
 /// money moved between two of the household's own accounts (R4).
 enum _Kind { ingreso, gasto, ahorro, pasar }
 
@@ -45,6 +48,13 @@ extension on _Kind {
     _Kind.gasto => l10n.categoriesTypeExpense,
     _Kind.ahorro => l10n.categoriesTypeSavings,
     _Kind.pasar => l10n.transactionsTypeTransfer,
+  };
+
+  /// What a category created from here is: an expense from «Gasto».
+  CategoryType get newCategoryType => switch (this) {
+    _Kind.ingreso => CategoryType.ingreso,
+    _Kind.ahorro => CategoryType.ahorro,
+    _Kind.gasto || _Kind.pasar => CategoryType.gasto,
   };
 
   bool matches(CategoryType type) => switch (this) {
@@ -77,7 +87,7 @@ class EditTransactionScreen extends ConsumerStatefulWidget {
   /// Date for a new movement - the month being browsed in Movimientos.
   final DateTime? initialDate;
 
-  /// Opens on «Pasar», for the entry points that used to open a separate
+  /// Opens on «Mover», for the entry points that used to open a separate
   /// transfer screen.
   final bool startWithTransfer;
 
@@ -109,14 +119,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   /// null until the user picks - then whoever is logging it.
   late String? _paidBy = widget.transaction?.payer;
 
-  /// «Pasar»: from one account to another.
+  /// «Mover»: from one account to another.
   String? _fromAccountId;
   String? _toAccountId;
 
   @override
   void initState() {
     super.initState();
-    // The amount drives the resulting balances shown under «Pasar».
+    // The amount drives the resulting balances shown under «Mover».
     _amountController.addListener(_onAmountChanged);
   }
 
@@ -227,7 +237,14 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: DateTime(_date.year - 3),
+      // Not before the household's month: older spending is already behind
+      // the balances typed in at setup (tester feedback F2).
+      firstDate: earliestDate(
+        householdCreatedAt: ref.read(householdCreatedAtProvider),
+        accountCreatedAt: ref.read(accountCreatedAtProvider),
+        today: DateTime.now(),
+        current: _date,
+      ),
       lastDate: DateTime(_date.year + 1),
     );
     if (picked != null) setState(() => _date = picked);
@@ -395,7 +412,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                _HintButton(label: dateLabel, onTap: _pickDate),
+                _HintButton(key: const Key('movementDate'), label: dateLabel, onTap: _pickDate),
                 if (_kind != _Kind.pasar) ...[
                   Text(' · ', style: TextStyle(fontSize: 12, color: colors.inkFaint)),
                   if (accounts.isEmpty && cards.isEmpty)
@@ -423,26 +440,31 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
               ..._transferFields(accounts)
             else ...[
               Finan2SectionLabel(l10n.commonCategory),
-              if (categoriesOfKind.isEmpty)
+              if (categoriesOfKind.isEmpty) ...[
                 Text(
                   l10n.transactionsNoCategoriesOfType,
                   style: TextStyle(fontSize: 12, color: colors.inkSoft),
-                )
-              else
-                Wrap(
-                  spacing: 7,
-                  runSpacing: 7,
-                  children: [
-                    for (final category in categoriesOfKind)
-                      Finan2Chip(
-                        icon: Finan2Icons.categoria(category.iconSlug),
-                        label: category.name,
-                        tone: Finan2Tone.of(context, Color(category.color)),
-                        selected: _categoryId == category.id,
-                        onTap: () => setState(() => _categoryId = category.id),
-                      ),
-                  ],
                 ),
+                const SizedBox(height: Finan2Space.xs),
+              ],
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final category in categoriesOfKind)
+                    Finan2Chip(
+                      icon: Finan2Icons.categoria(category.iconSlug),
+                      label: category.name,
+                      tone: Finan2Tone.of(context, Color(category.color)),
+                      selected: _categoryId == category.id,
+                      onTap: () => setState(() => _categoryId = category.id),
+                    ),
+                  NewCategoryChip(
+                    type: _kind.newCategoryType,
+                    onCreated: (id) => setState(() => _categoryId = id),
+                  ),
+                ],
+              ),
               const SizedBox(height: Finan2Space.md),
               Finan2Field(label: l10n.commonDescription, controller: _descriptionController),
               // Only worth asking once there's a partner to tell apart.
@@ -507,7 +529,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     );
   }
 
-  /// «Pasar»: from and to, each in its color with what it will be left
+  /// «Mover»: from and to, each in its color with what it will be left
   /// with, and the reminder that it isn't an expense.
   List<Widget> _transferFields(List<Account> accounts) {
     final l10n = context.l10n;
@@ -516,12 +538,31 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
     final from = accounts.where((a) => a.id == _fromAccountId).firstOrNull;
     final to = accounts.where((a) => a.id == _toAccountId).firstOrNull;
 
+    // With one account there's nowhere to move it to: say what «Mover» is
+    // for and offer the second account right here, not «go to Ajustes».
     if (accounts.length < 2) {
       return [
+        Text(
+          l10n.transactionsTransferExplain,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 14, height: 1.45, color: colors.ink),
+        ),
+        const SizedBox(height: Finan2Space.xs),
         Text(
           l10n.transactionsTransferNeedsTwoAccounts,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12.5, color: colors.inkSoft),
+        ),
+        const SizedBox(height: Finan2Space.md),
+        Center(
+          child: OutlinedButton.icon(
+            key: const Key('pasarCreateAccount'),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute<void>(builder: (_) => const EditAccountScreen())),
+            icon: const Icon(Icons.add, size: Finan2Sizes.iconSm),
+            label: Text(l10n.transactionsTransferCreateAccount),
+          ),
         ),
       ];
     }
@@ -591,7 +632,7 @@ class _EditTransactionScreenState extends ConsumerState<EditTransactionScreen> {
   }
 }
 
-/// One end of «Pasar»: the account's tile in its color, «De» or «A» over
+/// One end of «Mover»: the account's tile in its color, «De» or «A» over
 /// its name, and on the right what it has - or, once there's an amount,
 /// what it will be left with.
 class _TransferEnd extends ConsumerWidget {
